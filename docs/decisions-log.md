@@ -31,6 +31,10 @@ Append new decisions at the bottom. Never rewrite past entries; supersede them w
 | 24 | 2026-10-10 | Sack QR payload `kernel:item:<itemId>`. Any other payload is ignored | Shared by the label PDF and the scanner |
 | 25 | 2026-10-10 | Languages: en plus hi, bn, te, mr, ta, gu, kn, ml, or, pa. Machine-drafted, with native review required (docs/glossary.md) | User: "all major languages" |
 | 26 | 2026-10-10 | Archiving is a soft delete (`archivedAt`). Scan history is never deleted except by the user's "delete all history" | Guardrail §6 and the PRD's immutable history |
+| 27 | 2026-10-10 | Model manifest is strict:<br>• `validation` required<br>• a proxy model needs a non-empty `note` (≤500 chars) as well as `experimental=true`<br>• unknown keys are rejected except `meta.*`<br>Full spec: `audio-ai/README.md` | Stops a typo from silently disabling the uncertain band, or a proxy model losing its disclaimer |
+| 28 | 2026-10-10 | Supersedes #21: the hardware input rate is now exposed as `EngineInfo.deviceInputSampleRate` (API 29+, after the first capture). `ScanOutcome.sampleRate` is still the rate delivered to the app | W2 |
+| 29 | 2026-10-10 | `latencyMs` = capture end to result (includes the WAV write when retained). Total including capture appears only in logcat `bench … totalMs` | Keeps the v1 contract meaning |
+| 30 | 2026-10-10 | `captureLevels()` is one process-wide broadcast stream. The UI subscribes before calling `captureAndAnalyze` | The native side has a single event sink |
 
 ## Contract follow-ups (proposed by agents, not yet done)
 - `ScanOutcome.audioRetained` flag (retained files are `files/recordings/<scanId>.wav`).
