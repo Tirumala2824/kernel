@@ -1,0 +1,39 @@
+[project]
+name = "kernel-train"
+version = "0.1.0"
+description = "Off-device training, log-mel parity and TFLite export for the Kernel acoustic screening model. Never shipped in the APK except the released .tflite + .properties."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    # CPU-only on Windows/Linux. Pinned to the 2.19 line: its TFLite converter
+    # emits builtin-op versions that the app's LiteRT 1.4.2 runtime
+    # (docs/decisions-log.md #16) already knows, and tf.lite.Interpreter is
+    # still bundled for the Python-side verification.
+    "tensorflow==2.19.*",
+    "numpy>=1.26,<2.2",
+    "scipy>=1.13",
+    "soundfile>=0.12",
+    "scikit-learn>=1.5",
+    # TensorFlow on Windows needs msvcp140.dll + msvcp140_1.dll. This wheel puts
+    # Microsoft's redistributable DLLs inside the venv (no system-wide install).
+    "msvc-runtime>=14.40; sys_platform == 'win32'",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["kernel_train"]
+
+[tool.uv]
+# Installed editable so `python -I -m kernel_train...` works without the cwd on sys.path.
+package = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]  # so tests can import retrain.py
+addopts = "-q"
