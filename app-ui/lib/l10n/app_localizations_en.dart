@@ -10,6 +10,169 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get batchSetupTitle => 'Choose a room or stack';
+
+  @override
+  String get batchSetupSubtitle =>
+      'Kernel walks you through its sacks one at a time.';
+
+  @override
+  String get batchSequentialNote =>
+      'One recording per sack. Kernel never scans several sacks at once.';
+
+  @override
+  String get batchNoPlaces => 'No rooms or stacks yet';
+
+  @override
+  String get batchNoPlacesDetail =>
+      'Add a warehouse with its rooms and stacks, then register sacks in them.';
+
+  @override
+  String batchPlaceSubtitle(String type, int total, int needScan) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$total sacks',
+      one: '1 sack',
+    );
+    return '$type · $_temp0 · $needScan need a scan';
+  }
+
+  @override
+  String batchIntroSubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sacks to walk, one at a time',
+      one: '1 sack to walk, one at a time',
+      zero: 'No sacks to walk',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get batchSkipToday => 'Skip sacks scanned today';
+
+  @override
+  String get batchSkipTodayBody =>
+      'Leave out sacks that already have a recording from today.';
+
+  @override
+  String batchWalkLine(int position, String label, String grain) {
+    return '$position. $label · $grain';
+  }
+
+  @override
+  String batchStart(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Start with $count sacks',
+      one: 'Start with 1 sack',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get batchNothingToWalk =>
+      'Every sack here already has a usable scan or was scanned today.';
+
+  @override
+  String batchProgress(int position, int total) {
+    return 'Sack $position of $total';
+  }
+
+  @override
+  String get batchSkipSack => 'Skip this sack';
+
+  @override
+  String get batchStop => 'Stop session';
+
+  @override
+  String batchNextIn(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: 'Next sack in $seconds seconds',
+      one: 'Next sack in 1 second',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String batchSummaryIn(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: 'Summary in $seconds seconds',
+      one: 'Summary in 1 second',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get batchNextSack => 'Next sack';
+
+  @override
+  String get batchFinish => 'Finish';
+
+  @override
+  String get batchRetrySack => 'Record this sack again';
+
+  @override
+  String get batchSummaryTitle => 'Session summary';
+
+  @override
+  String batchSummarySubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sacks in this session',
+      one: '1 sack in this session',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get batchStatRecorded => 'recorded';
+
+  @override
+  String get batchStatSkipped => 'skipped';
+
+  @override
+  String get batchStatRetry => 'need a retry';
+
+  @override
+  String get rankedTitle => 'Ranked';
+
+  @override
+  String rankLabel(int rank) {
+    return '#$rank';
+  }
+
+  @override
+  String get queueSuggestionNote =>
+      'The order is a suggestion of what to check first. Inspect physically before any decision.';
+
+  @override
+  String get queueNothingRanked =>
+      'No item has a usable model result yet, so nothing is ranked. Items without one are listed under \"Needs scan\".';
+
+  @override
+  String get queueNothingRankedShort => 'Nothing ranked yet';
+
+  @override
+  String needsScanTitle(int count) {
+    return 'Needs scan ($count)';
+  }
+
+  @override
+  String get needsScanChip => 'Needs scan';
+
+  @override
+  String get needsScanEmpty => 'Every item has a usable scan.';
+
+  @override
   String get saveHarvest => 'Save harvest';
 
   @override

@@ -6,6 +6,9 @@ import 'package:kernel_contracts/kernel_contracts.dart';
 import '../../app/copy.dart';
 import '../../app/data_providers.dart';
 import '../../app/routes.dart';
+import '../../brand/illustrations.dart';
+import '../../brand/kernel_brand.dart';
+import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_app_bar.dart';
 import '../../widgets/record_tiles.dart';
@@ -18,65 +21,64 @@ class QueueScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
     final role = ref.watch(activeRoleProvider).value;
     final queue = ref.watch(
       inspectionQueueProvider((role: role, locationId: null, lotId: null)),
     );
     return Scaffold(
-      appBar: const KernelAppBar(title: 'Inspection queue'),
+      appBar: KernelAppBar(title: l.queueTitle),
       body: AsyncView<InspectionQueue>(
         value: queue,
         data: (queue) => PageList(
           children: [
             ScreenHeader(
-              title: 'Inspection queue',
+              title: l.queueTitle,
               subtitle: queue.modelVersion == null || queue.ranked.isEmpty
-                  ? 'Nothing ranked yet'
+                  ? l.queueNothingRankedShort
                   : provenanceLine(
+                      l,
                       modelVersion: queue.modelVersion!,
-                      experimental: queue.ranked.any(
-                        (e) => e.latestValidScan.experimental,
-                      ),
+                      experimental: queue.experimental,
                     ),
             ),
-            const Text(
-              'The order is a suggestion of what to check first. Inspect '
-              'physically before any decision.',
-            ),
-            const SectionTitle('Ranked'),
-            if (queue.ranked.isEmpty)
-              const Text(
-                'No item has a usable model result yet, so nothing is '
-                'ranked. Items without one are listed under "Needs scan".',
-              )
-            else
+            Text(l.queueSuggestionNote),
+            SectionTitle(l.rankedTitle),
+            if (queue.ranked.isEmpty) ...[
+              Center(
+                child: KernelIllustration(KernelIllustrations.queue, height: 96),
+              ),
+              QuietNote(l.queueNothingRanked),
+            ] else
               for (final (index, entry) in queue.ranked.indexed)
                 ItemTile(
                   item: entry.item,
                   onTap: () => context.push(Routes.item(entry.item.id)),
-                  trailing: Wrap(
-                    spacing: 4,
-                    crossAxisAlignment: WrapCrossAlignment.center,
+                  footer: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
-                      Text('#${index + 1}'),
+                      StatusChip(label: l.rankLabel(index + 1)),
                       ScanResultChip(
                         quality: entry.latestValidScan.quality,
                         result: entry.latestValidScan.result,
                       ),
+                      if (entry.latestValidScan.experimental)
+                        const ExperimentalBadge(),
                     ],
                   ),
                 ),
-            SectionTitle('Needs scan (${queue.needsScan.length})'),
+            SectionTitle(l.needsScanTitle(queue.needsScan.length)),
             if (queue.needsScan.isEmpty)
-              const Text('Every item has a usable scan.')
+              QuietNote(l.needsScanEmpty)
             else
               for (final item in queue.needsScan)
                 ItemTile(
                   item: item,
                   onTap: () => context.push(Routes.item(item.id)),
-                  trailing: const StatusChip(
-                    label: 'Needs scan',
-                    tone: StatusTone.neutral,
+                  footer: StatusChip(
+                    label: l.needsScanChip,
+                    icon: Icons.hearing_disabled_rounded,
                   ),
                 ),
           ],

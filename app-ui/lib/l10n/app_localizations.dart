@@ -94,6 +94,204 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('en')];
 
+  /// Batch setup title.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a room or stack'**
+  String get batchSetupTitle;
+
+  /// Batch setup subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Kernel walks you through its sacks one at a time.'**
+  String get batchSetupSubtitle;
+
+  /// Sequential scanning note (never multi-sack).
+  ///
+  /// In en, this message translates to:
+  /// **'One recording per sack. Kernel never scans several sacks at once.'**
+  String get batchSequentialNote;
+
+  /// Empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'No rooms or stacks yet'**
+  String get batchNoPlaces;
+
+  /// Empty state detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a warehouse with its rooms and stacks, then register sacks in them.'**
+  String get batchNoPlacesDetail;
+
+  /// Batch place row.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} · {total, plural, =1{1 sack} other{{total} sacks}} · {needScan} need a scan'**
+  String batchPlaceSubtitle(String type, int total, int needScan);
+
+  /// Batch intro subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No sacks to walk} =1{1 sack to walk, one at a time} other{{count} sacks to walk, one at a time}}'**
+  String batchIntroSubtitle(int count);
+
+  /// Toggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip sacks scanned today'**
+  String get batchSkipToday;
+
+  /// Toggle explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave out sacks that already have a recording from today.'**
+  String get batchSkipTodayBody;
+
+  /// A sack in the walk list.
+  ///
+  /// In en, this message translates to:
+  /// **'{position}. {label} · {grain}'**
+  String batchWalkLine(int position, String label, String grain);
+
+  /// Starts the session.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Start with 1 sack} other{Start with {count} sacks}}'**
+  String batchStart(int count);
+
+  /// Nothing to walk.
+  ///
+  /// In en, this message translates to:
+  /// **'Every sack here already has a usable scan or was scanned today.'**
+  String get batchNothingToWalk;
+
+  /// Session progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Sack {position} of {total}'**
+  String batchProgress(int position, int total);
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip this sack'**
+  String get batchSkipSack;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop session'**
+  String get batchStop;
+
+  /// Auto-advance countdown.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds, plural, =1{Next sack in 1 second} other{Next sack in {seconds} seconds}}'**
+  String batchNextIn(int seconds);
+
+  /// Countdown on the last sack.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds, plural, =1{Summary in 1 second} other{Summary in {seconds} seconds}}'**
+  String batchSummaryIn(int seconds);
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Next sack'**
+  String get batchNextSack;
+
+  /// Button on the last sack.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get batchFinish;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Record this sack again'**
+  String get batchRetrySack;
+
+  /// Batch summary title.
+  ///
+  /// In en, this message translates to:
+  /// **'Session summary'**
+  String get batchSummaryTitle;
+
+  /// Batch summary subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 sack in this session} other{{count} sacks in this session}}'**
+  String batchSummarySubtitle(int count);
+
+  /// Stat label.
+  ///
+  /// In en, this message translates to:
+  /// **'recorded'**
+  String get batchStatRecorded;
+
+  /// Stat label.
+  ///
+  /// In en, this message translates to:
+  /// **'skipped'**
+  String get batchStatSkipped;
+
+  /// Stat label.
+  ///
+  /// In en, this message translates to:
+  /// **'need a retry'**
+  String get batchStatRetry;
+
+  /// Queue section.
+  ///
+  /// In en, this message translates to:
+  /// **'Ranked'**
+  String get rankedTitle;
+
+  /// Rank chip.
+  ///
+  /// In en, this message translates to:
+  /// **'#{rank}'**
+  String rankLabel(int rank);
+
+  /// Queue honesty note.
+  ///
+  /// In en, this message translates to:
+  /// **'The order is a suggestion of what to check first. Inspect physically before any decision.'**
+  String get queueSuggestionNote;
+
+  /// Empty ranking.
+  ///
+  /// In en, this message translates to:
+  /// **'No item has a usable model result yet, so nothing is ranked. Items without one are listed under \"Needs scan\".'**
+  String get queueNothingRanked;
+
+  /// Queue subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing ranked yet'**
+  String get queueNothingRankedShort;
+
+  /// Needs-scan group.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs scan ({count})'**
+  String needsScanTitle(int count);
+
+  /// Item without a valid, comparable scan.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs scan'**
+  String get needsScanChip;
+
+  /// Empty needs-scan group.
+  ///
+  /// In en, this message translates to:
+  /// **'Every item has a usable scan.'**
+  String get needsScanEmpty;
+
   /// Form button.
   ///
   /// In en, this message translates to:
