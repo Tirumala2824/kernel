@@ -10,6 +10,144 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get saveHarvest => 'Save harvest';
+
+  @override
+  String get harvestNameField => 'Harvest name';
+
+  @override
+  String get harvestNameHelper => 'For example \"Rabi wheat 2026\"';
+
+  @override
+  String get harvestedOnField => 'Harvested on';
+
+  @override
+  String get notesFieldOptional => 'Notes (optional)';
+
+  @override
+  String get harvestAppBar => 'Harvest';
+
+  @override
+  String get harvestNotFound => 'This harvest was not found on this phone.';
+
+  @override
+  String get harvestAddSack => 'Register sack in this harvest';
+
+  @override
+  String get harvestSacksTitle => 'Sacks from this harvest';
+
+  @override
+  String get harvestSacksEmpty => 'No sacks in this harvest yet';
+
+  @override
+  String get harvestSacksEmptyDetail =>
+      'Register the sacks you filled from this harvest, then scan them before sale.';
+
+  @override
+  String get preSaleBody =>
+      'A summary of this harvest\'s sacks for a buyer. Scans show their model version and experimental status, and verified inspection findings are listed separately. It is not a quality certificate.';
+
+  @override
+  String get notScannedYet => 'Not scanned yet';
+
+  @override
+  String get lotAppBar => 'Lot';
+
+  @override
+  String get lotNotFound => 'This lot was not found on this phone.';
+
+  @override
+  String get supplierNotRecorded => 'Supplier not recorded';
+
+  @override
+  String get fieldDeclaredQuantity => 'Declared quantity';
+
+  @override
+  String get fieldReceived => 'Received';
+
+  @override
+  String get fieldScreened => 'Screened';
+
+  @override
+  String get screeningStatusTitle => 'Screening status';
+
+  @override
+  String get screeningStatusBody =>
+      'You set this after reviewing scans and physical checks. Scans never change it, and Kernel never accepts or rejects a lot.';
+
+  @override
+  String currentStatus(String status) {
+    return 'Current: $status';
+  }
+
+  @override
+  String get lotSacksTitle => 'Sacks in this lot';
+
+  @override
+  String get lotSacksEmpty => 'No sacks in this lot yet';
+
+  @override
+  String get lotSacksEmptyAction => 'Register a sack in this lot';
+
+  @override
+  String get sampleScansTitle => 'Sample scans';
+
+  @override
+  String get sampleScansBody =>
+      'Scan sacks from this delivery one at a time. Each result is an unverified model output and does not change the lot\'s status.';
+
+  @override
+  String get sampleScansStart => 'Start sample scans';
+
+  @override
+  String get physicalChecksTitle => 'Physical checks';
+
+  @override
+  String get physicalChecksBody =>
+      'Open and look inside each sack, then record what you found. Your findings are kept apart from the scans.';
+
+  @override
+  String get recordPhysicalCheck => 'Record physical check';
+
+  @override
+  String get noPhysicalCheckYet => 'No physical check yet';
+
+  @override
+  String lotSummaryTitle(String code) {
+    return 'Lot $code summary report';
+  }
+
+  @override
+  String get lotSummaryBody =>
+      'Sample scans with model provenance, and physical check findings listed separately, from records on this phone. Use it to support your own decision.';
+
+  @override
+  String savedLot(String code) {
+    return 'Saved lot $code';
+  }
+
+  @override
+  String get saveLot => 'Save lot';
+
+  @override
+  String get lotCodeField => 'Lot code';
+
+  @override
+  String get lotCodeHelper => 'The reference on the delivery note';
+
+  @override
+  String get validationLotCode => 'Enter the lot code';
+
+  @override
+  String get supplierFieldOptional => 'Supplier name (optional)';
+
+  @override
+  String get declaredQuantityField => 'Declared quantity';
+
+  @override
+  String get receivedOnField => 'Received on';
+
+  @override
   String shareSubject(String title) {
     return 'Kernel $title';
   }

@@ -94,6 +94,258 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('en')];
 
+  /// Form button.
+  ///
+  /// In en, this message translates to:
+  /// **'Save harvest'**
+  String get saveHarvest;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Harvest name'**
+  String get harvestNameField;
+
+  /// Form helper.
+  ///
+  /// In en, this message translates to:
+  /// **'For example \"Rabi wheat 2026\"'**
+  String get harvestNameHelper;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Harvested on'**
+  String get harvestedOnField;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get notesFieldOptional;
+
+  /// App bar title.
+  ///
+  /// In en, this message translates to:
+  /// **'Harvest'**
+  String get harvestAppBar;
+
+  /// Unknown harvest id.
+  ///
+  /// In en, this message translates to:
+  /// **'This harvest was not found on this phone.'**
+  String get harvestNotFound;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Register sack in this harvest'**
+  String get harvestAddSack;
+
+  /// Section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sacks from this harvest'**
+  String get harvestSacksTitle;
+
+  /// Empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'No sacks in this harvest yet'**
+  String get harvestSacksEmpty;
+
+  /// Empty state detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Register the sacks you filled from this harvest, then scan them before sale.'**
+  String get harvestSacksEmptyDetail;
+
+  /// Pre-sale report explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'A summary of this harvest\'s sacks for a buyer. Scans show their model version and experimental status, and verified inspection findings are listed separately. It is not a quality certificate.'**
+  String get preSaleBody;
+
+  /// Item with no scans.
+  ///
+  /// In en, this message translates to:
+  /// **'Not scanned yet'**
+  String get notScannedYet;
+
+  /// App bar title.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot'**
+  String get lotAppBar;
+
+  /// Unknown lot id.
+  ///
+  /// In en, this message translates to:
+  /// **'This lot was not found on this phone.'**
+  String get lotNotFound;
+
+  /// Lot without supplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier not recorded'**
+  String get supplierNotRecorded;
+
+  /// Field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Declared quantity'**
+  String get fieldDeclaredQuantity;
+
+  /// Field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Received'**
+  String get fieldReceived;
+
+  /// Field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Screened'**
+  String get fieldScreened;
+
+  /// Section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Screening status'**
+  String get screeningStatusTitle;
+
+  /// Human-set status explanation. Keep the only mention of accepting.
+  ///
+  /// In en, this message translates to:
+  /// **'You set this after reviewing scans and physical checks. Scans never change it, and Kernel never accepts or rejects a lot.'**
+  String get screeningStatusBody;
+
+  /// Current screening status chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Current: {status}'**
+  String currentStatus(String status);
+
+  /// Section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sacks in this lot'**
+  String get lotSacksTitle;
+
+  /// Empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'No sacks in this lot yet'**
+  String get lotSacksEmpty;
+
+  /// Empty state action.
+  ///
+  /// In en, this message translates to:
+  /// **'Register a sack in this lot'**
+  String get lotSacksEmptyAction;
+
+  /// Buyer sample scans section.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample scans'**
+  String get sampleScansTitle;
+
+  /// Sample scans explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan sacks from this delivery one at a time. Each result is an unverified model output and does not change the lot\'s status.'**
+  String get sampleScansBody;
+
+  /// Starts a sequential session for this lot.
+  ///
+  /// In en, this message translates to:
+  /// **'Start sample scans'**
+  String get sampleScansStart;
+
+  /// Buyer physical checks section.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical checks'**
+  String get physicalChecksTitle;
+
+  /// Physical checks explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Open and look inside each sack, then record what you found. Your findings are kept apart from the scans.'**
+  String get physicalChecksBody;
+
+  /// Tooltip/button.
+  ///
+  /// In en, this message translates to:
+  /// **'Record physical check'**
+  String get recordPhysicalCheck;
+
+  /// Sack without an inspection.
+  ///
+  /// In en, this message translates to:
+  /// **'No physical check yet'**
+  String get noPhysicalCheckYet;
+
+  /// Lot summary export title.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot {code} summary report'**
+  String lotSummaryTitle(String code);
+
+  /// Lot summary explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample scans with model provenance, and physical check findings listed separately, from records on this phone. Use it to support your own decision.'**
+  String get lotSummaryBody;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved lot {code}'**
+  String savedLot(String code);
+
+  /// Form button.
+  ///
+  /// In en, this message translates to:
+  /// **'Save lot'**
+  String get saveLot;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot code'**
+  String get lotCodeField;
+
+  /// Form helper.
+  ///
+  /// In en, this message translates to:
+  /// **'The reference on the delivery note'**
+  String get lotCodeHelper;
+
+  /// Form validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the lot code'**
+  String get validationLotCode;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier name (optional)'**
+  String get supplierFieldOptional;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Declared quantity'**
+  String get declaredQuantityField;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Received on'**
+  String get receivedOnField;
+
   /// Share sheet subject for an exported file.
   ///
   /// In en, this message translates to:

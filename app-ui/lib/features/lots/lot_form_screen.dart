@@ -5,6 +5,7 @@ import 'package:kernel_contracts/kernel_contracts.dart';
 
 import '../../app/providers.dart';
 import '../../app/routes.dart';
+import '../../l10n/l10n.dart';
 import '../../widgets/form_fields.dart';
 import '../../widgets/kernel_app_bar.dart';
 
@@ -37,6 +38,7 @@ class _LotFormScreenState extends ConsumerState<LotFormScreen> {
   }
 
   Future<void> _save() async {
+    final l = context.l10n;
     if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() {
       _saving = true;
@@ -57,11 +59,12 @@ class _LotFormScreenState extends ConsumerState<LotFormScreen> {
             ),
           );
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Saved lot ${lot.code}')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l.savedLot(lot.code))));
       context.pushReplacement(Routes.lot(lot.id));
     } on Object catch (e) {
-      if (mounted) setState(() => _error = 'Could not save: $e');
+      if (mounted) setState(() => _error = l.saveFailed('$e'));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -69,11 +72,12 @@ class _LotFormScreenState extends ConsumerState<LotFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     return Scaffold(
-      appBar: const KernelAppBar(title: 'Register delivery'),
+      appBar: KernelAppBar(title: l.buyerHeroTitle),
       body: FormPage(
         formKey: _formKey,
-        saveLabel: 'Save lot',
+        saveLabel: l.saveLot,
         saving: _saving,
         error: _error,
         onSave: _save,
@@ -83,26 +87,24 @@ class _LotFormScreenState extends ConsumerState<LotFormScreen> {
             controller: _code,
             textCapitalization: TextCapitalization.characters,
             maxLength: 40,
-            decoration: const InputDecoration(
-              labelText: 'Lot code',
-              helperText: 'The reference on the delivery note',
+            decoration: InputDecoration(
+              labelText: l.lotCodeField,
+              helperText: l.lotCodeHelper,
             ),
-            validator: (v) => requiredText(v, 'the lot code'),
+            validator: (v) => requiredText(v, l.validationLotCode),
           ),
           TextFormField(
             key: const Key('field-supplier'),
             controller: _supplier,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              labelText: 'Supplier name (optional)',
-            ),
+            decoration: InputDecoration(labelText: l.supplierFieldOptional),
           ),
           TextFormField(
             key: const Key('field-grain'),
             controller: _grain,
             textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(labelText: 'Grain type'),
-            validator: (v) => requiredText(v, 'the grain type'),
+            decoration: InputDecoration(labelText: l.grainTypeField),
+            validator: (v) => requiredText(v, l.validationGrain),
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,10 +117,8 @@ class _LotFormScreenState extends ConsumerState<LotFormScreen> {
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  decoration: const InputDecoration(
-                    labelText: 'Declared quantity',
-                  ),
-                  validator: validateQuantity,
+                  decoration: InputDecoration(labelText: l.declaredQuantityField),
+                  validator: (v) => validateQuantity(l, v),
                 ),
               ),
               const SizedBox(width: 12),
@@ -128,7 +128,7 @@ class _LotFormScreenState extends ConsumerState<LotFormScreen> {
                   key: const Key('field-unit'),
                   initialValue: _unit,
                   isExpanded: true,
-                  decoration: const InputDecoration(labelText: 'Unit'),
+                  decoration: InputDecoration(labelText: l.unitField),
                   items: [
                     for (final unit in quantityUnits)
                       DropdownMenuItem(value: unit, child: Text(unit)),
@@ -140,7 +140,7 @@ class _LotFormScreenState extends ConsumerState<LotFormScreen> {
           ),
           DateField(
             key: const Key('field-received'),
-            label: 'Received on',
+            label: l.receivedOnField,
             value: _receivedAt,
             onChanged: (d) => setState(() => _receivedAt = d),
           ),
