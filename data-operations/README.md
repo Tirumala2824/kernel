@@ -1,39 +1,52 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# data_operations
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Kernel's local data and operations layer. It implements every repository and
+service interface from `package:kernel_contracts` on an on-device SQLite
+database (drift). It works fully offline and makes no network calls.
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
 ```dart
-const like = 'sample';
+import 'package:data_operations/data_operations.dart';
+
+final data = await DataOperations.open(
+  deleteRetainedAudio: () async { /* clear audio-ai's retained recordings */ },
+);
+// data.items, data.locations, data.lots, data.scans, data.inspections,
+// data.reminders, data.settings, data.ranking, data.reports, data.privacy
+await data.close();
 ```
 
-## Additional information
+Tests construct `DataOperations(executor: NativeDatabase.memory(), ...)` with a
+test scheduler and a temporary report directory (see `test/support/`).
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+## Rules enforced here
+
+- A fresh database is empty. Migrations never insert rows.
+- Scans are append-only: there is no update and no single delete, and a
+  database trigger rejects edits to recorded fields.
+  `ScanRepository.record` throws `ArgumentError` when
+  `ScanOutcome.invariantViolations()` is non-empty.
+- Verified inspection findings are immutable (trigger-guarded). Only the
+  follow-up status changes.
+- Ranking follows the rule in `docs/contracts.md`. Items without a comparable
+  valid scan go to `needsScan`.
+- Reports are built only from stored records. They carry model provenance on
+  every scan row, keep AI and human columns separate, and include the
+  "Clean is not a guarantee" disclaimer.
+
+## Schema changes
+
+1. Edit `lib/src/db/tables.dart` and bump `schemaVersion`.
+2. Run `dart run build_runner build` and then `dart run drift_dev make-migrations`.
+3. Add the `stepByStep` migration and an upgrade test in
+   `test/drift/kernel_database/migration_test.dart`.
+
+## Android app requirements (reminders)
+
+The app's `AndroidManifest.xml` must declare `RECEIVE_BOOT_COMPLETED` and the
+`ScheduledNotificationReceiver` / `ScheduledNotificationBootReceiver`
+receivers from flutter_local_notifications. The app module must also enable
+core library desugaring. Reminders use inexact scheduling, so no exact-alarm
+permission is needed. On Android 13+, call
+`DataOperations.requestNotificationPermission()` from a user action.

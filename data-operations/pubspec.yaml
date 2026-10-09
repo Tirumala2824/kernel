@@ -10,12 +10,23 @@ environment:
 resolution: workspace
 
 dependencies:
+  csv: ^8.0.0
+  drift: ^2.35.2
+  drift_flutter: ^0.3.1
   flutter:
     sdk: flutter
+  flutter_local_notifications: ^22.3.1
   kernel_contracts:
     path: ../contracts
+  path: ^1.9.1
+  path_provider: ^2.1.6
+  pdf: ^3.13.1
+  timezone: ^0.11.1
+  uuid: ^4.6.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  drift_dev: ^2.35.1
+  build_runner: ^2.16.1
