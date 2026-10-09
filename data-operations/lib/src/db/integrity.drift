@@ -1,0 +1,24 @@
+import 'tables.dart';
+
+-- Defence in depth for guardrails §6, below the repository layer.
+
+-- Scan history is append-only: no recorded field may ever change. Only the
+-- sync bookkeeping columns (updated_at, sync_state) stay writable for V3.
+CREATE TRIGGER scans_append_only
+BEFORE UPDATE OF id, item_id, captured_at, duration_ms, sample_rate, quality,
+  quality_reasons, model_version, result, confidence, experimental, latency_ms,
+  device_model, os_version, created_at
+ON scans
+BEGIN
+  SELECT RAISE(ABORT, 'scans are append-only');
+END;
+
+-- A verified inspection outcome is never overwritten. Only the follow-up
+-- status and sync bookkeeping may change.
+CREATE TRIGGER inspections_verified_immutable
+BEFORE UPDATE OF id, item_id, scan_id, inspected_at, inspector, observations,
+  verified_finding, created_at
+ON inspections
+BEGIN
+  SELECT RAISE(ABORT, 'verified inspection fields are immutable');
+END;

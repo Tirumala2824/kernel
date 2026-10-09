@@ -1,0 +1,17 @@
+targets:
+  $default:
+    builders:
+      drift_dev:
+        options:
+          # ISO-8601 text keeps millisecond precision for scan ordering.
+          store_date_time_values_as_text: true
+          # The repositories use the core query API only.
+          generate_manager: false
+          databases:
+            kernel_database: lib/src/db/database.dart
+          schema_dir: drift_schemas/
+          test_dir: test/drift/
+          sql:
+            dialect: sqlite
+            options:
+              version: "3.45"
