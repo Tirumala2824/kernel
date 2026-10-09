@@ -19,8 +19,18 @@ Append new decisions at the bottom. Never rewrite past entries; supersede them w
 | 12 | 2026-10-09 | Android Auto Backup disabled (`allowBackup=false`) | Stops the grain DB from leaving the device through cloud backup |
 | 13 | 2026-10-09 | No harvest/session entity in V0.1. The farmer subtitle uses the role tagline; FPO "scanned this session" is shown as "scanned today" | Avoids a new entity before it is needed |
 | 14 | 2026-10-09 | The UI requests the mic and POST_NOTIFICATIONS permissions. The engine returns RETRY/permissionDenied and never prompts | One owner per permission prompt |
+| 15 | 2026-10-10 | Audio source is VOICE_RECOGNITION (AGC and noise suppression off by spec), to be compared against UNPROCESSED on the iQOO 15 | Specified sensitivity on Android; UNPROCESSED is about 18 dB quieter |
+| 16 | 2026-10-10 | LiteRT pinned to 1.4.2 (CPU, 4 threads) | 2.3.0 pulls Play AI delivery and androidx.work, which bring network services and extra permissions. That breaks the bundled-model-only and no-network rules |
+| 17 | 2026-10-10 | A model ships as `models/<name>.tflite` plus `<name>.properties` (version, labels, output type, input layout, every log-mel param). Missing or invalid manifest ⇒ treated as no model | Model integrity; preprocessing travels with the model |
+| 18 | 2026-10-10 | Provisional log-mel: 512-pt FFT, 25 ms window, 10 ms hop, 64 mels, 125–7500 Hz, log offset 0.001 | Common 16 kHz front end (YAMNet-style) until the training pipeline is known |
+| 19 | 2026-10-10 | Provisional quality gate: too-short <1500 ms; silence RMS < -70 dBFS; clipping >0.1% of samples ≥99% FS; high noise when the quietest 10% > -45 dBFS. SNR is logged but not gated | Must be calibrated on the iQOO 15 with real sacks |
+| 20 | 2026-10-10 | App compileSdk 37 | permission_handler_android 13 requires it |
+| 21 | 2026-10-10 | `ScanOutcome.sampleRate` is the rate AudioRecord actually delivered to the app. The hardware rate is in logcat (`AudioAi`) only | audio-ai-dev interpretation, accepted for V0.1 |
 
 ## Contract follow-ups (proposed by agents, not yet done)
+- `ScanOutcome.audioRetained` flag (retained files are `files/recordings/<scanId>.wav`).
+- An in-app haptics toggle: `captureAndAnalyze(..., {bool haptics = true})`.
+- `EngineInfo.audioSource` / `deviceInputSampleRate` for the device log.
 - `LocationRepository.watchAll()`: the UI currently walks `watchChildren`.
 - `ScanRepository.watchSince(DateTime)`: for the FPO "scanned today" count.
 - Document `watchForItem` ordering (newest first) and the `watchOpen()` semantics (open plus inProgress).

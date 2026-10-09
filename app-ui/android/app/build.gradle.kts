@@ -6,7 +6,8 @@ plugins {
 
 android {
     namespace = "com.kernel.kernel_app"
-    compileSdk = flutter.compileSdkVersion
+    // permission_handler_android 13 requires compileSdk 37.
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

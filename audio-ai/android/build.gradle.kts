@@ -1,5 +1,5 @@
 group = "com.kernel.audio_ai"
-version = "1.0-SNAPSHOT"
+version = "0.1.0"
 
 buildscript {
     val kotlinVersion = "2.4.0"
@@ -50,15 +50,14 @@ android {
 
     testOptions {
         unitTests {
-            isIncludeAndroidResources = true
             all {
                 it.useJUnitPlatform()
 
                 it.outputs.upToDateWhen { false }
 
                 it.testLogging {
-                    events("passed", "skipped", "failed", "standardOut", "standardError")
-                    showStandardStreams = true
+                    events("passed", "skipped", "failed")
+                    showStandardStreams = false
                 }
             }
         }
@@ -72,6 +71,23 @@ kotlin {
 }
 
 dependencies {
+    // Required by the pigeon-generated bridge (suspend host methods).
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
+
+    // LiteRT (formerly TensorFlow Lite) on-device interpreter, CPU only.
+    // Only used when a real .tflite model plus manifest is bundled in
+    // src/main/assets/models/. No network, no model download.
+    // Pinned to 1.4.x on purpose: litert 2.x pulls in Play AI/asset delivery
+    // (com.google.android.play:ai-delivery -> asset-delivery, androidx.work),
+    // which adds network-capable download services and permissions
+    // (FOREGROUND_SERVICE_DATA_SYNC, ACCESS_NETWORK_STATE, ...). That breaks the
+    // no-network, bundled-model-only guardrail. 1.4.2 has no transitive deps.
+    implementation("com.google.ai.edge.litert:litert:1.4.2")
+
+    // Unit tests are pure JVM (quality gate, log-mel, resampler, WAV, model
+    // manifest). No Android framework or test doubles are needed.
+    testImplementation(platform("org.junit:junit-bom:5.14.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.mockito:mockito-core:5.0.0")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

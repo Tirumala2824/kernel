@@ -59,5 +59,5 @@ grep -rniE "mock|fake|dummy|sample(Data|Sack|Lot)|random\(" --include=*.dart --i
 New dependencies: the owning agent adds them to its own package pubspec, then runs `flutter pub get` at the root. Every member keeps `resolution: workspace`.
 
 ## Status
-- Done: docs, agents, git init, workspace scaffold, `contracts/` (tests green).
-- Next: the parallel V0.1 foundation slices (ui-dev / audio-ai-dev / data-ops-dev), then lead integration. See [docs/scope-and-versions.md](docs/scope-and-versions.md).
+- Done: V0.1 foundation is integrated. Real NativeScanEngine and DataOperations are bound in `app-ui/lib/bootstrap.dart`. Analyze is clean. Tests: contracts 8, audio-ai 24, data-operations 62, app-ui 55, Kotlin 43 (results under `audio-ai/example/build/audio_ai/test-results/`). `flutter build apk --debug` succeeds.
+- Next: the iQOO 15 smoke test in [docs/device-validation.md](docs/device-validation.md) (calibrate the quality gate, effective sample rate). Then the contract follow-ups and V0.2/V0.4 items in [docs/decisions-log.md](docs/decisions-log.md) and [docs/scope-and-versions.md](docs/scope-and-versions.md).

@@ -1,24 +1,32 @@
-// This is a basic Flutter integration test.
-//
-// Since integration tests run in a full Flutter application, they can interact
-// with the host side of a plugin implementation, unlike Dart unit tests.
-//
-// For more information about Flutter integration tests, please see
-// https://flutter.dev/to/integration-testing
-
+// On-device check of the real plugin (run with `flutter test
+// integration_test` from audio-ai/example on the iQOO 15). No model is
+// bundled yet, so the engine must report "none" and never classify.
+import 'package:audio_ai/audio_ai.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-
-import 'package:audio_ai/audio_ai.dart';
+import 'package:kernel_contracts/kernel_contracts.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('getPlatformVersion test', (WidgetTester tester) async {
-    final AudioAi plugin = AudioAi();
-    final String? version = await plugin.getPlatformVersion();
-    // The version string depends on the host platform running the test, so
-    // just assert that some non-empty string is returned.
-    expect(version?.isNotEmpty, true);
+  testWidgets('engine info reports no bundled model', (tester) async {
+    final info = await NativeScanEngine().info();
+
+    expect(info.modelPresent, isFalse);
+    expect(info.modelVersion, noModelVersion);
+    expect(info.experimental, isTrue);
+    expect(info.targetSampleRate, 16000);
+    expect(info.deviceModel, isNot('unknown'));
+  });
+
+  testWidgets('a real capture yields a contract-valid, unclassified outcome', (
+    tester,
+  ) async {
+    final outcome = await NativeScanEngine().captureAndAnalyze('it-item');
+
+    expect(outcome.invariantViolations(), isEmpty);
+    expect(outcome.classification, Classification.notEvaluated);
+    expect(outcome.modelVersion, noModelVersion);
+    expect(outcome.confidence, isNull);
   });
 }
