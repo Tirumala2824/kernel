@@ -90,3 +90,30 @@ final privacyServiceProvider = Provider<PrivacyService>(
       _unbound('privacyServiceProvider', 'PrivacyService', 'data_operations'),
   name: 'privacyServiceProvider',
 );
+
+final harvestRepositoryProvider = Provider<HarvestRepository>(
+  (ref) => _unbound(
+    'harvestRepositoryProvider',
+    'HarvestRepository',
+    'data_operations',
+  ),
+  name: 'harvestRepositoryProvider',
+);
+
+final labeledSampleRepositoryProvider = Provider<LabeledSampleRepository>(
+  (ref) => _unbound(
+    'labeledSampleRepositoryProvider',
+    'LabeledSampleRepository',
+    'data_operations',
+  ),
+  name: 'labeledSampleRepositoryProvider',
+);
+
+final datasetExportServiceProvider = Provider<DatasetExportService>(
+  (ref) => _unbound(
+    'datasetExportServiceProvider',
+    'DatasetExportService',
+    'data_operations',
+  ),
+  name: 'datasetExportServiceProvider',
+);

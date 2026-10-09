@@ -7,6 +7,7 @@ import '../../app/copy.dart';
 import '../../app/data_providers.dart';
 import '../../app/providers.dart';
 import '../../app/routes.dart';
+import '../../l10n/l10n.dart';
 import '../../widgets/form_fields.dart';
 import '../../widgets/kernel_app_bar.dart';
 
@@ -42,7 +43,7 @@ class _LocationFormScreenState extends ConsumerState<LocationFormScreen> {
   }
 
   LocationType _defaultType(Role role, List<Location> all) {
-    final parent = all.where((l) => l.id == _parentId).firstOrNull;
+    final parent = all.where((x) => x.id == _parentId).firstOrNull;
     return switch (parent?.type) {
       LocationType.warehouse => LocationType.room,
       LocationType.room => LocationType.stack,
@@ -52,6 +53,7 @@ class _LocationFormScreenState extends ConsumerState<LocationFormScreen> {
   }
 
   Future<void> _save(LocationType type) async {
+    final l = context.l10n;
     if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() {
       _saving = true;
@@ -68,11 +70,12 @@ class _LocationFormScreenState extends ConsumerState<LocationFormScreen> {
             ),
           );
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Saved ${location.name}')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l.savedNamed(location.name))));
       context.pushReplacement(Routes.location(location.id));
     } on Object catch (e) {
-      if (mounted) setState(() => _error = 'Could not save: $e');
+      if (mounted) setState(() => _error = l.saveFailed('$e'));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -80,16 +83,17 @@ class _LocationFormScreenState extends ConsumerState<LocationFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final role = ref.watch(activeRoleProvider).value ?? Role.farmer;
     final allAsync = ref.watch(allLocationsProvider);
     final all = allAsync.value ?? const <Location>[];
     final type = _type ?? _defaultType(role, all);
 
     return Scaffold(
-      appBar: const KernelAppBar(title: 'Add location'),
+      appBar: KernelAppBar(title: l.addLocation),
       body: FormPage(
         formKey: _formKey,
-        saveLabel: 'Save location',
+        saveLabel: l.saveLocation,
         saving: _saving,
         error: _error,
         onSave: () => _save(type),
@@ -98,10 +102,10 @@ class _LocationFormScreenState extends ConsumerState<LocationFormScreen> {
             key: ValueKey('field-type-${type.name}'),
             initialValue: type,
             isExpanded: true,
-            decoration: const InputDecoration(labelText: 'Type'),
+            decoration: InputDecoration(labelText: l.typeField),
             items: [
               for (final t in LocationType.values)
-                DropdownMenuItem(value: t, child: Text(t.label)),
+                DropdownMenuItem(value: t, child: Text(t.label(l))),
             ],
             onChanged: (v) => setState(() => _type = v),
           ),
@@ -110,31 +114,33 @@ class _LocationFormScreenState extends ConsumerState<LocationFormScreen> {
             controller: _name,
             textCapitalization: TextCapitalization.sentences,
             maxLength: 60,
-            decoration: const InputDecoration(labelText: 'Name'),
-            validator: (v) => requiredText(v, 'a name'),
+            decoration: InputDecoration(labelText: l.nameField),
+            validator: (v) => requiredText(v, l.validationName),
           ),
           if (!allAsync.hasValue)
-            const Text('Loading places…')
+            Text(l.loading)
           else
             DropdownButtonFormField<String?>(
               key: const Key('field-parent'),
-              initialValue: all.any((l) => l.id == _parentId)
+              initialValue: all.any((x) => x.id == _parentId)
                   ? _parentId
                   : null,
               isExpanded: true,
-              decoration: const InputDecoration(
-                labelText: 'Inside (optional)',
-                helperText: 'For example a room inside a warehouse',
+              decoration: InputDecoration(
+                labelText: l.parentFieldOptional,
+                helperText: l.parentFieldHelper,
               ),
               items: [
-                const DropdownMenuItem<String?>(
+                DropdownMenuItem<String?>(
                   value: null,
-                  child: Text('Nothing (top level)'),
+                  child: Text(l.parentTopLevel),
                 ),
                 for (final location in all)
                   DropdownMenuItem<String?>(
                     value: location.id,
-                    child: Text('${location.name} (${location.type.label})'),
+                    child: Text(
+                      l.nameWithType(location.name, location.type.label(l)),
+                    ),
                   ),
               ],
               onChanged: (v) => setState(() => _parentId = v),

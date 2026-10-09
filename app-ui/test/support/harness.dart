@@ -10,19 +10,29 @@ import 'package:kernel_app/app/kernel_app.dart';
 import 'package:kernel_app/app/platform_providers.dart';
 import 'package:kernel_app/app/providers.dart';
 import 'package:kernel_app/app/router.dart';
+import 'package:kernel_app/l10n/app_localizations.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
 
 import 'in_memory.dart';
 
+/// English strings, for asserting on copy without a BuildContext.
+final en = lookupAppLocalizations(const Locale('en'));
+
 class TestEnv {
-  TestEnv({Role? role, this.offline = true})
-    : settings = InMemorySettingsRepository(activeRole: role) {
-    ranking = InMemoryRankingService(items, scans);
+  TestEnv({Role? role, this.offline = true, bool onboardingDone = true})
+    : settings = InMemorySettingsRepository(
+        activeRole: role,
+        onboardingDone: onboardingDone,
+      ) {
+    scans = InMemoryScanRepository(items);
+    ranking = InMemoryRankingService(items, scans, locations);
+    samples = InMemoryLabeledSampleRepository(scans, inspections);
     privacy = RecordingPrivacyService(
       onDelete: () {
         scans.clear();
         inspections.clear();
         reminders.clear();
+        samples.clear();
       },
     );
   }
@@ -32,28 +42,36 @@ class TestEnv {
   final items = InMemoryItemRepository();
   final locations = InMemoryLocationRepository();
   final lots = InMemoryLotRepository();
-  final scans = InMemoryScanRepository();
+  final harvests = InMemoryHarvestRepository();
+  late final InMemoryScanRepository scans;
   final inspections = InMemoryInspectionRepository();
   final reminders = InMemoryReminderRepository();
+  late final InMemoryLabeledSampleRepository samples;
   late final InMemoryRankingService ranking;
   final reports = RecordingReportService();
+  final dataset = RecordingDatasetExport();
   late final RecordingPrivacyService privacy;
   final engine = ScriptedScanEngine();
   final permissions = ScriptedPermissions();
   final sharer = RecordingSharer();
-  final feedback = RecordingFeedback();
+  final voice = RecordingVoicePrompter();
+  final photos = ScriptedPhotoStore();
+  final qr = ScriptedQrScanner();
 
   List<Override> get overrides => [
     scanEngineProvider.overrideWithValue(engine),
     itemRepositoryProvider.overrideWithValue(items),
     locationRepositoryProvider.overrideWithValue(locations),
     lotRepositoryProvider.overrideWithValue(lots),
+    harvestRepositoryProvider.overrideWithValue(harvests),
     scanRepositoryProvider.overrideWithValue(scans),
     inspectionRepositoryProvider.overrideWithValue(inspections),
     reminderRepositoryProvider.overrideWithValue(reminders),
     settingsRepositoryProvider.overrideWithValue(settings),
+    labeledSampleRepositoryProvider.overrideWithValue(samples),
     rankingServiceProvider.overrideWithValue(ranking),
     reportServiceProvider.overrideWithValue(reports),
+    datasetExportServiceProvider.overrideWithValue(dataset),
     privacyServiceProvider.overrideWithValue(privacy),
     connectivityResultsProvider.overrideWith(
       (ref) => Stream.value([
@@ -62,7 +80,11 @@ class TestEnv {
     ),
     devicePermissionsProvider.overrideWithValue(permissions),
     reportSharerProvider.overrideWithValue(sharer),
-    scanFeedbackProvider.overrideWithValue(feedback),
+    voicePrompterProvider.overrideWithValue(voice),
+    photoStoreProvider.overrideWithValue(photos),
+    photoImageProvider.overrideWithValue((_) => transparentPixel),
+    qrScannerBuilderProvider.overrideWithValue(qr.build),
+    appVersionProvider.overrideWith((ref) async => '0.1.0+1'),
   ];
 
   Future<GrainItem> addItem({
@@ -71,6 +93,7 @@ class TestEnv {
     String grain = 'Wheat',
     String? locationId,
     String? lotId,
+    String? harvestId,
   }) => items.create(
     GrainItemDraft(
       ownerRole: role,
@@ -81,20 +104,46 @@ class TestEnv {
       storageDate: DateTime(2026, 9, 1),
       locationId: locationId,
       lotId: lotId,
+      harvestId: harvestId,
+    ),
+  );
+
+  Future<Inspection> addInspection(
+    String itemId,
+    VerifiedFinding finding, {
+    String inspector = 'R. Devi',
+    String? assignedTo,
+    FollowUpStatus status = FollowUpStatus.open,
+  }) => inspections.create(
+    InspectionDraft(
+      itemId: itemId,
+      inspectedAt: DateTime.now(),
+      inspector: inspector,
+      observations: '',
+      verifiedFinding: finding,
+      assignedTo: assignedTo,
+      followUpStatus: status,
     ),
   );
 }
 
-/// Pumps the full app at phone width (360 dp). The viewport is tall
-/// (2000 dp) so lazily built list sections exist without scrolling.
+/// Pumps the full app at phone width (360 dp). The viewport is tall so
+/// lazily built list sections exist without scrolling. Decorative motion
+/// is reduced (as with the system setting) unless [reduceMotion] is false.
 Future<void> pumpKernelApp(
   WidgetTester tester,
   TestEnv env, {
   String? location,
+  bool reduceMotion = true,
 }) async {
-  tester.view.physicalSize = const Size(1080, 6000);
+  tester.view.physicalSize = const Size(1080, 12000);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
+  if (reduceMotion) {
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+  }
   await tester.pumpWidget(
     ProviderScope(overrides: env.overrides, child: const KernelApp()),
   );

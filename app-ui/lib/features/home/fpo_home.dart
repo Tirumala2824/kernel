@@ -6,12 +6,11 @@ import 'package:kernel_contracts/kernel_contracts.dart';
 import '../../app/copy.dart';
 import '../../app/data_providers.dart';
 import '../../app/routes.dart';
+import '../../brand/illustrations.dart';
+import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_card.dart';
 import 'home_screen.dart';
-
-/// How many recent scans to read for the "scanned today" count.
-const recentScanWindow = 500;
 
 class FpoHome extends ConsumerWidget {
   const FpoHome({super.key});
@@ -25,27 +24,31 @@ class FpoHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
     final items = ref.watch(itemsByRoleProvider(role));
     final places = ref.watch(childLocationsProvider(null)).value ?? const [];
-    final recent = ref.watch(recentScansProvider(recentScanWindow)).value;
+    final today = ref
+        .watch(scansSinceProvider((since: startOfToday(), role: role)))
+        .value;
     final queue = ref.watch(inspectionQueueProvider(queueScope)).value;
     final open = ref.watch(openInspectionsProvider).value ?? const [];
 
     return PageList(
       children: [
         ScreenHeader(
-          title: 'Warehouse overview',
+          title: l.fpoHomeTitle,
           subtitle: places.isEmpty
-              ? 'Warehouses, rooms and stacks'
+              ? l.fpoHomeSubtitle
               : places.map((p) => p.name).join(' • '),
         ),
-        KernelCard(
+        HeroActionCard(
           key: const Key('hero-scan'),
-          tone: KernelCardTone.hero,
-          icon: Icons.playlist_play,
-          title: 'Batch scan',
-          subtitle: 'Scan sacks one at a time',
-          onTap: () => context.go(Routes.scan),
+          eyebrow: l.heroEyebrowListen,
+          title: l.batchScanTitle,
+          subtitle: l.batchScanSubtitle,
+          actionLabel: l.heroStartBatch,
+          icon: Icons.playlist_play_rounded,
+          onTap: () => context.push(Routes.batchSetup),
         ),
         AsyncView<List<GrainItem>>(
           value: items,
@@ -53,22 +56,16 @@ class FpoHome extends ConsumerWidget {
             if (items.isEmpty) {
               return EmptyState(
                 key: const Key('empty-items'),
-                message: 'No sacks yet',
-                detail:
-                    'Register sacks, then scan them one at a time to build '
-                    'an inspection queue.',
-                actionLabel: 'Register your first sack',
+                illustration: KernelIllustrations.sacks,
+                message: l.emptyItemsMessage(role.itemKind),
+                detail: l.fpoEmptyDetail,
+                actionLabel: l.emptyItemsAction(role.itemKind),
                 onAction: () => context.push(Routes.newItem()),
               );
             }
             final ids = {for (final item in items) item.id};
-            final today = DateUtils.dateOnly(DateTime.now());
-            final scannedToday = (recent ?? const [])
-                .where(
-                  (s) =>
-                      ids.contains(s.itemId) &&
-                      !s.capturedAt.toLocal().isBefore(today),
-                )
+            final scannedToday = (today ?? const <ScanRecord>[])
+                .where((s) => ids.contains(s.itemId))
                 .map((s) => s.itemId)
                 .toSet()
                 .length;
@@ -88,16 +85,10 @@ class FpoHome extends ConsumerWidget {
               children: [
                 KernelCard(
                   key: const Key('items-summary'),
-                  icon: Icons.inventory_2_outlined,
-                  title: countLabel(
-                    items.length,
-                    'registered sack',
-                    'registered sacks',
-                  ),
-                  subtitle:
-                      '${countLabel(scannedToday, 'sack', 'sacks')} '
-                      'scanned today',
-                  onTap: () => context.go(Routes.inventory),
+                  icon: Icons.inventory_2_rounded,
+                  title: l.registeredSacks(items.length),
+                  subtitle: l.sacksScannedToday(scannedToday),
+                  onTap: () => context.push(Routes.scansToday),
                 ),
                 const SizedBox(height: 12),
                 KernelCard(
@@ -105,28 +96,23 @@ class FpoHome extends ConsumerWidget {
                   tone: flagged > 0
                       ? KernelCardTone.attention
                       : KernelCardTone.sage,
-                  icon: Icons.format_list_numbered,
-                  title: 'Inspection queue',
+                  icon: Icons.format_list_numbered_rounded,
+                  title: l.queueTitle,
                   subtitle: queue == null
-                      ? 'Loading queue'
-                      : '$flagged flagged · '
-                            '${countLabel(queue.needsScan.length, 'sack needs', 'sacks need')}'
-                            ' a scan',
+                      ? l.loading
+                      : l.queueSummary(flagged, queue.needsScan.length),
                   onTap: () => context.push(Routes.queue),
                 ),
                 const SizedBox(height: 12),
                 KernelCard(
                   key: const Key('assigned-card'),
                   tone: KernelCardTone.ivory,
-                  icon: Icons.assignment_ind_outlined,
-                  title: 'Assigned inspections',
+                  icon: Icons.assignment_ind_rounded,
+                  title: l.assignedTitle,
                   subtitle: assigned.isEmpty
-                      ? 'No open inspections'
-                      : '${countLabel(assigned.length, 'inspection', 'inspections')}'
-                            ' open',
-                  onTap: assigned.isEmpty
-                      ? null
-                      : () => context.push(Routes.item(assigned.first.itemId)),
+                      ? l.assignedNone
+                      : l.inspectionsOpen(assigned.length),
+                  onTap: () => context.push(Routes.assignedInspections),
                 ),
               ],
             );
@@ -134,9 +120,9 @@ class FpoHome extends ConsumerWidget {
         ),
         KernelCard(
           tone: KernelCardTone.ivory,
-          icon: Icons.add_home_work_outlined,
-          title: 'Add warehouse, room or stack',
-          subtitle: 'Organise sacks by where they are stored',
+          icon: Icons.add_home_work_rounded,
+          title: l.fpoAddLocationTitle,
+          subtitle: l.fpoAddLocationSubtitle,
           onTap: () => context.push(Routes.newLocation()),
         ),
       ],

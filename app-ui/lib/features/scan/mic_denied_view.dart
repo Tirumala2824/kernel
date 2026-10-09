@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/platform_providers.dart';
 import '../../app/routes.dart';
-import '../../theme/tokens.dart';
+import '../../brand/illustrations.dart';
+import '../../brand/kernel_brand.dart';
+import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 
 /// Shown when microphone access is refused. Explains why the mic is needed
@@ -21,52 +23,37 @@ class MicDeniedView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
     final textTheme = Theme.of(context).textTheme;
     final blocked = access != PermissionAccess.denied;
     return PageList(
       key: const Key('mic-denied'),
       children: [
-        const Icon(Icons.mic_off, size: 56, color: KernelColors.forest),
-        const ScreenHeader(
-          title: 'Microphone access is off',
-          subtitle: 'Kernel needs the microphone to listen to grain.',
-        ),
+        KernelIllustration(KernelIllustrations.recordings, height: 120),
+        ScreenHeader(title: l.micDeniedTitle, subtitle: l.micDeniedSubtitle),
+        Text(l.micDeniedPrivacy, style: textTheme.bodyLarge),
         Text(
-          'A scan records 2 seconds of sound and checks it on this phone. '
-          'The sound is never uploaded, and it is deleted after the check '
-          'unless you choose to keep recordings in Settings.',
+          blocked ? l.micDeniedBlocked : l.micDeniedAskAgain,
           style: textTheme.bodyLarge,
         ),
-        Text(
-          blocked
-              ? 'Microphone access is blocked for Kernel. Open the phone '
-                    'settings, choose Permissions, then allow Microphone.'
-              : 'You can allow it the next time Kernel asks, or in the phone '
-                    'settings.',
-          style: textTheme.bodyLarge,
-        ),
-        Text(
-          'Without the microphone you can still register items, browse your '
-          'inventory, record physical inspections and export reports.',
-          style: textTheme.bodyLarge,
-        ),
+        Text(l.micDeniedStillUsable, style: textTheme.bodyLarge),
         FilledButton.icon(
           key: const Key('open-settings'),
           onPressed: () => ref.read(devicePermissionsProvider).openSettings(),
-          icon: const Icon(Icons.settings),
-          label: const Text('Open settings'),
+          icon: const Icon(Icons.settings_rounded),
+          label: Text(l.actionOpenSettings),
         ),
         OutlinedButton.icon(
           key: const Key('try-again'),
           onPressed: onTryAgain,
-          icon: const Icon(Icons.mic),
-          label: const Text('Try again'),
+          icon: const Icon(Icons.mic_rounded),
+          label: Text(l.actionTryAgain),
         ),
         OutlinedButton.icon(
           key: const Key('browse-inventory'),
           onPressed: () => context.go(Routes.inventory),
-          icon: const Icon(Icons.inventory_2_outlined),
-          label: const Text('Browse inventory'),
+          icon: const Icon(Icons.inventory_2_rounded),
+          label: Text(l.actionBrowseInventory),
         ),
       ],
     );

@@ -46,8 +46,8 @@ void main() {
 
       expect(find.text('Screening result'), findsOneWidget);
       expect(find.text('Recording not usable — try again'), findsOneWidget);
-      expect(find.text(QualityReason.highNoise.explanation), findsOneWidget);
-      expect(find.text(QualityReason.clipping.explanation), findsOneWidget);
+      expect(find.text(QualityReason.highNoise.explanation(en)), findsOneWidget);
+      expect(find.text(QualityReason.clipping.explanation(en)), findsOneWidget);
       expect(find.byKey(const Key('retry')), findsOneWidget);
       // Provenance + experimental status always visible.
       expect(find.text('Model: none — Not evaluated'), findsWidgets);
@@ -57,7 +57,7 @@ void main() {
       expect(find.byKey(const Key('record-inspection')), findsOneWidget);
       expect(find.byKey(const Key('scan-another')), findsOneWidget);
       expect(find.byKey(const Key('item-card')), findsOneWidget);
-      expect(find.text(physicalInspectionNote), findsOneWidget);
+      expect(find.text(en.physicalInspectionNote), findsOneWidget);
     });
 
     testWidgets('Retry starts a new scan of the same item', (tester) async {
@@ -99,6 +99,7 @@ void main() {
     test('headline mapping follows design tokens for every state', () {
       expect(
         resultHeadline(
+          en,
           quality: ScanQuality.retry,
           classification: Classification.notEvaluated,
           modelVersion: noModelVersion,
@@ -107,6 +108,7 @@ void main() {
       );
       expect(
         resultHeadline(
+          en,
           quality: ScanQuality.pass,
           classification: Classification.notEvaluated,
           modelVersion: noModelVersion,
@@ -116,6 +118,7 @@ void main() {
       for (final c in [Classification.infested, Classification.uncertain]) {
         expect(
           resultHeadline(
+          en,
             quality: ScanQuality.pass,
             classification: c,
             modelVersion: 'v1',
@@ -125,6 +128,7 @@ void main() {
       }
       expect(
         resultHeadline(
+          en,
           quality: ScanQuality.pass,
           classification: Classification.clean,
           modelVersion: 'v1',
@@ -133,11 +137,11 @@ void main() {
         'decisions',
       );
       expect(
-        provenanceLine(modelVersion: noModelVersion, experimental: true),
+        provenanceLine(en, modelVersion: noModelVersion, experimental: true),
         'Model: none — Not evaluated',
       );
       expect(
-        provenanceLine(modelVersion: 'v1', experimental: true),
+        provenanceLine(en, modelVersion: 'v1', experimental: true),
         'Model v1 — Experimental',
       );
     });
@@ -197,7 +201,9 @@ void main() {
       expect(env.engine.calls.single.itemId, item.id);
       // Retain-audio opt-in defaults to off.
       expect(env.engine.calls.single.retainAudio, isFalse);
-      expect(env.feedback.events, ['start', 'end:pass']);
+      // Haptics follow the in-app setting (default on); no voice prompts.
+      expect(env.engine.calls.single.haptics, isTrue);
+      expect(env.voice.spoken, isEmpty);
       expect(env.scans.scans, hasLength(1));
       expect(
         find.text('Not evaluated — no model installed. Inspect physically.'),

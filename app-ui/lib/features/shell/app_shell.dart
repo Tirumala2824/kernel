@@ -4,44 +4,71 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/copy.dart';
 import '../../app/data_providers.dart';
+import '../../app/providers.dart';
+import '../../app/routes.dart';
+import '../../l10n/l10n.dart';
 
 /// Bottom navigation: Home / Scan / Inventory / Reports, with the
-/// role-specific Inventory label.
-class AppShell extends ConsumerWidget {
+/// role-specific Inventory label. On first build it opens the item whose
+/// reminder notification launched the app (consumed once).
+class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends ConsumerState<AppShell> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _openLaunchItem());
+  }
+
+  Future<void> _openLaunchItem() async {
+    try {
+      final itemId = await ref.read(reminderRepositoryProvider).takeLaunchItemId();
+      if (itemId == null || !mounted) return;
+      context.push(Routes.item(itemId));
+    } on Object catch (error) {
+      debugPrint('Kernel: could not read the launch reminder: $error');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
     final role = ref.watch(activeRoleProvider).value;
+    final shell = widget.navigationShell;
     return Scaffold(
-      body: navigationShell,
+      body: shell,
       bottomNavigationBar: NavigationBar(
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: (index) => navigationShell.goBranch(
+        selectedIndex: shell.currentIndex,
+        onDestinationSelected: (index) => shell.goBranch(
           index,
-          initialLocation: index == navigationShell.currentIndex,
+          initialLocation: index == shell.currentIndex,
         ),
         destinations: [
-          const NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
+          NavigationDestination(
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home_rounded),
+            label: l.navHome,
           ),
-          const NavigationDestination(
-            icon: Icon(Icons.graphic_eq),
-            label: 'Scan',
+          NavigationDestination(
+            icon: const Icon(Icons.graphic_eq_rounded),
+            label: l.navScan,
           ),
           NavigationDestination(
             icon: const Icon(Icons.inventory_2_outlined),
-            selectedIcon: const Icon(Icons.inventory_2),
-            label: role?.inventoryLabel ?? 'Inventory',
+            selectedIcon: const Icon(Icons.inventory_2_rounded),
+            label: role?.inventoryLabel(l) ?? l.navInventory,
           ),
-          const NavigationDestination(
-            icon: Icon(Icons.description_outlined),
-            selectedIcon: Icon(Icons.description),
-            label: 'Reports',
+          NavigationDestination(
+            icon: const Icon(Icons.description_outlined),
+            selectedIcon: const Icon(Icons.description_rounded),
+            label: l.navReports,
           ),
         ],
       ),

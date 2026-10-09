@@ -7,15 +7,23 @@ import '../../app/copy.dart';
 import '../../app/data_providers.dart';
 import '../../app/providers.dart';
 import '../../app/routes.dart';
+import '../../l10n/l10n.dart';
 import '../../widgets/form_fields.dart';
 import '../../widgets/kernel_app_bar.dart';
 
-/// F02: register a sack or container for the active role.
+/// F02: register a sack or container for the active role, optionally into a
+/// place, lot or (farmer) harvest.
 class ItemFormScreen extends ConsumerStatefulWidget {
-  const ItemFormScreen({super.key, this.locationId, this.lotId});
+  const ItemFormScreen({
+    super.key,
+    this.locationId,
+    this.lotId,
+    this.harvestId,
+  });
 
   final String? locationId;
   final String? lotId;
+  final String? harvestId;
 
   @override
   ConsumerState<ItemFormScreen> createState() => _ItemFormScreenState();
@@ -30,6 +38,8 @@ class _ItemFormScreenState extends ConsumerState<ItemFormScreen> {
   DateTime _storageDate = DateUtils.dateOnly(DateTime.now());
   String? _locationId;
   String? _lotId;
+  String? _harvestId;
+  bool _grainFromHarvest = false;
   bool _saving = false;
   String? _error;
 
@@ -38,6 +48,7 @@ class _ItemFormScreenState extends ConsumerState<ItemFormScreen> {
     super.initState();
     _locationId = widget.locationId;
     _lotId = widget.lotId;
+    _harvestId = widget.harvestId;
   }
 
   @override
@@ -49,6 +60,7 @@ class _ItemFormScreenState extends ConsumerState<ItemFormScreen> {
   }
 
   Future<void> _save(Role role) async {
+    final l = context.l10n;
     if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() {
       _saving = true;
@@ -67,14 +79,16 @@ class _ItemFormScreenState extends ConsumerState<ItemFormScreen> {
               storageDate: _storageDate,
               locationId: _locationId,
               lotId: _lotId,
+              harvestId: role == Role.farmer ? _harvestId : null,
             ),
           );
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Saved ${item.label}')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l.savedNamed(item.label))));
       context.pushReplacement(Routes.item(item.id));
     } on Object catch (e) {
-      if (mounted) setState(() => _error = 'Could not save: $e');
+      if (mounted) setState(() => _error = l.saveFailed('$e'));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -82,21 +96,33 @@ class _ItemFormScreenState extends ConsumerState<ItemFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final role = ref.watch(activeRoleProvider).value ?? Role.farmer;
+    final kind = role.itemKind;
     // Pickers are built only once their options have loaded, so a
-    // preselected location or lot shows up as the initial value.
+    // preselected location, lot or harvest shows up as the initial value.
     final locationsAsync = ref.watch(allLocationsProvider);
     final lotsAsync = ref.watch(lotsProvider);
+    final harvestsAsync = role == Role.farmer
+        ? ref.watch(harvestsProvider)
+        : const AsyncData(<Harvest>[]);
     final locations = locationsAsync.value ?? const <Location>[];
     final lots = lotsAsync.value ?? const <Lot>[];
-    final noun = role.itemNoun;
+    final harvests = harvestsAsync.value ?? const <Harvest>[];
     final showLots = role == Role.buyer || _lotId != null;
 
+    // Prefill the grain type from a preselected harvest once.
+    final preset = harvests.where((h) => h.id == _harvestId).firstOrNull;
+    if (!_grainFromHarvest && preset != null && _grain.text.isEmpty) {
+      _grainFromHarvest = true;
+      _grain.text = preset.grainType;
+    }
+
     return Scaffold(
-      appBar: KernelAppBar(title: role.registerItemAction),
+      appBar: KernelAppBar(title: l.registerItemAction(kind)),
       body: FormPage(
         formKey: _formKey,
-        saveLabel: 'Save $noun',
+        saveLabel: l.saveItem(kind),
         saving: _saving,
         error: _error,
         onSave: () => _save(role),
@@ -107,17 +133,17 @@ class _ItemFormScreenState extends ConsumerState<ItemFormScreen> {
             textCapitalization: TextCapitalization.sentences,
             maxLength: 60,
             decoration: InputDecoration(
-              labelText: '${noun[0].toUpperCase()}${noun.substring(1)} label',
-              helperText: 'The name written on the $noun',
+              labelText: l.itemLabelField(kind),
+              helperText: l.itemLabelHelper(kind),
             ),
-            validator: (v) => requiredText(v, 'a label'),
+            validator: (v) => requiredText(v, l.validationLabel),
           ),
           TextFormField(
             key: const Key('field-grain'),
             controller: _grain,
             textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(labelText: 'Grain type'),
-            validator: (v) => requiredText(v, 'the grain type'),
+            decoration: InputDecoration(labelText: l.grainTypeField),
+            validator: (v) => requiredText(v, l.validationGrain),
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,8 +156,8 @@ class _ItemFormScreenState extends ConsumerState<ItemFormScreen> {
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  decoration: const InputDecoration(labelText: 'Quantity'),
-                  validator: validateQuantity,
+                  decoration: InputDecoration(labelText: l.quantityField),
+                  validator: (v) => validateQuantity(l, v),
                 ),
               ),
               const SizedBox(width: 12),
@@ -141,7 +167,7 @@ class _ItemFormScreenState extends ConsumerState<ItemFormScreen> {
                   key: const Key('field-unit'),
                   initialValue: _unit,
                   isExpanded: true,
-                  decoration: const InputDecoration(labelText: 'Unit'),
+                  decoration: InputDecoration(labelText: l.unitField),
                   items: [
                     for (final unit in quantityUnits)
                       DropdownMenuItem(value: unit, child: Text(unit)),
@@ -153,58 +179,78 @@ class _ItemFormScreenState extends ConsumerState<ItemFormScreen> {
           ),
           DateField(
             key: const Key('field-storage-date'),
-            label: 'Storage date',
+            label: l.storageDateField,
             value: _storageDate,
             onChanged: (d) => setState(() => _storageDate = d),
           ),
+          if (role == Role.farmer)
+            if (!harvestsAsync.hasValue)
+              Text(l.loading)
+            else
+              DropdownButtonFormField<String?>(
+                key: const Key('field-harvest'),
+                initialValue: harvests.any((h) => h.id == _harvestId)
+                    ? _harvestId
+                    : null,
+                isExpanded: true,
+                decoration: InputDecoration(
+                  labelText: l.harvestFieldOptional,
+                  helperText: harvests.isEmpty ? l.harvestFieldNone : null,
+                ),
+                items: [
+                  DropdownMenuItem<String?>(value: null, child: Text(l.none)),
+                  for (final harvest in harvests)
+                    DropdownMenuItem<String?>(
+                      value: harvest.id,
+                      child: Text(harvest.name),
+                    ),
+                ],
+                onChanged: (v) => setState(() => _harvestId = v),
+              ),
           if (!locationsAsync.hasValue)
-            const Text('Loading places…')
+            Text(l.loading)
           else
             DropdownButtonFormField<String?>(
               key: const Key('field-location'),
-              initialValue: locations.any((l) => l.id == _locationId)
+              initialValue: locations.any((x) => x.id == _locationId)
                   ? _locationId
                   : null,
               isExpanded: true,
               decoration: InputDecoration(
-                labelText: 'Location (optional)',
+                labelText: l.locationFieldOptional,
                 helperText: locations.isEmpty
-                    ? 'No places yet. You can add them from ${role.inventoryLabel}.'
+                    ? l.locationFieldNone(role.inventoryLabel(l))
                     : null,
               ),
               items: [
-                const DropdownMenuItem<String?>(
-                  value: null,
-                  child: Text('None'),
-                ),
+                DropdownMenuItem<String?>(value: null, child: Text(l.none)),
                 for (final location in locations)
                   DropdownMenuItem<String?>(
                     value: location.id,
-                    child: Text('${location.name} (${location.type.label})'),
+                    child: Text(
+                      l.nameWithType(location.name, location.type.label(l)),
+                    ),
                   ),
               ],
               onChanged: (v) => setState(() => _locationId = v),
             ),
           if (showLots && !lotsAsync.hasValue)
-            const Text('Loading lots…')
+            Text(l.loading)
           else if (showLots)
             DropdownButtonFormField<String?>(
               key: const Key('field-lot'),
-              initialValue: lots.any((l) => l.id == _lotId) ? _lotId : null,
+              initialValue: lots.any((x) => x.id == _lotId) ? _lotId : null,
               isExpanded: true,
               decoration: InputDecoration(
-                labelText: 'Lot (optional)',
-                helperText: lots.isEmpty ? 'No lots registered yet.' : null,
+                labelText: l.lotFieldOptional,
+                helperText: lots.isEmpty ? l.lotFieldNone : null,
               ),
               items: [
-                const DropdownMenuItem<String?>(
-                  value: null,
-                  child: Text('None'),
-                ),
+                DropdownMenuItem<String?>(value: null, child: Text(l.none)),
                 for (final lot in lots)
                   DropdownMenuItem<String?>(
                     value: lot.id,
-                    child: Text('${lot.code} (${lot.grainType})'),
+                    child: Text(l.nameWithType(lot.code, lot.grainType)),
                   ),
               ],
               onChanged: (v) => setState(() => _lotId = v),

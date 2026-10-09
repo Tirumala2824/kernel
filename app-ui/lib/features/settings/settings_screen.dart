@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kernel_contracts/kernel_contracts.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../app/copy.dart';
 import '../../app/data_providers.dart';
 import '../../app/providers.dart';
+import '../../app/routes.dart';
+import '../../l10n/l10n.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_app_bar.dart';
 import '../../widgets/kernel_card.dart';
+import 'language_picker.dart';
+import 'settings_sections.dart';
 
-/// Privacy settings (F12) and on-device engine information.
+/// Language, scan feedback, privacy (F12), research mode and on-device
+/// engine information.
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
@@ -22,19 +26,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _deleting = false;
 
   Future<void> _confirmDelete() async {
+    final l = context.l10n;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete all history?'),
-        content: const Text(
-          'This deletes every scan, inspection, reminder and kept recording '
-          'on this phone. Your registered items, places and lots stay. '
-          'This cannot be undone.',
+        icon: const Icon(
+          Icons.delete_forever_rounded,
+          color: KernelColors.danger,
         ),
+        title: Text(l.deleteHistoryConfirmTitle),
+        content: Text(l.deleteHistoryConfirmBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l.actionCancel),
           ),
           FilledButton(
             key: const Key('confirm-delete'),
@@ -43,7 +48,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               foregroundColor: KernelColors.onForest,
             ),
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete history'),
+            child: Text(l.deleteHistoryConfirmAction),
           ),
         ],
       ),
@@ -53,12 +58,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     setState(() => _deleting = true);
     try {
       await ref.read(privacyServiceProvider).deleteAllHistory();
-      messenger.showSnackBar(
-        const SnackBar(content: Text('All history deleted')),
-      );
+      messenger.showSnackBar(SnackBar(content: Text(l.deleteHistoryDone)));
     } on Object catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Could not delete history: $e')),
+        SnackBar(content: Text(l.deleteHistoryFailed('$e'))),
       );
     } finally {
       if (mounted) setState(() => _deleting = false);
@@ -67,41 +70,33 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final retain = ref.watch(retainAudioOptInProvider);
-    final info = ref.watch(engineInfoProvider);
+    final l = context.l10n;
+    final research = ref.watch(researchModeProvider).value ?? false;
     return Scaffold(
-      appBar: const KernelAppBar(title: 'Settings'),
+      appBar: KernelAppBar(title: l.menuSettings),
       body: PageList(
         children: [
-          const ScreenHeader(
-            title: 'Settings',
-            subtitle: 'Privacy and on-device information',
-          ),
-          Card(
-            color: Colors.white,
-            child: SwitchListTile(
-              key: const Key('retain-audio'),
-              value: retain.value ?? false,
-              onChanged: retain.hasValue
-                  ? (v) => ref
-                        .read(settingsRepositoryProvider)
-                        .setRetainAudioOptIn(v)
-                  : null,
-              title: const Text('Keep recordings on this phone'),
-              subtitle: const Text(
-                'Off by default: each 2-second recording is deleted right '
-                'after it is checked. When on, recordings are kept privately '
-                'inside the app so they can be checked again. They are never '
-                'uploaded. "Delete all history" removes them.',
-              ),
+          ScreenHeader(title: l.menuSettings, subtitle: l.settingsSubtitle),
+          const SettingsGroup(children: [LanguageTile()]),
+          SectionTitle(l.settingsScanning),
+          const ScanTogglesGroup(),
+          SectionTitle(l.settingsResearchSection),
+          const ResearchToggle(),
+          if (research)
+            KernelCard(
+              key: const Key('open-samples'),
+              tone: KernelCardTone.ivory,
+              icon: Icons.folder_zip_rounded,
+              title: l.samplesTitle,
+              subtitle: l.settingsSamplesCard,
+              onTap: () => context.push(Routes.researchSamples),
             ),
-          ),
+          SectionTitle(l.settingsPrivacy),
           KernelCard(
             tone: KernelCardTone.ivory,
-            icon: Icons.delete_forever_outlined,
-            title: 'Delete all history',
-            subtitle:
-                'Removes scans, inspections, reminders and kept recordings.',
+            icon: Icons.delete_forever_rounded,
+            title: l.deleteHistoryTitle,
+            subtitle: l.deleteHistoryBody,
             child: FilledButton.icon(
               key: const Key('delete-history'),
               style: FilledButton.styleFrom(
@@ -109,50 +104,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 foregroundColor: KernelColors.onForest,
               ),
               onPressed: _deleting ? null : _confirmDelete,
-              icon: const Icon(Icons.delete_outline),
-              label: const Text('Delete all history'),
+              icon: const Icon(Icons.delete_outline_rounded),
+              label: Text(l.deleteHistoryTitle),
             ),
           ),
-          const SectionTitle('On-device scanning'),
-          AsyncView<EngineInfo>(
-            value: info,
-            errorPrefix: 'Scan engine information is unavailable',
-            data: (info) => KernelCard(
-              icon: Icons.memory,
-              title: provenanceLine(
-                modelVersion: info.modelVersion,
-                experimental: info.experimental,
-              ),
-              subtitle: info.modelPresent
-                  ? 'Results are experimental and not verified.'
-                  : 'No model is installed, so scans check recording '
-                        'quality only and results show "Not evaluated".',
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FieldRow(
-                    label: 'Target sample rate',
-                    value: '${info.targetSampleRate} Hz',
-                  ),
-                  FieldRow(
-                    label: 'Device sample rate',
-                    value: info.effectiveSampleRate == null
-                        ? 'Not measured yet'
-                        : '${info.effectiveSampleRate} Hz',
-                  ),
-                  FieldRow(label: 'Processor', value: info.delegate.name),
-                  FieldRow(
-                    label: 'Device',
-                    value: '${info.deviceModel} (${info.osVersion})',
-                  ),
-                ],
-              ),
-            ),
+          SectionTitle(l.settingsOnDevice),
+          const EngineCard(),
+          KernelCard(
+            key: const Key('open-diagnostics'),
+            tone: KernelCardTone.ivory,
+            icon: Icons.developer_board_rounded,
+            title: l.diagnosticsTitle,
+            subtitle: l.diagnosticsCard,
+            onTap: () => context.push(Routes.diagnostics),
           ),
-          const Text(
-            'All scanning runs on this phone. Kernel works without a '
-            'network connection and never uploads audio.',
-          ),
+          QuietNote(l.settingsFooter, icon: Icons.phonelink_lock_rounded),
         ],
       ),
     );

@@ -7,6 +7,7 @@ import 'package:kernel_app/app/routes.dart';
 import 'package:kernel_app/theme/kernel_theme.dart';
 import 'package:kernel_app/theme/tokens.dart';
 import 'package:kernel_app/widgets/kernel_card.dart';
+import 'package:kernel_app/widgets/status_chip.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -100,6 +101,78 @@ void main() {
         isNull,
       );
     });
+  });
+
+  group('Visual system', () {
+    test('every status chip pairs text and fill at >= 4.5:1', () {
+      for (final tone in StatusTone.values) {
+        final (bg, fg, _) = statusColors(tone);
+        expect(contrast(fg, bg), greaterThan(4.5), reason: tone.name);
+      }
+    });
+
+    test('tints and paper keep body text readable', () {
+      expect(contrast(KernelColors.ink, KernelColors.paper), greaterThan(4.5));
+      expect(
+        contrast(KernelColors.inkMuted, KernelColors.paper),
+        greaterThan(4.5),
+      );
+      expect(
+        contrast(KernelColors.amberInk, KernelColors.amberSoft),
+        greaterThan(4.5),
+      );
+      expect(
+        contrast(KernelColors.forest, KernelColors.paper),
+        greaterThan(4.5),
+      );
+      expect(
+        contrast(KernelColors.onForest, KernelColors.forestDeep),
+        greaterThan(4.5),
+      );
+      expect(
+        contrast(KernelColors.onForest, KernelColors.forestSoft),
+        greaterThan(4.5),
+      );
+      expect(contrast(KernelColors.ink, KernelColors.sageDeep), greaterThan(4.5));
+    });
+
+    test('theme uses the bundled Manrope type scale', () {
+      final theme = buildKernelTheme();
+      expect(theme.textTheme.bodyLarge?.fontFamily, kernelFontFamily);
+      expect(theme.textTheme.headlineMedium?.fontWeight, FontWeight.w800);
+      expect(KernelMotion.reveal, greaterThan(KernelMotion.fast));
+      expect(KernelRadii.lg, greaterThan(KernelRadii.sm));
+    });
+  });
+
+  final largeTextRoutes = <String, Future<String> Function(TestEnv)>{
+    'guided scan': (env) async =>
+        Routes.scanItem((await env.addItem(label: 'A long sack label')).id),
+    'settings': (env) async => Routes.settings,
+    'diagnostics': (env) async => Routes.diagnostics,
+    'batch setup': (env) async => Routes.batchSetup,
+    'qr': (env) async => Routes.qr,
+  };
+  for (final MapEntry(key: name, value: route) in largeTextRoutes.entries) {
+    testWidgets('$name has no overflow at 200% font scale', (tester) async {
+      final env = TestEnv(role: Role.storageFpo);
+      final location = await route(env);
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await pumpKernelApp(tester, env, location: location);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('onboarding has no overflow at 200% font scale', (tester) async {
+    final env = TestEnv(onboardingDone: false);
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await pumpKernelApp(tester, env);
+    expect(tester.takeException(), isNull);
+    await tester.tap(find.byKey(const Key('onboarding-next')));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
   });
 
   for (final role in Role.values) {

@@ -11,6 +11,8 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   kernel_contracts:
     path: ../contracts
   audio_ai:
@@ -22,11 +24,29 @@ dependencies:
   connectivity_plus: 7.3.1 # 7.3.2 needs dbus ^0.8 (via nm 0.6); flutter_local_notifications_linux 8 needs ^0.7
   permission_handler: ^13.0.2
   share_plus: ^13.3.1
+  intl: any # version pinned by flutter_localizations
+  flutter_svg: ^2.3.0
+  flutter_tts: ^4.2.5 # Android system TTS; offline voices only (see VoicePrompter)
+  mobile_scanner: ^7.4.2 # bundled ML Kit barcode model (no Play services download)
+  image_picker: ^1.2.4
+  path_provider: ^2.1.6
+  package_info_plus: ^10.2.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  # Asset generators only; run manually, outputs are committed.
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.8
 
 flutter:
   uses-material-design: true
+  generate: true
+  assets:
+    - assets/brand/
+  fonts:
+    - family: Manrope
+      fonts:
+        # Variable font (wght 200-800); FontWeight drives the wght axis.
+        - asset: assets/fonts/Manrope-VariableFont_wght.ttf

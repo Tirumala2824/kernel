@@ -6,6 +6,8 @@ import 'package:kernel_contracts/kernel_contracts.dart';
 import '../../app/copy.dart';
 import '../../app/data_providers.dart';
 import '../../app/routes.dart';
+import '../../brand/illustrations.dart';
+import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_card.dart';
 import 'home_screen.dart';
@@ -17,20 +19,27 @@ class FarmerHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
     final items = ref.watch(itemsByRoleProvider(role));
     final open = ref.watch(openInspectionsProvider);
+    final harvests = ref.watch(harvestsProvider).value ?? const <Harvest>[];
+    final latest = ([...harvests]
+          ..sort((a, b) => b.harvestedAt.compareTo(a.harvestedAt)))
+        .firstOrNull;
     return PageList(
       children: [
-        const ScreenHeader(
-          title: 'Farmer dashboard',
-          subtitle: 'Harvest and pre-sale checks',
+        ScreenHeader(
+          title: l.farmerHomeTitle,
+          subtitle: latest == null
+              ? role.tagline(l)
+              : l.farmerHomeHarvestSubtitle(latest.name),
         ),
-        KernelCard(
+        HeroActionCard(
           key: const Key('hero-scan'),
-          tone: KernelCardTone.hero,
-          icon: Icons.graphic_eq,
-          title: 'Scan grain',
-          subtitle: 'Start a guided 2-second recording',
+          eyebrow: l.heroEyebrowListen,
+          title: l.farmerHeroTitle,
+          subtitle: l.farmerHeroSubtitle,
+          actionLabel: l.heroStartScan,
           onTap: () => context.go(Routes.scan),
         ),
         AsyncView<List<GrainItem>>(
@@ -39,49 +48,54 @@ class FarmerHome extends ConsumerWidget {
             if (items.isEmpty) {
               return EmptyState(
                 key: const Key('empty-items'),
-                message: 'No sacks yet',
-                detail: 'Register a sack to start scanning and tracking it.',
-                actionLabel: 'Register your first sack',
+                illustration: KernelIllustrations.sacks,
+                message: l.emptyItemsMessage(role.itemKind),
+                detail: l.farmerEmptyDetail,
+                actionLabel: l.emptyItemsAction(role.itemKind),
                 onAction: () => context.push(Routes.newItem()),
               );
             }
             final followUps = openFor(open.value ?? const [], items).length;
             return KernelCard(
               key: const Key('items-summary'),
-              icon: Icons.inventory_2_outlined,
-              title: countLabel(
-                items.length,
-                'registered sack',
-                'registered sacks',
-              ),
+              icon: Icons.inventory_2_rounded,
+              title: l.registeredSacks(items.length),
               subtitle: followUps == 0
-                  ? 'No follow-up inspections open'
-                  : '${countLabel(followUps, 'sack requires', 'sacks require')}'
-                        ' follow-up inspection',
+                  ? l.noFollowUps
+                  : l.sacksRequireFollowUp(followUps),
               onTap: () => context.go(Routes.inventory),
             );
           },
         ),
         KernelCard(
+          key: const Key('harvests-card'),
           tone: KernelCardTone.ivory,
-          icon: Icons.grass,
-          title: 'My grain',
-          subtitle: 'Sacks, storage dates and scan history',
-          onTap: () => context.go(Routes.inventory),
+          icon: Icons.grass_rounded,
+          title: l.harvestsTitle,
+          subtitle: harvests.isEmpty
+              ? l.harvestsEmptyCard
+              : l.harvestsCount(harvests.length),
+          onTap: () => context.push(
+            latest == null ? Routes.newHarvest : Routes.harvest(latest.id),
+          ),
         ),
         KernelCard(
           tone: KernelCardTone.ivory,
-          icon: Icons.format_list_numbered,
-          title: 'Inspection queue',
-          subtitle: 'Which sacks to check first',
+          icon: Icons.format_list_numbered_rounded,
+          title: l.queueTitle,
+          subtitle: l.queueCardSubtitle,
           onTap: () => context.push(Routes.queue),
         ),
         KernelCard(
           tone: KernelCardTone.ivory,
-          icon: Icons.description_outlined,
-          title: 'Pre-sale report',
-          subtitle: 'Export a summary built from your stored records',
-          onTap: () => context.go(Routes.reports),
+          icon: Icons.description_rounded,
+          title: l.reportTitleFarmer,
+          subtitle: latest == null
+              ? l.preSaleCardSubtitle
+              : l.preSaleCardHarvest(latest.name),
+          onTap: () => latest == null
+              ? context.go(Routes.reports)
+              : context.push(Routes.harvest(latest.id)),
         ),
       ],
     );

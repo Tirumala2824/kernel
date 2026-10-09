@@ -7,10 +7,52 @@ import '../../app/copy.dart';
 import '../../app/data_providers.dart';
 import '../../app/providers.dart';
 import '../../app/routes.dart';
+import '../../l10n/l10n.dart';
+import '../../theme/tokens.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_app_bar.dart';
 import '../../widgets/kernel_card.dart';
 import '../../widgets/status_chip.dart';
+
+/// The four role cards. Used by role selection and the last onboarding
+/// page.
+class RolePicker extends StatelessWidget {
+  const RolePicker({
+    super.key,
+    required this.current,
+    required this.onSelect,
+    this.enabled = true,
+  });
+
+  final Role? current;
+  final ValueChanged<Role> onSelect;
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final role in Role.values)
+          Padding(
+            padding: const EdgeInsets.only(bottom: KernelSpace.md),
+            child: KernelCard(
+              key: Key('role-${role.name}'),
+              title: role.title(l),
+              subtitle: role.tagline(l),
+              icon: role.icon,
+              tone: role == current ? KernelCardTone.hero : KernelCardTone.ivory,
+              trailing: role == current
+                  ? StatusChip(label: l.roleCurrent, tone: StatusTone.positive)
+                  : null,
+              onTap: enabled ? () => onSelect(role) : null,
+            ),
+          ),
+      ],
+    );
+  }
+}
 
 /// F01: pick one of four workflows. Switching only changes the active role;
 /// records from every role stay on the phone.
@@ -30,6 +72,7 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
   String? _error;
 
   Future<void> _select(Role role) async {
+    final l = context.l10n;
     setState(() {
       _saving = true;
       _error = null;
@@ -40,7 +83,7 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
       context.go(Routes.home);
     } on Object catch (e) {
       if (!mounted) return;
-      setState(() => _error = 'Could not save your role: $e');
+      setState(() => _error = l.roleSaveFailed('$e'));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -48,35 +91,19 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final current = ref.watch(activeRoleProvider).value;
     return Scaffold(
-      appBar: KernelAppBar(title: widget.switching ? 'Switch role' : 'Kernel'),
+      appBar: KernelAppBar(title: widget.switching ? l.menuSwitchRole : null),
       body: PageList(
         children: [
-          const ScreenHeader(
-            title: 'Select your role',
-            subtitle: 'One app. Four workflows.',
+          ScreenHeader(title: l.roleSelectTitle, subtitle: l.roleSelectSubtitle),
+          if (widget.switching) QuietNote(l.roleSwitchKeepsRecords),
+          RolePicker(
+            current: current,
+            enabled: !_saving,
+            onSelect: _select,
           ),
-          if (widget.switching)
-            const Text(
-              'Switching role keeps every record on this phone. You can '
-              'switch back at any time.',
-            ),
-          for (final role in Role.values)
-            KernelCard(
-              key: Key('role-${role.name}'),
-              title: role.title,
-              subtitle: role.tagline,
-              icon: role.icon,
-              tone: role == current ? KernelCardTone.hero : KernelCardTone.sage,
-              trailing: role == current
-                  ? const StatusChip(
-                      label: 'Current',
-                      tone: StatusTone.positive,
-                    )
-                  : null,
-              onTap: _saving ? null : () => _select(role),
-            ),
           if (_error != null) ErrorNote(_error!),
         ],
       ),

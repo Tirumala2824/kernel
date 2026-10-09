@@ -1,0 +1,10 @@
+# Generates Android launcher icons from the brand PNGs (rendered from
+# assets/brand/kernel_mark.svg). Run: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: true
+  ios: false
+  min_sdk_android: 24
+  image_path: "assets/brand/png/icon_legacy.png"
+  adaptive_icon_background: "#F6F3E9"
+  adaptive_icon_foreground: "assets/brand/png/icon_foreground.png"
+  adaptive_icon_monochrome: "assets/brand/png/icon_monochrome.png"
