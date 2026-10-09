@@ -1,0 +1,13 @@
+# Native splash: ivory with the centred Kernel mark.
+# Run: dart run flutter_native_splash:create
+flutter_native_splash:
+  color: "#F6F3E9"
+  image: assets/brand/png/splash_mark.png
+  android: true
+  ios: false
+  web: false
+  fullscreen: false
+  android_12:
+    color: "#F6F3E9"
+    image: assets/brand/png/splash_android12.png
+    icon_background_color: "#F6F3E9"
