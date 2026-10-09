@@ -157,22 +157,29 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: Row(
                 children: [
                   _Dots(count: _pageCount, index: _page),
-                  const Spacer(),
-                  if (_page > 0)
-                    TextButton(
-                      key: const Key('onboarding-back'),
-                      onPressed: () => _goTo(_page - 1),
-                      child: Text(l.onboardingBack),
+                  const SizedBox(width: KernelSpace.md),
+                  Expanded(
+                    child: Wrap(
+                      alignment: WrapAlignment.end,
+                      spacing: KernelSpace.sm,
+                      runSpacing: KernelSpace.sm,
+                      children: [
+                        if (_page > 0)
+                          TextButton(
+                            key: const Key('onboarding-back'),
+                            onPressed: () => _goTo(_page - 1),
+                            child: Text(l.onboardingBack),
+                          ),
+                        if (!last)
+                          FilledButton.icon(
+                            key: const Key('onboarding-next'),
+                            onPressed: () => _goTo(_page + 1),
+                            icon: const Icon(Icons.arrow_forward_rounded),
+                            label: Text(l.onboardingNext),
+                          ),
+                      ],
                     ),
-                  if (!last) ...[
-                    const SizedBox(width: KernelSpace.sm),
-                    FilledButton.icon(
-                      key: const Key('onboarding-next'),
-                      onPressed: () => _goTo(_page + 1),
-                      icon: const Icon(Icons.arrow_forward_rounded),
-                      label: Text(l.onboardingNext),
-                    ),
-                  ],
+                  ),
                 ],
               ),
             ),
