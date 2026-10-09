@@ -1,0 +1,13 @@
+name: kernel_contracts
+description: Shared Kernel contracts (ScanEngine, ScanOutcome, domain models, repository interfaces). Lead-owned; see docs/contracts.md.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.5
+
+resolution: workspace
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.0

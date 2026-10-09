@@ -1,0 +1,35 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec_overrides.yaml
+*.g.dart.tmp
+
+# Android / Gradle
+.gradle/
+local.properties
+*.iml
+.idea/
+captures/
+*.jks
+*.keystore
+key.properties
+
+# Secrets — never commit (see docs/guardrails.md §7)
+google-services.json
+GoogleService-Info.plist
+*service-account*.json
+.env
+.env.*
+
+# Local audio captured during dev (fixtures go in tests/fixtures explicitly)
+*.pcm
+recordings/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.claude/settings.local.json

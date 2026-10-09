@@ -1,0 +1,21 @@
+name: data_operations
+description: "Kernel local data and operations layer"
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.5
+  flutter: ">=1.17.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  kernel_contracts:
+    path: ../contracts
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0

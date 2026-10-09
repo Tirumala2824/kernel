@@ -1,0 +1,12 @@
+name: kernel_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.13.5
+
+workspace:
+  - contracts
+  - app-ui
+  - audio-ai
+  - audio-ai/example
+  - data-operations
