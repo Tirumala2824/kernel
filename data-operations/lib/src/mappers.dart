@@ -15,6 +15,8 @@ extension ItemRowMapping on ItemRow {
     storageDate: storageDate,
     locationId: locationId,
     lotId: lotId,
+    harvestId: harvestId,
+    archivedAt: archivedAt,
     createdAt: createdAt,
     updatedAt: updatedAt,
     syncState: syncState,
@@ -27,6 +29,7 @@ extension LocationRowMapping on LocationRow {
     type: type,
     name: name,
     parentId: parentId,
+    archivedAt: archivedAt,
     createdAt: createdAt,
     updatedAt: updatedAt,
     syncState: syncState,
@@ -44,6 +47,21 @@ extension LotRowMapping on LotRow {
     quantityUnit: quantityUnit,
     receivedAt: receivedAt,
     screeningStatus: screeningStatus,
+    archivedAt: archivedAt,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+    syncState: syncState,
+  );
+}
+
+extension HarvestRowMapping on HarvestRow {
+  Harvest toModel() => Harvest(
+    id: id,
+    name: name,
+    grainType: grainType,
+    harvestedAt: harvestedAt,
+    notes: notes,
+    archivedAt: archivedAt,
     createdAt: createdAt,
     updatedAt: updatedAt,
     syncState: syncState,
@@ -66,6 +84,7 @@ extension ScanRowMapping on ScanRow {
     latencyMs: latencyMs,
     deviceModel: deviceModel,
     osVersion: osVersion,
+    audioRetained: audioRetained,
     createdAt: createdAt,
     updatedAt: updatedAt,
     syncState: syncState,
@@ -82,6 +101,8 @@ extension InspectionRowMapping on InspectionRow {
     observations: observations,
     verifiedFinding: verifiedFinding,
     followUpStatus: followUpStatus,
+    assignedTo: assignedTo,
+    photoPaths: List.unmodifiable(photoPaths),
     createdAt: createdAt,
     updatedAt: updatedAt,
     syncState: syncState,
@@ -94,6 +115,23 @@ extension ReminderRowMapping on ReminderRow {
     itemId: itemId,
     dueAt: dueAt,
     status: status,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+    syncState: syncState,
+  );
+}
+
+extension LabeledSampleRowMapping on LabeledSampleRow {
+  LabeledSample toModel() => LabeledSample(
+    id: id,
+    scanId: scanId,
+    itemId: itemId,
+    label: label,
+    inspectionId: inspectionId,
+    grainType: grainType,
+    sackMaterial: sackMaterial,
+    environment: environment,
+    notes: notes,
     createdAt: createdAt,
     updatedAt: updatedAt,
     syncState: syncState,

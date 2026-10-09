@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:data_operations/src/reminders/reminder_scheduler.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
@@ -15,6 +16,61 @@ void main() {
     item = await h.addItem(role: Role.household, label: 'Rice tin');
   });
   tearDown(() => h.dispose());
+
+  test('takeLaunchItemId returns the launching reminder item once', () async {
+    final reminder = await h.ops.reminders.schedule(
+      item.id,
+      h.clock.now.add(const Duration(days: 1)),
+    );
+    h.scheduler.launchPayloadValue = encodeReminderPayload(
+      reminderId: reminder.id,
+      itemId: item.id,
+    );
+    expect(await h.ops.reminders.takeLaunchItemId(), item.id);
+    // The OS keeps reporting it, but it is consumed.
+    expect(await h.ops.reminders.takeLaunchItemId(), isNull);
+    expect(h.scheduler.launchPayloadCalls, 1);
+  });
+
+  test('takeLaunchItemId is null without a launch, for unknown items and '
+      'for unreadable payloads', () async {
+    Future<String?> take(String? payload) async {
+      final fresh = await Harness.create();
+      addTearDown(fresh.dispose);
+      await fresh.addItem(label: 'Sack');
+      fresh.scheduler.launchPayloadValue = payload;
+      return fresh.ops.reminders.takeLaunchItemId();
+    }
+
+    expect(await take(null), isNull);
+    expect(await take(''), isNull);
+    expect(await take('{"reminderId":"r","itemId":"no-such-item"}'), isNull);
+    expect(await take('{not json'), isNull);
+    expect(await take('{"reminderId":"r"}'), isNull);
+    // A bare item id is accepted too.
+    final bare = await Harness.create();
+    addTearDown(bare.dispose);
+    final sack = await bare.addItem();
+    bare.scheduler.launchPayloadValue = sack.id;
+    expect(await bare.ops.reminders.takeLaunchItemId(), sack.id);
+    // An archived item still opens: its history stays reachable.
+    final archived = await Harness.create();
+    addTearDown(archived.dispose);
+    final old = await archived.addItem();
+    await archived.ops.items.archive(old.id);
+    archived.scheduler.launchPayloadValue = encodeReminderPayload(
+      reminderId: 'r',
+      itemId: old.id,
+    );
+    expect(await archived.ops.reminders.takeLaunchItemId(), old.id);
+  });
+
+  test('payload helpers round-trip the item id', () {
+    final payload = encodeReminderPayload(reminderId: 'r-1', itemId: 'i-1');
+    expect(itemIdFromReminderPayload(payload), 'i-1');
+    expect(itemIdFromReminderPayload(null), isNull);
+    expect(itemIdFromReminderPayload('{"itemId":""}'), isNull);
+  });
 
   test(
     'schedule persists the reminder and hands it to the scheduler',

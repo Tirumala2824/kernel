@@ -82,6 +82,17 @@ class $LocationsTable extends Locations
       'REFERENCES locations (id)',
     ),
   );
+  static const VerificationMeta _archivedAtMeta = const VerificationMeta(
+    'archivedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> archivedAt = GeneratedColumn<DateTime>(
+    'archived_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -91,6 +102,7 @@ class $LocationsTable extends Locations
     type,
     name,
     parentId,
+    archivedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -139,6 +151,12 @@ class $LocationsTable extends Locations
         parentId.isAcceptableOrUnknown(data['parent_id']!, _parentIdMeta),
       );
     }
+    if (data.containsKey('archived_at')) {
+      context.handle(
+        _archivedAtMeta,
+        archivedAt.isAcceptableOrUnknown(data['archived_at']!, _archivedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -180,6 +198,10 @@ class $LocationsTable extends Locations
         DriftSqlType.string,
         data['${effectivePrefix}parent_id'],
       ),
+      archivedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}archived_at'],
+      ),
     );
   }
 
@@ -202,6 +224,9 @@ class LocationRow extends DataClass implements Insertable<LocationRow> {
   final LocationType type;
   final String name;
   final String? parentId;
+
+  /// Soft delete (v2). Hidden from lists, kept for history.
+  final DateTime? archivedAt;
   const LocationRow({
     required this.id,
     required this.createdAt,
@@ -210,6 +235,7 @@ class LocationRow extends DataClass implements Insertable<LocationRow> {
     required this.type,
     required this.name,
     this.parentId,
+    this.archivedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -231,6 +257,9 @@ class LocationRow extends DataClass implements Insertable<LocationRow> {
     if (!nullToAbsent || parentId != null) {
       map['parent_id'] = Variable<String>(parentId);
     }
+    if (!nullToAbsent || archivedAt != null) {
+      map['archived_at'] = Variable<DateTime>(archivedAt);
+    }
     return map;
   }
 
@@ -245,6 +274,9 @@ class LocationRow extends DataClass implements Insertable<LocationRow> {
       parentId: parentId == null && nullToAbsent
           ? const Value.absent()
           : Value(parentId),
+      archivedAt: archivedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(archivedAt),
     );
   }
 
@@ -265,6 +297,7 @@ class LocationRow extends DataClass implements Insertable<LocationRow> {
       ),
       name: serializer.fromJson<String>(json['name']),
       parentId: serializer.fromJson<String?>(json['parentId']),
+      archivedAt: serializer.fromJson<DateTime?>(json['archivedAt']),
     );
   }
   @override
@@ -282,6 +315,7 @@ class LocationRow extends DataClass implements Insertable<LocationRow> {
       ),
       'name': serializer.toJson<String>(name),
       'parentId': serializer.toJson<String?>(parentId),
+      'archivedAt': serializer.toJson<DateTime?>(archivedAt),
     };
   }
 
@@ -293,6 +327,7 @@ class LocationRow extends DataClass implements Insertable<LocationRow> {
     LocationType? type,
     String? name,
     Value<String?> parentId = const Value.absent(),
+    Value<DateTime?> archivedAt = const Value.absent(),
   }) => LocationRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -301,6 +336,7 @@ class LocationRow extends DataClass implements Insertable<LocationRow> {
     type: type ?? this.type,
     name: name ?? this.name,
     parentId: parentId.present ? parentId.value : this.parentId,
+    archivedAt: archivedAt.present ? archivedAt.value : this.archivedAt,
   );
   LocationRow copyWithCompanion(LocationsCompanion data) {
     return LocationRow(
@@ -311,6 +347,9 @@ class LocationRow extends DataClass implements Insertable<LocationRow> {
       type: data.type.present ? data.type.value : this.type,
       name: data.name.present ? data.name.value : this.name,
       parentId: data.parentId.present ? data.parentId.value : this.parentId,
+      archivedAt: data.archivedAt.present
+          ? data.archivedAt.value
+          : this.archivedAt,
     );
   }
 
@@ -323,14 +362,23 @@ class LocationRow extends DataClass implements Insertable<LocationRow> {
           ..write('syncState: $syncState, ')
           ..write('type: $type, ')
           ..write('name: $name, ')
-          ..write('parentId: $parentId')
+          ..write('parentId: $parentId, ')
+          ..write('archivedAt: $archivedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, createdAt, updatedAt, syncState, type, name, parentId);
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    type,
+    name,
+    parentId,
+    archivedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -341,7 +389,8 @@ class LocationRow extends DataClass implements Insertable<LocationRow> {
           other.syncState == this.syncState &&
           other.type == this.type &&
           other.name == this.name &&
-          other.parentId == this.parentId);
+          other.parentId == this.parentId &&
+          other.archivedAt == this.archivedAt);
 }
 
 class LocationsCompanion extends UpdateCompanion<LocationRow> {
@@ -352,6 +401,7 @@ class LocationsCompanion extends UpdateCompanion<LocationRow> {
   final Value<LocationType> type;
   final Value<String> name;
   final Value<String?> parentId;
+  final Value<DateTime?> archivedAt;
   final Value<int> rowid;
   const LocationsCompanion({
     this.id = const Value.absent(),
@@ -361,6 +411,7 @@ class LocationsCompanion extends UpdateCompanion<LocationRow> {
     this.type = const Value.absent(),
     this.name = const Value.absent(),
     this.parentId = const Value.absent(),
+    this.archivedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LocationsCompanion.insert({
@@ -371,6 +422,7 @@ class LocationsCompanion extends UpdateCompanion<LocationRow> {
     required LocationType type,
     required String name,
     this.parentId = const Value.absent(),
+    this.archivedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -385,6 +437,7 @@ class LocationsCompanion extends UpdateCompanion<LocationRow> {
     Expression<String>? type,
     Expression<String>? name,
     Expression<String>? parentId,
+    Expression<DateTime>? archivedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -395,6 +448,7 @@ class LocationsCompanion extends UpdateCompanion<LocationRow> {
       if (type != null) 'type': type,
       if (name != null) 'name': name,
       if (parentId != null) 'parent_id': parentId,
+      if (archivedAt != null) 'archived_at': archivedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -407,6 +461,7 @@ class LocationsCompanion extends UpdateCompanion<LocationRow> {
     Value<LocationType>? type,
     Value<String>? name,
     Value<String?>? parentId,
+    Value<DateTime?>? archivedAt,
     Value<int>? rowid,
   }) {
     return LocationsCompanion(
@@ -417,6 +472,7 @@ class LocationsCompanion extends UpdateCompanion<LocationRow> {
       type: type ?? this.type,
       name: name ?? this.name,
       parentId: parentId ?? this.parentId,
+      archivedAt: archivedAt ?? this.archivedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -449,6 +505,9 @@ class LocationsCompanion extends UpdateCompanion<LocationRow> {
     if (parentId.present) {
       map['parent_id'] = Variable<String>(parentId.value);
     }
+    if (archivedAt.present) {
+      map['archived_at'] = Variable<DateTime>(archivedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -465,6 +524,7 @@ class LocationsCompanion extends UpdateCompanion<LocationRow> {
           ..write('type: $type, ')
           ..write('name: $name, ')
           ..write('parentId: $parentId, ')
+          ..write('archivedAt: $archivedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -602,6 +662,17 @@ class $LotsTable extends Lots with TableInfo<$LotsTable, LotRow> {
     requiredDuringInsert: false,
     defaultValue: Constant(ScreeningStatus.pending.name),
   ).withConverter<ScreeningStatus>($LotsTable.$converterscreeningStatus);
+  static const VerificationMeta _archivedAtMeta = const VerificationMeta(
+    'archivedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> archivedAt = GeneratedColumn<DateTime>(
+    'archived_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -616,6 +687,7 @@ class $LotsTable extends Lots with TableInfo<$LotsTable, LotRow> {
     quantityUnit,
     receivedAt,
     screeningStatus,
+    archivedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -711,6 +783,12 @@ class $LotsTable extends Lots with TableInfo<$LotsTable, LotRow> {
     } else if (isInserting) {
       context.missing(_receivedAtMeta);
     }
+    if (data.containsKey('archived_at')) {
+      context.handle(
+        _archivedAtMeta,
+        archivedAt.isAcceptableOrUnknown(data['archived_at']!, _archivedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -772,6 +850,10 @@ class $LotsTable extends Lots with TableInfo<$LotsTable, LotRow> {
           data['${effectivePrefix}screening_status'],
         )!,
       ),
+      archivedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}archived_at'],
+      ),
     );
   }
 
@@ -801,6 +883,9 @@ class LotRow extends DataClass implements Insertable<LotRow> {
   final String quantityUnit;
   final DateTime receivedAt;
   final ScreeningStatus screeningStatus;
+
+  /// Soft delete (v2).
+  final DateTime? archivedAt;
   const LotRow({
     required this.id,
     required this.createdAt,
@@ -814,6 +899,7 @@ class LotRow extends DataClass implements Insertable<LotRow> {
     required this.quantityUnit,
     required this.receivedAt,
     required this.screeningStatus,
+    this.archivedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -842,6 +928,9 @@ class LotRow extends DataClass implements Insertable<LotRow> {
         $LotsTable.$converterscreeningStatus.toSql(screeningStatus),
       );
     }
+    if (!nullToAbsent || archivedAt != null) {
+      map['archived_at'] = Variable<DateTime>(archivedAt);
+    }
     return map;
   }
 
@@ -863,6 +952,9 @@ class LotRow extends DataClass implements Insertable<LotRow> {
       quantityUnit: Value(quantityUnit),
       receivedAt: Value(receivedAt),
       screeningStatus: Value(screeningStatus),
+      archivedAt: archivedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(archivedAt),
     );
   }
 
@@ -888,6 +980,7 @@ class LotRow extends DataClass implements Insertable<LotRow> {
       screeningStatus: $LotsTable.$converterscreeningStatus.fromJson(
         serializer.fromJson<String>(json['screeningStatus']),
       ),
+      archivedAt: serializer.fromJson<DateTime?>(json['archivedAt']),
     );
   }
   @override
@@ -910,6 +1003,7 @@ class LotRow extends DataClass implements Insertable<LotRow> {
       'screeningStatus': serializer.toJson<String>(
         $LotsTable.$converterscreeningStatus.toJson(screeningStatus),
       ),
+      'archivedAt': serializer.toJson<DateTime?>(archivedAt),
     };
   }
 
@@ -926,6 +1020,7 @@ class LotRow extends DataClass implements Insertable<LotRow> {
     String? quantityUnit,
     DateTime? receivedAt,
     ScreeningStatus? screeningStatus,
+    Value<DateTime?> archivedAt = const Value.absent(),
   }) => LotRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -939,6 +1034,7 @@ class LotRow extends DataClass implements Insertable<LotRow> {
     quantityUnit: quantityUnit ?? this.quantityUnit,
     receivedAt: receivedAt ?? this.receivedAt,
     screeningStatus: screeningStatus ?? this.screeningStatus,
+    archivedAt: archivedAt.present ? archivedAt.value : this.archivedAt,
   );
   LotRow copyWithCompanion(LotsCompanion data) {
     return LotRow(
@@ -966,6 +1062,9 @@ class LotRow extends DataClass implements Insertable<LotRow> {
       screeningStatus: data.screeningStatus.present
           ? data.screeningStatus.value
           : this.screeningStatus,
+      archivedAt: data.archivedAt.present
+          ? data.archivedAt.value
+          : this.archivedAt,
     );
   }
 
@@ -983,7 +1082,8 @@ class LotRow extends DataClass implements Insertable<LotRow> {
           ..write('declaredQuantity: $declaredQuantity, ')
           ..write('quantityUnit: $quantityUnit, ')
           ..write('receivedAt: $receivedAt, ')
-          ..write('screeningStatus: $screeningStatus')
+          ..write('screeningStatus: $screeningStatus, ')
+          ..write('archivedAt: $archivedAt')
           ..write(')'))
         .toString();
   }
@@ -1002,6 +1102,7 @@ class LotRow extends DataClass implements Insertable<LotRow> {
     quantityUnit,
     receivedAt,
     screeningStatus,
+    archivedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -1018,7 +1119,8 @@ class LotRow extends DataClass implements Insertable<LotRow> {
           other.declaredQuantity == this.declaredQuantity &&
           other.quantityUnit == this.quantityUnit &&
           other.receivedAt == this.receivedAt &&
-          other.screeningStatus == this.screeningStatus);
+          other.screeningStatus == this.screeningStatus &&
+          other.archivedAt == this.archivedAt);
 }
 
 class LotsCompanion extends UpdateCompanion<LotRow> {
@@ -1034,6 +1136,7 @@ class LotsCompanion extends UpdateCompanion<LotRow> {
   final Value<String> quantityUnit;
   final Value<DateTime> receivedAt;
   final Value<ScreeningStatus> screeningStatus;
+  final Value<DateTime?> archivedAt;
   final Value<int> rowid;
   const LotsCompanion({
     this.id = const Value.absent(),
@@ -1048,6 +1151,7 @@ class LotsCompanion extends UpdateCompanion<LotRow> {
     this.quantityUnit = const Value.absent(),
     this.receivedAt = const Value.absent(),
     this.screeningStatus = const Value.absent(),
+    this.archivedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LotsCompanion.insert({
@@ -1063,6 +1167,7 @@ class LotsCompanion extends UpdateCompanion<LotRow> {
     required String quantityUnit,
     required DateTime receivedAt,
     this.screeningStatus = const Value.absent(),
+    this.archivedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -1085,6 +1190,7 @@ class LotsCompanion extends UpdateCompanion<LotRow> {
     Expression<String>? quantityUnit,
     Expression<DateTime>? receivedAt,
     Expression<String>? screeningStatus,
+    Expression<DateTime>? archivedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1100,6 +1206,7 @@ class LotsCompanion extends UpdateCompanion<LotRow> {
       if (quantityUnit != null) 'quantity_unit': quantityUnit,
       if (receivedAt != null) 'received_at': receivedAt,
       if (screeningStatus != null) 'screening_status': screeningStatus,
+      if (archivedAt != null) 'archived_at': archivedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1117,6 +1224,7 @@ class LotsCompanion extends UpdateCompanion<LotRow> {
     Value<String>? quantityUnit,
     Value<DateTime>? receivedAt,
     Value<ScreeningStatus>? screeningStatus,
+    Value<DateTime?>? archivedAt,
     Value<int>? rowid,
   }) {
     return LotsCompanion(
@@ -1132,6 +1240,7 @@ class LotsCompanion extends UpdateCompanion<LotRow> {
       quantityUnit: quantityUnit ?? this.quantityUnit,
       receivedAt: receivedAt ?? this.receivedAt,
       screeningStatus: screeningStatus ?? this.screeningStatus,
+      archivedAt: archivedAt ?? this.archivedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1179,6 +1288,9 @@ class LotsCompanion extends UpdateCompanion<LotRow> {
         $LotsTable.$converterscreeningStatus.toSql(screeningStatus.value),
       );
     }
+    if (archivedAt.present) {
+      map['archived_at'] = Variable<DateTime>(archivedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1200,6 +1312,579 @@ class LotsCompanion extends UpdateCompanion<LotRow> {
           ..write('quantityUnit: $quantityUnit, ')
           ..write('receivedAt: $receivedAt, ')
           ..write('screeningStatus: $screeningStatus, ')
+          ..write('archivedAt: $archivedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $HarvestsTable extends Harvests
+    with TableInfo<$HarvestsTable, HarvestRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $HarvestsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<SyncState, String> syncState =
+      GeneratedColumn<String>(
+        'sync_state',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(SyncState.localOnly.name),
+      ).withConverter<SyncState>($HarvestsTable.$convertersyncState);
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _grainTypeMeta = const VerificationMeta(
+    'grainType',
+  );
+  @override
+  late final GeneratedColumn<String> grainType = GeneratedColumn<String>(
+    'grain_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _harvestedAtMeta = const VerificationMeta(
+    'harvestedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> harvestedAt = GeneratedColumn<DateTime>(
+    'harvested_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _archivedAtMeta = const VerificationMeta(
+    'archivedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> archivedAt = GeneratedColumn<DateTime>(
+    'archived_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    name,
+    grainType,
+    harvestedAt,
+    notes,
+    archivedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'harvests';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<HarvestRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('grain_type')) {
+      context.handle(
+        _grainTypeMeta,
+        grainType.isAcceptableOrUnknown(data['grain_type']!, _grainTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_grainTypeMeta);
+    }
+    if (data.containsKey('harvested_at')) {
+      context.handle(
+        _harvestedAtMeta,
+        harvestedAt.isAcceptableOrUnknown(
+          data['harvested_at']!,
+          _harvestedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_harvestedAtMeta);
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('archived_at')) {
+      context.handle(
+        _archivedAtMeta,
+        archivedAt.isAcceptableOrUnknown(data['archived_at']!, _archivedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  HarvestRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return HarvestRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      syncState: $HarvestsTable.$convertersyncState.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}sync_state'],
+        )!,
+      ),
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      grainType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}grain_type'],
+      )!,
+      harvestedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}harvested_at'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      archivedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}archived_at'],
+      ),
+    );
+  }
+
+  @override
+  $HarvestsTable createAlias(String alias) {
+    return $HarvestsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<SyncState, String, String> $convertersyncState =
+      const EnumNameConverter<SyncState>(SyncState.values);
+}
+
+class HarvestRow extends DataClass implements Insertable<HarvestRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final SyncState syncState;
+  final String name;
+  final String grainType;
+  final DateTime harvestedAt;
+  final String? notes;
+
+  /// Soft delete.
+  final DateTime? archivedAt;
+  const HarvestRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.syncState,
+    required this.name,
+    required this.grainType,
+    required this.harvestedAt,
+    this.notes,
+    this.archivedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    {
+      map['sync_state'] = Variable<String>(
+        $HarvestsTable.$convertersyncState.toSql(syncState),
+      );
+    }
+    map['name'] = Variable<String>(name);
+    map['grain_type'] = Variable<String>(grainType);
+    map['harvested_at'] = Variable<DateTime>(harvestedAt);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    if (!nullToAbsent || archivedAt != null) {
+      map['archived_at'] = Variable<DateTime>(archivedAt);
+    }
+    return map;
+  }
+
+  HarvestsCompanion toCompanion(bool nullToAbsent) {
+    return HarvestsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      syncState: Value(syncState),
+      name: Value(name),
+      grainType: Value(grainType),
+      harvestedAt: Value(harvestedAt),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      archivedAt: archivedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(archivedAt),
+    );
+  }
+
+  factory HarvestRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return HarvestRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      syncState: $HarvestsTable.$convertersyncState.fromJson(
+        serializer.fromJson<String>(json['syncState']),
+      ),
+      name: serializer.fromJson<String>(json['name']),
+      grainType: serializer.fromJson<String>(json['grainType']),
+      harvestedAt: serializer.fromJson<DateTime>(json['harvestedAt']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      archivedAt: serializer.fromJson<DateTime?>(json['archivedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'syncState': serializer.toJson<String>(
+        $HarvestsTable.$convertersyncState.toJson(syncState),
+      ),
+      'name': serializer.toJson<String>(name),
+      'grainType': serializer.toJson<String>(grainType),
+      'harvestedAt': serializer.toJson<DateTime>(harvestedAt),
+      'notes': serializer.toJson<String?>(notes),
+      'archivedAt': serializer.toJson<DateTime?>(archivedAt),
+    };
+  }
+
+  HarvestRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    SyncState? syncState,
+    String? name,
+    String? grainType,
+    DateTime? harvestedAt,
+    Value<String?> notes = const Value.absent(),
+    Value<DateTime?> archivedAt = const Value.absent(),
+  }) => HarvestRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    syncState: syncState ?? this.syncState,
+    name: name ?? this.name,
+    grainType: grainType ?? this.grainType,
+    harvestedAt: harvestedAt ?? this.harvestedAt,
+    notes: notes.present ? notes.value : this.notes,
+    archivedAt: archivedAt.present ? archivedAt.value : this.archivedAt,
+  );
+  HarvestRow copyWithCompanion(HarvestsCompanion data) {
+    return HarvestRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      syncState: data.syncState.present ? data.syncState.value : this.syncState,
+      name: data.name.present ? data.name.value : this.name,
+      grainType: data.grainType.present ? data.grainType.value : this.grainType,
+      harvestedAt: data.harvestedAt.present
+          ? data.harvestedAt.value
+          : this.harvestedAt,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      archivedAt: data.archivedAt.present
+          ? data.archivedAt.value
+          : this.archivedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HarvestRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('name: $name, ')
+          ..write('grainType: $grainType, ')
+          ..write('harvestedAt: $harvestedAt, ')
+          ..write('notes: $notes, ')
+          ..write('archivedAt: $archivedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    name,
+    grainType,
+    harvestedAt,
+    notes,
+    archivedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is HarvestRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.syncState == this.syncState &&
+          other.name == this.name &&
+          other.grainType == this.grainType &&
+          other.harvestedAt == this.harvestedAt &&
+          other.notes == this.notes &&
+          other.archivedAt == this.archivedAt);
+}
+
+class HarvestsCompanion extends UpdateCompanion<HarvestRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<SyncState> syncState;
+  final Value<String> name;
+  final Value<String> grainType;
+  final Value<DateTime> harvestedAt;
+  final Value<String?> notes;
+  final Value<DateTime?> archivedAt;
+  final Value<int> rowid;
+  const HarvestsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.syncState = const Value.absent(),
+    this.name = const Value.absent(),
+    this.grainType = const Value.absent(),
+    this.harvestedAt = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.archivedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  HarvestsCompanion.insert({
+    required String id,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.syncState = const Value.absent(),
+    required String name,
+    required String grainType,
+    required DateTime harvestedAt,
+    this.notes = const Value.absent(),
+    this.archivedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       name = Value(name),
+       grainType = Value(grainType),
+       harvestedAt = Value(harvestedAt);
+  static Insertable<HarvestRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? syncState,
+    Expression<String>? name,
+    Expression<String>? grainType,
+    Expression<DateTime>? harvestedAt,
+    Expression<String>? notes,
+    Expression<DateTime>? archivedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (syncState != null) 'sync_state': syncState,
+      if (name != null) 'name': name,
+      if (grainType != null) 'grain_type': grainType,
+      if (harvestedAt != null) 'harvested_at': harvestedAt,
+      if (notes != null) 'notes': notes,
+      if (archivedAt != null) 'archived_at': archivedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  HarvestsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<SyncState>? syncState,
+    Value<String>? name,
+    Value<String>? grainType,
+    Value<DateTime>? harvestedAt,
+    Value<String?>? notes,
+    Value<DateTime?>? archivedAt,
+    Value<int>? rowid,
+  }) {
+    return HarvestsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      syncState: syncState ?? this.syncState,
+      name: name ?? this.name,
+      grainType: grainType ?? this.grainType,
+      harvestedAt: harvestedAt ?? this.harvestedAt,
+      notes: notes ?? this.notes,
+      archivedAt: archivedAt ?? this.archivedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (syncState.present) {
+      map['sync_state'] = Variable<String>(
+        $HarvestsTable.$convertersyncState.toSql(syncState.value),
+      );
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (grainType.present) {
+      map['grain_type'] = Variable<String>(grainType.value);
+    }
+    if (harvestedAt.present) {
+      map['harvested_at'] = Variable<DateTime>(harvestedAt.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (archivedAt.present) {
+      map['archived_at'] = Variable<DateTime>(archivedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HarvestsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('name: $name, ')
+          ..write('grainType: $grainType, ')
+          ..write('harvestedAt: $harvestedAt, ')
+          ..write('notes: $notes, ')
+          ..write('archivedAt: $archivedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1340,6 +2025,31 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
       'REFERENCES lots (id)',
     ),
   );
+  static const VerificationMeta _harvestIdMeta = const VerificationMeta(
+    'harvestId',
+  );
+  @override
+  late final GeneratedColumn<String> harvestId = GeneratedColumn<String>(
+    'harvest_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES harvests (id)',
+    ),
+  );
+  static const VerificationMeta _archivedAtMeta = const VerificationMeta(
+    'archivedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> archivedAt = GeneratedColumn<DateTime>(
+    'archived_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1354,6 +2064,8 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
     storageDate,
     locationId,
     lotId,
+    harvestId,
+    archivedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1446,6 +2158,18 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
         lotId.isAcceptableOrUnknown(data['lot_id']!, _lotIdMeta),
       );
     }
+    if (data.containsKey('harvest_id')) {
+      context.handle(
+        _harvestIdMeta,
+        harvestId.isAcceptableOrUnknown(data['harvest_id']!, _harvestIdMeta),
+      );
+    }
+    if (data.containsKey('archived_at')) {
+      context.handle(
+        _archivedAtMeta,
+        archivedAt.isAcceptableOrUnknown(data['archived_at']!, _archivedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -1507,6 +2231,14 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
         DriftSqlType.string,
         data['${effectivePrefix}lot_id'],
       ),
+      harvestId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}harvest_id'],
+      ),
+      archivedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}archived_at'],
+      ),
     );
   }
 
@@ -1534,6 +2266,12 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
   final DateTime storageDate;
   final String? locationId;
   final String? lotId;
+
+  /// Farmer harvest this sack belongs to (v2).
+  final String? harvestId;
+
+  /// Soft delete (v2). Scans, inspections and reminders are kept.
+  final DateTime? archivedAt;
   const ItemRow({
     required this.id,
     required this.createdAt,
@@ -1547,6 +2285,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     required this.storageDate,
     this.locationId,
     this.lotId,
+    this.harvestId,
+    this.archivedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1575,6 +2315,12 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     if (!nullToAbsent || lotId != null) {
       map['lot_id'] = Variable<String>(lotId);
     }
+    if (!nullToAbsent || harvestId != null) {
+      map['harvest_id'] = Variable<String>(harvestId);
+    }
+    if (!nullToAbsent || archivedAt != null) {
+      map['archived_at'] = Variable<DateTime>(archivedAt);
+    }
     return map;
   }
 
@@ -1596,6 +2342,12 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
       lotId: lotId == null && nullToAbsent
           ? const Value.absent()
           : Value(lotId),
+      harvestId: harvestId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(harvestId),
+      archivedAt: archivedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(archivedAt),
     );
   }
 
@@ -1621,6 +2373,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
       storageDate: serializer.fromJson<DateTime>(json['storageDate']),
       locationId: serializer.fromJson<String?>(json['locationId']),
       lotId: serializer.fromJson<String?>(json['lotId']),
+      harvestId: serializer.fromJson<String?>(json['harvestId']),
+      archivedAt: serializer.fromJson<DateTime?>(json['archivedAt']),
     );
   }
   @override
@@ -1643,6 +2397,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
       'storageDate': serializer.toJson<DateTime>(storageDate),
       'locationId': serializer.toJson<String?>(locationId),
       'lotId': serializer.toJson<String?>(lotId),
+      'harvestId': serializer.toJson<String?>(harvestId),
+      'archivedAt': serializer.toJson<DateTime?>(archivedAt),
     };
   }
 
@@ -1659,6 +2415,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     DateTime? storageDate,
     Value<String?> locationId = const Value.absent(),
     Value<String?> lotId = const Value.absent(),
+    Value<String?> harvestId = const Value.absent(),
+    Value<DateTime?> archivedAt = const Value.absent(),
   }) => ItemRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -1672,6 +2430,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     storageDate: storageDate ?? this.storageDate,
     locationId: locationId.present ? locationId.value : this.locationId,
     lotId: lotId.present ? lotId.value : this.lotId,
+    harvestId: harvestId.present ? harvestId.value : this.harvestId,
+    archivedAt: archivedAt.present ? archivedAt.value : this.archivedAt,
   );
   ItemRow copyWithCompanion(ItemsCompanion data) {
     return ItemRow(
@@ -1693,6 +2453,10 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           ? data.locationId.value
           : this.locationId,
       lotId: data.lotId.present ? data.lotId.value : this.lotId,
+      harvestId: data.harvestId.present ? data.harvestId.value : this.harvestId,
+      archivedAt: data.archivedAt.present
+          ? data.archivedAt.value
+          : this.archivedAt,
     );
   }
 
@@ -1710,7 +2474,9 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           ..write('quantityUnit: $quantityUnit, ')
           ..write('storageDate: $storageDate, ')
           ..write('locationId: $locationId, ')
-          ..write('lotId: $lotId')
+          ..write('lotId: $lotId, ')
+          ..write('harvestId: $harvestId, ')
+          ..write('archivedAt: $archivedAt')
           ..write(')'))
         .toString();
   }
@@ -1729,6 +2495,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     storageDate,
     locationId,
     lotId,
+    harvestId,
+    archivedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -1745,7 +2513,9 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           other.quantityUnit == this.quantityUnit &&
           other.storageDate == this.storageDate &&
           other.locationId == this.locationId &&
-          other.lotId == this.lotId);
+          other.lotId == this.lotId &&
+          other.harvestId == this.harvestId &&
+          other.archivedAt == this.archivedAt);
 }
 
 class ItemsCompanion extends UpdateCompanion<ItemRow> {
@@ -1761,6 +2531,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
   final Value<DateTime> storageDate;
   final Value<String?> locationId;
   final Value<String?> lotId;
+  final Value<String?> harvestId;
+  final Value<DateTime?> archivedAt;
   final Value<int> rowid;
   const ItemsCompanion({
     this.id = const Value.absent(),
@@ -1775,6 +2547,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     this.storageDate = const Value.absent(),
     this.locationId = const Value.absent(),
     this.lotId = const Value.absent(),
+    this.harvestId = const Value.absent(),
+    this.archivedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ItemsCompanion.insert({
@@ -1790,6 +2564,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     required DateTime storageDate,
     this.locationId = const Value.absent(),
     this.lotId = const Value.absent(),
+    this.harvestId = const Value.absent(),
+    this.archivedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -1813,6 +2589,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     Expression<DateTime>? storageDate,
     Expression<String>? locationId,
     Expression<String>? lotId,
+    Expression<String>? harvestId,
+    Expression<DateTime>? archivedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1828,6 +2606,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
       if (storageDate != null) 'storage_date': storageDate,
       if (locationId != null) 'location_id': locationId,
       if (lotId != null) 'lot_id': lotId,
+      if (harvestId != null) 'harvest_id': harvestId,
+      if (archivedAt != null) 'archived_at': archivedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1845,6 +2625,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     Value<DateTime>? storageDate,
     Value<String?>? locationId,
     Value<String?>? lotId,
+    Value<String?>? harvestId,
+    Value<DateTime?>? archivedAt,
     Value<int>? rowid,
   }) {
     return ItemsCompanion(
@@ -1860,6 +2642,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
       storageDate: storageDate ?? this.storageDate,
       locationId: locationId ?? this.locationId,
       lotId: lotId ?? this.lotId,
+      harvestId: harvestId ?? this.harvestId,
+      archivedAt: archivedAt ?? this.archivedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1907,6 +2691,12 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     if (lotId.present) {
       map['lot_id'] = Variable<String>(lotId.value);
     }
+    if (harvestId.present) {
+      map['harvest_id'] = Variable<String>(harvestId.value);
+    }
+    if (archivedAt.present) {
+      map['archived_at'] = Variable<DateTime>(archivedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1928,6 +2718,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
           ..write('storageDate: $storageDate, ')
           ..write('locationId: $locationId, ')
           ..write('lotId: $lotId, ')
+          ..write('harvestId: $harvestId, ')
+          ..write('archivedAt: $archivedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2121,6 +2913,21 @@ class $ScansTable extends Scans with TableInfo<$ScansTable, ScanRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _audioRetainedMeta = const VerificationMeta(
+    'audioRetained',
+  );
+  @override
+  late final GeneratedColumn<bool> audioRetained = GeneratedColumn<bool>(
+    'audio_retained',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("audio_retained" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2140,6 +2947,7 @@ class $ScansTable extends Scans with TableInfo<$ScansTable, ScanRow> {
     latencyMs,
     deviceModel,
     osVersion,
+    audioRetained,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2261,6 +3069,15 @@ class $ScansTable extends Scans with TableInfo<$ScansTable, ScanRow> {
     } else if (isInserting) {
       context.missing(_osVersionMeta);
     }
+    if (data.containsKey('audio_retained')) {
+      context.handle(
+        _audioRetainedMeta,
+        audioRetained.isAcceptableOrUnknown(
+          data['audio_retained']!,
+          _audioRetainedMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -2346,6 +3163,10 @@ class $ScansTable extends Scans with TableInfo<$ScansTable, ScanRow> {
         DriftSqlType.string,
         data['${effectivePrefix}os_version'],
       )!,
+      audioRetained: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}audio_retained'],
+      )!,
     );
   }
 
@@ -2386,6 +3207,9 @@ class ScanRow extends DataClass implements Insertable<ScanRow> {
   final int latencyMs;
   final String deviceModel;
   final String osVersion;
+
+  /// Whether the engine kept the WAV for this scan (v2). Immutable.
+  final bool audioRetained;
   const ScanRow({
     required this.id,
     required this.createdAt,
@@ -2404,6 +3228,7 @@ class ScanRow extends DataClass implements Insertable<ScanRow> {
     required this.latencyMs,
     required this.deviceModel,
     required this.osVersion,
+    required this.audioRetained,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2443,6 +3268,7 @@ class ScanRow extends DataClass implements Insertable<ScanRow> {
     map['latency_ms'] = Variable<int>(latencyMs);
     map['device_model'] = Variable<String>(deviceModel);
     map['os_version'] = Variable<String>(osVersion);
+    map['audio_retained'] = Variable<bool>(audioRetained);
     return map;
   }
 
@@ -2467,6 +3293,7 @@ class ScanRow extends DataClass implements Insertable<ScanRow> {
       latencyMs: Value(latencyMs),
       deviceModel: Value(deviceModel),
       osVersion: Value(osVersion),
+      audioRetained: Value(audioRetained),
     );
   }
 
@@ -2501,6 +3328,7 @@ class ScanRow extends DataClass implements Insertable<ScanRow> {
       latencyMs: serializer.fromJson<int>(json['latencyMs']),
       deviceModel: serializer.fromJson<String>(json['deviceModel']),
       osVersion: serializer.fromJson<String>(json['osVersion']),
+      audioRetained: serializer.fromJson<bool>(json['audioRetained']),
     );
   }
   @override
@@ -2530,6 +3358,7 @@ class ScanRow extends DataClass implements Insertable<ScanRow> {
       'latencyMs': serializer.toJson<int>(latencyMs),
       'deviceModel': serializer.toJson<String>(deviceModel),
       'osVersion': serializer.toJson<String>(osVersion),
+      'audioRetained': serializer.toJson<bool>(audioRetained),
     };
   }
 
@@ -2551,6 +3380,7 @@ class ScanRow extends DataClass implements Insertable<ScanRow> {
     int? latencyMs,
     String? deviceModel,
     String? osVersion,
+    bool? audioRetained,
   }) => ScanRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -2569,6 +3399,7 @@ class ScanRow extends DataClass implements Insertable<ScanRow> {
     latencyMs: latencyMs ?? this.latencyMs,
     deviceModel: deviceModel ?? this.deviceModel,
     osVersion: osVersion ?? this.osVersion,
+    audioRetained: audioRetained ?? this.audioRetained,
   );
   ScanRow copyWithCompanion(ScansCompanion data) {
     return ScanRow(
@@ -2605,6 +3436,9 @@ class ScanRow extends DataClass implements Insertable<ScanRow> {
           ? data.deviceModel.value
           : this.deviceModel,
       osVersion: data.osVersion.present ? data.osVersion.value : this.osVersion,
+      audioRetained: data.audioRetained.present
+          ? data.audioRetained.value
+          : this.audioRetained,
     );
   }
 
@@ -2627,7 +3461,8 @@ class ScanRow extends DataClass implements Insertable<ScanRow> {
           ..write('experimental: $experimental, ')
           ..write('latencyMs: $latencyMs, ')
           ..write('deviceModel: $deviceModel, ')
-          ..write('osVersion: $osVersion')
+          ..write('osVersion: $osVersion, ')
+          ..write('audioRetained: $audioRetained')
           ..write(')'))
         .toString();
   }
@@ -2651,6 +3486,7 @@ class ScanRow extends DataClass implements Insertable<ScanRow> {
     latencyMs,
     deviceModel,
     osVersion,
+    audioRetained,
   );
   @override
   bool operator ==(Object other) =>
@@ -2672,7 +3508,8 @@ class ScanRow extends DataClass implements Insertable<ScanRow> {
           other.experimental == this.experimental &&
           other.latencyMs == this.latencyMs &&
           other.deviceModel == this.deviceModel &&
-          other.osVersion == this.osVersion);
+          other.osVersion == this.osVersion &&
+          other.audioRetained == this.audioRetained);
 }
 
 class ScansCompanion extends UpdateCompanion<ScanRow> {
@@ -2693,6 +3530,7 @@ class ScansCompanion extends UpdateCompanion<ScanRow> {
   final Value<int> latencyMs;
   final Value<String> deviceModel;
   final Value<String> osVersion;
+  final Value<bool> audioRetained;
   final Value<int> rowid;
   const ScansCompanion({
     this.id = const Value.absent(),
@@ -2712,6 +3550,7 @@ class ScansCompanion extends UpdateCompanion<ScanRow> {
     this.latencyMs = const Value.absent(),
     this.deviceModel = const Value.absent(),
     this.osVersion = const Value.absent(),
+    this.audioRetained = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ScansCompanion.insert({
@@ -2732,6 +3571,7 @@ class ScansCompanion extends UpdateCompanion<ScanRow> {
     required int latencyMs,
     required String deviceModel,
     required String osVersion,
+    this.audioRetained = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -2766,6 +3606,7 @@ class ScansCompanion extends UpdateCompanion<ScanRow> {
     Expression<int>? latencyMs,
     Expression<String>? deviceModel,
     Expression<String>? osVersion,
+    Expression<bool>? audioRetained,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2786,6 +3627,7 @@ class ScansCompanion extends UpdateCompanion<ScanRow> {
       if (latencyMs != null) 'latency_ms': latencyMs,
       if (deviceModel != null) 'device_model': deviceModel,
       if (osVersion != null) 'os_version': osVersion,
+      if (audioRetained != null) 'audio_retained': audioRetained,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2808,6 +3650,7 @@ class ScansCompanion extends UpdateCompanion<ScanRow> {
     Value<int>? latencyMs,
     Value<String>? deviceModel,
     Value<String>? osVersion,
+    Value<bool>? audioRetained,
     Value<int>? rowid,
   }) {
     return ScansCompanion(
@@ -2828,6 +3671,7 @@ class ScansCompanion extends UpdateCompanion<ScanRow> {
       latencyMs: latencyMs ?? this.latencyMs,
       deviceModel: deviceModel ?? this.deviceModel,
       osVersion: osVersion ?? this.osVersion,
+      audioRetained: audioRetained ?? this.audioRetained,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2894,6 +3738,9 @@ class ScansCompanion extends UpdateCompanion<ScanRow> {
     if (osVersion.present) {
       map['os_version'] = Variable<String>(osVersion.value);
     }
+    if (audioRetained.present) {
+      map['audio_retained'] = Variable<bool>(audioRetained.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2920,6 +3767,7 @@ class ScansCompanion extends UpdateCompanion<ScanRow> {
           ..write('latencyMs: $latencyMs, ')
           ..write('deviceModel: $deviceModel, ')
           ..write('osVersion: $osVersion, ')
+          ..write('audioRetained: $audioRetained, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3048,6 +3896,27 @@ class $InspectionsTable extends Inspections
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   ).withConverter<FollowUpStatus>($InspectionsTable.$converterfollowUpStatus);
+  static const VerificationMeta _assignedToMeta = const VerificationMeta(
+    'assignedTo',
+  );
+  @override
+  late final GeneratedColumn<String> assignedTo = GeneratedColumn<String>(
+    'assigned_to',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<List<String>, String> photoPaths =
+      GeneratedColumn<String>(
+        'photo_paths',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('[]'),
+      ).withConverter<List<String>>($InspectionsTable.$converterphotoPaths);
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3061,6 +3930,8 @@ class $InspectionsTable extends Inspections
     observations,
     verifiedFinding,
     followUpStatus,
+    assignedTo,
+    photoPaths,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3139,6 +4010,12 @@ class $InspectionsTable extends Inspections
     } else if (isInserting) {
       context.missing(_observationsMeta);
     }
+    if (data.containsKey('assigned_to')) {
+      context.handle(
+        _assignedToMeta,
+        assignedTo.isAcceptableOrUnknown(data['assigned_to']!, _assignedToMeta),
+      );
+    }
     return context;
   }
 
@@ -3198,6 +4075,16 @@ class $InspectionsTable extends Inspections
           data['${effectivePrefix}follow_up_status'],
         )!,
       ),
+      assignedTo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}assigned_to'],
+      ),
+      photoPaths: $InspectionsTable.$converterphotoPaths.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}photo_paths'],
+        )!,
+      ),
     );
   }
 
@@ -3216,6 +4103,8 @@ class $InspectionsTable extends Inspections
   $converterfollowUpStatus = const EnumNameConverter<FollowUpStatus>(
     FollowUpStatus.values,
   );
+  static TypeConverter<List<String>, String> $converterphotoPaths =
+      const StringListConverter();
 }
 
 class InspectionRow extends DataClass implements Insertable<InspectionRow> {
@@ -3232,6 +4121,13 @@ class InspectionRow extends DataClass implements Insertable<InspectionRow> {
   /// Human-verified finding. Never derived from a scan result.
   final VerifiedFinding verifiedFinding;
   final FollowUpStatus followUpStatus;
+
+  /// Staff member responsible for the follow-up (v2). Updatable.
+  final String? assignedTo;
+
+  /// App-private evidence photo paths as a JSON array (v2). Part of the
+  /// immutable inspection record.
+  final List<String> photoPaths;
   const InspectionRow({
     required this.id,
     required this.createdAt,
@@ -3244,6 +4140,8 @@ class InspectionRow extends DataClass implements Insertable<InspectionRow> {
     required this.observations,
     required this.verifiedFinding,
     required this.followUpStatus,
+    this.assignedTo,
+    required this.photoPaths,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3273,6 +4171,14 @@ class InspectionRow extends DataClass implements Insertable<InspectionRow> {
         $InspectionsTable.$converterfollowUpStatus.toSql(followUpStatus),
       );
     }
+    if (!nullToAbsent || assignedTo != null) {
+      map['assigned_to'] = Variable<String>(assignedTo);
+    }
+    {
+      map['photo_paths'] = Variable<String>(
+        $InspectionsTable.$converterphotoPaths.toSql(photoPaths),
+      );
+    }
     return map;
   }
 
@@ -3291,6 +4197,10 @@ class InspectionRow extends DataClass implements Insertable<InspectionRow> {
       observations: Value(observations),
       verifiedFinding: Value(verifiedFinding),
       followUpStatus: Value(followUpStatus),
+      assignedTo: assignedTo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(assignedTo),
+      photoPaths: Value(photoPaths),
     );
   }
 
@@ -3317,6 +4227,8 @@ class InspectionRow extends DataClass implements Insertable<InspectionRow> {
       followUpStatus: $InspectionsTable.$converterfollowUpStatus.fromJson(
         serializer.fromJson<String>(json['followUpStatus']),
       ),
+      assignedTo: serializer.fromJson<String?>(json['assignedTo']),
+      photoPaths: serializer.fromJson<List<String>>(json['photoPaths']),
     );
   }
   @override
@@ -3340,6 +4252,8 @@ class InspectionRow extends DataClass implements Insertable<InspectionRow> {
       'followUpStatus': serializer.toJson<String>(
         $InspectionsTable.$converterfollowUpStatus.toJson(followUpStatus),
       ),
+      'assignedTo': serializer.toJson<String?>(assignedTo),
+      'photoPaths': serializer.toJson<List<String>>(photoPaths),
     };
   }
 
@@ -3355,6 +4269,8 @@ class InspectionRow extends DataClass implements Insertable<InspectionRow> {
     String? observations,
     VerifiedFinding? verifiedFinding,
     FollowUpStatus? followUpStatus,
+    Value<String?> assignedTo = const Value.absent(),
+    List<String>? photoPaths,
   }) => InspectionRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -3367,6 +4283,8 @@ class InspectionRow extends DataClass implements Insertable<InspectionRow> {
     observations: observations ?? this.observations,
     verifiedFinding: verifiedFinding ?? this.verifiedFinding,
     followUpStatus: followUpStatus ?? this.followUpStatus,
+    assignedTo: assignedTo.present ? assignedTo.value : this.assignedTo,
+    photoPaths: photoPaths ?? this.photoPaths,
   );
   InspectionRow copyWithCompanion(InspectionsCompanion data) {
     return InspectionRow(
@@ -3389,6 +4307,12 @@ class InspectionRow extends DataClass implements Insertable<InspectionRow> {
       followUpStatus: data.followUpStatus.present
           ? data.followUpStatus.value
           : this.followUpStatus,
+      assignedTo: data.assignedTo.present
+          ? data.assignedTo.value
+          : this.assignedTo,
+      photoPaths: data.photoPaths.present
+          ? data.photoPaths.value
+          : this.photoPaths,
     );
   }
 
@@ -3405,7 +4329,9 @@ class InspectionRow extends DataClass implements Insertable<InspectionRow> {
           ..write('inspector: $inspector, ')
           ..write('observations: $observations, ')
           ..write('verifiedFinding: $verifiedFinding, ')
-          ..write('followUpStatus: $followUpStatus')
+          ..write('followUpStatus: $followUpStatus, ')
+          ..write('assignedTo: $assignedTo, ')
+          ..write('photoPaths: $photoPaths')
           ..write(')'))
         .toString();
   }
@@ -3423,6 +4349,8 @@ class InspectionRow extends DataClass implements Insertable<InspectionRow> {
     observations,
     verifiedFinding,
     followUpStatus,
+    assignedTo,
+    photoPaths,
   );
   @override
   bool operator ==(Object other) =>
@@ -3438,7 +4366,9 @@ class InspectionRow extends DataClass implements Insertable<InspectionRow> {
           other.inspector == this.inspector &&
           other.observations == this.observations &&
           other.verifiedFinding == this.verifiedFinding &&
-          other.followUpStatus == this.followUpStatus);
+          other.followUpStatus == this.followUpStatus &&
+          other.assignedTo == this.assignedTo &&
+          other.photoPaths == this.photoPaths);
 }
 
 class InspectionsCompanion extends UpdateCompanion<InspectionRow> {
@@ -3453,6 +4383,8 @@ class InspectionsCompanion extends UpdateCompanion<InspectionRow> {
   final Value<String> observations;
   final Value<VerifiedFinding> verifiedFinding;
   final Value<FollowUpStatus> followUpStatus;
+  final Value<String?> assignedTo;
+  final Value<List<String>> photoPaths;
   final Value<int> rowid;
   const InspectionsCompanion({
     this.id = const Value.absent(),
@@ -3466,6 +4398,8 @@ class InspectionsCompanion extends UpdateCompanion<InspectionRow> {
     this.observations = const Value.absent(),
     this.verifiedFinding = const Value.absent(),
     this.followUpStatus = const Value.absent(),
+    this.assignedTo = const Value.absent(),
+    this.photoPaths = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   InspectionsCompanion.insert({
@@ -3480,6 +4414,8 @@ class InspectionsCompanion extends UpdateCompanion<InspectionRow> {
     required String observations,
     required VerifiedFinding verifiedFinding,
     required FollowUpStatus followUpStatus,
+    this.assignedTo = const Value.absent(),
+    this.photoPaths = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -3502,6 +4438,8 @@ class InspectionsCompanion extends UpdateCompanion<InspectionRow> {
     Expression<String>? observations,
     Expression<String>? verifiedFinding,
     Expression<String>? followUpStatus,
+    Expression<String>? assignedTo,
+    Expression<String>? photoPaths,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3516,6 +4454,8 @@ class InspectionsCompanion extends UpdateCompanion<InspectionRow> {
       if (observations != null) 'observations': observations,
       if (verifiedFinding != null) 'verified_finding': verifiedFinding,
       if (followUpStatus != null) 'follow_up_status': followUpStatus,
+      if (assignedTo != null) 'assigned_to': assignedTo,
+      if (photoPaths != null) 'photo_paths': photoPaths,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3532,6 +4472,8 @@ class InspectionsCompanion extends UpdateCompanion<InspectionRow> {
     Value<String>? observations,
     Value<VerifiedFinding>? verifiedFinding,
     Value<FollowUpStatus>? followUpStatus,
+    Value<String?>? assignedTo,
+    Value<List<String>>? photoPaths,
     Value<int>? rowid,
   }) {
     return InspectionsCompanion(
@@ -3546,6 +4488,8 @@ class InspectionsCompanion extends UpdateCompanion<InspectionRow> {
       observations: observations ?? this.observations,
       verifiedFinding: verifiedFinding ?? this.verifiedFinding,
       followUpStatus: followUpStatus ?? this.followUpStatus,
+      assignedTo: assignedTo ?? this.assignedTo,
+      photoPaths: photoPaths ?? this.photoPaths,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3594,6 +4538,14 @@ class InspectionsCompanion extends UpdateCompanion<InspectionRow> {
         $InspectionsTable.$converterfollowUpStatus.toSql(followUpStatus.value),
       );
     }
+    if (assignedTo.present) {
+      map['assigned_to'] = Variable<String>(assignedTo.value);
+    }
+    if (photoPaths.present) {
+      map['photo_paths'] = Variable<String>(
+        $InspectionsTable.$converterphotoPaths.toSql(photoPaths.value),
+      );
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3614,6 +4566,744 @@ class InspectionsCompanion extends UpdateCompanion<InspectionRow> {
           ..write('observations: $observations, ')
           ..write('verifiedFinding: $verifiedFinding, ')
           ..write('followUpStatus: $followUpStatus, ')
+          ..write('assignedTo: $assignedTo, ')
+          ..write('photoPaths: $photoPaths, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $LabeledSamplesTable extends LabeledSamples
+    with TableInfo<$LabeledSamplesTable, LabeledSampleRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LabeledSamplesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<SyncState, String> syncState =
+      GeneratedColumn<String>(
+        'sync_state',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(SyncState.localOnly.name),
+      ).withConverter<SyncState>($LabeledSamplesTable.$convertersyncState);
+  static const VerificationMeta _scanIdMeta = const VerificationMeta('scanId');
+  @override
+  late final GeneratedColumn<String> scanId = GeneratedColumn<String>(
+    'scan_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'UNIQUE REFERENCES scans (id)',
+    ),
+  );
+  static const VerificationMeta _itemIdMeta = const VerificationMeta('itemId');
+  @override
+  late final GeneratedColumn<String> itemId = GeneratedColumn<String>(
+    'item_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES items (id)',
+    ),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<SampleLabel, String> label =
+      GeneratedColumn<String>(
+        'label',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<SampleLabel>($LabeledSamplesTable.$converterlabel);
+  static const VerificationMeta _inspectionIdMeta = const VerificationMeta(
+    'inspectionId',
+  );
+  @override
+  late final GeneratedColumn<String> inspectionId = GeneratedColumn<String>(
+    'inspection_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES inspections (id)',
+    ),
+  );
+  static const VerificationMeta _grainTypeMeta = const VerificationMeta(
+    'grainType',
+  );
+  @override
+  late final GeneratedColumn<String> grainType = GeneratedColumn<String>(
+    'grain_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sackMaterialMeta = const VerificationMeta(
+    'sackMaterial',
+  );
+  @override
+  late final GeneratedColumn<String> sackMaterial = GeneratedColumn<String>(
+    'sack_material',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _environmentMeta = const VerificationMeta(
+    'environment',
+  );
+  @override
+  late final GeneratedColumn<String> environment = GeneratedColumn<String>(
+    'environment',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    scanId,
+    itemId,
+    label,
+    inspectionId,
+    grainType,
+    sackMaterial,
+    environment,
+    notes,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'labeled_samples';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LabeledSampleRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('scan_id')) {
+      context.handle(
+        _scanIdMeta,
+        scanId.isAcceptableOrUnknown(data['scan_id']!, _scanIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_scanIdMeta);
+    }
+    if (data.containsKey('item_id')) {
+      context.handle(
+        _itemIdMeta,
+        itemId.isAcceptableOrUnknown(data['item_id']!, _itemIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_itemIdMeta);
+    }
+    if (data.containsKey('inspection_id')) {
+      context.handle(
+        _inspectionIdMeta,
+        inspectionId.isAcceptableOrUnknown(
+          data['inspection_id']!,
+          _inspectionIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('grain_type')) {
+      context.handle(
+        _grainTypeMeta,
+        grainType.isAcceptableOrUnknown(data['grain_type']!, _grainTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_grainTypeMeta);
+    }
+    if (data.containsKey('sack_material')) {
+      context.handle(
+        _sackMaterialMeta,
+        sackMaterial.isAcceptableOrUnknown(
+          data['sack_material']!,
+          _sackMaterialMeta,
+        ),
+      );
+    }
+    if (data.containsKey('environment')) {
+      context.handle(
+        _environmentMeta,
+        environment.isAcceptableOrUnknown(
+          data['environment']!,
+          _environmentMeta,
+        ),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LabeledSampleRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LabeledSampleRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      syncState: $LabeledSamplesTable.$convertersyncState.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}sync_state'],
+        )!,
+      ),
+      scanId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}scan_id'],
+      )!,
+      itemId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}item_id'],
+      )!,
+      label: $LabeledSamplesTable.$converterlabel.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}label'],
+        )!,
+      ),
+      inspectionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}inspection_id'],
+      ),
+      grainType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}grain_type'],
+      )!,
+      sackMaterial: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sack_material'],
+      ),
+      environment: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}environment'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+    );
+  }
+
+  @override
+  $LabeledSamplesTable createAlias(String alias) {
+    return $LabeledSamplesTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<SyncState, String, String> $convertersyncState =
+      const EnumNameConverter<SyncState>(SyncState.values);
+  static JsonTypeConverter2<SampleLabel, String, String> $converterlabel =
+      const EnumNameConverter<SampleLabel>(SampleLabel.values);
+}
+
+class LabeledSampleRow extends DataClass
+    implements Insertable<LabeledSampleRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final SyncState syncState;
+  final String scanId;
+  final String itemId;
+  final SampleLabel label;
+  final String? inspectionId;
+  final String grainType;
+  final String? sackMaterial;
+  final String? environment;
+  final String? notes;
+  const LabeledSampleRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.syncState,
+    required this.scanId,
+    required this.itemId,
+    required this.label,
+    this.inspectionId,
+    required this.grainType,
+    this.sackMaterial,
+    this.environment,
+    this.notes,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    {
+      map['sync_state'] = Variable<String>(
+        $LabeledSamplesTable.$convertersyncState.toSql(syncState),
+      );
+    }
+    map['scan_id'] = Variable<String>(scanId);
+    map['item_id'] = Variable<String>(itemId);
+    {
+      map['label'] = Variable<String>(
+        $LabeledSamplesTable.$converterlabel.toSql(label),
+      );
+    }
+    if (!nullToAbsent || inspectionId != null) {
+      map['inspection_id'] = Variable<String>(inspectionId);
+    }
+    map['grain_type'] = Variable<String>(grainType);
+    if (!nullToAbsent || sackMaterial != null) {
+      map['sack_material'] = Variable<String>(sackMaterial);
+    }
+    if (!nullToAbsent || environment != null) {
+      map['environment'] = Variable<String>(environment);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    return map;
+  }
+
+  LabeledSamplesCompanion toCompanion(bool nullToAbsent) {
+    return LabeledSamplesCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      syncState: Value(syncState),
+      scanId: Value(scanId),
+      itemId: Value(itemId),
+      label: Value(label),
+      inspectionId: inspectionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(inspectionId),
+      grainType: Value(grainType),
+      sackMaterial: sackMaterial == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sackMaterial),
+      environment: environment == null && nullToAbsent
+          ? const Value.absent()
+          : Value(environment),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+    );
+  }
+
+  factory LabeledSampleRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LabeledSampleRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      syncState: $LabeledSamplesTable.$convertersyncState.fromJson(
+        serializer.fromJson<String>(json['syncState']),
+      ),
+      scanId: serializer.fromJson<String>(json['scanId']),
+      itemId: serializer.fromJson<String>(json['itemId']),
+      label: $LabeledSamplesTable.$converterlabel.fromJson(
+        serializer.fromJson<String>(json['label']),
+      ),
+      inspectionId: serializer.fromJson<String?>(json['inspectionId']),
+      grainType: serializer.fromJson<String>(json['grainType']),
+      sackMaterial: serializer.fromJson<String?>(json['sackMaterial']),
+      environment: serializer.fromJson<String?>(json['environment']),
+      notes: serializer.fromJson<String?>(json['notes']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'syncState': serializer.toJson<String>(
+        $LabeledSamplesTable.$convertersyncState.toJson(syncState),
+      ),
+      'scanId': serializer.toJson<String>(scanId),
+      'itemId': serializer.toJson<String>(itemId),
+      'label': serializer.toJson<String>(
+        $LabeledSamplesTable.$converterlabel.toJson(label),
+      ),
+      'inspectionId': serializer.toJson<String?>(inspectionId),
+      'grainType': serializer.toJson<String>(grainType),
+      'sackMaterial': serializer.toJson<String?>(sackMaterial),
+      'environment': serializer.toJson<String?>(environment),
+      'notes': serializer.toJson<String?>(notes),
+    };
+  }
+
+  LabeledSampleRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    SyncState? syncState,
+    String? scanId,
+    String? itemId,
+    SampleLabel? label,
+    Value<String?> inspectionId = const Value.absent(),
+    String? grainType,
+    Value<String?> sackMaterial = const Value.absent(),
+    Value<String?> environment = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+  }) => LabeledSampleRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    syncState: syncState ?? this.syncState,
+    scanId: scanId ?? this.scanId,
+    itemId: itemId ?? this.itemId,
+    label: label ?? this.label,
+    inspectionId: inspectionId.present ? inspectionId.value : this.inspectionId,
+    grainType: grainType ?? this.grainType,
+    sackMaterial: sackMaterial.present ? sackMaterial.value : this.sackMaterial,
+    environment: environment.present ? environment.value : this.environment,
+    notes: notes.present ? notes.value : this.notes,
+  );
+  LabeledSampleRow copyWithCompanion(LabeledSamplesCompanion data) {
+    return LabeledSampleRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      syncState: data.syncState.present ? data.syncState.value : this.syncState,
+      scanId: data.scanId.present ? data.scanId.value : this.scanId,
+      itemId: data.itemId.present ? data.itemId.value : this.itemId,
+      label: data.label.present ? data.label.value : this.label,
+      inspectionId: data.inspectionId.present
+          ? data.inspectionId.value
+          : this.inspectionId,
+      grainType: data.grainType.present ? data.grainType.value : this.grainType,
+      sackMaterial: data.sackMaterial.present
+          ? data.sackMaterial.value
+          : this.sackMaterial,
+      environment: data.environment.present
+          ? data.environment.value
+          : this.environment,
+      notes: data.notes.present ? data.notes.value : this.notes,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabeledSampleRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('scanId: $scanId, ')
+          ..write('itemId: $itemId, ')
+          ..write('label: $label, ')
+          ..write('inspectionId: $inspectionId, ')
+          ..write('grainType: $grainType, ')
+          ..write('sackMaterial: $sackMaterial, ')
+          ..write('environment: $environment, ')
+          ..write('notes: $notes')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    scanId,
+    itemId,
+    label,
+    inspectionId,
+    grainType,
+    sackMaterial,
+    environment,
+    notes,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LabeledSampleRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.syncState == this.syncState &&
+          other.scanId == this.scanId &&
+          other.itemId == this.itemId &&
+          other.label == this.label &&
+          other.inspectionId == this.inspectionId &&
+          other.grainType == this.grainType &&
+          other.sackMaterial == this.sackMaterial &&
+          other.environment == this.environment &&
+          other.notes == this.notes);
+}
+
+class LabeledSamplesCompanion extends UpdateCompanion<LabeledSampleRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<SyncState> syncState;
+  final Value<String> scanId;
+  final Value<String> itemId;
+  final Value<SampleLabel> label;
+  final Value<String?> inspectionId;
+  final Value<String> grainType;
+  final Value<String?> sackMaterial;
+  final Value<String?> environment;
+  final Value<String?> notes;
+  final Value<int> rowid;
+  const LabeledSamplesCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.syncState = const Value.absent(),
+    this.scanId = const Value.absent(),
+    this.itemId = const Value.absent(),
+    this.label = const Value.absent(),
+    this.inspectionId = const Value.absent(),
+    this.grainType = const Value.absent(),
+    this.sackMaterial = const Value.absent(),
+    this.environment = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LabeledSamplesCompanion.insert({
+    required String id,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.syncState = const Value.absent(),
+    required String scanId,
+    required String itemId,
+    required SampleLabel label,
+    this.inspectionId = const Value.absent(),
+    required String grainType,
+    this.sackMaterial = const Value.absent(),
+    this.environment = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       scanId = Value(scanId),
+       itemId = Value(itemId),
+       label = Value(label),
+       grainType = Value(grainType);
+  static Insertable<LabeledSampleRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? syncState,
+    Expression<String>? scanId,
+    Expression<String>? itemId,
+    Expression<String>? label,
+    Expression<String>? inspectionId,
+    Expression<String>? grainType,
+    Expression<String>? sackMaterial,
+    Expression<String>? environment,
+    Expression<String>? notes,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (syncState != null) 'sync_state': syncState,
+      if (scanId != null) 'scan_id': scanId,
+      if (itemId != null) 'item_id': itemId,
+      if (label != null) 'label': label,
+      if (inspectionId != null) 'inspection_id': inspectionId,
+      if (grainType != null) 'grain_type': grainType,
+      if (sackMaterial != null) 'sack_material': sackMaterial,
+      if (environment != null) 'environment': environment,
+      if (notes != null) 'notes': notes,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LabeledSamplesCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<SyncState>? syncState,
+    Value<String>? scanId,
+    Value<String>? itemId,
+    Value<SampleLabel>? label,
+    Value<String?>? inspectionId,
+    Value<String>? grainType,
+    Value<String?>? sackMaterial,
+    Value<String?>? environment,
+    Value<String?>? notes,
+    Value<int>? rowid,
+  }) {
+    return LabeledSamplesCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      syncState: syncState ?? this.syncState,
+      scanId: scanId ?? this.scanId,
+      itemId: itemId ?? this.itemId,
+      label: label ?? this.label,
+      inspectionId: inspectionId ?? this.inspectionId,
+      grainType: grainType ?? this.grainType,
+      sackMaterial: sackMaterial ?? this.sackMaterial,
+      environment: environment ?? this.environment,
+      notes: notes ?? this.notes,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (syncState.present) {
+      map['sync_state'] = Variable<String>(
+        $LabeledSamplesTable.$convertersyncState.toSql(syncState.value),
+      );
+    }
+    if (scanId.present) {
+      map['scan_id'] = Variable<String>(scanId.value);
+    }
+    if (itemId.present) {
+      map['item_id'] = Variable<String>(itemId.value);
+    }
+    if (label.present) {
+      map['label'] = Variable<String>(
+        $LabeledSamplesTable.$converterlabel.toSql(label.value),
+      );
+    }
+    if (inspectionId.present) {
+      map['inspection_id'] = Variable<String>(inspectionId.value);
+    }
+    if (grainType.present) {
+      map['grain_type'] = Variable<String>(grainType.value);
+    }
+    if (sackMaterial.present) {
+      map['sack_material'] = Variable<String>(sackMaterial.value);
+    }
+    if (environment.present) {
+      map['environment'] = Variable<String>(environment.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabeledSamplesCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('scanId: $scanId, ')
+          ..write('itemId: $itemId, ')
+          ..write('label: $label, ')
+          ..write('inspectionId: $inspectionId, ')
+          ..write('grainType: $grainType, ')
+          ..write('sackMaterial: $sackMaterial, ')
+          ..write('environment: $environment, ')
+          ..write('notes: $notes, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4564,16 +6254,22 @@ abstract class _$KernelDatabase extends GeneratedDatabase {
   _$KernelDatabase(QueryExecutor e) : super(e);
   late final $LocationsTable locations = $LocationsTable(this);
   late final $LotsTable lots = $LotsTable(this);
+  late final $HarvestsTable harvests = $HarvestsTable(this);
   late final $ItemsTable items = $ItemsTable(this);
   late final $ScansTable scans = $ScansTable(this);
   late final Trigger scansAppendOnly = Trigger(
-    'CREATE TRIGGER scans_append_only BEFORE UPDATE OF id, item_id, captured_at, duration_ms, sample_rate, quality, quality_reasons, model_version, result, confidence, experimental, latency_ms, device_model, os_version, created_at ON scans BEGIN SELECT RAISE (ABORT, \'scans are append-only\');END',
+    'CREATE TRIGGER scans_append_only BEFORE UPDATE OF id, item_id, captured_at, duration_ms, sample_rate, quality, quality_reasons, model_version, result, confidence, experimental, latency_ms, device_model, os_version, audio_retained, created_at ON scans BEGIN SELECT RAISE (ABORT, \'scans are append-only\');END',
     'scans_append_only',
   );
   late final $InspectionsTable inspections = $InspectionsTable(this);
   late final Trigger inspectionsVerifiedImmutable = Trigger(
-    'CREATE TRIGGER inspections_verified_immutable BEFORE UPDATE OF id, item_id, scan_id, inspected_at, inspector, observations, verified_finding, created_at ON inspections BEGIN SELECT RAISE (ABORT, \'verified inspection fields are immutable\');END',
+    'CREATE TRIGGER inspections_verified_immutable BEFORE UPDATE OF id, item_id, scan_id, inspected_at, inspector, observations, verified_finding, photo_paths, created_at ON inspections BEGIN SELECT RAISE (ABORT, \'verified inspection fields are immutable\');END',
     'inspections_verified_immutable',
+  );
+  late final $LabeledSamplesTable labeledSamples = $LabeledSamplesTable(this);
+  late final Trigger labeledSamplesImmutable = Trigger(
+    'CREATE TRIGGER labeled_samples_immutable BEFORE UPDATE OF id, scan_id, item_id, label, inspection_id, grain_type, sack_material, environment, notes, created_at ON labeled_samples BEGIN SELECT RAISE (ABORT, \'labeled samples are immutable\');END',
+    'labeled_samples_immutable',
   );
   late final $RemindersTable reminders = $RemindersTable(this);
   late final $SettingsTable settings = $SettingsTable(this);
@@ -4589,6 +6285,10 @@ abstract class _$KernelDatabase extends GeneratedDatabase {
     'items_lot',
     'CREATE INDEX items_lot ON items (lot_id)',
   );
+  late final Index itemsHarvest = Index(
+    'items_harvest',
+    'CREATE INDEX items_harvest ON items (harvest_id)',
+  );
   late final Index scansItemCaptured = Index(
     'scans_item_captured',
     'CREATE INDEX scans_item_captured ON scans (item_id, captured_at)',
@@ -4601,6 +6301,10 @@ abstract class _$KernelDatabase extends GeneratedDatabase {
     'reminders_item',
     'CREATE INDEX reminders_item ON reminders (item_id)',
   );
+  late final Index labeledSamplesItem = Index(
+    'labeled_samples_item',
+    'CREATE INDEX labeled_samples_item ON labeled_samples (item_id)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4608,19 +6312,24 @@ abstract class _$KernelDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     locations,
     lots,
+    harvests,
     items,
     scans,
     scansAppendOnly,
     inspections,
     inspectionsVerifiedImmutable,
+    labeledSamples,
+    labeledSamplesImmutable,
     reminders,
     settings,
     itemsOwnerRole,
     itemsLocation,
     itemsLot,
+    itemsHarvest,
     scansItemCaptured,
     inspectionsItem,
     remindersItem,
+    labeledSamplesItem,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -4634,6 +6343,13 @@ abstract class _$KernelDatabase extends GeneratedDatabase {
     WritePropagation(
       on: TableUpdateQuery.onTableName(
         'inspections',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'labeled_samples',
         limitUpdateKind: UpdateKind.update,
       ),
       result: [],

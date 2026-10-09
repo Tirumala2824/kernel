@@ -1,15 +1,19 @@
 /// Kernel local data and operations layer: drift-backed implementations of
 /// the repository and service interfaces in `package:kernel_contracts`.
 ///
-/// Only [DataOperations] and the reminder scheduling types are public. The
-/// database and its tables are internal; the UI works through the contracts
-/// interfaces only. Everything runs offline and makes no network calls.
+/// Only [DataOperations] and the wiring types (scheduler, callbacks, font
+/// loader) are public. The database and its tables are internal; the UI
+/// works through the contracts interfaces only. Everything runs offline and
+/// makes no network calls.
 library;
 
 import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:flutter/foundation.dart'
+    show LicenseEntryWithLineBreaks, LicenseRegistry;
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:kernel_contracts/kernel_contracts.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -17,13 +21,17 @@ import 'package:path_provider/path_provider.dart';
 import 'src/db/database.dart';
 import 'src/reminders/local_notification_scheduler.dart';
 import 'src/reminders/reminder_scheduler.dart';
+import 'src/reports/report_fonts.dart';
+import 'src/repositories/harvest_repository.dart';
 import 'src/repositories/inspection_repository.dart';
 import 'src/repositories/item_repository.dart';
+import 'src/repositories/labeled_sample_repository.dart';
 import 'src/repositories/location_repository.dart';
 import 'src/repositories/lot_repository.dart';
 import 'src/repositories/reminder_repository.dart';
 import 'src/repositories/scan_repository.dart';
 import 'src/repositories/settings_repository.dart';
+import 'src/services/dataset_export_service.dart';
 import 'src/services/privacy_service.dart';
 import 'src/services/ranking_service.dart';
 import 'src/services/report_service.dart';
@@ -33,7 +41,12 @@ export 'src/reminders/local_notification_scheduler.dart'
     show LocalNotificationReminderScheduler, ReminderTapCallback;
 export 'src/reminders/reminder_scheduler.dart'
     show ReminderNotification, ReminderScheduler;
+export 'src/reports/report_fonts.dart'
+    show ReportFontLoader, bundledReportFont, reportFontFamilies;
+export 'src/services/dataset_export_service.dart'
+    show RetainedAudioPathResolver;
 export 'src/services/privacy_service.dart' show RetainedAudioDeleter;
+export 'src/services/report_service.dart' show ModelNoteSource;
 
 /// The data layer, wired once at app start and closed on shutdown.
 class DataOperations {
@@ -41,30 +54,62 @@ class DataOperations {
   ///
   /// Tests pass an in-memory executor, their own [reminderScheduler] and a
   /// temporary [reportDirectory]. [clock] defaults to the device clock.
-  /// [deleteRetainedAudio] is called by `privacy.deleteAllHistory()`.
+  /// - [datasetDirectory]: where dataset ZIPs go; defaults to
+  ///   `<reportDirectory>/datasets`.
+  /// - [deleteRetainedAudio]: called by `privacy.deleteAllHistory()`.
+  /// - [retainedAudioPath]: locates a scan's retained WAV for
+  ///   `datasetExport.exportZip()`; without it every WAV is listed missing.
+  /// - [currentModelNote]: the installed model's note for report headers.
+  /// - [reportFonts]: loads the bundled Noto fonts for PDFs. Without it,
+  ///   PDFs use the built-in Latin-1 fonts and other characters become `?`.
   factory DataOperations({
     required QueryExecutor executor,
     required ReminderScheduler reminderScheduler,
     required Directory reportDirectory,
+    Directory? datasetDirectory,
     DateTime Function()? clock,
     RetainedAudioDeleter? deleteRetainedAudio,
+    RetainedAudioPathResolver? retainedAudioPath,
+    ModelNoteSource? currentModelNote,
+    ReportFontLoader? reportFonts,
   }) {
     final db = KernelDatabase(executor);
     final now = clock ?? systemClock;
+    final datasets =
+        datasetDirectory ?? Directory(p.join(reportDirectory.path, 'datasets'));
     final reminders = DriftReminderRepository(db, reminderScheduler, now);
     return DataOperations._(
       db,
       reminderScheduler,
       reminders,
-      items: DriftItemRepository(db, now),
+      items: DriftItemRepository(db, now, reminders),
       locations: DriftLocationRepository(db, now),
       lots: DriftLotRepository(db, now),
+      harvests: DriftHarvestRepository(db, now),
       scans: DriftScanRepository(db, now),
       inspections: DriftInspectionRepository(db, now),
+      labeledSamples: DriftLabeledSampleRepository(db, now),
       settings: DriftSettingsRepository(db, now),
       ranking: DriftRankingService(db),
-      reports: DriftReportService(db, reportDirectory, now),
-      privacy: DriftPrivacyService(db, reminders, deleteRetainedAudio),
+      reports: DriftReportService(
+        db,
+        reportDirectory,
+        now,
+        fontLoader: reportFonts,
+        modelNote: currentModelNote,
+      ),
+      datasetExport: DriftDatasetExportService(
+        db,
+        datasets,
+        now,
+        retainedAudioPath,
+      ),
+      privacy: DriftPrivacyService(
+        db,
+        reminders,
+        deleteRetainedAudio,
+        datasets,
+      ),
     );
   }
 
@@ -75,25 +120,36 @@ class DataOperations {
     required this.items,
     required this.locations,
     required this.lots,
+    required this.harvests,
     required this.scans,
     required this.inspections,
+    required this.labeledSamples,
     required this.settings,
     required this.ranking,
     required this.reports,
+    required this.datasetExport,
     required this.privacy,
   });
 
   /// Opens the on-device database (`kernel.sqlite` in the app-private
   /// support directory) with the flutter_local_notifications scheduler, then
-  /// restores pending reminders.
+  /// restores pending reminders. PDFs use the bundled Noto fonts, and their
+  /// OFL licence is registered with the app's LicenseRegistry.
   ///
-  /// [deleteRetainedAudio] should delete audio retained by the scan engine;
-  /// it runs as part of `privacy.deleteAllHistory()`.
-  /// [onReminderTapped] is called when a reminder notification is tapped
-  /// while the app is running. [notificationIcon] is the Android resource
-  /// for the status-bar icon.
+  /// - [deleteRetainedAudio]: `ScanEngine.deleteRetainedAudio`; runs as
+  ///   part of `privacy.deleteAllHistory()`.
+  /// - [retainedAudioPath]: `ScanEngine.retainedAudioPath`, used by the
+  ///   dataset export.
+  /// - [currentModelNote]: returns `EngineInfo.modelNote`, shown in report
+  ///   headers.
+  /// - [onReminderTapped]: called when a reminder notification is tapped
+  ///   while the app is running (a launch from closed goes through
+  ///   `reminders.takeLaunchItemId()`).
+  /// - [notificationIcon]: Android resource for the status-bar icon.
   static Future<DataOperations> open({
     RetainedAudioDeleter? deleteRetainedAudio,
+    RetainedAudioPathResolver? retainedAudioPath,
+    ModelNoteSource? currentModelNote,
     ReminderTapCallback? onReminderTapped,
     String notificationIcon = '@mipmap/ic_launcher',
   }) async {
@@ -103,6 +159,7 @@ class DataOperations {
       onReminderTapped: onReminderTapped,
     );
     await scheduler.initialize();
+    _registerFontLicense();
     final ops = DataOperations(
       executor: driftDatabase(
         name: 'kernel',
@@ -110,7 +167,11 @@ class DataOperations {
       ),
       reminderScheduler: scheduler,
       reportDirectory: Directory(p.join(support.path, 'reports')),
+      datasetDirectory: Directory(p.join(support.path, 'datasets')),
       deleteRetainedAudio: deleteRetainedAudio,
+      retainedAudioPath: retainedAudioPath,
+      currentModelNote: currentModelNote,
+      reportFonts: bundledReportFont,
     );
     try {
       await ops.restoreReminders();
@@ -121,6 +182,19 @@ class DataOperations {
     return ops;
   }
 
+  static bool _licenseRegistered = false;
+
+  static void _registerFontLicense() {
+    if (_licenseRegistered) return;
+    _licenseRegistered = true;
+    LicenseRegistry.addLicense(() async* {
+      final text = await rootBundle.loadString(bundledFontLicenseAsset);
+      yield LicenseEntryWithLineBreaks(const [
+        'Noto Sans (Kernel PDF reports)',
+      ], text);
+    });
+  }
+
   final KernelDatabase _db;
   final ReminderScheduler _scheduler;
   final DriftReminderRepository _reminders;
@@ -128,12 +202,15 @@ class DataOperations {
   final ItemRepository items;
   final LocationRepository locations;
   final LotRepository lots;
+  final HarvestRepository harvests;
   final ScanRepository scans;
   final InspectionRepository inspections;
   ReminderRepository get reminders => _reminders;
+  final LabeledSampleRepository labeledSamples;
   final SettingsRepository settings;
   final RankingService ranking;
   final ReportService reports;
+  final DatasetExportService datasetExport;
   final PrivacyService privacy;
 
   /// Reschedules future reminders and marks past-due ones fired. [open]

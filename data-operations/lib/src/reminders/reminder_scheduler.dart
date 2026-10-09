@@ -1,3 +1,30 @@
+import 'dart:convert';
+
+/// Notification payload: JSON `{"reminderId": ..., "itemId": ...}`.
+String encodeReminderPayload({
+  required String reminderId,
+  required String itemId,
+}) => jsonEncode({'reminderId': reminderId, 'itemId': itemId});
+
+/// Item id carried by a reminder notification [payload], or null if it
+/// carries none. Accepts the JSON payload written by
+/// [encodeReminderPayload] and, for robustness, a bare item id.
+String? itemIdFromReminderPayload(String? payload) {
+  final value = payload?.trim();
+  if (value == null || value.isEmpty) return null;
+  if (!value.startsWith('{')) return value;
+  final Object? decoded;
+  try {
+    decoded = jsonDecode(value);
+  } on FormatException {
+    return null;
+  }
+  if (decoded case {'itemId': final String itemId} when itemId.isNotEmpty) {
+    return itemId;
+  }
+  return null;
+}
+
 /// Everything the OS notification layer needs to show one reminder.
 class ReminderNotification {
   const ReminderNotification({
@@ -35,4 +62,10 @@ abstract interface class ReminderScheduler {
   /// Asks the OS for permission to post notifications (Android 13+).
   /// Returns whether notifications are allowed.
   Future<bool> requestPermission();
+
+  /// Payload of the reminder notification whose tap launched the app from
+  /// closed, or null when the app was not launched by a notification. The
+  /// OS keeps returning it for the life of the process; the repository
+  /// makes it consumable once.
+  Future<String?> launchPayload();
 }

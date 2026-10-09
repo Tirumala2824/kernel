@@ -1,11 +1,13 @@
 // Test-only doubles and fixtures. Never imported from lib/.
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:data_operations/data_operations.dart';
 import 'package:drift/drift.dart' show QueryExecutor, driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
+import 'package:path/path.dart' as p;
 import 'package:uuid/uuid.dart';
 
 /// Controllable clock.
@@ -42,41 +44,110 @@ class FakeReminderScheduler implements ReminderScheduler {
 
   @override
   Future<bool> requestPermission() async => true;
+
+  /// What the OS reports as the launching notification's payload.
+  String? launchPayloadValue;
+  int launchPayloadCalls = 0;
+
+  @override
+  Future<String?> launchPayload() async {
+    launchPayloadCalls++;
+    return launchPayloadValue;
+  }
 }
+
+/// Font bytes read from the package's own assets on disk (flutter test runs
+/// in the package root), injected instead of rootBundle.
+Future<ByteData> diskReportFont(String fontFile) async => ByteData.sublistView(
+  await File(p.join('assets', 'fonts', fontFile)).readAsBytes(),
+);
 
 /// A DataOperations over an in-memory (or given) database with test doubles.
 class Harness {
-  Harness._(this.ops, this.scheduler, this.clock, this.reportDir);
+  Harness._(
+    this.ops,
+    this.scheduler,
+    this.clock,
+    this.reportDir,
+    this.retainedAudio,
+  );
 
+  /// [retainedAudio] maps scan ids to WAV paths for the dataset export
+  /// (null disables the resolver). [modelNote] is the engine's model note.
+  /// [withFonts] injects the bundled Noto fonts for PDFs.
   static Future<Harness> create({
     QueryExecutor? executor,
     TestClock? clock,
     RetainedAudioDeleter? deleteRetainedAudio,
+    Map<String, String>? retainedAudio,
+    String? modelNote,
+    bool withFonts = true,
   }) async {
     // Some tests deliberately open a second database (app restart).
     driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
     final testClock = clock ?? TestClock(DateTime.utc(2026, 10, 1, 8));
     final scheduler = FakeReminderScheduler();
     final reportDir = await Directory.systemTemp.createTemp('kernel_reports_');
+    final audio = retainedAudio;
     final ops = DataOperations(
       executor: executor ?? NativeDatabase.memory(),
       reminderScheduler: scheduler,
       reportDirectory: reportDir,
       clock: testClock.call,
       deleteRetainedAudio: deleteRetainedAudio,
+      retainedAudioPath: audio == null ? null : (id) async => audio[id],
+      currentModelNote: modelNote == null ? null : () async => modelNote,
+      reportFonts: withFonts ? diskReportFont : null,
     );
-    return Harness._(ops, scheduler, testClock, reportDir);
+    return Harness._(ops, scheduler, testClock, reportDir, audio);
   }
 
   final DataOperations ops;
   final FakeReminderScheduler scheduler;
   final TestClock clock;
   final Directory reportDir;
+  final Map<String, String>? retainedAudio;
+
+  /// Default dataset directory (`<reportDir>/datasets`).
+  Directory get datasetDir => Directory(p.join(reportDir.path, 'datasets'));
 
   Future<void> dispose() async {
     await ops.close();
     if (reportDir.existsSync()) await reportDir.delete(recursive: true);
   }
+
+  Future<Harvest> addHarvest({
+    String name = 'Rabi 2026',
+    String grainType = 'Wheat',
+  }) => ops.harvests.create(
+    HarvestDraft(
+      name: name,
+      grainType: grainType,
+      harvestedAt: DateTime.utc(2026, 4, 10),
+    ),
+  );
+
+  Future<Inspection> addInspection(
+    String itemId,
+    VerifiedFinding finding, {
+    String? scanId,
+    DateTime? inspectedAt,
+    FollowUpStatus followUpStatus = FollowUpStatus.open,
+    List<String> photoPaths = const [],
+    String? assignedTo,
+  }) => ops.inspections.create(
+    InspectionDraft(
+      itemId: itemId,
+      scanId: scanId,
+      inspectedAt: inspectedAt ?? clock.now,
+      inspector: 'Ravi',
+      observations: 'Sieve sample checked',
+      verifiedFinding: finding,
+      followUpStatus: followUpStatus,
+      photoPaths: photoPaths,
+      assignedTo: assignedTo,
+    ),
+  );
 
   Future<GrainItem> addItem({
     Role role = Role.farmer,
@@ -86,6 +157,7 @@ class Harness {
     String unit = 'kg',
     String? locationId,
     String? lotId,
+    String? harvestId,
   }) {
     return ops.items.create(
       GrainItemDraft(
@@ -97,6 +169,7 @@ class Harness {
         storageDate: DateTime.utc(2026, 9, 1),
         locationId: locationId,
         lotId: lotId,
+        harvestId: harvestId,
       ),
     );
   }
@@ -111,6 +184,7 @@ class Harness {
     double? confidence,
     String modelVersion = noModelVersion,
     bool experimental = true,
+    bool audioRetained = false,
   }) {
     return ops.scans.record(
       outcome(
@@ -122,6 +196,7 @@ class Harness {
         confidence: confidence,
         modelVersion: modelVersion,
         experimental: experimental,
+        audioRetained: audioRetained,
       ),
     );
   }
@@ -154,8 +229,10 @@ ScanOutcome outcome({
   double? confidence,
   String modelVersion = noModelVersion,
   bool experimental = true,
+  bool audioRetained = false,
 }) {
   return ScanOutcome(
+    audioRetained: audioRetained,
     scanId: scanId ?? const Uuid().v4(),
     itemId: itemId,
     capturedAt: capturedAt ?? DateTime.utc(2026, 10, 1, 8),

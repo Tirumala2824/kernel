@@ -1,8 +1,10 @@
 // Schema and migration tests. When schemaVersion is bumped:
-//   1. dart run drift_dev make-migrations   (dumps drift_schemas/, writes
-//      database.steps.dart and regenerates generated/)
-//   2. add the stepByStep migration in KernelDatabase.migration
+//   1. dart run build_runner build, then dart run drift_dev make-migrations
+//      (dumps drift_schemas/, writes database.steps.dart and regenerates
+//      generated/)
+//   2. add the step to KernelDatabase._upgrade (stepByStep)
 //   3. add an upgrade test below (verifier.startAt(old) -> migrateAndValidate)
+//      plus a data-integrity test with rows written at the old version
 import 'package:data_operations/src/db/database.dart';
 import 'package:drift/native.dart';
 import 'package:drift_dev/api/migrations_native.dart';
@@ -17,24 +19,150 @@ void main() {
     verifier = SchemaVerifier(GeneratedHelper());
   });
 
-  test('schema version 1 is the only exported version', () {
+  test('every schema version up to the current one is exported', () {
     final db = KernelDatabase(NativeDatabase.memory());
     addTearDown(db.close);
-    expect(db.schemaVersion, 1);
-    expect(GeneratedHelper.versions, [db.schemaVersion]);
+    expect(db.schemaVersion, 2);
+    expect(GeneratedHelper.versions, [1, 2]);
   });
 
-  test('a fresh install creates exactly the exported v1 schema', () async {
+  test('a fresh install creates exactly the exported v2 schema', () async {
     final db = KernelDatabase(NativeDatabase.memory());
     addTearDown(db.close);
     await db.validateDatabaseSchema();
   });
 
-  test('opening a database already at v1 validates against the dump', () async {
+  test('opening a database already at v2 validates against the dump', () async {
+    final connection = await verifier.startAt(2);
+    final db = KernelDatabase(connection);
+    addTearDown(db.close);
+    await verifier.migrateAndValidate(db, 2);
+  });
+
+  test('upgrading v1 -> v2 yields exactly the exported v2 schema', () async {
     final connection = await verifier.startAt(1);
     final db = KernelDatabase(connection);
     addTearDown(db.close);
-    await verifier.migrateAndValidate(db, 1);
+    await verifier.migrateAndValidate(db, 2);
+  });
+
+  test('v1 -> v2 keeps every v1 row, adds no rows and defaults the new '
+      'columns', () async {
+    final schema = await verifier.schemaAt(1);
+    const t = '2026-10-01T08:00:00.000Z';
+    schema.rawDatabase.execute(
+      "INSERT INTO locations (id, created_at, updated_at, type, name) "
+      "VALUES ('loc', '$t', '$t', 'warehouse', 'Godown')",
+    );
+    schema.rawDatabase.execute(
+      "INSERT INTO lots (id, created_at, updated_at, code, grain_type, "
+      "declared_quantity, quantity_unit, received_at) VALUES "
+      "('lot', '$t', '$t', 'LOT-1', 'Wheat', 100.0, 'kg', '$t')",
+    );
+    schema.rawDatabase.execute(
+      "INSERT INTO items (id, created_at, updated_at, owner_role, label, "
+      "grain_type, quantity, quantity_unit, storage_date, location_id, "
+      "lot_id) VALUES ('item', '$t', '$t', 'farmer', 'Sack R-001', 'Wheat', "
+      "50.0, 'kg', '$t', 'loc', 'lot')",
+    );
+    schema.rawDatabase.execute(
+      "INSERT INTO scans (id, created_at, updated_at, item_id, captured_at, "
+      "duration_ms, sample_rate, quality, quality_reasons, model_version, "
+      "result, confidence, experimental, latency_ms, device_model, "
+      "os_version) VALUES ('scan', '$t', '$t', 'item', '$t', 2000, 16000, "
+      "'pass', '', 'none', 'notEvaluated', NULL, 1, 100, 'dev', 'os')",
+    );
+    schema.rawDatabase.execute(
+      "INSERT INTO inspections (id, created_at, updated_at, item_id, "
+      "scan_id, inspected_at, inspector, observations, verified_finding, "
+      "follow_up_status) VALUES ('insp', '$t', '$t', 'item', 'scan', '$t', "
+      "'Ravi', 'Looked fine', 'noneFound', 'open')",
+    );
+    schema.rawDatabase.execute(
+      "INSERT INTO settings (id, created_at, updated_at, key, value) "
+      "VALUES ('set', '$t', '$t', 'activeRole', 'farmer')",
+    );
+
+    final db = KernelDatabase(schema.newConnection());
+    addTearDown(db.close);
+    await verifier.migrateAndValidate(db, 2);
+
+    final counts = {
+      for (final table in db.allTables)
+        table.actualTableName:
+            (await db
+                    .customSelect(
+                      'SELECT COUNT(*) AS c FROM "${table.actualTableName}"',
+                    )
+                    .getSingle())
+                .read<int>('c'),
+    };
+    expect(counts, {
+      'locations': 1,
+      'lots': 1,
+      'harvests': 0,
+      'items': 1,
+      'scans': 1,
+      'inspections': 1,
+      'reminders': 0,
+      'settings': 1,
+      'labeled_samples': 0,
+    });
+
+    final item = await db.select(db.items).getSingle();
+    expect(item.label, 'Sack R-001');
+    expect(item.locationId, 'loc');
+    expect(item.lotId, 'lot');
+    expect(item.harvestId, isNull);
+    expect(item.archivedAt, isNull);
+    expect((await db.select(db.locations).getSingle()).archivedAt, isNull);
+    expect((await db.select(db.lots).getSingle()).archivedAt, isNull);
+    final scan = await db.select(db.scans).getSingle();
+    expect(scan.audioRetained, isFalse);
+    expect(scan.result.name, 'notEvaluated');
+    final inspection = await db.select(db.inspections).getSingle();
+    expect(inspection.assignedTo, isNull);
+    expect(inspection.photoPaths, isEmpty);
+    expect(inspection.verifiedFinding.name, 'noneFound');
+
+    // The recreated triggers cover the v2 columns: assignee and follow-up
+    // stay writable, the finding, photos and scan fields do not.
+    await db.customStatement(
+      "UPDATE inspections SET assigned_to = 'Asha', "
+      "follow_up_status = 'inProgress' WHERE id = 'insp'",
+    );
+    await expectLater(
+      db.customStatement(
+        "UPDATE inspections SET photo_paths = '[\"/x.jpg\"]' "
+        "WHERE id = 'insp'",
+      ),
+      throwsA(isA<SqliteException>()),
+    );
+    await expectLater(
+      db.customStatement(
+        "UPDATE inspections SET verified_finding = 'pestsFound' "
+        "WHERE id = 'insp'",
+      ),
+      throwsA(isA<SqliteException>()),
+    );
+    await expectLater(
+      db.customStatement(
+        "UPDATE scans SET audio_retained = 1 WHERE id = 'scan'",
+      ),
+      throwsA(isA<SqliteException>()),
+    );
+    final triggers = await db
+        .customSelect("SELECT name FROM sqlite_master WHERE type = 'trigger'")
+        .map((row) => row.read<String>('name'))
+        .get();
+    expect(
+      triggers,
+      unorderedEquals([
+        'scans_append_only',
+        'inspections_verified_immutable',
+        'labeled_samples_immutable',
+      ]),
+    );
   });
 
   test('a fresh database contains no rows (no seed data)', () async {
@@ -72,10 +200,12 @@ void main() {
           'items',
           'locations',
           'lots',
+          'harvests',
           'scans',
           'inspections',
           'reminders',
           'settings',
+          'labeled_samples',
         ]),
       );
     },
@@ -90,7 +220,11 @@ void main() {
         .get();
     expect(
       triggers,
-      containsAll(['scans_append_only', 'inspections_verified_immutable']),
+      containsAll([
+        'scans_append_only',
+        'inspections_verified_immutable',
+        'labeled_samples_immutable',
+      ]),
     );
     final fk = await db.customSelect('PRAGMA foreign_keys').getSingle();
     expect(fk.data.values.single, 1);
@@ -108,7 +242,7 @@ void main() {
 
   test('an unexpected schema version is refused, not silently reset', () async {
     final db = KernelDatabase(
-      NativeDatabase.memory(setup: (raw) => raw.userVersion = 2),
+      NativeDatabase.memory(setup: (raw) => raw.userVersion = 3),
     );
     addTearDown(db.close);
     // A database from a newer build must never be "migrated" by dropping

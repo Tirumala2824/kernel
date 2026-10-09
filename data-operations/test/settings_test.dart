@@ -20,6 +20,62 @@ void main() {
     expect(await firstWhere(stream, (r) => r == Role.buyer), Role.buyer);
   });
 
+  test(
+    'v2 settings have their defaults on a fresh install, with no rows',
+    () async {
+      final s = h.ops.settings;
+      expect(await s.watchResearchModeOptIn().first, isFalse);
+      expect(await s.watchLanguageTag().first, isNull);
+      expect(await s.watchHaptics().first, isTrue);
+      expect(await s.watchVoicePrompts().first, isFalse);
+      expect(await s.watchOnboardingDone().first, isFalse);
+      expect(await s.watchRetainAudioOptIn().first, isFalse);
+      expect(await s.watchActiveRole().first, isNull);
+    },
+  );
+
+  test(
+    'v2 settings can be changed and are independent of each other',
+    () async {
+      final s = h.ops.settings;
+      final research = s.watchResearchModeOptIn();
+      await s.setResearchModeOptIn(true);
+      expect(await firstWhere(research, (v) => v), isTrue);
+      expect(
+        await s.watchRetainAudioOptIn().first,
+        isFalse,
+        reason: 'research mode is a separate opt-in',
+      );
+
+      final haptics = s.watchHaptics();
+      await s.setHaptics(false);
+      expect(await firstWhere(haptics, (v) => !v), isFalse);
+      await s.setHaptics(true);
+      expect(await firstWhere(haptics, (v) => v), isTrue);
+
+      await s.setVoicePrompts(true);
+      expect(await s.watchVoicePrompts().first, isTrue);
+      await s.setOnboardingDone(true);
+      expect(await s.watchOnboardingDone().first, isTrue);
+
+      final language = s.watchLanguageTag();
+      await s.setLanguageTag(' hi ');
+      expect(await firstWhere(language, (v) => v != null), 'hi');
+      await s.setLanguageTag('ta');
+      expect(await firstWhere(language, (v) => v == 'ta'), 'ta');
+      // Null or blank goes back to following the device.
+      await s.setLanguageTag(null);
+      expect(await firstWhere(language, (v) => v == null), isNull);
+      await s.setLanguageTag('bn');
+      await s.setLanguageTag('  ');
+      expect(await s.watchLanguageTag().first, isNull);
+
+      expect(await s.watchResearchModeOptIn().first, isTrue);
+      await s.setResearchModeOptIn(false);
+      expect(await s.watchResearchModeOptIn().first, isFalse);
+    },
+  );
+
   test('retainAudioOptIn defaults to false and can be toggled', () async {
     final stream = h.ops.settings.watchRetainAudioOptIn();
     expect(await stream.first, isFalse);

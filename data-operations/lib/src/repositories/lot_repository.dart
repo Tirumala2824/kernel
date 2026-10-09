@@ -22,8 +22,8 @@ class DriftLotRepository implements LotRepository {
             createdAt: now,
             updatedAt: now,
             code: requireText(draft.code, 'code'),
-            supplierId: Value(_blankToNull(draft.supplierId)),
-            supplierName: Value(_blankToNull(draft.supplierName)),
+            supplierId: Value(blankToNull(draft.supplierId)),
+            supplierName: Value(blankToNull(draft.supplierName)),
             grainType: requireText(draft.grainType, 'grainType'),
             declaredQuantity: requireNonNegative(
               draft.declaredQuantity,
@@ -36,6 +36,7 @@ class DriftLotRepository implements LotRepository {
     return row.toModel();
   }
 
+  /// Returns archived lots too.
   @override
   Future<Lot?> get(String id) async {
     final row = await (_db.select(
@@ -44,10 +45,11 @@ class DriftLotRepository implements LotRepository {
     return row?.toModel();
   }
 
-  /// Most recently received first.
+  /// Non-archived lots, most recently received first.
   @override
   Stream<List<Lot>> watchAll() {
     final query = _db.select(_db.lots)
+      ..where((l) => l.archivedAt.isNull())
       ..orderBy([
         (l) => OrderingTerm.desc(l.receivedAt),
         (l) => OrderingTerm.asc(l.code),
@@ -74,8 +76,18 @@ class DriftLotRepository implements LotRepository {
     });
   }
 
-  static String? _blankToNull(String? value) {
-    final trimmed = value?.trim();
-    return (trimmed == null || trimmed.isEmpty) ? null : trimmed;
+  /// Soft delete. Items in the lot keep their lotId. Archiving an archived
+  /// lot keeps its original archivedAt.
+  @override
+  Future<void> archive(String id) async {
+    await _db.transaction(() async {
+      final lot = await get(id);
+      if (lot == null) throw ArgumentError.value(id, 'id', 'unknown lot');
+      if (lot.isArchived) return;
+      final now = _clock().toUtc();
+      await (_db.update(_db.lots)..where((l) => l.id.equals(id))).write(
+        LotsCompanion(archivedAt: Value(now), updatedAt: Value(now)),
+      );
+    });
   }
 }

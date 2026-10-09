@@ -59,6 +59,8 @@ List<int> renderCsv(ReportData data) {
     ['Role', roleLabel(data.scope.role)],
     ['Location', data.locationLabel ?? 'All'],
     ['Lot', data.lotLabel ?? 'All'],
+    ['Harvest', data.harvestLabel ?? 'All'],
+    ..._modelNoteRows(data.modelNote),
     ['Items', data.items.length],
     ['Scans', data.scanCount],
     ['Inspections', data.inspectionCount],
@@ -111,6 +113,206 @@ List<int> renderCsv(ReportData data) {
 
   return utf8.encode(Csv(addBom: true).encode(rows));
 }
+
+/// Columns of the pre-sale table: one `sack` row per sack. The latest AI
+/// screening (`latest_scan_*`, `ai_*`) and the latest human inspection
+/// (`latest_inspection_id`, `human_*`) are separate column groups.
+const preSaleCsvColumns = <String>[
+  'row_type',
+  'item_id',
+  'item_label',
+  'grain_type',
+  'quantity',
+  'quantity_unit',
+  'storage_date_utc',
+  'location',
+  'harvest',
+  'latest_scan_id',
+  'latest_scan_captured_at_utc',
+  'model_version',
+  'experimental',
+  'quality',
+  'ai_predicted_class',
+  'ai_predicted_label',
+  'ai_confidence',
+  'latest_inspection_id',
+  'human_inspected_at_utc',
+  'human_inspector',
+  'human_verified_finding',
+  'human_follow_up_status',
+];
+
+/// Pre-sale summary CSV: preamble (harvest, model note, summary counts,
+/// disclaimers), then [preSaleCsvColumns].
+List<int> renderPreSaleCsv(PreSaleData data) {
+  final rows = <List<Object?>>[
+    ['Kernel pre-sale summary'],
+    ['Generated (UTC)', utcStamp(data.generatedAt)],
+    ['Role', roleLabel(data.scope.role)],
+    ['Harvest', userText(data.harvestLabel)],
+    if (data.harvest case final harvest?) ...[
+      ['Harvested (UTC)', utcDate(harvest.harvestedAt)],
+      ['Harvest grain', userText(harvest.grainType)],
+      if (harvest.archivedAt != null) ['Harvest archived', 'yes'],
+    ],
+    ..._modelNoteRows(data.modelNote),
+    ['Sacks', data.sacks.length],
+    ['Sacks with a valid AI screening', data.screenedCount],
+    for (final (label, count) in data.aiCounts)
+      ['Latest AI screening: $label', count],
+    for (final (label, count) in data.humanCounts)
+      ['Latest physical inspection: $label', count],
+    ['Notice', preSaleNotice],
+    for (final line in reportDisclaimer) ['Disclaimer', line],
+    [],
+    preSaleCsvColumns,
+  ];
+  for (final sack in data.sacks) {
+    final item = sack.item;
+    final scan = sack.latestScan;
+    final inspection = sack.latestInspection;
+    rows.add([
+      'sack',
+      item.id,
+      userText(item.label),
+      userText(item.grainType),
+      formatQuantity(item.quantity),
+      userText(item.quantityUnit),
+      utcDate(item.storageDate),
+      userText(sack.locationPath ?? ''),
+      userText(sack.harvest?.name ?? ''),
+      ..._latestScanCells(scan),
+      inspection?.id ?? '',
+      inspection == null ? '' : utcStamp(inspection.inspectedAt),
+      inspection == null ? '' : userText(inspection.inspector),
+      inspection == null
+          ? notInspected
+          : verifiedFindingLabel(inspection.verifiedFinding),
+      inspection == null ? '' : followUpLabel(inspection.followUpStatus),
+    ]);
+  }
+  return utf8.encode(Csv(addBom: true).encode(rows));
+}
+
+/// Columns of the lot summary table. `sack` rows carry the latest AI
+/// screening; `check` rows carry one human physical check each. The two
+/// column groups never share a row.
+const lotSummaryCsvColumns = <String>[
+  'row_type',
+  'item_id',
+  'item_label',
+  'grain_type',
+  'quantity',
+  'quantity_unit',
+  'screened',
+  'latest_scan_id',
+  'latest_scan_captured_at_utc',
+  'model_version',
+  'experimental',
+  'quality',
+  'ai_predicted_class',
+  'ai_predicted_label',
+  'ai_confidence',
+  'inspection_id',
+  'human_inspected_at_utc',
+  'human_inspector',
+  'human_verified_finding',
+  'human_observations',
+  'human_follow_up_status',
+];
+
+/// Buyer lot summary CSV: preamble (lot details, human-set screening
+/// status, counts, the not-a-decision statement, disclaimers), then
+/// [lotSummaryCsvColumns].
+List<int> renderLotSummaryCsv(LotSummaryData data) {
+  final lot = data.lot;
+  final total = data.sacks.length;
+  final rows = <List<Object?>>[
+    ['Kernel lot screening summary'],
+    ['Generated (UTC)', utcStamp(data.generatedAt)],
+    ['Role', roleLabel(data.scope.role)],
+    ['Lot', userText(lot.code)],
+    ['Supplier', userText(lot.supplierName ?? '')],
+    ['Supplier ID', userText(lot.supplierId ?? '')],
+    ['Grain', userText(lot.grainType)],
+    [
+      'Declared quantity',
+      userText('${formatQuantity(lot.declaredQuantity)} ${lot.quantityUnit}'),
+    ],
+    ['Received (UTC)', utcDate(lot.receivedAt)],
+    [
+      'Screening status (set by a person)',
+      screeningStatusLabel(lot.screeningStatus),
+    ],
+    if (lot.archivedAt != null) ['Lot archived', 'yes'],
+    ..._modelNoteRows(data.modelNote),
+    ['Sacks', total],
+    ['Sacks screened (valid scans)', '${data.screenedCount} of $total'],
+    for (final (label, count) in data.aiCounts)
+      ['Latest AI screening: $label', count],
+    ['Sacks physically checked', '${data.checkedCount} of $total'],
+    ['Physical checks', data.checkCount],
+    for (final (label, count) in data.findingCounts)
+      ['Physical checks: $label', count],
+    ['Decision', lotDecisionNotice],
+    for (final line in reportDisclaimer) ['Disclaimer', line],
+    [],
+    lotSummaryCsvColumns,
+  ];
+  for (final sack in data.sacks) {
+    final item = sack.item;
+    final itemCells = [
+      item.id,
+      userText(item.label),
+      userText(item.grainType),
+      formatQuantity(item.quantity),
+      userText(item.quantityUnit),
+    ];
+    rows.add([
+      'sack',
+      ...itemCells,
+      yesNo(sack.screened),
+      ..._latestScanCells(sack.latestScan),
+      ...List.filled(6, ''),
+    ]);
+    for (final inspection in sack.inspections) {
+      rows.add([
+        'check',
+        ...itemCells,
+        '',
+        ...List.filled(_latestScanCellCount, ''),
+        inspection.id,
+        utcStamp(inspection.inspectedAt),
+        userText(inspection.inspector),
+        verifiedFindingLabel(inspection.verifiedFinding),
+        userText(inspection.observations),
+        followUpLabel(inspection.followUpStatus),
+      ]);
+    }
+  }
+  return utf8.encode(Csv(addBom: true).encode(rows));
+}
+
+const _latestScanCellCount = 8;
+
+/// latest_scan_id .. ai_confidence for the most recent scan, or "No scan
+/// recorded".
+List<Object?> _latestScanCells(ScanRecord? scan) => scan == null
+    ? ['', '', '', '', '', '', noScanRecorded, '']
+    : [
+        scan.id,
+        utcStamp(scan.capturedAt),
+        scan.modelVersion,
+        yesNo(scan.experimental),
+        qualityLabel(scan.quality),
+        scan.result.name,
+        predictedClassLabel(scan),
+        scan.confidence?.toStringAsFixed(3) ?? '',
+      ];
+
+List<List<Object?>> _modelNoteRows(String? note) => [
+  if (note != null) ['Model note (installed model)', userText(note)],
+];
 
 /// User-entered text, neutralised so spreadsheet apps never evaluate it as a
 /// formula when the shared CSV is opened.

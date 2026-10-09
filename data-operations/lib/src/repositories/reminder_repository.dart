@@ -9,6 +9,10 @@ import '../support.dart';
 /// Reminders are persisted first and mirrored into the OS scheduler, so they
 /// survive app restarts ([restore]) and, through the plugin's boot receiver,
 /// device reboots.
+///
+/// While an item is archived its reminders keep their stored status but
+/// their OS notifications are cancelled, and they are hidden from
+/// [watchUpcoming]. Unarchiving brings them back.
 class DriftReminderRepository implements ReminderRepository {
   DriftReminderRepository(this._db, this._scheduler, this._clock);
 
@@ -16,10 +20,13 @@ class DriftReminderRepository implements ReminderRepository {
   final ReminderScheduler _scheduler;
   final Clock _clock;
 
+  bool _launchTaken = false;
+
   static const _active = [ReminderStatus.scheduled, ReminderStatus.fired];
 
-  /// Throws [ArgumentError] for an unknown item or a [dueAt] that is not in
-  /// the future. If the OS scheduler fails, nothing is persisted.
+  /// Throws [ArgumentError] for an unknown or archived item or a [dueAt]
+  /// that is not in the future. If the OS scheduler fails, nothing is
+  /// persisted.
   @override
   Future<Reminder> schedule(String itemId, DateTime dueAt) async {
     final due = dueAt.toUtc();
@@ -33,6 +40,9 @@ class DriftReminderRepository implements ReminderRepository {
       )..where((i) => i.id.equals(itemId))).getSingleOrNull();
       if (item == null) {
         throw ArgumentError.value(itemId, 'itemId', 'unknown item');
+      }
+      if (item.archivedAt != null) {
+        throw ArgumentError.value(itemId, 'itemId', 'item is archived');
       }
       final maxId = _db.reminders.notificationId.max();
       final current = await (_db.selectOnly(
@@ -80,7 +90,8 @@ class DriftReminderRepository implements ReminderRepository {
     }
   }
 
-  /// All reminders for the item, soonest first.
+  /// All reminders for the item, soonest first, including while the item is
+  /// archived.
   @override
   Stream<List<Reminder>> watchForItem(String itemId) {
     final query = _db.select(_db.reminders)
@@ -89,34 +100,66 @@ class DriftReminderRepository implements ReminderRepository {
     return query.watch().map(_toModels);
   }
 
-  /// Reminders still needing action (scheduled, or fired but not yet done),
-  /// soonest first. Overdue ones stay in the list until done or cancelled.
+  /// Reminders still needing action (scheduled, or fired but not yet done)
+  /// for items that are not archived, soonest first. Overdue ones stay in
+  /// the list until done or cancelled.
   @override
   Stream<List<Reminder>> watchUpcoming() {
-    final query = _db.select(_db.reminders)
-      ..where((r) => r.status.isInValues(_active))
-      ..orderBy(_soonestFirst);
-    return query.watch().map(_toModels);
+    final reminders = _db.reminders;
+    final query =
+        _db.select(reminders).join([
+            innerJoin(_db.items, _db.items.id.equalsExp(reminders.itemId)),
+          ])
+          ..where(
+            reminders.status.isInValues(_active) &
+                _db.items.archivedAt.isNull(),
+          )
+          ..orderBy([
+            OrderingTerm.asc(reminders.dueAt),
+            OrderingTerm.asc(reminders.createdAt),
+            OrderingTerm.asc(reminders.id),
+          ]);
+    return query.watch().map(
+      (rows) => [for (final row in rows) row.readTable(reminders).toModel()],
+    );
+  }
+
+  /// Item id from the reminder notification that launched the app, if it
+  /// still names a stored item. Returns it at most once per app process.
+  @override
+  Future<String?> takeLaunchItemId() async {
+    if (_launchTaken) return null;
+    _launchTaken = true;
+    final itemId = itemIdFromReminderPayload(await _scheduler.launchPayload());
+    if (itemId == null) return null;
+    final item = await (_db.select(
+      _db.items,
+    )..where((i) => i.id.equals(itemId))).getSingleOrNull();
+    return item?.id;
   }
 
   /// Re-syncs the OS scheduler with the database after an app start:
   /// future reminders are rescheduled (idempotent, same notification id) and
-  /// past-due ones are marked fired.
-  Future<void> restore() async {
-    final now = _clock().toUtc();
-    final query = _db.select(_db.reminders).join([
-      innerJoin(_db.items, _db.items.id.equalsExp(_db.reminders.itemId)),
-    ])..where(_db.reminders.status.equalsValue(ReminderStatus.scheduled));
-    for (final joined in await query.get()) {
-      final row = joined.readTable(_db.reminders);
-      if (row.dueAt.isAfter(now)) {
-        final label = joined.readTable(_db.items).label;
-        await _scheduler.schedule(_notificationFor(row, label));
-      } else {
-        await _setStatus(row.id, ReminderStatus.fired);
-      }
+  /// past-due ones are marked fired. Reminders of archived items stay
+  /// silent and keep their status until the item is unarchived.
+  Future<void> restore() => _restoreWhere(const Constant(true));
+
+  /// Cancels the OS notifications of [itemId]'s active reminders. Their
+  /// stored status is kept so [resumeForItem] can bring them back.
+  Future<void> suspendForItem(String itemId) async {
+    final rows =
+        await (_db.select(_db.reminders)..where(
+              (r) => r.itemId.equals(itemId) & r.status.isInValues(_active),
+            ))
+            .get();
+    for (final row in rows) {
+      await _scheduler.cancel(row.notificationId);
     }
   }
+
+  /// Reschedules [itemId]'s future reminders; past-due ones become fired.
+  Future<void> resumeForItem(String itemId) =>
+      _restoreWhere(_db.reminders.itemId.equals(itemId));
 
   /// Cancels every OS notification that belongs to an active reminder.
   /// Used by the history wipe before rows are deleted.
@@ -126,6 +169,28 @@ class DriftReminderRepository implements ReminderRepository {
     )..where((r) => r.status.isInValues(_active))).get();
     for (final row in rows) {
       await _scheduler.cancel(row.notificationId);
+    }
+  }
+
+  Future<void> _restoreWhere(Expression<bool> filter) async {
+    final now = _clock().toUtc();
+    final query =
+        _db.select(_db.reminders).join([
+          innerJoin(_db.items, _db.items.id.equalsExp(_db.reminders.itemId)),
+        ])..where(
+          _db.reminders.status.equalsValue(ReminderStatus.scheduled) & filter,
+        );
+    for (final joined in await query.get()) {
+      final row = joined.readTable(_db.reminders);
+      final item = joined.readTable(_db.items);
+      if (item.archivedAt != null) {
+        // Idempotent; covers a suspend that failed part-way.
+        await _scheduler.cancel(row.notificationId);
+      } else if (row.dueAt.isAfter(now)) {
+        await _scheduler.schedule(_notificationFor(row, item.label));
+      } else {
+        await _setStatus(row.id, ReminderStatus.fired);
+      }
     }
   }
 

@@ -11,6 +11,11 @@ class DriftSettingsRepository implements SettingsRepository {
 
   static const activeRoleKey = 'activeRole';
   static const retainAudioOptInKey = 'retainAudioOptIn';
+  static const researchModeOptInKey = 'researchModeOptIn';
+  static const languageTagKey = 'languageTag';
+  static const hapticsKey = 'haptics';
+  static const voicePromptsKey = 'voicePrompts';
+  static const onboardingDoneKey = 'onboardingDone';
 
   final KernelDatabase _db;
   final Clock _clock;
@@ -31,13 +36,85 @@ class DriftSettingsRepository implements SettingsRepository {
   /// False unless the user has explicitly opted in.
   @override
   Stream<bool> watchRetainAudioOptIn() =>
-      _watchValue(retainAudioOptInKey)
-          .map((value) => value == 'true')
-          .distinct();
+      _watchBool(retainAudioOptInKey, defaultValue: false);
 
   @override
   Future<void> setRetainAudioOptIn(bool value) =>
-      _put(retainAudioOptInKey, value ? 'true' : 'false');
+      _putBool(retainAudioOptInKey, value);
+
+  /// False unless the user has explicitly opted in. Separate from the
+  /// audio retention opt-in.
+  @override
+  Stream<bool> watchResearchModeOptIn() =>
+      _watchBool(researchModeOptInKey, defaultValue: false);
+
+  @override
+  Future<void> setResearchModeOptIn(bool value) =>
+      _putBool(researchModeOptInKey, value);
+
+  /// Null (follow the device) until the user picks a language.
+  @override
+  Stream<String?> watchLanguageTag() => _watchValue(languageTagKey).distinct();
+
+  /// A null or blank [tag] removes the choice, so the device language is
+  /// followed again.
+  @override
+  Future<void> setLanguageTag(String? tag) async {
+    final value = blankToNull(tag);
+    if (value == null) {
+      await (_db.delete(
+        _db.settings,
+      )..where((s) => s.key.equals(languageTagKey))).go();
+    } else {
+      await _put(languageTagKey, value);
+    }
+  }
+
+  /// True unless the user turned haptics off.
+  @override
+  Stream<bool> watchHaptics() => _watchBool(hapticsKey, defaultValue: true);
+
+  @override
+  Future<void> setHaptics(bool value) => _putBool(hapticsKey, value);
+
+  /// False unless the user turned spoken prompts on.
+  @override
+  Stream<bool> watchVoicePrompts() =>
+      _watchBool(voicePromptsKey, defaultValue: false);
+
+  @override
+  Future<void> setVoicePrompts(bool value) => _putBool(voicePromptsKey, value);
+
+  /// False until onboarding has been completed once.
+  @override
+  Stream<bool> watchOnboardingDone() =>
+      _watchBool(onboardingDoneKey, defaultValue: false);
+
+  @override
+  Future<void> setOnboardingDone(bool value) =>
+      _putBool(onboardingDoneKey, value);
+
+  /// Current research opt-in, read inside other repositories' transactions.
+  static Future<bool> researchModeEnabled(KernelDatabase db) async {
+    final row = await (db.select(
+      db.settings,
+    )..where((s) => s.key.equals(researchModeOptInKey))).getSingleOrNull();
+    return row?.value == 'true';
+  }
+
+  Stream<bool> _watchBool(String key, {required bool defaultValue}) =>
+      _watchValue(key)
+          .map(
+            (value) => switch (value) {
+              'true' => true,
+              'false' => false,
+              _ => defaultValue,
+            },
+          )
+          .distinct();
+
+  Future<void> _putBool(String key, bool value) =>
+      _put(key, value ? 'true' : 'false');
 
   Stream<String?> _watchValue(String key) {
     final query = _db.select(_db.settings)..where((s) => s.key.equals(key));

@@ -10,6 +10,7 @@ environment:
 resolution: workspace
 
 dependencies:
+  archive: ^4.0.0
   csv: ^8.0.0
   drift: ^2.35.2
   drift_flutter: ^0.3.1
@@ -30,3 +31,9 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   drift_dev: ^2.35.1
   build_runner: ^2.16.1
+
+flutter:
+  assets:
+    # Noto Sans static TTFs (SIL OFL 1.1, assets/fonts/OFL.txt) for Unicode
+    # PDF reports. Read via rootBundle as packages/data_operations/...
+    - assets/fonts/

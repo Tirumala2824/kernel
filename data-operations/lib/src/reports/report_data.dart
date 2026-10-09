@@ -1,6 +1,6 @@
 import 'package:kernel_contracts/kernel_contracts.dart';
 
-/// Everything a report shows, loaded from stored records only.
+/// Everything a history report shows, loaded from stored records only.
 class ReportData {
   const ReportData({
     required this.scope,
@@ -8,6 +8,8 @@ class ReportData {
     required this.locationLabel,
     required this.lotLabel,
     required this.items,
+    this.harvestLabel,
+    this.modelNote,
   });
 
   final ReportScope scope;
@@ -20,6 +22,12 @@ class ReportData {
 
   /// Scope lot code, or null when the report is not lot-scoped.
   final String? lotLabel;
+
+  /// Scope harvest name, or null when the report is not harvest-scoped.
+  final String? harvestLabel;
+
+  /// Provenance note of the installed model, when known.
+  final String? modelNote;
   final List<ReportItem> items;
 
   int get scanCount => items.fold(0, (sum, i) => sum + i.scans.length);
@@ -34,17 +42,138 @@ class ReportItem {
     required this.lot,
     required this.scans,
     required this.inspections,
+    this.harvest,
   });
 
   final GrainItem item;
   final String? locationPath;
   final Lot? lot;
+  final Harvest? harvest;
 
   /// Oldest first.
   final List<ScanRecord> scans;
 
   /// Oldest first.
   final List<Inspection> inspections;
+
+  /// Most recent scan of any quality, or null.
+  ScanRecord? get latestScan => scans.isEmpty ? null : scans.last;
+
+  /// Most recent human inspection, or null.
+  Inspection? get latestInspection =>
+      inspections.isEmpty ? null : inspections.last;
+
+  /// Has at least one valid scan (PASS with a real model result).
+  bool get screened => scans.any((scan) => scan.isValid);
+}
+
+/// Farmer pre-sale summary: per sack, the latest AI screening next to the
+/// latest human inspection. The two are never combined into one verdict.
+class PreSaleData {
+  const PreSaleData({
+    required this.scope,
+    required this.generatedAt,
+    required this.harvest,
+    required this.modelNote,
+    required this.sacks,
+  });
+
+  final ReportScope scope;
+  final DateTime generatedAt;
+
+  /// Null when the summary covers every sack in scope.
+  final Harvest? harvest;
+  final String? modelNote;
+  final List<ReportItem> sacks;
+
+  String get harvestLabel => harvest?.name ?? 'All harvests';
+
+  /// Sacks by the result of their latest scan.
+  List<(String, int)> get aiCounts => latestAiCounts(sacks);
+
+  /// Sacks by the finding of their latest inspection.
+  List<(String, int)> get humanCounts => [
+    for (final finding in VerifiedFinding.values)
+      (
+        verifiedFindingLabel(finding),
+        sacks
+            .where((s) => s.latestInspection?.verifiedFinding == finding)
+            .length,
+      ),
+    (notInspected, sacks.where((s) => s.latestInspection == null).length),
+  ];
+
+  int get screenedCount => sacks.where((s) => s.screened).length;
+}
+
+/// Buyer lot screening summary. Shows the human-set screening status; it is
+/// never an accept/reject decision.
+class LotSummaryData {
+  const LotSummaryData({
+    required this.scope,
+    required this.generatedAt,
+    required this.lot,
+    required this.modelNote,
+    required this.sacks,
+  });
+
+  final ReportScope scope;
+  final DateTime generatedAt;
+  final Lot lot;
+  final String? modelNote;
+  final List<ReportItem> sacks;
+
+  int get screenedCount => sacks.where((s) => s.screened).length;
+  int get checkedCount => sacks.where((s) => s.inspections.isNotEmpty).length;
+  int get checkCount => sacks.fold(0, (sum, s) => sum + s.inspections.length);
+
+  /// Every physical check by verified finding.
+  List<(String, int)> get findingCounts => [
+    for (final finding in VerifiedFinding.values)
+      (
+        verifiedFindingLabel(finding),
+        sacks
+            .expand((s) => s.inspections)
+            .where((i) => i.verifiedFinding == finding)
+            .length,
+      ),
+  ];
+
+  List<(String, int)> get aiCounts => latestAiCounts(sacks);
+}
+
+/// One printable sack label.
+class SackLabel {
+  const SackLabel({
+    required this.itemId,
+    required this.label,
+    required this.grainType,
+  });
+
+  final String itemId;
+  final String label;
+  final String grainType;
+
+  /// What the QR code encodes.
+  String get payload => sackLabelPayload(itemId);
+}
+
+/// QR payload for a sack label: `kernel:item:<itemId>`.
+String sackLabelPayload(String itemId) => 'kernel:item:$itemId';
+
+/// Sacks by the result of their latest scan (any quality).
+List<(String, int)> latestAiCounts(List<ReportItem> sacks) {
+  int count(bool Function(ScanRecord scan) test) => sacks.where((s) {
+    final scan = s.latestScan;
+    return scan != null && test(scan);
+  }).length;
+  return [
+    ('Clean', count((s) => s.result == Classification.clean)),
+    ('Uncertain', count((s) => s.result == Classification.uncertain)),
+    ('Infested', count((s) => s.result == Classification.infested)),
+    (notEvaluatedOther, count((s) => s.result == Classification.notEvaluated)),
+    (noScanRecorded, sacks.where((s) => s.latestScan == null).length),
+  ];
 }
 
 /// Disclaimer printed on every report (guardrails §4).
@@ -59,10 +188,23 @@ const reportDisclaimer = <String>[
       'marked "Not evaluated" carry no AI prediction.',
 ];
 
+/// Pre-sale summary note (shown with [reportDisclaimer]).
+const preSaleNotice =
+    'This summary is prepared by the seller from records on this device. It '
+    'is not a quality certificate; buyers should confirm by physical '
+    'inspection.';
+
+/// Lot summary statement (guardrails §5).
+const lotDecisionNotice =
+    'This summary is not an accept/reject decision. Kernel never accepts or '
+    'rejects a lot from acoustic screening. The screening status was set by '
+    'a person, and any decision requires physical inspection.';
+
 const notEvaluatedNoModel = 'Not evaluated — no model installed';
 const notEvaluatedRetry = 'Not evaluated — recording needs a retry';
 const notEvaluatedOther = 'Not evaluated';
 const noScanRecorded = 'No scan recorded';
+const notInspected = 'Not inspected';
 
 /// Human-readable AI result. Never mixed with a verified finding.
 String predictedClassLabel(ScanRecord scan) => switch (scan.result) {
@@ -86,6 +228,13 @@ String followUpLabel(FollowUpStatus status) => switch (status) {
   FollowUpStatus.open => 'Open',
   FollowUpStatus.inProgress => 'In progress',
   FollowUpStatus.done => 'Done',
+};
+
+String screeningStatusLabel(ScreeningStatus status) => switch (status) {
+  ScreeningStatus.pending => 'Pending',
+  ScreeningStatus.screening => 'Screening',
+  ScreeningStatus.needsPhysicalCheck => 'Needs physical check',
+  ScreeningStatus.reviewed => 'Reviewed',
 };
 
 String roleLabel(Role role) => switch (role) {

@@ -90,10 +90,10 @@ class LocalNotificationReminderScheduler implements ReminderScheduler {
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       title: 'Grain check due',
       body: 'Time to re-scan or inspect "${notification.itemLabel}".',
-      payload: jsonEncode({
-        'reminderId': notification.reminderId,
-        'itemId': notification.itemId,
-      }),
+      payload: encodeReminderPayload(
+        reminderId: notification.reminderId,
+        itemId: notification.itemId,
+      ),
     );
   }
 
@@ -112,5 +112,16 @@ class LocalNotificationReminderScheduler implements ReminderScheduler {
         >();
     if (android == null) return false;
     return await android.requestNotificationsPermission() ?? false;
+  }
+
+  /// Uses `getNotificationAppLaunchDetails`, which reports the notification
+  /// that started the app from closed. Taps while the app is running go to
+  /// [onReminderTapped] instead.
+  @override
+  Future<String?> launchPayload() async {
+    await initialize();
+    final details = await _plugin.getNotificationAppLaunchDetails();
+    if (details == null || !details.didNotificationLaunchApp) return null;
+    return details.notificationResponse?.payload;
   }
 }

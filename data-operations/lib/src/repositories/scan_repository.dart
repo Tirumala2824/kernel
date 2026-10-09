@@ -67,13 +67,14 @@ class DriftScanRepository implements ScanRepository {
               latencyMs: outcome.latencyMs,
               deviceModel: outcome.deviceModel,
               osVersion: outcome.osVersion,
+              audioRetained: Value(outcome.audioRetained),
             ),
           );
       return row.toModel();
     });
   }
 
-  /// Newest first.
+  /// Newest first. The item's full history, also while it is archived.
   @override
   Stream<List<ScanRecord>> watchForItem(String itemId) {
     final query = _db.select(_db.scans)
@@ -82,16 +83,55 @@ class DriftScanRepository implements ScanRepository {
     return query.watch().map(_toModels);
   }
 
-  /// Newest first, across all items.
+  /// Newest first, across all items that are not archived.
   @override
   Stream<List<ScanRecord>> watchRecent({int limit = 50}) {
     if (limit <= 0) {
       throw ArgumentError.value(limit, 'limit', 'must be positive');
     }
-    final query = _db.select(_db.scans)
-      ..orderBy(_newestFirst)
-      ..limit(limit);
-    return query.watch().map(_toModels);
+    return _watchJoined(const Constant(true), limit: limit);
+  }
+
+  /// Scans captured at or after [since], newest first, for items that are
+  /// not archived, optionally only items owned by [role].
+  @override
+  Stream<List<ScanRecord>> watchSince(DateTime since, {Role? role}) {
+    final scans = _db.scans;
+    final items = _db.items;
+    return _watchJoined(
+      scans.capturedAt.isBiggerOrEqualValue(since.toUtc()) &
+          (role == null
+              ? const Constant(true)
+              : items.ownerRole.equalsValue(role)),
+    );
+  }
+
+  /// Any stored scan, including those of archived items.
+  @override
+  Future<ScanRecord?> get(String scanId) async {
+    final row = await (_db.select(
+      _db.scans,
+    )..where((s) => s.id.equals(scanId))).getSingleOrNull();
+    return row?.toModel();
+  }
+
+  Stream<List<ScanRecord>> _watchJoined(Expression<bool> filter, {int? limit}) {
+    final scans = _db.scans;
+    final items = _db.items;
+    final query =
+        _db.select(scans).join([
+            innerJoin(items, items.id.equalsExp(scans.itemId)),
+          ])
+          ..where(items.archivedAt.isNull() & filter)
+          ..orderBy([
+            OrderingTerm.desc(scans.capturedAt),
+            OrderingTerm.desc(scans.createdAt),
+            OrderingTerm.desc(scans.id),
+          ]);
+    if (limit != null) query.limit(limit);
+    return query.watch().map(
+      (rows) => [for (final row in rows) row.readTable(scans).toModel()],
+    );
   }
 
   @override
