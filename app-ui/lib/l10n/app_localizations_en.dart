@@ -10,6 +10,200 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get qrTitle => 'Open from a QR label';
+
+  @override
+  String get qrInstructions =>
+      'Hold the label inside the frame. It opens as soon as it is read.';
+
+  @override
+  String get qrNotKernel =>
+      'This QR code is not a Kernel sack label. Point the camera at a label printed from Kernel.';
+
+  @override
+  String get qrUnknownItem =>
+      'This label belongs to a sack that is not on this phone.';
+
+  @override
+  String qrLookupFailed(String detail) {
+    return 'Could not open the sack: $detail';
+  }
+
+  @override
+  String get qrScanAnother => 'Scan another label';
+
+  @override
+  String get qrRationaleTitle => 'Use the camera to read sack labels';
+
+  @override
+  String get qrRationaleBody =>
+      'Kernel uses the camera only to read QR sack labels and to take inspection photos. Labels are read on this phone; camera images are not saved or uploaded.';
+
+  @override
+  String get qrAllowCamera => 'Allow camera';
+
+  @override
+  String get qrCameraDenied =>
+      'Camera access was not allowed. You can still open sacks from your inventory.';
+
+  @override
+  String get qrCameraBlocked =>
+      'Camera access is blocked for Kernel. Open the phone settings, choose Permissions, then allow Camera.';
+
+  @override
+  String get qrPrivacyNote =>
+      'The label is read on this phone. Nothing is uploaded.';
+
+  @override
+  String get labelSampleTitle => 'Label research recording';
+
+  @override
+  String get labelRuleNote =>
+      'Only label Clean or Infested when a physical inspection of this sack confirmed it. Otherwise choose Unknown.';
+
+  @override
+  String get labelCleanHelp => 'Confirmed by an inspection that found no pests';
+
+  @override
+  String get labelCleanNeedsInspection =>
+      'Needs an inspection of this sack that found no pests';
+
+  @override
+  String get labelInfestedHelp => 'Confirmed by an inspection that found pests';
+
+  @override
+  String get labelInfestedNeedsInspection =>
+      'Needs an inspection of this sack that found pests';
+
+  @override
+  String get labelUnknownHelp =>
+      'No inspection confirms the state of this sack';
+
+  @override
+  String get labelNeedsEvidence =>
+      'Clean and Infested need an inspection of this sack that agrees. Choose Unknown or record an inspection first.';
+
+  @override
+  String get evidenceTitle => 'Confirming inspection';
+
+  @override
+  String get evidenceBody => 'Choose the inspection done for this recording.';
+
+  @override
+  String get sackMaterialField => 'Sack or container material';
+
+  @override
+  String get notRecorded => 'Not recorded';
+
+  @override
+  String get environmentField => 'Environment';
+
+  @override
+  String get environmentHelper =>
+      'Where it was recorded, for example a quiet room or a warehouse with fans';
+
+  @override
+  String get envQuietRoom => 'Quiet room';
+
+  @override
+  String get envWarehouse => 'Warehouse';
+
+  @override
+  String get envFansOn => 'Fans or machines on';
+
+  @override
+  String get envOutdoors => 'Outdoors';
+
+  @override
+  String get materialJute => 'Jute';
+
+  @override
+  String get materialWovenPp => 'Woven polypropylene';
+
+  @override
+  String get materialCotton => 'Cotton';
+
+  @override
+  String get materialPlastic => 'Plastic container';
+
+  @override
+  String get materialMetal => 'Metal container';
+
+  @override
+  String get materialOther => 'Other';
+
+  @override
+  String get sampleSave => 'Save labelled sample';
+
+  @override
+  String get sampleSaved => 'Labelled sample saved on this phone';
+
+  @override
+  String sampleRejected(String detail) {
+    return 'The label was not saved: $detail';
+  }
+
+  @override
+  String get sampleUnusableRetry =>
+      'This recording was not usable, so it cannot be labelled. Record it again in a quiet place.';
+
+  @override
+  String get sampleUnusableNotKept =>
+      'The audio for this recording was not kept, so it cannot be labelled.';
+
+  @override
+  String get sampleRecordAgain => 'Record again';
+
+  @override
+  String get samplesTitle => 'Research samples';
+
+  @override
+  String samplesSubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count labelled recordings on this phone',
+      one: '1 labelled recording on this phone',
+      zero: 'No labelled recordings yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get samplesResearchOff =>
+      'Research recording mode is off. Turn it on in Settings to record new samples.';
+
+  @override
+  String get samplesEmpty => 'No labelled samples yet';
+
+  @override
+  String get samplesEmptyDetail =>
+      'With research mode on, open a sack and choose \"Record labelled sample\".';
+
+  @override
+  String get datasetTitle => 'Training dataset';
+
+  @override
+  String get datasetBody =>
+      'A ZIP of the kept recordings and a CSV of their labels, written on this phone. You choose where to share it; Kernel never uploads it.';
+
+  @override
+  String get datasetExport => 'Export dataset';
+
+  @override
+  String datasetExportFailed(String detail) {
+    return 'The dataset could not be created or shared. $detail';
+  }
+
+  @override
+  String sampleLabelChip(String label) {
+    return 'Label: $label';
+  }
+
+  @override
+  String get sampleConfirmed => 'Confirmed by inspection';
+
+  @override
   String get inspectionTitle => 'Physical inspection';
 
   @override

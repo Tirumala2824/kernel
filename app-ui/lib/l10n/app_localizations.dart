@@ -94,6 +94,324 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('en')];
 
+  /// QR screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Open from a QR label'**
+  String get qrTitle;
+
+  /// QR scanning instructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold the label inside the frame. It opens as soon as it is read.'**
+  String get qrInstructions;
+
+  /// Friendly error for any other QR code.
+  ///
+  /// In en, this message translates to:
+  /// **'This QR code is not a Kernel sack label. Point the camera at a label printed from Kernel.'**
+  String get qrNotKernel;
+
+  /// Valid label, unknown item.
+  ///
+  /// In en, this message translates to:
+  /// **'This label belongs to a sack that is not on this phone.'**
+  String get qrUnknownItem;
+
+  /// Error.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the sack: {detail}'**
+  String qrLookupFailed(String detail);
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan another label'**
+  String get qrScanAnother;
+
+  /// Camera permission rationale title.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the camera to read sack labels'**
+  String get qrRationaleTitle;
+
+  /// Camera permission rationale.
+  ///
+  /// In en, this message translates to:
+  /// **'Kernel uses the camera only to read QR sack labels and to take inspection photos. Labels are read on this phone; camera images are not saved or uploaded.'**
+  String get qrRationaleBody;
+
+  /// Requests the camera permission.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow camera'**
+  String get qrAllowCamera;
+
+  /// Camera denied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access was not allowed. You can still open sacks from your inventory.'**
+  String get qrCameraDenied;
+
+  /// Camera permanently denied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is blocked for Kernel. Open the phone settings, choose Permissions, then allow Camera.'**
+  String get qrCameraBlocked;
+
+  /// QR privacy note.
+  ///
+  /// In en, this message translates to:
+  /// **'The label is read on this phone. Nothing is uploaded.'**
+  String get qrPrivacyNote;
+
+  /// Label form title.
+  ///
+  /// In en, this message translates to:
+  /// **'Label research recording'**
+  String get labelSampleTitle;
+
+  /// Research label rule.
+  ///
+  /// In en, this message translates to:
+  /// **'Only label Clean or Infested when a physical inspection of this sack confirmed it. Otherwise choose Unknown.'**
+  String get labelRuleNote;
+
+  /// Label option help.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed by an inspection that found no pests'**
+  String get labelCleanHelp;
+
+  /// Why Clean is unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs an inspection of this sack that found no pests'**
+  String get labelCleanNeedsInspection;
+
+  /// Label option help.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed by an inspection that found pests'**
+  String get labelInfestedHelp;
+
+  /// Why Infested is unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs an inspection of this sack that found pests'**
+  String get labelInfestedNeedsInspection;
+
+  /// Label option help.
+  ///
+  /// In en, this message translates to:
+  /// **'No inspection confirms the state of this sack'**
+  String get labelUnknownHelp;
+
+  /// Validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Clean and Infested need an inspection of this sack that agrees. Choose Unknown or record an inspection first.'**
+  String get labelNeedsEvidence;
+
+  /// Evidence picker title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirming inspection'**
+  String get evidenceTitle;
+
+  /// Evidence picker body.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the inspection done for this recording.'**
+  String get evidenceBody;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Sack or container material'**
+  String get sackMaterialField;
+
+  /// Empty picker option.
+  ///
+  /// In en, this message translates to:
+  /// **'Not recorded'**
+  String get notRecorded;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Environment'**
+  String get environmentField;
+
+  /// Form helper.
+  ///
+  /// In en, this message translates to:
+  /// **'Where it was recorded, for example a quiet room or a warehouse with fans'**
+  String get environmentHelper;
+
+  /// Environment preset.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet room'**
+  String get envQuietRoom;
+
+  /// Environment preset.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse'**
+  String get envWarehouse;
+
+  /// Environment preset.
+  ///
+  /// In en, this message translates to:
+  /// **'Fans or machines on'**
+  String get envFansOn;
+
+  /// Environment preset.
+  ///
+  /// In en, this message translates to:
+  /// **'Outdoors'**
+  String get envOutdoors;
+
+  /// Sack material.
+  ///
+  /// In en, this message translates to:
+  /// **'Jute'**
+  String get materialJute;
+
+  /// Sack material.
+  ///
+  /// In en, this message translates to:
+  /// **'Woven polypropylene'**
+  String get materialWovenPp;
+
+  /// Sack material.
+  ///
+  /// In en, this message translates to:
+  /// **'Cotton'**
+  String get materialCotton;
+
+  /// Container material.
+  ///
+  /// In en, this message translates to:
+  /// **'Plastic container'**
+  String get materialPlastic;
+
+  /// Container material.
+  ///
+  /// In en, this message translates to:
+  /// **'Metal container'**
+  String get materialMetal;
+
+  /// Material.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get materialOther;
+
+  /// Form button.
+  ///
+  /// In en, this message translates to:
+  /// **'Save labelled sample'**
+  String get sampleSave;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Labelled sample saved on this phone'**
+  String get sampleSaved;
+
+  /// Repository rejected the label.
+  ///
+  /// In en, this message translates to:
+  /// **'The label was not saved: {detail}'**
+  String sampleRejected(String detail);
+
+  /// RETRY recordings are never labelled.
+  ///
+  /// In en, this message translates to:
+  /// **'This recording was not usable, so it cannot be labelled. Record it again in a quiet place.'**
+  String get sampleUnusableRetry;
+
+  /// No retained audio.
+  ///
+  /// In en, this message translates to:
+  /// **'The audio for this recording was not kept, so it cannot be labelled.'**
+  String get sampleUnusableNotKept;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Record again'**
+  String get sampleRecordAgain;
+
+  /// Samples screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Research samples'**
+  String get samplesTitle;
+
+  /// Sample count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No labelled recordings yet} =1{1 labelled recording on this phone} other{{count} labelled recordings on this phone}}'**
+  String samplesSubtitle(int count);
+
+  /// Research mode off note.
+  ///
+  /// In en, this message translates to:
+  /// **'Research recording mode is off. Turn it on in Settings to record new samples.'**
+  String get samplesResearchOff;
+
+  /// Empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'No labelled samples yet'**
+  String get samplesEmpty;
+
+  /// Empty state detail.
+  ///
+  /// In en, this message translates to:
+  /// **'With research mode on, open a sack and choose \"Record labelled sample\".'**
+  String get samplesEmptyDetail;
+
+  /// Dataset export card.
+  ///
+  /// In en, this message translates to:
+  /// **'Training dataset'**
+  String get datasetTitle;
+
+  /// Dataset export explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'A ZIP of the kept recordings and a CSV of their labels, written on this phone. You choose where to share it; Kernel never uploads it.'**
+  String get datasetBody;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Export dataset'**
+  String get datasetExport;
+
+  /// Error.
+  ///
+  /// In en, this message translates to:
+  /// **'The dataset could not be created or shared. {detail}'**
+  String datasetExportFailed(String detail);
+
+  /// Sample label chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Label: {label}'**
+  String sampleLabelChip(String label);
+
+  /// Sample linked to an agreeing inspection.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed by inspection'**
+  String get sampleConfirmed;
+
   /// Inspection form title.
   ///
   /// In en, this message translates to:
