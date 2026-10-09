@@ -16,6 +16,8 @@ Future<List<Override>> bootstrapOverrides() async {
   try {
     ops = await DataOperations.open(
       deleteRetainedAudio: engine.deleteRetainedAudio,
+      retainedAudioPath: engine.retainedAudioPath,
+      currentModelNote: () async => (await engine.info()).modelNote,
     );
   } catch (error, stack) {
     debugPrint('Kernel: local data failed to open: $error\n$stack');
@@ -33,5 +35,8 @@ Future<List<Override>> bootstrapOverrides() async {
     rankingServiceProvider.overrideWithValue(ops.ranking),
     reportServiceProvider.overrideWithValue(ops.reports),
     privacyServiceProvider.overrideWithValue(ops.privacy),
+    harvestRepositoryProvider.overrideWithValue(ops.harvests),
+    labeledSampleRepositoryProvider.overrideWithValue(ops.labeledSamples),
+    datasetExportServiceProvider.overrideWithValue(ops.datasetExport),
   ];
 }
