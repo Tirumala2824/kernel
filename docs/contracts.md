@@ -72,5 +72,15 @@ Enum `Role { farmer, household, storageFpo, buyer }`. Switching role only change
 ## Ranking rule (F08)
 Rank only items whose **latest valid scan** (quality PASS and classification not notEvaluated) shares the same `modelVersion` as the others in the queue. Order: infested > uncertain > clean, then oldest scan first. Every other item goes into a separate "needs scan" group. While no model is bundled, every item is "needs scan". That is the honest, expected behaviour.
 
+## Package entry points (what the lead wires in `app-ui/lib/bootstrap.dart`)
+- `package:audio_ai/audio_ai.dart` exports `class NativeScanEngine implements ScanEngine` with a no-arg constructor.
+- `package:data_operations/data_operations.dart` exports `class DataOperations` with:
+  - `static Future<DataOperations> open()` (app-private DB file and real notification scheduler)
+  - fields `items`, `locations`, `lots`, `scans`, `inspections`, `reminders`, `settings`, `ranking`, `reports`, `privacy` (typed by the contracts interfaces)
+  - `Future<void> close()`
+
+  Tests may construct it over an in-memory executor and test-only scheduler, from inside `test/`.
+- `app-ui` declares one riverpod provider per interface. Providers are unbound by default, and `bootstrap.dart` overrides them with the real implementations.
+
 ## Native bridge (audio-ai internal)
 Dart ↔ Kotlin goes through a **pigeon**-generated API in `audio-ai/pigeons/`. The Dart `ScanEngine` implementation in `audio-ai/lib/` maps the pigeon types to the `contracts` types. The app-ui never touches the channel directly.
