@@ -12,6 +12,7 @@ class ScanAnalyzerTest {
     private class ScriptedModel(private val answer: Prediction?) : ModelHandle {
         override val version = "test-model-1"
         override val experimental = true
+        override val note: String? = "scripted test model"
         override val logMelConfig = LogMelConfig.PROVISIONAL
         var calls = 0
         var lastFrames = -1
@@ -52,6 +53,37 @@ class ScanAnalyzerTest {
 
         val unsure = ScriptedModel(null)
         assertNull(analyzer.analyze(Signals.sine(1000.0, 16_000, 2000, -50.0), 16_000, unsure).prediction)
+    }
+
+    /** Test clock: every reading advances by 1 ms, so each stage that runs takes exactly 1 ms. */
+    private fun steppingClock(): () -> Long {
+        var now = 0L
+        return { now.also { now += 1_000_000L } }
+    }
+
+    @Test
+    fun timingsCoverEveryStageThatRan() {
+        val withModel = ScanAnalyzer(clock = steppingClock())
+            .analyze(Signals.sine(1000.0, 16_000, 2000, -50.0), 16_000, ScriptedModel(null))
+        assertEquals(StageTimings(1_000_000, 1_000_000, 1_000_000, 1_000_000), withModel.timings)
+        assertEquals(4_000_000, withModel.timings.totalNanos)
+
+        val noModel = ScanAnalyzer(clock = steppingClock())
+            .analyze(Signals.sine(1000.0, 16_000, 2000, -50.0), 16_000, NoModel)
+        assertEquals(0, noModel.timings.inferenceNanos, "no model, no inference time")
+        assertEquals(1_000_000, noModel.timings.logMelNanos)
+    }
+
+    @Test
+    fun retryTimingsHaveOnlyTheGate() {
+        val a = ScanAnalyzer(clock = steppingClock()).analyze(ShortArray(32_000), 16_000, ScriptedModel(null))
+        assertEquals(StageTimings(1_000_000, 0, 0, 0), a.timings)
+    }
+
+    @Test
+    fun realClockTimingsAreNonNegative() {
+        val t = analyzer.analyze(Signals.sine(1000.0, 48_000, 2000, -50.0), 48_000, ScriptedModel(null)).timings
+        assertTrue(t.gateNanos >= 0 && t.resampleNanos >= 0 && t.logMelNanos >= 0 && t.inferenceNanos >= 0, "$t")
     }
 
     @Test

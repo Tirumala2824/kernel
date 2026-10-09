@@ -61,6 +61,33 @@ class WavAndStoreTest {
     }
 
     @Test
+    fun pathForReturnsTheAbsolutePathOnlyWhenTheRecordingExists() {
+        val store = RecordingStore(dir)
+        val id = "3f2b8c1e-4d5a-4b6c-8d7e-9f0a1b2c3d4e"
+        assertNull(store.pathFor(id), "nothing retained yet")
+
+        val saved = store.save(id, ShortArray(160), 16_000)!!
+        val path = store.pathFor(id)!!
+        assertTrue(File(path).isAbsolute)
+        assertEquals(saved.canonicalPath, File(path).canonicalPath)
+        assertTrue(path.endsWith("recordings${File.separator}$id.wav"), path)
+
+        assertNull(store.pathFor("0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d"), "other scan was not retained")
+        store.deleteAll()
+        assertNull(store.pathFor(id), "deleted recordings have no path")
+    }
+
+    @Test
+    fun pathForRefusesNonUuidIds() {
+        val store = RecordingStore(dir)
+        File(dir, "recordings").mkdirs()
+        File(File(dir, "recordings"), "x.wav").writeBytes(ByteArray(44))
+        assertNull(store.pathFor("x"))
+        assertNull(store.pathFor("../recordings/x"))
+        assertNull(store.pathFor(""))
+    }
+
+    @Test
     fun storeRefusesNonUuidIds() {
         val store = RecordingStore(dir)
         assertNull(store.save("../escape", ShortArray(160), 16_000))

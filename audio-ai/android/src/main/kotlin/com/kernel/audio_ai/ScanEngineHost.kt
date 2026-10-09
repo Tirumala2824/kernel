@@ -11,20 +11,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import java.util.Locale
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * Pigeon host: permission check -> start cue -> capture (own thread) ->
- * quality gate -> log-mel -> model (only if a real one is bundled) ->
- * finish/retry cue -> result. Audio and model problems become RETRY or
+ * Pigeon host: permission check -> start cue -> capture (own thread, live
+ * levels) -> quality gate -> log-mel -> model (only if a real one is bundled)
+ * -> finish/retry cue -> result. Audio and model problems become RETRY or
  * NOT_EVALUATED results and are never thrown to Dart.
  *
- * Privacy: audio is never logged or sent anywhere. Buffers are zeroed after
- * analysis. The only persistence is the retain-audio opt-in, which writes to
- * app-private storage.
+ * Privacy: audio is never logged or sent anywhere. Live levels are scalar
+ * dBFS readings only. Buffers are zeroed after analysis. The only persistence
+ * is the retain-audio opt-in, which writes to app-private storage.
  */
-class ScanEngineHost(context: Context) : ScanHostApi {
+class ScanEngineHost(
+    context: Context,
+    private val levels: CaptureLevelEmitter,
+) : ScanHostApi {
     private val appContext = context.applicationContext
     private val capture = AudioCapture(appContext)
     private val haptics = Haptics(appContext)
@@ -45,6 +49,10 @@ class ScanEngineHost(context: Context) : ScanHostApi {
     @Volatile
     private var lastEffectiveRate: Int? = null
 
+    /** HAL capture rate from the last capture that reported one (API 29+). */
+    @Volatile
+    private var lastDeviceInputRate: Int? = null
+
     @Volatile
     private var loggedCaptureConfig: String? = null
 
@@ -61,7 +69,7 @@ class ScanEngineHost(context: Context) : ScanHostApi {
         }
     }
 
-    override suspend fun captureAndAnalyze(scanId: String, retainAudio: Boolean): NativeScanResult {
+    override suspend fun captureAndAnalyze(scanId: String, retainAudio: Boolean, haptics: Boolean): NativeScanResult {
         val calledAt = System.currentTimeMillis()
         if (!capture.hasPermission()) return notRecorded(NativeQualityReason.PERMISSION_DENIED, calledAt)
         if (!busy.compareAndSet(false, true)) {
@@ -69,7 +77,7 @@ class ScanEngineHost(context: Context) : ScanHostApi {
             return notRecorded(NativeQualityReason.CAPTURE_ERROR, calledAt)
         }
         return try {
-            withContext(captureDispatcher) { scan(scanId, retainAudio, calledAt) }
+            withContext(captureDispatcher) { scan(scanId, retainAudio, haptics, calledAt) }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Throwable) {
@@ -92,11 +100,18 @@ class ScanEngineHost(context: Context) : ScanHostApi {
             delegate = if (present) NativeDelegate.CPU else NativeDelegate.NONE,
             deviceModel = DEVICE_MODEL,
             osVersion = OS_VERSION,
+            modelNote = if (present) handle.note else null,
+            audioSource = AudioCapture.AUDIO_SOURCE_NAME,
+            deviceInputSampleRate = lastDeviceInputRate?.toLong(),
         )
     }
 
     override suspend fun deleteRetainedAudio(): Long = withContext(Dispatchers.IO) {
         store.deleteAll().toLong()
+    }
+
+    override suspend fun retainedAudioPath(scanId: String): String? = withContext(Dispatchers.IO) {
+        store.pathFor(scanId)
     }
 
     fun close() {
@@ -111,31 +126,36 @@ class ScanEngineHost(context: Context) : ScanHostApi {
     }
 
     /** Runs on the capture thread. */
-    private fun scan(scanId: String, retainAudio: Boolean, calledAt: Long): NativeScanResult {
-        if (haptics.start()) Thread.sleep(Haptics.START_SETTLE_MS)
+    private fun scan(scanId: String, retainAudio: Boolean, hapticsOn: Boolean, calledAt: Long): NativeScanResult {
+        val scanStart = SystemClock.elapsedRealtimeNanos()
+        // haptics=false (in-app setting off) means no cue at all, and no settle wait.
+        if (hapticsOn && haptics.start()) Thread.sleep(Haptics.START_SETTLE_MS)
 
+        val captureStart = SystemClock.elapsedRealtimeNanos()
         val recording = try {
-            capture.record(TARGET_DURATION_MS)
+            capture.record(TARGET_DURATION_MS, levels::emit)
         } catch (e: SecurityException) {
             return notRecorded(NativeQualityReason.PERMISSION_DENIED, calledAt)
         } catch (e: CaptureException) {
             Log.w(TAG, "capture failed: ${e.message}")
-            haptics.retry()
+            if (hapticsOn) haptics.retry()
             return notRecorded(NativeQualityReason.CAPTURE_ERROR, calledAt)
         } catch (e: RuntimeException) {
             // AudioRecord state errors (IllegalStateException etc.).
             Log.w(TAG, "capture failed: ${e.javaClass.simpleName}")
-            haptics.retry()
+            if (hapticsOn) haptics.retry()
             return notRecorded(NativeQualityReason.CAPTURE_ERROR, calledAt)
         }
 
         try {
             lastEffectiveRate = recording.sampleRate
+            recording.deviceInputRate?.let { lastDeviceInputRate = it }
             logCaptureConfigOnce(recording)
             val handle = model.handle()
 
             val reasons: List<NativeQualityReason>
             val prediction: Prediction?
+            var analysis: Analysis? = null
             if (recording.clientSilenced) {
                 // Android handed the mic to another app and fed us zeros. That
                 // is not "silence" in the room.
@@ -143,17 +163,34 @@ class ScanEngineHost(context: Context) : ScanHostApi {
                 reasons = listOf(NativeQualityReason.CAPTURE_ERROR)
                 prediction = null
             } else {
-                val analysis = analyzer.analyze(recording.pcm, recording.sampleRate, handle)
-                reasons = analysis.reasons.map(::toNative)
-                prediction = analysis.prediction
-                if (debuggable) logMetrics(scanId, analysis)
+                val a = analyzer.analyze(recording.pcm, recording.sampleRate, handle)
+                analysis = a
+                reasons = a.reasons.map(::toNative)
+                prediction = a.prediction
+                if (debuggable) logMetrics(scanId, a)
             }
 
             val pass = reasons.isEmpty()
-            if (pass) haptics.finish() else haptics.retry()
-            if (retainAudio) retain(scanId, recording)
+            if (hapticsOn) {
+                if (pass) haptics.finish() else haptics.retry()
+            }
+            val retainStart = SystemClock.elapsedRealtimeNanos()
+            val retained = retainAudio && retain(scanId, recording)
 
             val classified = if (pass) prediction else null
+            val resultReady = SystemClock.elapsedRealtimeNanos()
+            val latencyMs = (resultReady - recording.endedAtElapsedNanos) / 1_000_000L
+            if (debuggable) {
+                logBenchmark(
+                    scanId = scanId,
+                    settleNanos = captureStart - scanStart,
+                    captureNanos = recording.endedAtElapsedNanos - captureStart,
+                    timings = analysis?.timings,
+                    retainNanos = resultReady - retainStart,
+                    latencyMs = latencyMs,
+                    totalNanos = resultReady - scanStart,
+                )
+            }
             return NativeScanResult(
                 qualityPass = pass,
                 qualityReasons = reasons,
@@ -162,30 +199,41 @@ class ScanEngineHost(context: Context) : ScanHostApi {
                 experimental = handle.experimental,
                 modelVersion = handle.version,
                 capturedAtEpochMs = recording.startedAtEpochMs,
-                latencyMs = (SystemClock.elapsedRealtimeNanos() - recording.endedAtElapsedNanos) / 1_000_000L,
+                latencyMs = latencyMs,
                 durationMs = recording.durationMs.toLong(),
                 sampleRate = recording.sampleRate.toLong(),
                 deviceModel = DEVICE_MODEL,
                 osVersion = OS_VERSION,
+                audioRetained = retained,
             )
         } finally {
             recording.discard()
         }
     }
 
-    private fun retain(scanId: String, recording: Recording) {
-        try {
+    /** Returns true only if the WAV was actually written. */
+    private fun retain(scanId: String, recording: Recording): Boolean {
+        if (recording.clientSilenced) {
+            // The system replaced the audio with zeros; there is nothing real to keep.
+            Log.w(TAG, "retain-audio skipped for scan $scanId (capture silenced by the system)")
+            return false
+        }
+        return try {
             if (store.save(scanId, recording.pcm, recording.sampleRate) == null) {
                 Log.w(TAG, "retain-audio skipped for scan $scanId (invalid id or storage unavailable)")
+                false
+            } else {
+                true
             }
         } catch (e: IOException) {
             Log.w(TAG, "retain-audio failed for scan $scanId: ${e.javaClass.simpleName}")
+            false
         }
     }
 
     /** Technical capture configuration only (no audio), logged when it changes. */
     private fun logCaptureConfigOnce(recording: Recording) {
-        val config = "source=VOICE_RECOGNITION clientRate=${recording.sampleRate} " +
+        val config = "source=${AudioCapture.AUDIO_SOURCE_NAME} clientRate=${recording.sampleRate} " +
             "deviceRate=${recording.deviceInputRate ?: "unknown"} " +
             "resampled=${recording.sampleRate != ModelManifest.PIPELINE_SAMPLE_RATE}"
         if (config != loggedCaptureConfig) {
@@ -200,9 +248,39 @@ class ScanEngineHost(context: Context) : ScanHostApi {
         Log.d(
             TAG,
             "gate scan=$scanId durMs=${m.durationMs} rms=%.1f floor=%.1f peak=%.1f snr=%.1f clip=%.5f reasons=%s frames=%d"
-                .format(m.rmsDbfs, m.noiseFloorDbfs, m.peakFrameDbfs, m.snrDb, m.clipFraction, analysis.reasons, analysis.logMelFrames),
+                .format(Locale.ROOT, m.rmsDbfs, m.noiseFloorDbfs, m.peakFrameDbfs, m.snrDb, m.clipFraction, analysis.reasons, analysis.logMelFrames),
         )
     }
+
+    /**
+     * Debuggable builds only: per-stage wall-clock timings in ms.
+     * - settle: start haptic plus motor ring-down wait (0 with haptics off)
+     * - capture: AudioRecord setup + 100 ms warm-up + the kept audio
+     * - gate / resample / logMel / inference: [StageTimings]
+     * - retain: WAV write under the opt-in (0 when off)
+     * - latency: what ScanOutcome.latencyMs reports (capture end -> result ready)
+     * - total: the whole native scan, from the start cue to the result
+     */
+    private fun logBenchmark(
+        scanId: String,
+        settleNanos: Long,
+        captureNanos: Long,
+        timings: StageTimings?,
+        retainNanos: Long,
+        latencyMs: Long,
+        totalNanos: Long,
+    ) {
+        val t = timings ?: StageTimings(0, 0, 0, 0)
+        Log.d(
+            TAG,
+            ("bench scan=$scanId settleMs=%.1f captureMs=%.1f gateMs=%.2f resampleMs=%.2f logMelMs=%.2f " +
+                "inferenceMs=%.2f retainMs=%.2f latencyMs=%d totalMs=%.1f")
+                .format(Locale.ROOT, ms(settleNanos), ms(captureNanos), ms(t.gateNanos), ms(t.resampleNanos),
+                    ms(t.logMelNanos), ms(t.inferenceNanos), ms(retainNanos), latencyMs, ms(totalNanos)),
+        )
+    }
+
+    private fun ms(nanos: Long): Double = nanos / 1_000_000.0
 
     private fun notRecorded(reason: NativeQualityReason, calledAt: Long): NativeScanResult {
         val handle = try {
@@ -223,6 +301,7 @@ class ScanEngineHost(context: Context) : ScanHostApi {
             sampleRate = 0L,
             deviceModel = DEVICE_MODEL,
             osVersion = OS_VERSION,
+            audioRetained = false,
         )
     }
 

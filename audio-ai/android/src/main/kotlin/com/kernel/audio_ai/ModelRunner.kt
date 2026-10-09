@@ -12,7 +12,8 @@ import java.nio.ByteOrder
  * Loads the bundled LiteRT model (if any) and runs it on the CPU.
  *
  * The model is a versioned asset: `src/main/assets/models/<name>.tflite`
- * plus `<name>.properties` (see [ModelManifest]). Nothing is downloaded and
+ * plus `<name>.properties` (see [ModelManifest] and the "Model manifest"
+ * section of audio-ai/README.md). Nothing is downloaded and
  * nothing is learned on device. Today no model is bundled, so [status] is
  * [Status.Absent]. The engine then reports modelVersion "none" and
  * NOT_EVALUATED, and never produces a class.
@@ -44,7 +45,11 @@ class ModelRunner(private val context: Context) {
         when (it) {
             is Status.Absent -> Log.i(TAG, "no model bundled; scans are NOT_EVALUATED")
             is Status.Unusable -> Log.w(TAG, "bundled model unusable: ${it.reason}")
-            is Status.Ready -> Log.i(TAG, "model ${it.manifest.version} loaded (CPU)")
+            is Status.Ready -> Log.i(
+                TAG,
+                "model ${it.manifest.version} loaded (CPU, validation=${it.manifest.validation.name.lowercase()}, " +
+                    "experimental=${it.manifest.experimental}, frames=${it.frames})",
+            )
         }
     }
 
@@ -54,6 +59,7 @@ class ModelRunner(private val context: Context) {
         return object : ModelHandle {
             override val version: String = ready.manifest.version
             override val experimental: Boolean = ready.manifest.experimental
+            override val note: String? = ready.manifest.note
             override val logMelConfig: LogMelConfig = ready.manifest.logMel
             override fun classify(logMel: LogMelResult): Prediction? = this@ModelRunner.classify(logMel)
         }

@@ -49,9 +49,14 @@ class AudioCapture(private val context: Context) {
      * first, then common native rates if the device refuses 16 kHz (the
      * caller resamples). Throws [CaptureException] if no configuration works
      * or no audio could be read, and SecurityException if permission is gone.
+     *
+     * [onLevel], if given, receives a [LevelReading] every
+     * [LevelMeter.WINDOW_MS] of kept audio, on this (capture) thread, computed
+     * in the read loop. Only scalar levels are passed out, never samples.
+     * Nothing is emitted during the warm-up discard or outside this call.
      */
     @SuppressLint("MissingPermission") // Checked by the caller via hasPermission().
-    fun record(durationMs: Int): Recording {
+    fun record(durationMs: Int, onLevel: ((LevelReading) -> Unit)? = null): Recording {
         for (rate in CANDIDATE_RATES) {
             val minBuffer = AudioRecord.getMinBufferSize(rate, CHANNEL, ENCODING)
             if (minBuffer <= 0) continue
@@ -65,13 +70,14 @@ class AudioCapture(private val context: Context) {
                 record.release()
                 continue
             }
-            return recordWith(record, durationMs)
+            return recordWith(record, durationMs, onLevel)
         }
         throw CaptureException("no supported AudioRecord configuration")
     }
 
-    private fun recordWith(record: AudioRecord, durationMs: Int): Recording {
+    private fun recordWith(record: AudioRecord, durationMs: Int, onLevel: ((LevelReading) -> Unit)?): Recording {
         val rate = record.sampleRate
+        val meter = onLevel?.let { LevelMeter(rate, durationMs, onLevel = it) }
         val warmupSamples = rate * WARMUP_DISCARD_MS / 1000
         val keepSamples = rate * durationMs / 1000
         val chunkSamples = rate * READ_CHUNK_MS / 1000
@@ -107,9 +113,11 @@ class AudioCapture(private val context: Context) {
                     readError = n
                     break
                 }
+                meter?.add(out, filled, n)
                 filled += n
             }
             endedAt = SystemClock.elapsedRealtimeNanos()
+            meter?.flush()
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val config = record.activeRecordingConfiguration
@@ -148,6 +156,9 @@ class AudioCapture(private val context: Context) {
          */
         const val AUDIO_SOURCE = MediaRecorder.AudioSource.VOICE_RECOGNITION
 
+        /** Name of [AUDIO_SOURCE], reported in EngineInfo.audioSource and logcat. */
+        const val AUDIO_SOURCE_NAME = "VOICE_RECOGNITION"
+
         /** 16 kHz first (pipeline rate); then common native rates to resample from. */
         val CANDIDATE_RATES = intArrayOf(16_000, 48_000, 44_100)
 
@@ -164,8 +175,13 @@ class AudioCapture(private val context: Context) {
         /** AudioRecord internal buffer: at least 200 ms so reads never overrun. */
         const val BUFFER_MS = 200
 
-        /** Blocking read size (100 ms) so the deadline is checked regularly. */
-        const val READ_CHUNK_MS = 100
+        /**
+         * Blocking read size. 50 ms matches [LevelMeter.WINDOW_MS], so each
+         * read yields one live level reading (about 20 Hz) and the deadline is
+         * checked regularly. The 200 ms internal buffer leaves 150 ms of slack
+         * for scheduling jitter on the capture thread.
+         */
+        const val READ_CHUNK_MS = 50
 
         /** Give up if the device has not delivered the audio this long after it should have. */
         const val READ_TIMEOUT_SLACK_MS = 3_000

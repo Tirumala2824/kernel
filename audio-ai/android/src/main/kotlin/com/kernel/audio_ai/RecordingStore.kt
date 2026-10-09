@@ -21,6 +21,17 @@ class RecordingStore(filesDir: File) {
     }
 
     /**
+     * Absolute path of the retained `<scanId>.wav`, or null if [scanId] is not
+     * a UUID or no such recording exists. Writes are atomic (temp file plus
+     * rename), so an existing file is always a complete WAV.
+     */
+    fun pathFor(scanId: String): String? {
+        if (!UUID_PATTERN.matches(scanId)) return null
+        val file = File(directory, "$scanId.wav")
+        return if (file.isFile) file.absolutePath else null
+    }
+
+    /**
      * Deletes every retained recording. Returns the number of files removed.
      * Throws IOException if any file is left behind, so a failed privacy
      * delete is never reported as success.
