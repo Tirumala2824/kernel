@@ -148,7 +148,9 @@ class RemindersSection extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(KernelRadii.md),
                       border: Border.all(color: KernelColors.hairline),
                     ),
-                    child: ListTile(
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: ListTile(
                       leading: const Icon(Icons.alarm_rounded),
                       title: Text(
                         l.recheckOn(formatDateTime(context, reminder.dueAt)),
@@ -172,6 +174,7 @@ class RemindersSection extends ConsumerWidget {
                           ),
                         ],
                       ),
+                    ),
                     ),
                   ),
               ],

@@ -137,12 +137,12 @@ class _CapturePanelState extends ConsumerState<CapturePanel> {
         haptics: haptics,
       );
     } on Object catch (e) {
-      await _levelSub?.cancel();
+      _levelSub?.cancel();
       _levelSub = null;
       _set(CapturePhase.failed, error: l.scanCouldNotRun('$e'));
       return;
     }
-    await _levelSub?.cancel();
+    _levelSub?.cancel();
     _levelSub = null;
     if (voice && !_disposed) {
       unawaited(prompter.speak(l.voiceDone, languageTag: languageTag));
@@ -332,7 +332,8 @@ class _LiveSection extends StatelessWidget {
             borderRadius: BorderRadius.circular(KernelRadii.pill),
             child: LinearProgressIndicator(
               key: const Key('capture-progress'),
-              value: saving ? 1 : progress,
+              // Real elapsed progress from the engine; 0 until it reports.
+              value: saving ? 1 : (progress ?? 0),
               minHeight: 8,
               color: KernelColors.amber,
               backgroundColor: KernelColors.onForest.withValues(alpha: 0.18),

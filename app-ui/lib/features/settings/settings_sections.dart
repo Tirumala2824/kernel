@@ -27,13 +27,16 @@ class SettingsGroup extends StatelessWidget {
         boxShadow: KernelShadows.soft,
       ),
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: [
-          for (var i = 0; i < children.length; i++) ...[
-            if (i > 0) const Divider(indent: 16, endIndent: 16),
-            children[i],
+      child: Material(
+        type: MaterialType.transparency,
+        child: Column(
+          children: [
+            for (var i = 0; i < children.length; i++) ...[
+              if (i > 0) const Divider(indent: 16, endIndent: 16),
+              children[i],
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

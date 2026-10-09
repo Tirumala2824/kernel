@@ -141,12 +141,15 @@ class _BatchSessionScreenState extends ConsumerState<BatchSessionScreen> {
                 borderRadius: BorderRadius.circular(KernelRadii.md),
                 border: Border.all(color: KernelColors.hairline),
               ),
-              child: SwitchListTile(
-                key: const Key('batch-skip-today'),
-                value: _skipScannedToday,
-                onChanged: (v) => setState(() => _skipScannedToday = v),
-                title: Text(l.batchSkipToday),
-                subtitle: Text(l.batchSkipTodayBody),
+              child: Material(
+                type: MaterialType.transparency,
+                child: SwitchListTile(
+                  key: const Key('batch-skip-today'),
+                  value: _skipScannedToday,
+                  onChanged: (v) => setState(() => _skipScannedToday = v),
+                  title: Text(l.batchSkipToday),
+                  subtitle: Text(l.batchSkipTodayBody),
+                ),
               ),
             ),
             for (final (i, item) in walk.indexed)
