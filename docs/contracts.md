@@ -118,6 +118,14 @@ The source of truth is `contracts/lib/src/`. New fields are optional with defaul
   - `Future<void> close()`
 
   Tests may construct it over an in-memory executor and test-only scheduler, from inside `test/`.
+- v2 `DataOperations.open` takes these parameters:
+  - `deleteRetainedAudio: engine.deleteRetainedAudio`
+  - `retainedAudioPath: engine.retainedAudioPath`
+  - `currentModelNote: () async => (await engine.info()).modelNote`
+  - `onReminderTapped:`
+  - `notificationIcon:`
+
+  New fields: `harvests`, `labeledSamples`, `datasetExport`.
 - `app-ui` declares one riverpod provider per interface. Providers are unbound by default, and `bootstrap.dart` overrides them with the real implementations.
 
 ## Native bridge (audio-ai internal)

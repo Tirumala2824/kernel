@@ -35,8 +35,16 @@ Append new decisions at the bottom. Never rewrite past entries; supersede them w
 | 28 | 2026-10-10 | Supersedes #21: the hardware input rate is now exposed as `EngineInfo.deviceInputSampleRate` (API 29+, after the first capture). `ScanOutcome.sampleRate` is still the rate delivered to the app | W2 |
 | 29 | 2026-10-10 | `latencyMs` = capture end to result (includes the WAV write when retained). Total including capture appears only in logcat `bench … totalMs` | Keeps the v1 contract meaning |
 | 30 | 2026-10-10 | `captureLevels()` is one process-wide broadcast stream. The UI subscribes before calling `captureAndAnalyze` | The native side has a single event sink |
+| 31 | 2026-10-10 | DB schema v2. The migration only adds columns, tables, indexes and triggers, and never changes rows. Immutability triggers now also cover `audio_retained`, `photo_paths` and labels | W4 |
+| 32 | 2026-10-10 | Archiving:<br>• hides records from every `watch*`, ranking and report (`get`/`watchForItem` still resolve them)<br>• cancels the item's reminders; unarchiving reschedules them<br>• new records can't reference archived parents | W4, accepted |
+| 33 | 2026-10-10 | Labelled samples:<br>• one label per recording<br>• a RETRY recording can only be `unknown`<br>• research mode must be on | Guardrail: RETRY never carries a pest class |
+| 34 | 2026-10-10 | PDF Indic text renders with correct glyphs but **without complex shaping** (pdf 3.13.1 has no GSUB/GPOS). Conjuncts and pre-base vowel signs look wrong; text is readable but not typographically correct. CSV is exact UTF-8. Revisit: rasterise text runs, or switch PDF engine | W4 finding |
+| 35 | 2026-10-10 | `deleteAllHistory` also deletes exported dataset ZIPs (they contain audio) | Privacy |
 
 ## Contract follow-ups (proposed by agents, not yet done)
+- `LabeledSampleRepository.relabel(id, draft)`, to upgrade `unknown` once an inspection confirms the label.
+- `unarchive` for locations, lots and harvests (only items have it).
+- `deleteAllHistory` should also delete exported report files, which contain copies of the history (recommended: yes).
 - `ScanOutcome.audioRetained` flag (retained files are `files/recordings/<scanId>.wav`).
 - An in-app haptics toggle: `captureAndAnalyze(..., {bool haptics = true})`.
 - `EngineInfo.audioSource` / `deviceInputSampleRate` for the device log.
