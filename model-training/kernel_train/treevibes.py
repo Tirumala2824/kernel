@@ -29,6 +29,7 @@ import hashlib
 import random
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -143,7 +144,7 @@ def _is_valid(path: Path, item: Item) -> bool:
     return head[:4] == b"RIFF" and head[8:12] == b"WAVE"
 
 
-def _download_one(item: Item, retries: int = 4) -> str:
+def _download_one(item: Item, retries: int = 8) -> str:
     dest = RAW_DIR / item.relative_path
     if _is_valid(dest, item):
         return "cached"
@@ -165,7 +166,14 @@ def _download_one(item: Item, retries: int = 4) -> str:
             tmp.unlink(missing_ok=True)
             if attempt == retries - 1:
                 return f"FAILED {type(e).__name__}: {e}"
-            time.sleep(2.0 * (attempt + 1))
+            wait = 2.0 * (attempt + 1)
+            if isinstance(e, urllib.error.HTTPError) and e.code == 429:
+                # Rate limited: honour Retry-After, else back off for a while.
+                try:
+                    wait = max(wait, float(e.headers.get("Retry-After", "")))
+                except ValueError:
+                    wait = max(wait, 30.0 * (attempt + 1))
+            time.sleep(wait)
     return "FAILED"
 
 
@@ -207,6 +215,7 @@ if __name__ == "__main__":
         summarise(sel)
         print(f"{len(sel)} files -> {SELECTION}")
     elif cmd == "download":
-        sys.exit(1 if download(read_selection()) else 0)
+        workers = int(sys.argv[2]) if len(sys.argv) > 2 else 8
+        sys.exit(1 if download(read_selection(), workers=workers) else 0)
     else:
         raise SystemExit(f"unknown command {cmd}")

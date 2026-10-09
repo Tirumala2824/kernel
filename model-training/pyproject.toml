@@ -14,6 +14,9 @@ dependencies = [
     "scipy>=1.13",
     "soundfile>=0.12",
     "scikit-learn>=1.5",
+    # TensorFlow on Windows needs msvcp140.dll + msvcp140_1.dll. This wheel puts
+    # Microsoft's redistributable DLLs inside the venv (no system-wide install).
+    "msvc-runtime>=14.40; sys_platform == 'win32'",
 ]
 
 [dependency-groups]
@@ -32,4 +35,5 @@ package = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]  # so tests can import retrain.py
 addopts = "-q"

@@ -54,6 +54,22 @@ class LogMelGoldenFixtureTest {
         checkOrWrite("alt_power2_nyquist", config, pcm, expectedFrames = 1 + (12_345 - 640) / 320)
     }
 
+    @Test
+    fun exportedModelManifestsParseAndUseAFixtureCoveredFrontEnd() {
+        // Models exported by model-training/ must parse with the app's own
+        // ModelManifest parser, and their log-mel front end must be one whose
+        // Kotlin/Python parity this test's fixtures prove. Passes vacuously
+        // until something is exported.
+        val dist = File(repoRoot(), "model-training/dist")
+        val manifests = dist.listFiles { f -> f.name.endsWith(".properties") }.orEmpty()
+        for (file in manifests) {
+            val manifest = ModelManifest.parse(file.readText(Charsets.UTF_8))
+            assertEquals(LogMelConfig.PROVISIONAL, manifest.logMel, "${file.name}: front end not covered by a golden fixture")
+            assertTrue(manifest.experimental, "${file.name}: exported models stay experimental until field-validated")
+            assertTrue(File(dist, file.name.removeSuffix(".properties") + ".tflite").isFile, "${file.name}: missing .tflite")
+        }
+    }
+
     private fun checkOrWrite(name: String, config: LogMelConfig, pcm: ShortArray, expectedFrames: Int) {
         // Same int16 -> float conversion as ScanAnalyzer.
         val samples = FloatArray(pcm.size) { pcm[it] / QualityGate.FULL_SCALE.toFloat() }
@@ -143,13 +159,13 @@ class LogMelGoldenFixtureTest {
     }
 
     /** Repo root = first ancestor of the Gradle working dir holding both CLAUDE.md and audio-ai/. */
-    private fun fixtureDir(): File {
+    private fun fixtureDir(): File = File(repoRoot(), "tests/fixtures/logmel")
+
+    private fun repoRoot(): File {
         val workingDir = System.getProperty("user.dir") ?: error("user.dir is not set")
         var dir: File? = File(workingDir).absoluteFile
         while (dir != null) {
-            if (File(dir, "CLAUDE.md").isFile && File(dir, "audio-ai").isDirectory) {
-                return File(dir, "tests/fixtures/logmel")
-            }
+            if (File(dir, "CLAUDE.md").isFile && File(dir, "audio-ai").isDirectory) return dir
             dir = dir.parentFile
         }
         error("repo root not found above $workingDir")

@@ -238,6 +238,7 @@ name = "kernel-train"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "msvc-runtime", marker = "sys_platform == 'win32'" },
     { name = "numpy" },
     { name = "scikit-learn" },
     { name = "scipy" },
@@ -252,6 +253,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "msvc-runtime", marker = "sys_platform == 'win32'", specifier = ">=14.40" },
     { name = "numpy", specifier = ">=1.26,<2.2" },
     { name = "scikit-learn", specifier = ">=1.5" },
     { name = "scipy", specifier = ">=1.13" },
@@ -346,6 +348,16 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/c7/f9/7d76c1eae866f5d4636401b31b6d6dd90e4b4ced1fa7cfdfcca9c60e4bd3/ml_dtypes-0.6.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:3b4a480aa8fd54a1805b8ac10f3f91763926a74f73c0c364c10f9231854f4170", size = 409890, upload-time = "2026-08-13T14:14:04.248Z" },
     { url = "https://files.pythonhosted.org/packages/ba/db/9c61ec2760b5cbfb1c6558d5c991a6d8fd3271053c32db20506a9a90272b/ml_dtypes-0.6.0-cp312-cp312-win_amd64.whl", hash = "sha256:2a3e9d53925597fbffafd2a37048dadeddd0bdaba58058f6ae0869ed709a184d", size = 439333, upload-time = "2026-08-13T14:14:05.501Z" },
     { url = "https://files.pythonhosted.org/packages/6a/57/780ca3e5ab135b9fbdd8e5441abf5f801b30398371b691291e05ab9834c0/ml_dtypes-0.6.0-cp312-cp312-win_arm64.whl", hash = "sha256:6eaed129a4afe90694b8685e2f9b6294849f5eda4af9a15be83a4326eeebd775", size = 552268, upload-time = "2026-08-13T14:14:06.866Z" },
+]
+
+[[package]]
+name = "msvc-runtime"
+version = "14.44.35112"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1f/7d/f86050e24fd78e76e56145b326bfd3e7ae2c028e87e0732802a0c5144223/msvc_runtime-14.44.35112-cp312-cp312-win32.whl", hash = "sha256:7c5af6756056dbf6f3593f69b0f4575dbbd9e8ec10d3108ff00437da811a7b67", size = 1921505, upload-time = "2025-08-08T03:57:54.509Z" },
+    { url = "https://files.pythonhosted.org/packages/21/3b/134d04268ab8e35853cd007582076429b45d60d6abb1036d159be9c50342/msvc_runtime-14.44.35112-cp312-cp312-win_amd64.whl", hash = "sha256:32f9c706009e16ccc319d6947ce3bffe20e5192bee52b18cf48313f9e7bedfbe", size = 1921899, upload-time = "2025-08-08T03:57:55.648Z" },
+    { url = "https://files.pythonhosted.org/packages/a0/38/f245d6d30a76655293575683aaa5f72a7a70fc8efa1637bf6fd9e5e7e665/msvc_runtime-14.44.35112-cp312-cp312-win_arm64.whl", hash = "sha256:62f272c51f30ce0de1b7a796e50af4d3911b76cbc9bc909917435d094f68d5fe", size = 3208186, upload-time = "2025-08-08T03:57:57.401Z" },
 ]
 
 [[package]]

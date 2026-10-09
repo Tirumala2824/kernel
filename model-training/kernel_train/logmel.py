@@ -157,6 +157,25 @@ class LogMel:
         """float32 [frames, nMels], frame-major like LogMelResult.values."""
         return self.log(self.mel_spectrum(samples))
 
+    def compute_batch(self, windows: np.ndarray) -> np.ndarray:
+        """float32 [B, frames, nMels] for equal-length windows [B, N].
+
+        Same operations as compute() per row; only BLAS summation order may
+        differ (~1e-15 relative), see tests/test_features.py.
+        """
+        cfg = self.cfg
+        w = np.asarray(windows)
+        if w.ndim != 2:
+            raise ValueError("windows must be [B, N]")
+        frames = self.frame_count(w.shape[1])
+        x64 = w.astype(np.float32).astype(np.float64)
+        idx = (np.arange(frames)[:, None] * cfg.hop_length) + np.arange(cfg.win_length)[None, :]
+        seg = x64[:, idx] * self.window[None, None, :]
+        spec = np.abs(np.fft.rfft(seg, n=cfg.n_fft, axis=2))
+        if cfg.power == 2.0:
+            spec = spec * spec
+        return self.log(spec @ self.weights.T)
+
 
 def pcm16_to_float(pcm: np.ndarray) -> np.ndarray:
     """Same conversion as ScanAnalyzer: pcm / 32768f, in float32."""

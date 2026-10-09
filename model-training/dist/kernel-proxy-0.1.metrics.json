@@ -1,0 +1,939 @@
+{
+  "version": "kernel-proxy-0.1",
+  "validation": "proxy",
+  "experimental": true,
+  "uncertain_below": 0.7,
+  "shipped_variant": "float32",
+  "temperature": 1.435852545641643,
+  "tflite_bytes": 247668,
+  "tflite_sha256": "4dea00ab7e88ff50ca2368e94373171b579c911b80911db6d18dcd6afee5edc5",
+  "int8_bytes": 69768,
+  "audit": {
+    "float32": {
+      "ops": {
+        "STRIDED_SLICE": 1,
+        "MEAN": 1,
+        "SUB": 1,
+        "CONV_2D": 1,
+        "MAX_POOL_2D": 1,
+        "REDUCE_MAX": 1,
+        "CONCATENATION": 1,
+        "FULLY_CONNECTED": 1,
+        "SOFTMAX": 1
+      },
+      "input_shape": [
+        1,
+        64,
+        198,
+        1
+      ],
+      "output_shape": [
+        1,
+        2
+      ],
+      "bytes": 247668
+    },
+    "int8_dynamic": {
+      "ops": {
+        "STRIDED_SLICE": 1,
+        "MEAN": 1,
+        "SUB": 1,
+        "CONV_2D": 5,
+        "MAX_POOL_2D": 1,
+        "REDUCE_MAX": 1,
+        "CONCATENATION": 1,
+        "FULLY_CONNECTED": 1,
+        "SOFTMAX": 1
+      },
+      "input_shape": [
+        1,
+        64,
+        198,
+        1
+      ],
+      "output_shape": [
+        1,
+        2
+      ],
+      "bytes": 69768
+    }
+  },
+  "parity_probe": {
+    "keras": [
+      0.4955882728099823,
+      0.5044116973876953
+    ],
+    "tflite_float32": [
+      0.49558791518211365,
+      0.504412055015564
+    ],
+    "tflite_int8": [
+      0.48919153213500977,
+      0.5108084678649902
+    ],
+    "tflite_float32_ms_per_inference_this_pc": 0.81
+  },
+  "keras_vs_tflite": {
+    "val_windows": 3469,
+    "max_abs_prob_diff": 5.0067901611328125e-06,
+    "argmax_agreement": 1.0
+  },
+  "training": {
+    "best": {
+      "bal_acc": 0.7158768814280921,
+      "loss": 0.5696176886558533,
+      "epoch": 13
+    },
+    "temperature": 1.435852545641643,
+    "val_nll_raw": 0.5696176886558533,
+    "val_nll_calibrated": 0.5548914074897766,
+    "bands": 47,
+    "seed": 20261010,
+    "epochs_run": 22,
+    "steps": 150,
+    "batch": 64,
+    "lr": 0.001
+  },
+  "history": [
+    {
+      "epoch": 0,
+      "train_loss": 0.8643610954284668,
+      "val_loss": 0.9647091627120972,
+      "val_bal_acc": 0.501891551071879,
+      "lr": 0.0010000000474974513,
+      "sec": 112.3
+    },
+    {
+      "epoch": 1,
+      "train_loss": 0.5793151706457138,
+      "val_loss": 0.649887204170227,
+      "val_bal_acc": 0.6368241223858611,
+      "lr": 0.0010000000474974513,
+      "sec": 100.0
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.431140995323658,
+      "val_loss": 0.6958088278770447,
+      "val_bal_acc": 0.5272177038382483,
+      "lr": 0.0010000000474974513,
+      "sec": 103.1
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.3776446892817815,
+      "val_loss": 0.6525235176086426,
+      "val_bal_acc": 0.6718993795095465,
+      "lr": 0.0010000000474974513,
+      "sec": 102.5
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.3646066693464915,
+      "val_loss": 0.5952180027961731,
+      "val_bal_acc": 0.6796933026366023,
+      "lr": 0.0010000000474974513,
+      "sec": 104.2
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.3384258527557055,
+      "val_loss": 0.5073987245559692,
+      "val_bal_acc": 0.7080692681760512,
+      "lr": 0.0010000000474974513,
+      "sec": 119.4
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.31124378422896065,
+      "val_loss": 0.5600218176841736,
+      "val_bal_acc": 0.6747347779307473,
+      "lr": 0.0010000000474974513,
+      "sec": 110.9
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.30227937042713166,
+      "val_loss": 0.5243198275566101,
+      "val_bal_acc": 0.7068901820593805,
+      "lr": 0.0010000000474974513,
+      "sec": 99.7
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.3032863380511602,
+      "val_loss": 5.22749137878418,
+      "val_bal_acc": 0.5191256830601093,
+      "lr": 0.0010000000474974513,
+      "sec": 95.1
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.264952110350132,
+      "val_loss": 1.226520299911499,
+      "val_bal_acc": 0.5783489709268022,
+      "lr": 0.0005000000237487257,
+      "sec": 97.9
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.27547780255476634,
+      "val_loss": 1.2741116285324097,
+      "val_bal_acc": 0.5720821716008962,
+      "lr": 0.0005000000237487257,
+      "sec": 111.9
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.26831307967503865,
+      "val_loss": 2.363060474395752,
+      "val_bal_acc": 0.5360729008796388,
+      "lr": 0.0005000000237487257,
+      "sec": 142.9
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.2648273222645124,
+      "val_loss": 2.084662914276123,
+      "val_bal_acc": 0.5271305498031321,
+      "lr": 0.0002500000118743628,
+      "sec": 91.6
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.2543238650759061,
+      "val_loss": 0.5696176886558533,
+      "val_bal_acc": 0.7158768814280921,
+      "lr": 0.0002500000118743628,
+      "sec": 104.7
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.24894795616467794,
+      "val_loss": 0.5923487544059753,
+      "val_bal_acc": 0.7028130314564365,
+      "lr": 0.0002500000118743628,
+      "sec": 106.0
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.24478370552261672,
+      "val_loss": 1.6740412712097168,
+      "val_bal_acc": 0.5661641812341166,
+      "lr": 0.0002500000118743628,
+      "sec": 103.2
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.25316330591837566,
+      "val_loss": 1.1030521392822266,
+      "val_bal_acc": 0.6000115691197057,
+      "lr": 0.0002500000118743628,
+      "sec": 100.9
+    },
+    {
+      "epoch": 17,
+      "train_loss": 0.23962752312421798,
+      "val_loss": 1.4213742017745972,
+      "val_bal_acc": 0.5641740998260776,
+      "lr": 0.0001250000059371814,
+      "sec": 98.2
+    },
+    {
+      "epoch": 18,
+      "train_loss": 0.2470095087091128,
+      "val_loss": 0.7040461301803589,
+      "val_bal_acc": 0.6888570095368111,
+      "lr": 0.0001250000059371814,
+      "sec": 105.8
+    },
+    {
+      "epoch": 19,
+      "train_loss": 0.23581807012359302,
+      "val_loss": 0.6768626570701599,
+      "val_bal_acc": 0.6967650813116296,
+      "lr": 0.0001250000059371814,
+      "sec": 112.9
+    },
+    {
+      "epoch": 20,
+      "train_loss": 0.23834151342511178,
+      "val_loss": 1.8881689310073853,
+      "val_bal_acc": 0.5361862782527544,
+      "lr": 6.25000029685907e-05,
+      "sec": 125.9
+    },
+    {
+      "epoch": 21,
+      "train_loss": 0.2350632234911124,
+      "val_loss": 1.2439616918563843,
+      "val_bal_acc": 0.5847875716803375,
+      "lr": 6.25000029685907e-05,
+      "sec": 119.4
+    }
+  ],
+  "metrics_float32": {
+    "val": {
+      "windows": {
+        "n": 3469,
+        "n_clean": 2379,
+        "n_infested": 1090,
+        "accuracy": 0.711155952724128,
+        "balanced_accuracy": 0.716087053769412,
+        "per_class": {
+          "clean": {
+            "precision": 0.8500254194204372,
+            "recall": 0.7028163093736864,
+            "f1": 0.7694431661297745,
+            "support": 2379
+          },
+          "infested": {
+            "precision": 0.5292942743009321,
+            "recall": 0.7293577981651376,
+            "f1": 0.6134259259259259,
+            "support": 1090
+          }
+        },
+        "confusion_matrix": {
+          "rows_true": [
+            "clean",
+            "infested"
+          ],
+          "cols_pred": [
+            "clean",
+            "infested"
+          ],
+          "values": [
+            [
+              1672,
+              707
+            ],
+            [
+              295,
+              795
+            ]
+          ]
+        },
+        "roc_auc": 0.7904828564927828
+      },
+      "band": {
+        "uncertain_below": 0.7,
+        "uncertain_rate": 0.49870279619486885,
+        "uncertain_rate_by_true_class": {
+          "clean": 0.5418242959226566,
+          "infested": 0.40458715596330275
+        },
+        "confident_accuracy": 0.8223116733755031,
+        "confident_n": 1739,
+        "three_way_table_rows_true": {
+          "clean": {
+            "clean": 900,
+            "uncertain": 1289,
+            "infested": 190
+          },
+          "infested": {
+            "clean": 119,
+            "uncertain": 441,
+            "infested": 530
+          }
+        }
+      },
+      "clips": {
+        "n": 347,
+        "n_clean": 238,
+        "n_infested": 109,
+        "accuracy": 0.8645533141210374,
+        "balanced_accuracy": 0.8490478760311464,
+        "per_class": {
+          "clean": {
+            "precision": 0.9098712446351931,
+            "recall": 0.8907563025210085,
+            "f1": 0.9002123142250531,
+            "support": 238
+          },
+          "infested": {
+            "precision": 0.7719298245614035,
+            "recall": 0.8073394495412844,
+            "f1": 0.7892376681614349,
+            "support": 109
+          }
+        },
+        "confusion_matrix": {
+          "rows_true": [
+            "clean",
+            "infested"
+          ],
+          "cols_pred": [
+            "clean",
+            "infested"
+          ],
+          "values": [
+            [
+              212,
+              26
+            ],
+            [
+              21,
+              88
+            ]
+          ]
+        },
+        "roc_auc": 0.8995451391565802
+      },
+      "groups": {
+        "folder_06": {
+          "label": "infested",
+          "windows": 760,
+          "pred_infested_rate": 0.6815789473684211,
+          "uncertain_rate": 0.4328947368421053
+        },
+        "folder_08": {
+          "label": "clean",
+          "windows": 2379,
+          "pred_infested_rate": 0.29718369062631356,
+          "uncertain_rate": 0.5418242959226566
+        },
+        "folder_13": {
+          "label": "infested",
+          "windows": 150,
+          "pred_infested_rate": 0.8733333333333333,
+          "uncertain_rate": 0.28
+        },
+        "folder_14": {
+          "label": "infested",
+          "windows": 180,
+          "pred_infested_rate": 0.8111111111111111,
+          "uncertain_rate": 0.3888888888888889
+        }
+      },
+      "seconds": 22.8
+    },
+    "test": {
+      "windows": {
+        "n": 6559,
+        "n_clean": 5334,
+        "n_infested": 1225,
+        "accuracy": 0.7040707424912335,
+        "balanced_accuracy": 0.6727896512935883,
+        "per_class": {
+          "clean": {
+            "precision": 0.8929812369701181,
+            "recall": 0.7227221597300337,
+            "f1": 0.7988809449797949,
+            "support": 5334
+          },
+          "infested": {
+            "precision": 0.34032114183764495,
+            "recall": 0.6228571428571429,
+            "f1": 0.44014998557830975,
+            "support": 1225
+          }
+        },
+        "confusion_matrix": {
+          "rows_true": [
+            "clean",
+            "infested"
+          ],
+          "cols_pred": [
+            "clean",
+            "infested"
+          ],
+          "values": [
+            [
+              3855,
+              1479
+            ],
+            [
+              462,
+              763
+            ]
+          ]
+        },
+        "roc_auc": 0.7153704766496024
+      },
+      "band": {
+        "uncertain_below": 0.7,
+        "uncertain_rate": 0.4973319103521878,
+        "uncertain_rate_by_true_class": {
+          "clean": 0.5069366329208849,
+          "infested": 0.4555102040816327
+        },
+        "confident_accuracy": 0.7682741886563542,
+        "confident_n": 3297,
+        "three_way_table_rows_true": {
+          "clean": {
+            "clean": 2076,
+            "uncertain": 2704,
+            "infested": 554
+          },
+          "infested": {
+            "clean": 210,
+            "uncertain": 558,
+            "infested": 457
+          }
+        }
+      },
+      "clips": {
+        "n": 660,
+        "n_clean": 535,
+        "n_infested": 125,
+        "accuracy": 0.8318181818181818,
+        "balanced_accuracy": 0.7889719626168223,
+        "per_class": {
+          "clean": {
+            "precision": 0.9291497975708503,
+            "recall": 0.8579439252336448,
+            "f1": 0.892128279883382,
+            "support": 535
+          },
+          "infested": {
+            "precision": 0.5421686746987951,
+            "recall": 0.72,
+            "f1": 0.6185567010309279,
+            "support": 125
+          }
+        },
+        "confusion_matrix": {
+          "rows_true": [
+            "clean",
+            "infested"
+          ],
+          "cols_pred": [
+            "clean",
+            "infested"
+          ],
+          "values": [
+            [
+              459,
+              76
+            ],
+            [
+              35,
+              90
+            ]
+          ]
+        },
+        "roc_auc": 0.8297570093457944
+      },
+      "groups": {
+        "dep_f03_f04": {
+          "label": "infested",
+          "windows": 310,
+          "pred_infested_rate": 0.7290322580645161,
+          "uncertain_rate": 0.5161290322580645
+        },
+        "folder_01": {
+          "label": "infested",
+          "windows": 730,
+          "pred_infested_rate": 0.5356164383561643,
+          "uncertain_rate": 0.4726027397260274
+        },
+        "folder_09": {
+          "label": "clean",
+          "windows": 5064,
+          "pred_infested_rate": 0.28337282780410744,
+          "uncertain_rate": 0.5177725118483413
+        },
+        "folder_12": {
+          "label": "infested",
+          "windows": 25,
+          "pred_infested_rate": 0.92,
+          "uncertain_rate": 0.16
+        },
+        "folder_18": {
+          "label": "infested",
+          "windows": 100,
+          "pred_infested_rate": 0.66,
+          "uncertain_rate": 0.42
+        },
+        "folder_22": {
+          "label": "infested",
+          "windows": 60,
+          "pred_infested_rate": 0.95,
+          "uncertain_rate": 0.11666666666666667
+        },
+        "folder_25": {
+          "label": "clean",
+          "windows": 270,
+          "pred_infested_rate": 0.16296296296296298,
+          "uncertain_rate": 0.3037037037037037
+        }
+      },
+      "seconds": 48.1
+    },
+    "challenge_hardneg": {
+      "true_class": "clean",
+      "windows": 3320,
+      "pred_infested_rate": 0.6792168674698795,
+      "uncertain_rate": 0.44819277108433736,
+      "confident_infested_rate": 0.44006024096385543,
+      "confident_clean_rate": 0.11174698795180722,
+      "groups": {
+        "folder_35": {
+          "windows": 3320,
+          "pred_infested_rate": 0.6792168674698795
+        }
+      },
+      "seconds": 23.0
+    },
+    "challenge_pos": {
+      "true_class": "infested",
+      "windows": 16782,
+      "pred_infested_rate": 0.38052675485639376,
+      "uncertain_rate": 0.42277440114408293,
+      "confident_infested_rate": 0.20253843403646765,
+      "confident_clean_rate": 0.3746871648194494,
+      "groups": {
+        "folder_15": {
+          "windows": 380,
+          "pred_infested_rate": 0.9710526315789474
+        },
+        "folder_26": {
+          "windows": 270,
+          "pred_infested_rate": 0.6148148148148148
+        },
+        "folder_27": {
+          "windows": 150,
+          "pred_infested_rate": 0.6533333333333333
+        },
+        "folder_28": {
+          "windows": 186,
+          "pred_infested_rate": 0.20430107526881722
+        },
+        "folder_29": {
+          "windows": 190,
+          "pred_infested_rate": 0.7105263157894737
+        },
+        "folder_30": {
+          "windows": 190,
+          "pred_infested_rate": 0.48947368421052634
+        },
+        "folder_31": {
+          "windows": 190,
+          "pred_infested_rate": 0.6368421052631579
+        },
+        "folder_32": {
+          "windows": 7562,
+          "pred_infested_rate": 0.30547474213171116
+        },
+        "folder_33": {
+          "windows": 7534,
+          "pred_infested_rate": 0.4005840191133528
+        },
+        "folder_34": {
+          "windows": 130,
+          "pred_infested_rate": 0.2923076923076923
+        }
+      },
+      "seconds": 160.0
+    }
+  },
+  "metrics_int8_dynamic": {
+    "val": {
+      "windows": {
+        "n": 3469,
+        "n_clean": 2379,
+        "n_infested": 1090,
+        "accuracy": 0.7094263476506197,
+        "balanced_accuracy": 0.7153231062315135,
+        "per_class": {
+          "clean": {
+            "precision": 0.8502810424118549,
+            "recall": 0.6994535519125683,
+            "f1": 0.7675276752767528,
+            "support": 2379
+          },
+          "infested": {
+            "precision": 0.5271164021164021,
+            "recall": 0.7311926605504587,
+            "f1": 0.6126056879323597,
+            "support": 1090
+          }
+        },
+        "confusion_matrix": {
+          "rows_true": [
+            "clean",
+            "infested"
+          ],
+          "cols_pred": [
+            "clean",
+            "infested"
+          ],
+          "values": [
+            [
+              1664,
+              715
+            ],
+            [
+              293,
+              797
+            ]
+          ]
+        },
+        "roc_auc": 0.7908657943550408
+      },
+      "band": {
+        "uncertain_below": 0.7,
+        "uncertain_rate": 0.49956759873162293,
+        "uncertain_rate_by_true_class": {
+          "clean": 0.546448087431694,
+          "infested": 0.39724770642201834
+        },
+        "confident_accuracy": 0.8220046082949308,
+        "confident_n": 1736,
+        "three_way_table_rows_true": {
+          "clean": {
+            "clean": 888,
+            "uncertain": 1300,
+            "infested": 191
+          },
+          "infested": {
+            "clean": 118,
+            "uncertain": 433,
+            "infested": 539
+          }
+        }
+      },
+      "clips": {
+        "n": 347,
+        "n_clean": 238,
+        "n_infested": 109,
+        "accuracy": 0.8645533141210374,
+        "balanced_accuracy": 0.8515341916583147,
+        "per_class": {
+          "clean": {
+            "precision": 0.9134199134199135,
+            "recall": 0.8865546218487395,
+            "f1": 0.8997867803837953,
+            "support": 238
+          },
+          "infested": {
+            "precision": 0.7672413793103449,
+            "recall": 0.8165137614678899,
+            "f1": 0.7911111111111111,
+            "support": 109
+          }
+        },
+        "confusion_matrix": {
+          "rows_true": [
+            "clean",
+            "infested"
+          ],
+          "cols_pred": [
+            "clean",
+            "infested"
+          ],
+          "values": [
+            [
+              211,
+              27
+            ],
+            [
+              20,
+              89
+            ]
+          ]
+        },
+        "roc_auc": 0.8996222342147868
+      },
+      "groups": {
+        "folder_06": {
+          "label": "infested",
+          "windows": 760,
+          "pred_infested_rate": 0.6828947368421052,
+          "uncertain_rate": 0.425
+        },
+        "folder_08": {
+          "label": "clean",
+          "windows": 2379,
+          "pred_infested_rate": 0.3005464480874317,
+          "uncertain_rate": 0.546448087431694
+        },
+        "folder_13": {
+          "label": "infested",
+          "windows": 150,
+          "pred_infested_rate": 0.88,
+          "uncertain_rate": 0.2733333333333333
+        },
+        "folder_14": {
+          "label": "infested",
+          "windows": 180,
+          "pred_infested_rate": 0.8111111111111111,
+          "uncertain_rate": 0.38333333333333336
+        }
+      },
+      "seconds": 26.8
+    },
+    "test": {
+      "windows": {
+        "n": 6559,
+        "n_clean": 5334,
+        "n_infested": 1225,
+        "accuracy": 0.7002591858515017,
+        "balanced_accuracy": 0.6707606192083133,
+        "per_class": {
+          "clean": {
+            "precision": 0.8925407925407925,
+            "recall": 0.7178477690288714,
+            "f1": 0.7957190357439734,
+            "support": 5334
+          },
+          "infested": {
+            "precision": 0.3367122080211547,
+            "recall": 0.6236734693877551,
+            "f1": 0.4373211219232971,
+            "support": 1225
+          }
+        },
+        "confusion_matrix": {
+          "rows_true": [
+            "clean",
+            "infested"
+          ],
+          "cols_pred": [
+            "clean",
+            "infested"
+          ],
+          "values": [
+            [
+              3829,
+              1505
+            ],
+            [
+              461,
+              764
+            ]
+          ]
+        },
+        "roc_auc": 0.7152079459455324
+      },
+      "band": {
+        "uncertain_below": 0.7,
+        "uncertain_rate": 0.49900899527366976,
+        "uncertain_rate_by_true_class": {
+          "clean": 0.5086239220097488,
+          "infested": 0.45714285714285713
+        },
+        "confident_accuracy": 0.7647595861229458,
+        "confident_n": 3286,
+        "three_way_table_rows_true": {
+          "clean": {
+            "clean": 2053,
+            "uncertain": 2713,
+            "infested": 568
+          },
+          "infested": {
+            "clean": 205,
+            "uncertain": 560,
+            "infested": 460
+          }
+        }
+      },
+      "clips": {
+        "n": 660,
+        "n_clean": 535,
+        "n_infested": 125,
+        "accuracy": 0.8303030303030303,
+        "balanced_accuracy": 0.7880373831775701,
+        "per_class": {
+          "clean": {
+            "precision": 0.9290060851926978,
+            "recall": 0.8560747663551402,
+            "f1": 0.8910505836575876,
+            "support": 535
+          },
+          "infested": {
+            "precision": 0.5389221556886228,
+            "recall": 0.72,
+            "f1": 0.6164383561643836,
+            "support": 125
+          }
+        },
+        "confusion_matrix": {
+          "rows_true": [
+            "clean",
+            "infested"
+          ],
+          "cols_pred": [
+            "clean",
+            "infested"
+          ],
+          "values": [
+            [
+              458,
+              77
+            ],
+            [
+              35,
+              90
+            ]
+          ]
+        },
+        "roc_auc": 0.829592523364486
+      },
+      "groups": {
+        "dep_f03_f04": {
+          "label": "infested",
+          "windows": 310,
+          "pred_infested_rate": 0.7290322580645161,
+          "uncertain_rate": 0.5096774193548387
+        },
+        "folder_01": {
+          "label": "infested",
+          "windows": 730,
+          "pred_infested_rate": 0.536986301369863,
+          "uncertain_rate": 0.4767123287671233
+        },
+        "folder_09": {
+          "label": "clean",
+          "windows": 5064,
+          "pred_infested_rate": 0.2883096366508689,
+          "uncertain_rate": 0.5195497630331753
+        },
+        "folder_12": {
+          "label": "infested",
+          "windows": 25,
+          "pred_infested_rate": 0.92,
+          "uncertain_rate": 0.16
+        },
+        "folder_18": {
+          "label": "infested",
+          "windows": 100,
+          "pred_infested_rate": 0.66,
+          "uncertain_rate": 0.43
+        },
+        "folder_22": {
+          "label": "infested",
+          "windows": 60,
+          "pred_infested_rate": 0.95,
+          "uncertain_rate": 0.11666666666666667
+        },
+        "folder_25": {
+          "label": "clean",
+          "windows": 270,
+          "pred_infested_rate": 0.16666666666666666,
+          "uncertain_rate": 0.3037037037037037
+        }
+      },
+      "seconds": 50.1
+    }
+  },
+  "split_sizes": {
+    "val": {
+      "clips": 347,
+      "windows": 3469
+    },
+    "test": {
+      "clips": 660,
+      "windows": 6559
+    },
+    "challenge_hardneg": {
+      "clips": 332,
+      "windows": 3320
+    },
+    "challenge_pos": {
+      "clips": 1689,
+      "windows": 16782
+    }
+  }
+}
