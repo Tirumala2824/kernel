@@ -73,6 +73,43 @@ Enum `Role { farmer, household, storageFpo, buyer }`. Switching role only change
 ## Ranking rule (F08)
 Rank only items whose **latest valid scan** (quality PASS and classification not notEvaluated) shares the same `modelVersion` as the others in the queue. Order: infested > uncertain > clean, then oldest scan first. Every other item goes into a separate "needs scan" group. While no model is bundled, every item is "needs scan". That is the honest, expected behaviour.
 
+## Contracts v2 (2026-10-10)
+The source of truth is `contracts/lib/src/`. New fields are optional with defaults, so v1 call sites still compile. New interface methods must be implemented.
+
+**ScanEngine**
+- `captureAndAnalyze(itemId, {retainAudio, haptics = true})`
+- `Stream<CaptureLevel> captureLevels()`: about 20 Hz, carrying `elapsedMs`, `targetMs`, `rmsDbfs` and `peakDbfs`. Levels only, never samples.
+- `retainedAudioPath(scanId)`
+- `ScanOutcome.audioRetained`
+- `EngineInfo.modelNote`: provenance from the model manifest. The UI shows it with every result and the PDF header includes it.
+- `EngineInfo.audioSource` and `EngineInfo.deviceInputSampleRate`
+
+**Models**
+- `archivedAt` on GrainItem, Location, Lot and Harvest. Archiving is a soft delete: hidden from `watch*`, queues and new reports, and scan history is kept.
+- `Harvest` + `HarvestDraft`, and `GrainItem.harvestId`.
+- `Inspection.assignedTo` and `Inspection.photoPaths` (app-private evidence photos).
+- `LabeledSample` + `LabeledSampleDraft`, with `SampleLabel {clean, infested, unknown}`.
+- `InspectionQueue.experimental`
+- `ReportScope.kind` (`ReportKind {history, preSale, lotSummary, sackLabels}`) and `ReportScope.harvestId`.
+
+**Repositories and services**
+- `ItemRepository.watchByHarvest`, plus `archive`/`unarchive`.
+- `LocationRepository.watchAll` and `archive`. `LotRepository.archive`.
+- `HarvestRepository`.
+- `ScanRepository.watchSince(since, {role})` and `get(scanId)`.
+- `InspectionRepository.assign(id, assignee)`.
+- `ReminderRepository.takeLaunchItemId()`: the reminder that opened the app, consumed once.
+- `LabeledSampleRepository`: clean or infested requires `inspectionId` whose verified finding agrees (noneFound / pestsFound). Otherwise it throws ArgumentError.
+- `SettingsRepository` adds research-mode opt-in, `languageTag`, haptics, voice prompts and onboardingDone.
+- `DatasetExportService.exportZip()`: retained WAVs plus a CSV manifest, written locally. The user shares it through the share sheet and the app never uploads it.
+- `PrivacyService.deleteAllHistory` also removes inspection photos and labeled samples.
+
+**Ordering**
+- `watchForItem` (scans and inspections), `watchRecent` and `watchSince` return newest first.
+- `watchOpen` returns open and inProgress inspections, oldest first.
+
+**Model manifest keys** (`models/<name>.properties`, owned by audio-ai): the v1 keys plus `validation=proxy|field` and `note=<text>`. `note` becomes `EngineInfo.modelNote`. A proxy model is always `experimental=true`.
+
 ## Package entry points (what the lead wires in `app-ui/lib/bootstrap.dart`)
 - `package:audio_ai/audio_ai.dart` exports `class NativeScanEngine implements ScanEngine` with a no-arg constructor.
 - `package:data_operations/data_operations.dart` exports `class DataOperations` with:

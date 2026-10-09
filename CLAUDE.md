@@ -17,6 +17,7 @@ An offline-first Android app (Flutter UI + native Kotlin audio/AI plugin) for ac
 | `contracts/` | Pure Dart: ScanOutcome, enums, repository interfaces | **lead only** (agents propose changes) |
 | `app-ui/` | Flutter app: theme, navigation, role screens, riverpod wiring | `ui-dev` |
 | `audio-ai/` | Flutter plugin: Dart ScanEngine + Kotlin (AudioRecord, quality gate, log-mel, LiteRT), pigeon | `audio-ai-dev` |
+| `model-training/` | Off-device Python: dataset prep, log-mel parity, CNN training, TFLite export, model cards. Never shipped in the APK except the released `.tflite` + `.properties` | `audio-ai-dev` |
 | `data-operations/` | Dart package: drift DB, repositories, ranking, inspections, reminders, CSV/PDF | `data-ops-dev` |
 | `tests/` | Cross-module integration tests + recorded audio fixtures | shared |
 | `docs/` | PRD split, decisions log, device log | lead (agents may append to device-validation.md log and propose decisions) |

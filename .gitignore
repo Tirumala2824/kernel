@@ -36,3 +36,9 @@ Thumbs.db
 
 # Claude Code agent worktrees
 .claude/worktrees/
+
+# Model training (datasets and venvs stay local; only dist/ models and cards are committed)
+model-training/data/
+model-training/.venv/
+model-training/**/__pycache__/
+model-training/runs/

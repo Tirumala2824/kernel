@@ -22,6 +22,8 @@ class GrainItem implements Tracked {
     required this.createdAt,
     required this.updatedAt,
     required this.syncState,
+    this.harvestId,
+    this.archivedAt,
   });
 
   @override
@@ -36,12 +38,21 @@ class GrainItem implements Tracked {
   final DateTime storageDate;
   final String? locationId;
   final String? lotId;
+
+  /// Farmer harvest this sack belongs to.
+  final String? harvestId;
+
+  /// Soft delete. Archived items are hidden from lists, queues and new
+  /// reports; their scan history is kept unchanged.
+  final DateTime? archivedAt;
   @override
   final DateTime createdAt;
   @override
   final DateTime updatedAt;
   @override
   final SyncState syncState;
+
+  bool get isArchived => archivedAt != null;
 }
 
 class GrainItemDraft {
@@ -54,6 +65,7 @@ class GrainItemDraft {
     required this.storageDate,
     this.locationId,
     this.lotId,
+    this.harvestId,
   });
 
   final Role ownerRole;
@@ -64,6 +76,7 @@ class GrainItemDraft {
   final DateTime storageDate;
   final String? locationId;
   final String? lotId;
+  final String? harvestId;
 }
 
 class Location implements Tracked {
@@ -75,6 +88,7 @@ class Location implements Tracked {
     required this.createdAt,
     required this.updatedAt,
     required this.syncState,
+    this.archivedAt,
   });
 
   @override
@@ -82,12 +96,15 @@ class Location implements Tracked {
   final LocationType type;
   final String name;
   final String? parentId;
+  final DateTime? archivedAt;
   @override
   final DateTime createdAt;
   @override
   final DateTime updatedAt;
   @override
   final SyncState syncState;
+
+  bool get isArchived => archivedAt != null;
 }
 
 class LocationDraft {
@@ -112,6 +129,7 @@ class Lot implements Tracked {
     required this.createdAt,
     required this.updatedAt,
     required this.syncState,
+    this.archivedAt,
   });
 
   @override
@@ -126,12 +144,15 @@ class Lot implements Tracked {
   final String quantityUnit;
   final DateTime receivedAt;
   final ScreeningStatus screeningStatus;
+  final DateTime? archivedAt;
   @override
   final DateTime createdAt;
   @override
   final DateTime updatedAt;
   @override
   final SyncState syncState;
+
+  bool get isArchived => archivedAt != null;
 }
 
 class LotDraft {
@@ -154,6 +175,49 @@ class LotDraft {
   final String? supplierName;
 }
 
+/// A farmer's harvest, grouping the sacks registered from it.
+class Harvest implements Tracked {
+  const Harvest({
+    required this.id,
+    required this.name,
+    required this.grainType,
+    required this.harvestedAt,
+    required this.notes,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.syncState,
+    this.archivedAt,
+  });
+
+  @override
+  final String id;
+  final String name;
+  final String grainType;
+  final DateTime harvestedAt;
+  final String? notes;
+  final DateTime? archivedAt;
+  @override
+  final DateTime createdAt;
+  @override
+  final DateTime updatedAt;
+  @override
+  final SyncState syncState;
+}
+
+class HarvestDraft {
+  const HarvestDraft({
+    required this.name,
+    required this.grainType,
+    required this.harvestedAt,
+    this.notes,
+  });
+
+  final String name;
+  final String grainType;
+  final DateTime harvestedAt;
+  final String? notes;
+}
+
 /// Persisted, immutable copy of a ScanOutcome. Append-only.
 class ScanRecord implements Tracked {
   const ScanRecord({
@@ -174,6 +238,7 @@ class ScanRecord implements Tracked {
     required this.createdAt,
     required this.updatedAt,
     required this.syncState,
+    this.audioRetained = false,
   });
 
   @override
@@ -193,6 +258,7 @@ class ScanRecord implements Tracked {
   final int latencyMs;
   final String deviceModel;
   final String osVersion;
+  final bool audioRetained;
   @override
   final DateTime createdAt;
   @override
@@ -218,6 +284,8 @@ class Inspection implements Tracked {
     required this.createdAt,
     required this.updatedAt,
     required this.syncState,
+    this.assignedTo,
+    this.photoPaths = const [],
   });
 
   @override
@@ -229,6 +297,13 @@ class Inspection implements Tracked {
   final String observations;
   final VerifiedFinding verifiedFinding;
   final FollowUpStatus followUpStatus;
+
+  /// Staff member responsible for the follow-up (FPO task assignment).
+  final String? assignedTo;
+
+  /// App-private evidence photos. Evidence for the inspection only, never
+  /// acoustic proof.
+  final List<String> photoPaths;
   @override
   final DateTime createdAt;
   @override
@@ -246,6 +321,8 @@ class InspectionDraft {
     required this.verifiedFinding,
     this.scanId,
     this.followUpStatus = FollowUpStatus.open,
+    this.assignedTo,
+    this.photoPaths = const [],
   });
 
   final String itemId;
@@ -255,6 +332,8 @@ class InspectionDraft {
   final String observations;
   final VerifiedFinding verifiedFinding;
   final FollowUpStatus followUpStatus;
+  final String? assignedTo;
+  final List<String> photoPaths;
 }
 
 class Reminder implements Tracked {
@@ -281,6 +360,66 @@ class Reminder implements Tracked {
   final SyncState syncState;
 }
 
+/// A research recording: a retained scan plus an explicit label. Used only
+/// to build training data; never shown as a pest result.
+class LabeledSample implements Tracked {
+  const LabeledSample({
+    required this.id,
+    required this.scanId,
+    required this.itemId,
+    required this.label,
+    required this.inspectionId,
+    required this.grainType,
+    required this.sackMaterial,
+    required this.environment,
+    required this.notes,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.syncState,
+  });
+
+  @override
+  final String id;
+  final String scanId;
+  final String itemId;
+  final SampleLabel label;
+
+  /// Inspection confirming the label. Required for clean and infested.
+  final String? inspectionId;
+  final String grainType;
+  final String? sackMaterial;
+
+  /// Free text, e.g. "quiet room", "warehouse, fans on".
+  final String? environment;
+  final String? notes;
+  @override
+  final DateTime createdAt;
+  @override
+  final DateTime updatedAt;
+  @override
+  final SyncState syncState;
+}
+
+class LabeledSampleDraft {
+  const LabeledSampleDraft({
+    required this.scanId,
+    required this.label,
+    required this.grainType,
+    this.inspectionId,
+    this.sackMaterial,
+    this.environment,
+    this.notes,
+  });
+
+  final String scanId;
+  final SampleLabel label;
+  final String? inspectionId;
+  final String grainType;
+  final String? sackMaterial;
+  final String? environment;
+  final String? notes;
+}
+
 class QueueEntry {
   const QueueEntry({required this.item, required this.latestValidScan});
 
@@ -304,13 +443,25 @@ class InspectionQueue {
 
   /// Model version the ranked scans share; null when nothing is ranked.
   final String? modelVersion;
+
+  /// True when any ranked scan came from an experimental model.
+  bool get experimental => ranked.any((e) => e.latestValidScan.experimental);
 }
 
 class ReportScope {
-  const ReportScope({required this.role, this.locationId, this.lotId, this.itemIds});
+  const ReportScope({
+    required this.role,
+    this.kind = ReportKind.history,
+    this.locationId,
+    this.lotId,
+    this.harvestId,
+    this.itemIds,
+  });
 
   final Role role;
+  final ReportKind kind;
   final String? locationId;
   final String? lotId;
+  final String? harvestId;
   final List<String>? itemIds;
 }

@@ -31,3 +31,11 @@ enum ReminderStatus { scheduled, fired, done, cancelled }
 enum SyncState { localOnly, pending, synced, conflict }
 
 enum ReportFormat { csv, pdf }
+
+/// history: all records in scope. preSale: farmer harvest summary.
+/// lotSummary: buyer screening report. sackLabels: printable QR labels (PDF only).
+enum ReportKind { history, preSale, lotSummary, sackLabels }
+
+/// Label on a research recording. clean/infested require a linked human
+/// inspection that confirms it; otherwise the label is unknown.
+enum SampleLabel { clean, infested, unknown }

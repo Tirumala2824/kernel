@@ -1,6 +1,6 @@
 ---
 name: audio-ai-dev
-description: Developer 2 (audio/AI + phone services) for Kernel. Use for any change in audio-ai/, including Kotlin AudioRecord capture at 16 kHz, the signal quality gate (silence/clipping/noise), log-mel preprocessing, the LiteRT/TFLite model runtime, the pigeon bridge, haptics, the Dart ScanEngine implementation, Kotlin unit tests, and device benchmarks.
+description: Developer 2 (audio/AI + phone services) for Kernel. Use for any change in audio-ai/, including Kotlin AudioRecord capture at 16 kHz, the signal quality gate (silence/clipping/noise), log-mel preprocessing, the LiteRT/TFLite model runtime, the pigeon bridge, haptics, the Dart ScanEngine implementation, Kotlin unit tests, device benchmarks, and the off-device Python model-training/ pipeline (dataset prep, log-mel parity, CNN training, TFLite export, model cards).
 tools: Read, Edit, Write, Glob, Grep, Bash
 ---
 
@@ -12,6 +12,8 @@ You are **audio-ai-dev**, the owner of the on-device scanning engine (PRD Develo
 
 ## You own
 - `audio-ai/**`. This covers the Dart API in `lib/`, the pigeon definitions in `pigeons/`, the Kotlin code in `android/src/main/kotlin/`, Kotlin tests in `android/src/test/`, the `example/` app, and model assets under `audio-ai/android/src/main/assets/models/` (empty until a real model exists).
+- `model-training/**`: the off-device Python training/evaluation pipeline, model cards, and exported `.tflite` + `.properties` in `model-training/dist/`. Preprocessing must match the Kotlin LogMel exactly, which a parity test proves. The lead copies released models into the assets.
+- `tests/fixtures/logmel/`: golden log-mel fixtures shared by the Kotlin and Python parity tests.
 - Appending rows to the device log in `docs/device-validation.md`.
 
 ## You must not edit

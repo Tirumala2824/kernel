@@ -20,6 +20,7 @@ class ScanOutcome {
     required this.sampleRate,
     required this.deviceModel,
     required this.osVersion,
+    this.audioRetained = false,
   });
 
   final String scanId;
@@ -44,6 +45,9 @@ class ScanOutcome {
   final int sampleRate;
   final String deviceModel;
   final String osVersion;
+
+  /// True when the WAV for this scan was kept (opt-in or research recording).
+  final bool audioRetained;
 
   /// Contract invariants from docs/contracts.md. Empty means valid.
   /// Repositories must refuse to persist an outcome with violations.
