@@ -7,18 +7,27 @@ import 'tables.dart';
 CREATE TRIGGER scans_append_only
 BEFORE UPDATE OF id, item_id, captured_at, duration_ms, sample_rate, quality,
   quality_reasons, model_version, result, confidence, experimental, latency_ms,
-  device_model, os_version, created_at
+  device_model, os_version, audio_retained, created_at
 ON scans
 BEGIN
   SELECT RAISE(ABORT, 'scans are append-only');
 END;
 
 -- A verified inspection outcome is never overwritten. Only the follow-up
--- status and sync bookkeeping may change.
+-- status, the assignee and sync bookkeeping may change.
 CREATE TRIGGER inspections_verified_immutable
 BEFORE UPDATE OF id, item_id, scan_id, inspected_at, inspector, observations,
-  verified_finding, created_at
+  verified_finding, photo_paths, created_at
 ON inspections
 BEGIN
   SELECT RAISE(ABORT, 'verified inspection fields are immutable');
+END;
+
+-- A research label is fixed once stored; only sync bookkeeping may change.
+CREATE TRIGGER labeled_samples_immutable
+BEFORE UPDATE OF id, scan_id, item_id, label, inspection_id, grain_type,
+  sack_material, environment, notes, created_at
+ON labeled_samples
+BEGIN
+  SELECT RAISE(ABORT, 'labeled samples are immutable');
 END;

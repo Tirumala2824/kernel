@@ -21,6 +21,12 @@ String requireText(String value, String name) {
   return trimmed;
 }
 
+/// Optional user-entered text: trimmed, with blank meaning "not given".
+String? blankToNull(String? value) {
+  final trimmed = value?.trim();
+  return (trimmed == null || trimmed.isEmpty) ? null : trimmed;
+}
+
 double requireNonNegative(double value, String name) {
   if (value.isNaN || value < 0) {
     throw ArgumentError.value(value, name, 'must be zero or more');
