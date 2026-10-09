@@ -26,6 +26,11 @@ Append new decisions at the bottom. Never rewrite past entries; supersede them w
 | 19 | 2026-10-10 | Provisional quality gate: too-short <1500 ms; silence RMS < -70 dBFS; clipping >0.1% of samples ≥99% FS; high noise when the quietest 10% > -45 dBFS. SNR is logged but not gated | Must be calibrated on the iQOO 15 with real sacks |
 | 20 | 2026-10-10 | App compileSdk 37 | permission_handler_android 13 requires it |
 | 21 | 2026-10-10 | `ScanOutcome.sampleRate` is the rate AudioRecord actually delivered to the app. The hardware rate is in logcat (`AudioAi`) only | audio-ai-dev interpretation, accepted for V0.1 |
+| 22 | 2026-10-10 | Phase 2 model strategy: a **proxy** model trained on public, licence-clear insect-acoustic data, always `experimental=true` and `validation=proxy` with a visible note. Plus research recording mode, so the model can be retrained on the team's own inspection-confirmed grain samples | User choice. A working product without false claims |
+| 23 | 2026-10-10 | Brand: "grain + sound wave" mark (forest kernel, amber waveform seam). Manrope for Latin UI. Indic UI text falls back to Android system Noto fonts. Noto Indic fonts are bundled only in data-operations for PDFs | User choice. Avoids duplicating ~MBs of fonts |
+| 24 | 2026-10-10 | Sack QR payload `kernel:item:<itemId>`. Any other payload is ignored | Shared by the label PDF and the scanner |
+| 25 | 2026-10-10 | Languages: en plus hi, bn, te, mr, ta, gu, kn, ml, or, pa. Machine-drafted, with native review required (docs/glossary.md) | User: "all major languages" |
+| 26 | 2026-10-10 | Archiving is a soft delete (`archivedAt`). Scan history is never deleted except by the user's "delete all history" | Guardrail §6 and the PRD's immutable history |
 
 ## Contract follow-ups (proposed by agents, not yet done)
 - `ScanOutcome.audioRetained` flag (retained files are `files/recordings/<scanId>.wav`).
