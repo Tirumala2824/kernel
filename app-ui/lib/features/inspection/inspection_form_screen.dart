@@ -7,6 +7,7 @@ import '../../app/copy.dart';
 import '../../app/data_providers.dart';
 import '../../app/platform_providers.dart';
 import '../../app/providers.dart';
+import '../../app/routes.dart';
 import '../../l10n/l10n.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/common.dart';
@@ -127,7 +128,11 @@ class _InspectionFormScreenState extends ConsumerState<InspectionFormScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l.inspectionSaved)));
-      context.pop();
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go(Routes.item(widget.itemId));
+      }
     } on Object catch (e) {
       if (mounted) setState(() => _error = l.saveFailed('$e'));
     } finally {

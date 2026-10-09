@@ -138,7 +138,11 @@ class _LabelFormState extends ConsumerState<_LabelForm> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l.sampleSaved)));
-      context.pop();
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go(Routes.item(widget.itemId));
+      }
     } on ArgumentError catch (e) {
       if (mounted) setState(() => _error = l.sampleRejected('${e.message}'));
     } on Object catch (e) {
