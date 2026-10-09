@@ -1,7 +1,7 @@
 name: audio_ai
 description: "Kernel on-device acoustic scan engine (AudioRecord, quality gate, log-mel, LiteRT). No network code."
 publish_to: none
-version: 0.1.0
+version: 0.2.0
 
 environment:
   sdk: ^3.13.5

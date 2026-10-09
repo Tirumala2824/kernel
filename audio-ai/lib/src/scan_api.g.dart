@@ -10,9 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -46,8 +46,9 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -96,7 +97,6 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
-
 /// Mirrors contracts QualityReason.
 enum NativeQualityReason {
   silence,
@@ -104,24 +104,14 @@ enum NativeQualityReason {
   highNoise,
   tooShort,
   permissionDenied,
-  captureError;
+  captureError,
 }
 
 /// Mirrors contracts Classification.
-enum NativeClassification {
-  clean,
-  uncertain,
-  infested,
-  notEvaluated;
-}
+enum NativeClassification { clean, uncertain, infested, notEvaluated }
 
 /// Mirrors contracts InferenceDelegate.
-enum NativeDelegate {
-  none,
-  cpu,
-  nnapi,
-  gpu;
-}
+enum NativeDelegate { none, cpu, nnapi, gpu }
 
 /// One capture plus analysis, as produced by the Kotlin engine.
 class NativeScanResult {
@@ -138,6 +128,7 @@ class NativeScanResult {
     required this.sampleRate,
     required this.deviceModel,
     required this.osVersion,
+    required this.audioRetained,
   });
 
   bool qualityPass;
@@ -158,7 +149,9 @@ class NativeScanResult {
   /// when nothing was recorded).
   int capturedAtEpochMs;
 
-  /// Capture end -> result ready, measured on the native side.
+  /// Capture end -> result ready, measured on the native side: quality gate
+  /// + resampling + log-mel + inference. Per-stage timings go to logcat
+  /// (tag AudioAi) in debuggable builds.
   int latencyMs;
 
   /// Actual recorded duration of the kept audio.
@@ -170,6 +163,10 @@ class NativeScanResult {
   String deviceModel;
 
   String osVersion;
+
+  /// True only if the WAV for this scan was actually written to
+  /// app-private `files/recordings/<scanId>.wav`.
+  bool audioRetained;
 
   List<Object?> _toList() {
     return <Object?>[
@@ -185,11 +182,13 @@ class NativeScanResult {
       sampleRate,
       deviceModel,
       osVersion,
+      audioRetained,
     ];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static NativeScanResult decode(Object result) {
     result as List<Object?>;
@@ -206,6 +205,7 @@ class NativeScanResult {
       sampleRate: result[9]! as int,
       deviceModel: result[10]! as String,
       osVersion: result[11]! as String,
+      audioRetained: result[12]! as bool,
     );
   }
 
@@ -218,7 +218,19 @@ class NativeScanResult {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(qualityPass, other.qualityPass) && _deepEquals(qualityReasons, other.qualityReasons) && _deepEquals(classification, other.classification) && _deepEquals(confidence, other.confidence) && _deepEquals(experimental, other.experimental) && _deepEquals(modelVersion, other.modelVersion) && _deepEquals(capturedAtEpochMs, other.capturedAtEpochMs) && _deepEquals(latencyMs, other.latencyMs) && _deepEquals(durationMs, other.durationMs) && _deepEquals(sampleRate, other.sampleRate) && _deepEquals(deviceModel, other.deviceModel) && _deepEquals(osVersion, other.osVersion);
+    return _deepEquals(qualityPass, other.qualityPass) &&
+        _deepEquals(qualityReasons, other.qualityReasons) &&
+        _deepEquals(classification, other.classification) &&
+        _deepEquals(confidence, other.confidence) &&
+        _deepEquals(experimental, other.experimental) &&
+        _deepEquals(modelVersion, other.modelVersion) &&
+        _deepEquals(capturedAtEpochMs, other.capturedAtEpochMs) &&
+        _deepEquals(latencyMs, other.latencyMs) &&
+        _deepEquals(durationMs, other.durationMs) &&
+        _deepEquals(sampleRate, other.sampleRate) &&
+        _deepEquals(deviceModel, other.deviceModel) &&
+        _deepEquals(osVersion, other.osVersion) &&
+        _deepEquals(audioRetained, other.audioRetained);
   }
 
   @override
@@ -227,7 +239,7 @@ class NativeScanResult {
 
   @override
   String toString() {
-    return 'NativeScanResult(qualityPass: $qualityPass, qualityReasons: $qualityReasons, classification: $classification, confidence: $confidence, experimental: $experimental, modelVersion: $modelVersion, capturedAtEpochMs: $capturedAtEpochMs, latencyMs: $latencyMs, durationMs: $durationMs, sampleRate: $sampleRate, deviceModel: $deviceModel, osVersion: $osVersion)';
+    return 'NativeScanResult(qualityPass: $qualityPass, qualityReasons: $qualityReasons, classification: $classification, confidence: $confidence, experimental: $experimental, modelVersion: $modelVersion, capturedAtEpochMs: $capturedAtEpochMs, latencyMs: $latencyMs, durationMs: $durationMs, sampleRate: $sampleRate, deviceModel: $deviceModel, osVersion: $osVersion, audioRetained: $audioRetained)';
   }
 }
 
@@ -241,6 +253,9 @@ class NativeEngineInfo {
     required this.delegate,
     required this.deviceModel,
     required this.osVersion,
+    this.modelNote,
+    this.audioSource,
+    this.deviceInputSampleRate,
   });
 
   bool modelPresent;
@@ -260,6 +275,17 @@ class NativeEngineInfo {
 
   String osVersion;
 
+  /// `note` from the bundled model's manifest; null with no model.
+  String? modelNote;
+
+  /// Android AudioSource used for capture, e.g. "VOICE_RECOGNITION".
+  String? audioSource;
+
+  /// Rate the audio HAL captured at (before any resampling), from the
+  /// AudioRecordingConfiguration of the last capture (API 29+). Null until a
+  /// capture has run in this process, or below API 29.
+  int? deviceInputSampleRate;
+
   List<Object?> _toList() {
     return <Object?>[
       modelPresent,
@@ -270,11 +296,15 @@ class NativeEngineInfo {
       delegate,
       deviceModel,
       osVersion,
+      modelNote,
+      audioSource,
+      deviceInputSampleRate,
     ];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static NativeEngineInfo decode(Object result) {
     result as List<Object?>;
@@ -287,6 +317,9 @@ class NativeEngineInfo {
       delegate: result[5]! as NativeDelegate,
       deviceModel: result[6]! as String,
       osVersion: result[7]! as String,
+      modelNote: result[8] as String?,
+      audioSource: result[9] as String?,
+      deviceInputSampleRate: result[10] as int?,
     );
   }
 
@@ -299,7 +332,17 @@ class NativeEngineInfo {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(modelPresent, other.modelPresent) && _deepEquals(modelVersion, other.modelVersion) && _deepEquals(experimental, other.experimental) && _deepEquals(targetSampleRate, other.targetSampleRate) && _deepEquals(effectiveSampleRate, other.effectiveSampleRate) && _deepEquals(delegate, other.delegate) && _deepEquals(deviceModel, other.deviceModel) && _deepEquals(osVersion, other.osVersion);
+    return _deepEquals(modelPresent, other.modelPresent) &&
+        _deepEquals(modelVersion, other.modelVersion) &&
+        _deepEquals(experimental, other.experimental) &&
+        _deepEquals(targetSampleRate, other.targetSampleRate) &&
+        _deepEquals(effectiveSampleRate, other.effectiveSampleRate) &&
+        _deepEquals(delegate, other.delegate) &&
+        _deepEquals(deviceModel, other.deviceModel) &&
+        _deepEquals(osVersion, other.osVersion) &&
+        _deepEquals(modelNote, other.modelNote) &&
+        _deepEquals(audioSource, other.audioSource) &&
+        _deepEquals(deviceInputSampleRate, other.deviceInputSampleRate);
   }
 
   @override
@@ -308,10 +351,74 @@ class NativeEngineInfo {
 
   @override
   String toString() {
-    return 'NativeEngineInfo(modelPresent: $modelPresent, modelVersion: $modelVersion, experimental: $experimental, targetSampleRate: $targetSampleRate, effectiveSampleRate: $effectiveSampleRate, delegate: $delegate, deviceModel: $deviceModel, osVersion: $osVersion)';
+    return 'NativeEngineInfo(modelPresent: $modelPresent, modelVersion: $modelVersion, experimental: $experimental, targetSampleRate: $targetSampleRate, effectiveSampleRate: $effectiveSampleRate, delegate: $delegate, deviceModel: $deviceModel, osVersion: $osVersion, modelNote: $modelNote, audioSource: $audioSource, deviceInputSampleRate: $deviceInputSampleRate)';
   }
 }
 
+/// One live input-level reading during a capture. Scalars only: never
+/// samples or spectra.
+class NativeCaptureLevel {
+  NativeCaptureLevel({
+    required this.elapsedMs,
+    required this.targetMs,
+    required this.rmsDbfs,
+    required this.peakDbfs,
+  });
+
+  /// Kept audio recorded so far (excludes the warm-up discard).
+  int elapsedMs;
+
+  /// Kept audio the capture is aiming for.
+  int targetMs;
+
+  /// RMS of the last ~50 ms window after removing its mean, in dBFS.
+  double rmsDbfs;
+
+  /// Largest absolute sample of the last ~50 ms window, in dBFS.
+  double peakDbfs;
+
+  List<Object?> _toList() {
+    return <Object?>[elapsedMs, targetMs, rmsDbfs, peakDbfs];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NativeCaptureLevel decode(Object result) {
+    result as List<Object?>;
+    return NativeCaptureLevel(
+      elapsedMs: result[0]! as int,
+      targetMs: result[1]! as int,
+      rmsDbfs: result[2]! as double,
+      peakDbfs: result[3]! as double,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativeCaptureLevel || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(elapsedMs, other.elapsedMs) &&
+        _deepEquals(targetMs, other.targetMs) &&
+        _deepEquals(rmsDbfs, other.rmsDbfs) &&
+        _deepEquals(peakDbfs, other.peakDbfs);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NativeCaptureLevel(elapsedMs: $elapsedMs, targetMs: $targetMs, rmsDbfs: $rmsDbfs, peakDbfs: $peakDbfs)';
+  }
+}
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -320,20 +427,23 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is NativeQualityReason) {
+    } else if (value is NativeQualityReason) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is NativeClassification) {
+    } else if (value is NativeClassification) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is NativeDelegate) {
+    } else if (value is NativeDelegate) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    }    else if (value is NativeScanResult) {
+    } else if (value is NativeScanResult) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    }    else if (value is NativeEngineInfo) {
+    } else if (value is NativeEngineInfo) {
       buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is NativeCaptureLevel) {
+      buffer.putUint8(134);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -356,54 +466,67 @@ class _PigeonCodec extends StandardMessageCodec {
         return NativeScanResult.decode(readValue(buffer)!);
       case 133:
         return NativeEngineInfo.decode(readValue(buffer)!);
+      case 134:
+        return NativeCaptureLevel.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
   }
 }
 
+const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(
+  _PigeonCodec(),
+);
+
 class ScanHostApi {
   /// Constructor for [ScanHostApi]. The [binaryMessenger] named argument is
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   ScanHostApi({
-      BinaryMessenger? binaryMessenger, 
-      String messageChannelSuffix = '', 
-      })
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
 
-
   /// Records ~2 s, runs the quality gate and (only with a real bundled model)
   /// inference. Audio/model problems come back as a RETRY or NOT_EVALUATED
   /// result, not as errors. [scanId] names the WAV file when [retainAudio]
-  /// is true.
-  Future<NativeScanResult> captureAndAnalyze(String scanId, bool retainAudio) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.audio_ai.ScanHostApi.captureAndAnalyze$pigeonVar_messageChannelSuffix';
+  /// is true. [haptics] false means no vibration cue at all.
+  Future<NativeScanResult> captureAndAnalyze(
+    String scanId,
+    bool retainAudio,
+    bool haptics,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.audio_ai.ScanHostApi.captureAndAnalyze$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[scanId, retainAudio]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[scanId, retainAudio, haptics],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as NativeScanResult;
   }
 
   Future<NativeEngineInfo> info() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.audio_ai.ScanHostApi.info$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.audio_ai.ScanHostApi.info$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -413,18 +536,18 @@ class ScanHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as NativeEngineInfo;
   }
 
   /// Deletes every retained recording in app-private storage. Returns the
   /// number of files deleted.
   Future<int> deleteRetainedAudio() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.audio_ai.ScanHostApi.deleteRetainedAudio$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.audio_ai.ScanHostApi.deleteRetainedAudio$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -434,11 +557,53 @@ class ScanHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as int;
   }
+
+  /// Absolute path of `files/recordings/<scanId>.wav` if it exists, else
+  /// null (also null for an id that is not a UUID).
+  Future<String?> retainedAudioPath(String scanId) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.audio_ai.ScanHostApi.retainedAudioPath$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[scanId],
+    );
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as String?;
+  }
+}
+
+/// Live levels while a capture runs (~20 Hz). Nothing is sent while idle.
+/// Returns a broadcast [Stream] of events from the `captureLevels` event channel.
+///
+/// Each call to this method creates a new [EventChannel], so it should
+/// not be called multiple times for the same `instanceName`. To deliver
+/// events to multiple listeners, call this method once and listen to the
+/// returned broadcast stream multiple times instead.
+Stream<NativeCaptureLevel> captureLevels({String instanceName = ''}) {
+  if (instanceName.isNotEmpty) {
+    instanceName = '.$instanceName';
+  }
+  final EventChannel captureLevelsChannel = EventChannel(
+    'dev.flutter.pigeon.audio_ai.CaptureLevelEvents.captureLevels$instanceName',
+    pigeonMethodCodec,
+  );
+  return captureLevelsChannel.receiveBroadcastStream().map((dynamic event) {
+    return event as NativeCaptureLevel;
+  });
 }

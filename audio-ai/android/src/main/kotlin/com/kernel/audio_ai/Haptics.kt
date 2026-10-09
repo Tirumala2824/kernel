@@ -13,11 +13,12 @@ import android.util.Log
 /**
  * Start / finish / retry vibration cues for a scan.
  *
- * User settings are respected. On API 33+ cues use VibrationAttributes
- * USAGE_TOUCH, so the system applies the user's touch-feedback toggle and
- * intensity itself. Below 33 nothing plays when HAPTIC_FEEDBACK_ENABLED is
- * off, and cues use sonification attributes. An in-app haptics toggle is not
- * in the contract yet.
+ * User settings are respected. The in-app haptics setting arrives as
+ * captureAndAnalyze(haptics = false), and ScanEngineHost then never calls
+ * these cues. On API 33+ cues use VibrationAttributes USAGE_TOUCH, so the
+ * system applies the user's touch-feedback toggle and intensity itself.
+ * Below 33 nothing plays when HAPTIC_FEEDBACK_ENABLED is off, and cues use
+ * sonification attributes.
  *
  * Failures are swallowed: haptics never affect a scan result.
  */

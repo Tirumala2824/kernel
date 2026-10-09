@@ -16,6 +16,10 @@ const int targetSampleRate = 16000;
 /// device identity is not known to Dart.
 const String unknownDeviceField = 'unknown';
 
+/// Lowest level the native meter reports (digital silence). Matches the
+/// Kotlin QualityGate.MIN_DBFS.
+const double minLevelDbfs = -120;
+
 ScanOutcome mapScanResult(
   NativeScanResult result, {
   required String scanId,
@@ -72,17 +76,21 @@ ScanOutcome mapScanResult(
     sampleRate: _nonNegative(result.sampleRate),
     deviceModel: _orUnknown(result.deviceModel),
     osVersion: _orUnknown(result.osVersion),
+    // Native sets this only after the WAV was actually written.
+    audioRetained: result.audioRetained,
   );
 
   if (outcome.invariantViolations().isNotEmpty) {
     // Unreachable by construction; kept so a future edit cannot leak an
-    // invalid outcome to the repositories.
+    // invalid outcome to the repositories. The WAV (if any) still exists,
+    // so audioRetained keeps telling the truth about it.
     return failureOutcome(
       scanId: scanId,
       itemId: itemId,
       capturedAt: outcome.capturedAt,
       deviceModel: outcome.deviceModel,
       osVersion: outcome.osVersion,
+      audioRetained: outcome.audioRetained,
     );
   }
   return outcome;
@@ -96,6 +104,7 @@ ScanOutcome failureOutcome({
   required DateTime capturedAt,
   String deviceModel = unknownDeviceField,
   String osVersion = unknownDeviceField,
+  bool audioRetained = false,
 }) {
   return ScanOutcome(
     scanId: scanId,
@@ -112,6 +121,7 @@ ScanOutcome failureOutcome({
     sampleRate: 0,
     deviceModel: deviceModel,
     osVersion: osVersion,
+    audioRetained: audioRetained,
   );
 }
 
@@ -125,12 +135,16 @@ EngineInfo mapEngineInfo(NativeEngineInfo info) {
     modelVersion: modelPresent ? modelVersion : noModelVersion,
     experimental: !modelPresent || info.experimental,
     targetSampleRate: info.targetSampleRate,
-    effectiveSampleRate: info.effectiveSampleRate,
+    effectiveSampleRate: _positiveOrNull(info.effectiveSampleRate),
     delegate: modelPresent
         ? _mapDelegate(info.delegate)
         : InferenceDelegate.none,
     deviceModel: _orUnknown(info.deviceModel),
     osVersion: _orUnknown(info.osVersion),
+    // Provenance belongs to a model; with no usable model there is none.
+    modelNote: modelPresent ? _trimmedOrNull(info.modelNote) : null,
+    audioSource: _trimmedOrNull(info.audioSource),
+    deviceInputSampleRate: _positiveOrNull(info.deviceInputSampleRate),
   );
 }
 
@@ -145,6 +159,17 @@ EngineInfo unavailableEngineInfo() {
     delegate: InferenceDelegate.none,
     deviceModel: unknownDeviceField,
     osVersion: unknownDeviceField,
+  );
+}
+
+/// Live level reading. Levels are display values, so anything outside the
+/// meter's physical range [minLevelDbfs, 0] (or NaN) is pinned to it.
+CaptureLevel mapCaptureLevel(NativeCaptureLevel level) {
+  return CaptureLevel(
+    elapsedMs: _nonNegative(level.elapsedMs),
+    targetMs: _nonNegative(level.targetMs),
+    rmsDbfs: _dbfs(level.rmsDbfs),
+    peakDbfs: _dbfs(level.peakDbfs),
   );
 }
 
@@ -174,5 +199,15 @@ InferenceDelegate _mapDelegate(NativeDelegate value) => switch (value) {
 
 int _nonNegative(int value) => value < 0 ? 0 : value;
 
+int? _positiveOrNull(int? value) => value == null || value <= 0 ? null : value;
+
 String _orUnknown(String value) =>
     value.trim().isEmpty ? unknownDeviceField : value;
+
+String? _trimmedOrNull(String? value) {
+  final trimmed = value?.trim();
+  return trimmed == null || trimmed.isEmpty ? null : trimmed;
+}
+
+double _dbfs(double value) =>
+    value.isNaN ? minLevelDbfs : value.clamp(minLevelDbfs, 0.0).toDouble();

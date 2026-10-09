@@ -261,14 +261,23 @@ data class NativeScanResult (
    * when nothing was recorded).
    */
   val capturedAtEpochMs: Long,
-  /** Capture end -> result ready, measured on the native side. */
+  /**
+   * Capture end -> result ready, measured on the native side: quality gate
+   * + resampling + log-mel + inference. Per-stage timings go to logcat
+   * (tag AudioAi) in debuggable builds.
+   */
   val latencyMs: Long,
   /** Actual recorded duration of the kept audio. */
   val durationMs: Long,
   /** Sample rate AudioRecord really delivered (0 if nothing was recorded). */
   val sampleRate: Long,
   val deviceModel: String,
-  val osVersion: String
+  val osVersion: String,
+  /**
+   * True only if the WAV for this scan was actually written to
+   * app-private `files/recordings/<scanId>.wav`.
+   */
+  val audioRetained: Boolean
 )
  {
   companion object {
@@ -285,7 +294,8 @@ data class NativeScanResult (
       val sampleRate = pigeonVar_list[9] as Long
       val deviceModel = pigeonVar_list[10] as String
       val osVersion = pigeonVar_list[11] as String
-      return NativeScanResult(qualityPass, qualityReasons, classification, confidence, experimental, modelVersion, capturedAtEpochMs, latencyMs, durationMs, sampleRate, deviceModel, osVersion)
+      val audioRetained = pigeonVar_list[12] as Boolean
+      return NativeScanResult(qualityPass, qualityReasons, classification, confidence, experimental, modelVersion, capturedAtEpochMs, latencyMs, durationMs, sampleRate, deviceModel, osVersion, audioRetained)
     }
   }
   fun toList(): List<Any?> {
@@ -302,6 +312,7 @@ data class NativeScanResult (
       sampleRate,
       deviceModel,
       osVersion,
+      audioRetained,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -312,7 +323,7 @@ data class NativeScanResult (
       return true
     }
     val other = other as NativeScanResult
-    return ScanApiPigeonUtils.deepEquals(this.qualityPass, other.qualityPass) && ScanApiPigeonUtils.deepEquals(this.qualityReasons, other.qualityReasons) && ScanApiPigeonUtils.deepEquals(this.classification, other.classification) && ScanApiPigeonUtils.deepEquals(this.confidence, other.confidence) && ScanApiPigeonUtils.deepEquals(this.experimental, other.experimental) && ScanApiPigeonUtils.deepEquals(this.modelVersion, other.modelVersion) && ScanApiPigeonUtils.deepEquals(this.capturedAtEpochMs, other.capturedAtEpochMs) && ScanApiPigeonUtils.deepEquals(this.latencyMs, other.latencyMs) && ScanApiPigeonUtils.deepEquals(this.durationMs, other.durationMs) && ScanApiPigeonUtils.deepEquals(this.sampleRate, other.sampleRate) && ScanApiPigeonUtils.deepEquals(this.deviceModel, other.deviceModel) && ScanApiPigeonUtils.deepEquals(this.osVersion, other.osVersion)
+    return ScanApiPigeonUtils.deepEquals(this.qualityPass, other.qualityPass) && ScanApiPigeonUtils.deepEquals(this.qualityReasons, other.qualityReasons) && ScanApiPigeonUtils.deepEquals(this.classification, other.classification) && ScanApiPigeonUtils.deepEquals(this.confidence, other.confidence) && ScanApiPigeonUtils.deepEquals(this.experimental, other.experimental) && ScanApiPigeonUtils.deepEquals(this.modelVersion, other.modelVersion) && ScanApiPigeonUtils.deepEquals(this.capturedAtEpochMs, other.capturedAtEpochMs) && ScanApiPigeonUtils.deepEquals(this.latencyMs, other.latencyMs) && ScanApiPigeonUtils.deepEquals(this.durationMs, other.durationMs) && ScanApiPigeonUtils.deepEquals(this.sampleRate, other.sampleRate) && ScanApiPigeonUtils.deepEquals(this.deviceModel, other.deviceModel) && ScanApiPigeonUtils.deepEquals(this.osVersion, other.osVersion) && ScanApiPigeonUtils.deepEquals(this.audioRetained, other.audioRetained)
   }
 
   override fun hashCode(): Int {
@@ -329,10 +340,11 @@ data class NativeScanResult (
     result = 31 * result + ScanApiPigeonUtils.deepHash(this.sampleRate)
     result = 31 * result + ScanApiPigeonUtils.deepHash(this.deviceModel)
     result = 31 * result + ScanApiPigeonUtils.deepHash(this.osVersion)
+    result = 31 * result + ScanApiPigeonUtils.deepHash(this.audioRetained)
     return result
   }
   override fun toString(): String {
-    return "NativeScanResult(qualityPass=$qualityPass, qualityReasons=$qualityReasons, classification=$classification, confidence=$confidence, experimental=$experimental, modelVersion=$modelVersion, capturedAtEpochMs=$capturedAtEpochMs, latencyMs=$latencyMs, durationMs=$durationMs, sampleRate=$sampleRate, deviceModel=$deviceModel, osVersion=$osVersion)"
+    return "NativeScanResult(qualityPass=$qualityPass, qualityReasons=$qualityReasons, classification=$classification, confidence=$confidence, experimental=$experimental, modelVersion=$modelVersion, capturedAtEpochMs=$capturedAtEpochMs, latencyMs=$latencyMs, durationMs=$durationMs, sampleRate=$sampleRate, deviceModel=$deviceModel, osVersion=$osVersion, audioRetained=$audioRetained)"
   }
 }
 
@@ -346,7 +358,17 @@ data class NativeEngineInfo (
   val effectiveSampleRate: Long? = null,
   val delegate: NativeDelegate,
   val deviceModel: String,
-  val osVersion: String
+  val osVersion: String,
+  /** `note` from the bundled model's manifest; null with no model. */
+  val modelNote: String? = null,
+  /** Android AudioSource used for capture, e.g. "VOICE_RECOGNITION". */
+  val audioSource: String? = null,
+  /**
+   * Rate the audio HAL captured at (before any resampling), from the
+   * AudioRecordingConfiguration of the last capture (API 29+). Null until a
+   * capture has run in this process, or below API 29.
+   */
+  val deviceInputSampleRate: Long? = null
 )
  {
   companion object {
@@ -359,7 +381,10 @@ data class NativeEngineInfo (
       val delegate = pigeonVar_list[5] as NativeDelegate
       val deviceModel = pigeonVar_list[6] as String
       val osVersion = pigeonVar_list[7] as String
-      return NativeEngineInfo(modelPresent, modelVersion, experimental, targetSampleRate, effectiveSampleRate, delegate, deviceModel, osVersion)
+      val modelNote = pigeonVar_list[8] as String?
+      val audioSource = pigeonVar_list[9] as String?
+      val deviceInputSampleRate = pigeonVar_list[10] as Long?
+      return NativeEngineInfo(modelPresent, modelVersion, experimental, targetSampleRate, effectiveSampleRate, delegate, deviceModel, osVersion, modelNote, audioSource, deviceInputSampleRate)
     }
   }
   fun toList(): List<Any?> {
@@ -372,6 +397,9 @@ data class NativeEngineInfo (
       delegate,
       deviceModel,
       osVersion,
+      modelNote,
+      audioSource,
+      deviceInputSampleRate,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -382,7 +410,7 @@ data class NativeEngineInfo (
       return true
     }
     val other = other as NativeEngineInfo
-    return ScanApiPigeonUtils.deepEquals(this.modelPresent, other.modelPresent) && ScanApiPigeonUtils.deepEquals(this.modelVersion, other.modelVersion) && ScanApiPigeonUtils.deepEquals(this.experimental, other.experimental) && ScanApiPigeonUtils.deepEquals(this.targetSampleRate, other.targetSampleRate) && ScanApiPigeonUtils.deepEquals(this.effectiveSampleRate, other.effectiveSampleRate) && ScanApiPigeonUtils.deepEquals(this.delegate, other.delegate) && ScanApiPigeonUtils.deepEquals(this.deviceModel, other.deviceModel) && ScanApiPigeonUtils.deepEquals(this.osVersion, other.osVersion)
+    return ScanApiPigeonUtils.deepEquals(this.modelPresent, other.modelPresent) && ScanApiPigeonUtils.deepEquals(this.modelVersion, other.modelVersion) && ScanApiPigeonUtils.deepEquals(this.experimental, other.experimental) && ScanApiPigeonUtils.deepEquals(this.targetSampleRate, other.targetSampleRate) && ScanApiPigeonUtils.deepEquals(this.effectiveSampleRate, other.effectiveSampleRate) && ScanApiPigeonUtils.deepEquals(this.delegate, other.delegate) && ScanApiPigeonUtils.deepEquals(this.deviceModel, other.deviceModel) && ScanApiPigeonUtils.deepEquals(this.osVersion, other.osVersion) && ScanApiPigeonUtils.deepEquals(this.modelNote, other.modelNote) && ScanApiPigeonUtils.deepEquals(this.audioSource, other.audioSource) && ScanApiPigeonUtils.deepEquals(this.deviceInputSampleRate, other.deviceInputSampleRate)
   }
 
   override fun hashCode(): Int {
@@ -395,10 +423,71 @@ data class NativeEngineInfo (
     result = 31 * result + ScanApiPigeonUtils.deepHash(this.delegate)
     result = 31 * result + ScanApiPigeonUtils.deepHash(this.deviceModel)
     result = 31 * result + ScanApiPigeonUtils.deepHash(this.osVersion)
+    result = 31 * result + ScanApiPigeonUtils.deepHash(this.modelNote)
+    result = 31 * result + ScanApiPigeonUtils.deepHash(this.audioSource)
+    result = 31 * result + ScanApiPigeonUtils.deepHash(this.deviceInputSampleRate)
     return result
   }
   override fun toString(): String {
-    return "NativeEngineInfo(modelPresent=$modelPresent, modelVersion=$modelVersion, experimental=$experimental, targetSampleRate=$targetSampleRate, effectiveSampleRate=$effectiveSampleRate, delegate=$delegate, deviceModel=$deviceModel, osVersion=$osVersion)"
+    return "NativeEngineInfo(modelPresent=$modelPresent, modelVersion=$modelVersion, experimental=$experimental, targetSampleRate=$targetSampleRate, effectiveSampleRate=$effectiveSampleRate, delegate=$delegate, deviceModel=$deviceModel, osVersion=$osVersion, modelNote=$modelNote, audioSource=$audioSource, deviceInputSampleRate=$deviceInputSampleRate)"
+  }
+}
+
+/**
+ * One live input-level reading during a capture. Scalars only: never
+ * samples or spectra.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class NativeCaptureLevel (
+  /** Kept audio recorded so far (excludes the warm-up discard). */
+  val elapsedMs: Long,
+  /** Kept audio the capture is aiming for. */
+  val targetMs: Long,
+  /** RMS of the last ~50 ms window after removing its mean, in dBFS. */
+  val rmsDbfs: Double,
+  /** Largest absolute sample of the last ~50 ms window, in dBFS. */
+  val peakDbfs: Double
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NativeCaptureLevel {
+      val elapsedMs = pigeonVar_list[0] as Long
+      val targetMs = pigeonVar_list[1] as Long
+      val rmsDbfs = pigeonVar_list[2] as Double
+      val peakDbfs = pigeonVar_list[3] as Double
+      return NativeCaptureLevel(elapsedMs, targetMs, rmsDbfs, peakDbfs)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      elapsedMs,
+      targetMs,
+      rmsDbfs,
+      peakDbfs,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as NativeCaptureLevel
+    return ScanApiPigeonUtils.deepEquals(this.elapsedMs, other.elapsedMs) && ScanApiPigeonUtils.deepEquals(this.targetMs, other.targetMs) && ScanApiPigeonUtils.deepEquals(this.rmsDbfs, other.rmsDbfs) && ScanApiPigeonUtils.deepEquals(this.peakDbfs, other.peakDbfs)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + ScanApiPigeonUtils.deepHash(this.elapsedMs)
+    result = 31 * result + ScanApiPigeonUtils.deepHash(this.targetMs)
+    result = 31 * result + ScanApiPigeonUtils.deepHash(this.rmsDbfs)
+    result = 31 * result + ScanApiPigeonUtils.deepHash(this.peakDbfs)
+    return result
+  }
+  override fun toString(): String {
+    return "NativeCaptureLevel(elapsedMs=$elapsedMs, targetMs=$targetMs, rmsDbfs=$rmsDbfs, peakDbfs=$peakDbfs)"
   }
 }
 private open class ScanApiPigeonCodec : StandardMessageCodec() {
@@ -429,6 +518,11 @@ private open class ScanApiPigeonCodec : StandardMessageCodec() {
           NativeEngineInfo.fromList(it)
         }
       }
+      134.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeCaptureLevel.fromList(it)
+        }
+      }
       else -> super.readValueOfType(type, buffer)
     }
   }
@@ -454,10 +548,16 @@ private open class ScanApiPigeonCodec : StandardMessageCodec() {
         stream.write(133)
         writeValue(stream, value.toList())
       }
+      is NativeCaptureLevel -> {
+        stream.write(134)
+        writeValue(stream, value.toList())
+      }
       else -> super.writeValue(stream, value)
     }
   }
 }
+
+val ScanApiPigeonMethodCodec = StandardMethodCodec(ScanApiPigeonCodec())
 
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
@@ -466,15 +566,20 @@ interface ScanHostApi {
    * Records ~2 s, runs the quality gate and (only with a real bundled model)
    * inference. Audio/model problems come back as a RETRY or NOT_EVALUATED
    * result, not as errors. [scanId] names the WAV file when [retainAudio]
-   * is true.
+   * is true. [haptics] false means no vibration cue at all.
    */
-  suspend fun captureAndAnalyze(scanId: String, retainAudio: Boolean): NativeScanResult
+  suspend fun captureAndAnalyze(scanId: String, retainAudio: Boolean, haptics: Boolean): NativeScanResult
   suspend fun info(): NativeEngineInfo
   /**
    * Deletes every retained recording in app-private storage. Returns the
    * number of files deleted.
    */
   suspend fun deleteRetainedAudio(): Long
+  /**
+   * Absolute path of `files/recordings/<scanId>.wav` if it exists, else
+   * null (also null for an id that is not a UUID).
+   */
+  suspend fun retainedAudioPath(scanId: String): String?
 
   companion object {
     /** The codec used by ScanHostApi. */
@@ -492,9 +597,10 @@ interface ScanHostApi {
             val args = message as List<Any?>
             val scanIdArg = args[0] as String
             val retainAudioArg = args[1] as Boolean
+            val hapticsArg = args[2] as Boolean
             CoroutineScope(Dispatchers.Main).launch {
               val wrapped: List<Any?> = try {
-                listOf(api.captureAndAnalyze(scanIdArg, retainAudioArg))
+                listOf(api.captureAndAnalyze(scanIdArg, retainAudioArg, hapticsArg))
               } catch (exception: Throwable) {
                 ScanApiPigeonUtils.wrapError(exception)
               }
@@ -539,6 +645,80 @@ interface ScanHostApi {
           channel.setMessageHandler(null)
         }
       }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.audio_ai.ScanHostApi.retainedAudioPath$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val scanIdArg = args[0] as String
+            CoroutineScope(Dispatchers.Main).launch {
+              val wrapped: List<Any?> = try {
+                listOf(api.retainedAudioPath(scanIdArg))
+              } catch (exception: Throwable) {
+                ScanApiPigeonUtils.wrapError(exception)
+              }
+              reply.reply(wrapped)
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
     }
   }
 }
+
+private class ScanApiPigeonStreamHandler<T>(
+    val wrapper: ScanApiPigeonEventChannelWrapper<T>
+) : EventChannel.StreamHandler {
+  var pigeonSink: PigeonEventSink<T>? = null
+
+  override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
+    pigeonSink = PigeonEventSink<T>(sink)
+    wrapper.onListen(p0, pigeonSink!!)
+  }
+
+  override fun onCancel(p0: Any?) {
+    pigeonSink = null
+    wrapper.onCancel(p0)
+  }
+}
+
+interface ScanApiPigeonEventChannelWrapper<T> {
+  open fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
+
+  open fun onCancel(p0: Any?) {}
+}
+
+class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
+  fun success(value: T) {
+    sink.success(value)
+  }
+
+  fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
+    sink.error(errorCode, errorMessage, errorDetails)
+  }
+
+  fun endOfStream() {
+    sink.endOfStream()
+  }
+}
+      
+/** Live levels while a capture runs (~20 Hz). Nothing is sent while idle. */
+abstract class CaptureLevelsStreamHandler : ScanApiPigeonEventChannelWrapper<NativeCaptureLevel> {
+  companion object {
+    fun register(messenger: BinaryMessenger, streamHandler: CaptureLevelsStreamHandler, instanceName: String = "") {
+      var channelName: String = "dev.flutter.pigeon.audio_ai.CaptureLevelEvents.captureLevels"
+      if (instanceName.isNotEmpty()) {
+        channelName += ".$instanceName"
+      }
+      val internalStreamHandler = ScanApiPigeonStreamHandler<NativeCaptureLevel>(streamHandler)
+      EventChannel(messenger, channelName, ScanApiPigeonMethodCodec).setStreamHandler(internalStreamHandler)
+    }
+  }
+// Implement methods from ScanApiPigeonEventChannelWrapper
+override fun onListen(p0: Any?, sink: PigeonEventSink<NativeCaptureLevel>) {}
+
+override fun onCancel(p0: Any?) {}
+}
+      
