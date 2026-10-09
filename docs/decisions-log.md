@@ -11,6 +11,24 @@ Append new decisions at the bottom. Never rewrite past entries; supersede them w
 | 5 | 2026-10-09 | Stack: riverpod, go_router, drift, pigeon, flutter_local_notifications, pdf/csv/share_plus, permission_handler, connectivity_plus | Typed, testable, offline |
 | 6 | 2026-10-09 | Three project subagents: ui-dev, audio-ai-dev, data-ops-dev. The lead (main session) owns `contracts/` and root files | Mirrors PRD D1/D2/D3 ownership |
 
+| 7 | 2026-10-09 | Ranking tie-break: the queue uses the modelVersion shared by the most latest-valid scans. A tie goes to the most recently used, then the greatest version string. Ties within the queue are broken by item id | data-ops-dev proposal, accepted |
+| 8 | 2026-10-09 | `locationId` filters in ranking/reports include nested locations. `watchByLocation` matches the item's own location only. ReportScope filters are AND, and role is always applied | data-ops-dev proposal, accepted |
+| 9 | 2026-10-09 | Scans and verified inspection findings are immutable at the DB level (triggers). A correction is a new inspection | Guardrail §6 |
+| 10 | 2026-10-09 | `ScanEngine.deleteRetainedAudio()` added to the contract. PrivacyService calls it via `DataOperations.open(deleteRetainedAudio:)` | Retained audio lives in the audio-ai filesDir |
+| 11 | 2026-10-09 | `connectivity_plus` pinned to 7.3.1 | 7.3.2 → nm 0.6 → dbus ^0.8 conflicts with flutter_local_notifications_linux (dbus ^0.7). Linux-only; unpin when the notifications plugin moves to dbus 0.8 |
+| 12 | 2026-10-09 | Android Auto Backup disabled (`allowBackup=false`) | Stops the grain DB from leaving the device through cloud backup |
+| 13 | 2026-10-09 | No harvest/session entity in V0.1. The farmer subtitle uses the role tagline; FPO "scanned this session" is shown as "scanned today" | Avoids a new entity before it is needed |
+| 14 | 2026-10-09 | The UI requests the mic and POST_NOTIFICATIONS permissions. The engine returns RETRY/permissionDenied and never prompts | One owner per permission prompt |
+
+## Contract follow-ups (proposed by agents, not yet done)
+- `LocationRepository.watchAll()`: the UI currently walks `watchChildren`.
+- `ScanRepository.watchSince(DateTime)`: for the FPO "scanned today" count.
+- Document `watchForItem` ordering (newest first) and the `watchOpen()` semantics (open plus inProgress).
+- `InspectionQueue.experimental` flag.
+- Delete for items, lots and locations, which currently have none.
+- Handling a reminder notification that launches the app from closed (`getNotificationAppLaunchDetails`).
+- PDF Unicode font (Noto Sans / Noto Sans Devanagari) for local-language reports. Built-in PDF fonts are Latin-1 only.
+
 ## Open questions
 - [ ] Does a trained grain-pest CNN exist? What were its training preprocessing parameters (n_mels, n_fft, hop, fmin/fmax, normalization)?
 - [ ] Is labelled grain-pest audio available, and from which pests and grain types?

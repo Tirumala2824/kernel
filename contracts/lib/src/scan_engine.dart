@@ -12,6 +12,10 @@ abstract interface class ScanEngine {
   Future<ScanOutcome> captureAndAnalyze(String itemId, {bool retainAudio = false});
 
   Future<EngineInfo> info();
+
+  /// Deletes every recording retained under the audio opt-in. Safe to call
+  /// when nothing was retained. Called by PrivacyService.deleteAllHistory.
+  Future<void> deleteRetainedAudio();
 }
 
 class EngineInfo {

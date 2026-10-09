@@ -10,6 +10,7 @@ abstract interface class ScanEngine {
   /// retainAudio mirrors the user's explicit opt-in; false = buffer discarded after analysis.
   Future<ScanOutcome> captureAndAnalyze(String itemId, {bool retainAudio = false});
   Future<EngineInfo> info(); // modelPresent, modelVersion, experimental, target/effective sample rate, delegate, device
+  Future<void> deleteRetainedAudio(); // wipes opt-in recordings; called by PrivacyService.deleteAllHistory
 }
 
 enum ScanQuality { pass, retry }

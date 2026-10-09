@@ -486,6 +486,11 @@ class ScriptedScanEngine implements ScanEngine {
     deviceModel: 'test-device',
     osVersion: 'test-os',
   );
+
+  int deleteRetainedAudioCalls = 0;
+
+  @override
+  Future<void> deleteRetainedAudio() async => deleteRetainedAudioCalls++;
 }
 
 ScanOutcome notEvaluatedOutcome(String itemId, {DateTime? at}) => ScanOutcome(
