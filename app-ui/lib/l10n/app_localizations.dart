@@ -94,6 +94,558 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('en')];
 
+  /// Role selection title (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Select your role'**
+  String get roleSelectTitle;
+
+  /// Role selection subtitle (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'One app. Four workflows.'**
+  String get roleSelectSubtitle;
+
+  /// Marks the active role.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get roleCurrent;
+
+  /// Reassurance on role switch.
+  ///
+  /// In en, this message translates to:
+  /// **'Switching role keeps every record on this phone. You can switch back at any time.'**
+  String get roleSwitchKeepsRecords;
+
+  /// Error.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save your role: {detail}'**
+  String roleSaveFailed(String detail);
+
+  /// Start screen error.
+  ///
+  /// In en, this message translates to:
+  /// **'Kernel could not open its local data on this phone. Please restart the app.\n\nDetails: {detail}'**
+  String startDataError(String detail);
+
+  /// Skip to the role page.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// Previous onboarding page.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get onboardingBack;
+
+  /// Next onboarding page.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// Onboarding progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String onboardingStep(int step, int total);
+
+  /// Onboarding page 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio stays on your phone'**
+  String get onboardingPrivacyTitle;
+
+  /// Onboarding privacy point.
+  ///
+  /// In en, this message translates to:
+  /// **'Kernel listens to grain for 2 seconds and checks the sound right here on this phone.'**
+  String get onboardingPrivacy1;
+
+  /// Onboarding privacy point.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing is uploaded. There is no account and no cloud, and everything works offline.'**
+  String get onboardingPrivacy2;
+
+  /// Onboarding privacy point.
+  ///
+  /// In en, this message translates to:
+  /// **'Recordings are deleted after the check unless you choose to keep them in Settings.'**
+  String get onboardingPrivacy3;
+
+  /// Onboarding page 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'How to scan'**
+  String get onboardingHowTitle;
+
+  /// Scan positioning step.
+  ///
+  /// In en, this message translates to:
+  /// **'Lay the phone flat against the sack or container, microphone touching it.'**
+  String get onboardingHow1;
+
+  /// Scan environment step.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a quiet room. Stop talking and switch off fans if you can.'**
+  String get onboardingHow2;
+
+  /// Scan duration step.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold still for 2 seconds while Kernel listens.'**
+  String get onboardingHow3;
+
+  /// Honesty note in onboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Results are experimental. Always inspect the grain yourself before deciding.'**
+  String get onboardingHow4;
+
+  /// Onboarding page 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick your role'**
+  String get onboardingRoleTitle;
+
+  /// Small overline on the scan hero card.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen to your grain'**
+  String get heroEyebrowListen;
+
+  /// Hero card action.
+  ///
+  /// In en, this message translates to:
+  /// **'Start scan'**
+  String get heroStartScan;
+
+  /// FPO hero card action.
+  ///
+  /// In en, this message translates to:
+  /// **'Start batch'**
+  String get heroStartBatch;
+
+  /// Placeholder while data loads.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading…'**
+  String get loading;
+
+  /// Farmer home title (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Farmer dashboard'**
+  String get farmerHomeTitle;
+
+  /// Farmer home subtitle with the latest harvest.
+  ///
+  /// In en, this message translates to:
+  /// **'Harvest: {name}'**
+  String farmerHomeHarvestSubtitle(String name);
+
+  /// Farmer hero card (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Scan grain'**
+  String get farmerHeroTitle;
+
+  /// Farmer hero card (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Start a guided 2-second recording'**
+  String get farmerHeroSubtitle;
+
+  /// Farmer empty state detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Register a sack to start scanning and tracking it.'**
+  String get farmerEmptyDetail;
+
+  /// Count of registered sacks.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 registered sack} other{{count} registered sacks}}'**
+  String registeredSacks(int count);
+
+  /// Farmer summary when nothing is open.
+  ///
+  /// In en, this message translates to:
+  /// **'No follow-up inspections open'**
+  String get noFollowUps;
+
+  /// Open inspection count (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 sack requires follow-up inspection} other{{count} sacks require follow-up inspection}}'**
+  String sacksRequireFollowUp(int count);
+
+  /// Farmer harvests card/section.
+  ///
+  /// In en, this message translates to:
+  /// **'Harvests'**
+  String get harvestsTitle;
+
+  /// Harvests card with no harvests.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a harvest to group its sacks for the pre-sale report'**
+  String get harvestsEmptyCard;
+
+  /// Harvest count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 harvest · open the latest} other{{count} harvests · open the latest}}'**
+  String harvestsCount(int count);
+
+  /// Ranked inspection queue.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection queue'**
+  String get queueTitle;
+
+  /// Queue card subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which sacks to check first'**
+  String get queueCardSubtitle;
+
+  /// Pre-sale report card subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export a summary built from your stored records'**
+  String get preSaleCardSubtitle;
+
+  /// Pre-sale report card subtitle with a harvest.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-sale summary for {name}'**
+  String preSaleCardHarvest(String name);
+
+  /// Household home title (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Household storage'**
+  String get householdHomeTitle;
+
+  /// Household home subtitle (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Home grain tracker'**
+  String get householdHomeSubtitle;
+
+  /// Household hero card (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a container'**
+  String get householdHeroTitle;
+
+  /// Household hero card (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Record grain condition'**
+  String get householdHeroSubtitle;
+
+  /// Household empty state detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a grain container to track its storage time.'**
+  String get householdEmptyDetail;
+
+  /// Household reminders card (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection reminders'**
+  String get remindersCardTitle;
+
+  /// Reminders card with nothing scheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'No reminders scheduled. Open a container to set one.'**
+  String get remindersCardEmpty;
+
+  /// Reminder count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 reminder scheduled} other{{count} reminders scheduled}}'**
+  String remindersScheduled(int count);
+
+  /// Container card title (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'{grain} / {place}'**
+  String containerTitle(String grain, String place);
+
+  /// Days since the storage date.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Stored 1 day} other{Stored {days} days}}'**
+  String storedDays(int days);
+
+  /// Review status for a container never scanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Not scanned yet — review due'**
+  String get reviewNeverScanned;
+
+  /// Review status when the last usable scan is old.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Review due — last scanned 1 day ago} other{Review due — last scanned {days} days ago}}'**
+  String reviewDueSince(int days);
+
+  /// Review status when recently scanned.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Next review in 1 day} other{Next review in {days} days}}'**
+  String reviewNextIn(int days);
+
+  /// A reminder is due now.
+  ///
+  /// In en, this message translates to:
+  /// **'Review due'**
+  String get reviewDue;
+
+  /// Next reminder chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder {date}'**
+  String reminderOn(String date);
+
+  /// Shortcut to scan a container again.
+  ///
+  /// In en, this message translates to:
+  /// **'Recheck'**
+  String get recheckAction;
+
+  /// Opens the reminder sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me'**
+  String get remindMeAction;
+
+  /// Reminder sheet title.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a re-check reminder'**
+  String get reminderSheetTitle;
+
+  /// Reminder sheet subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For {label}. Kernel reminds you on this phone.'**
+  String reminderSheetSubtitle(String label);
+
+  /// Reminder preset chip.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{In 1 day} other{In {days} days}}'**
+  String reminderInDays(int days);
+
+  /// Reminder date field.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get reminderDateLabel;
+
+  /// Reminder time field.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get reminderTimeLabel;
+
+  /// Reminder sheet note.
+  ///
+  /// In en, this message translates to:
+  /// **'The reminder is scheduled on this phone and works offline.'**
+  String get reminderOnDeviceNote;
+
+  /// Reminder sheet button.
+  ///
+  /// In en, this message translates to:
+  /// **'Save reminder'**
+  String get reminderSave;
+
+  /// Reminder validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a time in the future.'**
+  String get reminderPastError;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder set'**
+  String get reminderSet;
+
+  /// Snackbar when notifications are not allowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder saved. Notifications are off, so it will only show inside the app.'**
+  String get reminderSetNotificationsOff;
+
+  /// Error.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not set reminder: {detail}'**
+  String reminderFailed(String detail);
+
+  /// FPO home title (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse overview'**
+  String get fpoHomeTitle;
+
+  /// FPO home subtitle with no places yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouses, rooms and stacks'**
+  String get fpoHomeSubtitle;
+
+  /// FPO empty state detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Register sacks, then scan them one at a time to build an inspection queue.'**
+  String get fpoEmptyDetail;
+
+  /// Distinct sacks scanned since midnight.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 sack scanned today} other{{count} sacks scanned today}}'**
+  String sacksScannedToday(int count);
+
+  /// Queue card subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{flagged} flagged · {needScan, plural, =1{1 sack needs a scan} other{{needScan} sacks need a scan}}'**
+  String queueSummary(int flagged, int needScan);
+
+  /// FPO assigned inspections (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned inspections'**
+  String get assignedTitle;
+
+  /// Assigned card with nothing open.
+  ///
+  /// In en, this message translates to:
+  /// **'No open inspections'**
+  String get assignedNone;
+
+  /// Open inspection count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 inspection open} other{{count} inspections open}}'**
+  String inspectionsOpen(int count);
+
+  /// FPO card.
+  ///
+  /// In en, this message translates to:
+  /// **'Add warehouse, room or stack'**
+  String get fpoAddLocationTitle;
+
+  /// FPO card subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Organise sacks by where they are stored'**
+  String get fpoAddLocationSubtitle;
+
+  /// Buyer home title (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming lots'**
+  String get buyerHomeTitle;
+
+  /// Buyer home subtitle (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Procurement screening'**
+  String get buyerHomeSubtitle;
+
+  /// Buyer hero overline.
+  ///
+  /// In en, this message translates to:
+  /// **'New delivery'**
+  String get heroEyebrowDelivery;
+
+  /// Buyer hero card (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Register delivery'**
+  String get buyerHeroTitle;
+
+  /// Buyer hero card (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier, lot, grain, quantity'**
+  String get buyerHeroSubtitle;
+
+  /// Buyer hero action.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get buyerHeroAction;
+
+  /// Buyer empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'No lots yet'**
+  String get lotsEmptyMessage;
+
+  /// Buyer empty state detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Register a delivery to screen its sacks.'**
+  String get lotsEmptyDetail;
+
+  /// Buyer empty state action.
+  ///
+  /// In en, this message translates to:
+  /// **'Register your first delivery'**
+  String get lotsEmptyAction;
+
+  /// Buyer report card (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection report'**
+  String get buyerReportCardTitle;
+
+  /// Buyer report card subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export lot screening from your stored records'**
+  String get buyerReportCardSubtitle;
+
+  /// Lot card title (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'{code} / {grain}'**
+  String lotTitle(String code, String grain);
+
+  /// Lot card subtitle with no sacks.
+  ///
+  /// In en, this message translates to:
+  /// **'No sacks registered in this lot yet'**
+  String get lotNoSacks;
+
+  /// Sacks with a valid, comparable scan (PRD wireframe).
+  ///
+  /// In en, this message translates to:
+  /// **'{screened} of {total, plural, =1{1 sack} other{{total} sacks}} screened'**
+  String lotScreenedCount(int screened, int total);
+
+  /// Supplier chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier: {name}'**
+  String supplierChip(String name);
+
   /// App bar title on the guided scan screen.
   ///
   /// In en, this message translates to:

@@ -10,6 +10,417 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get roleSelectTitle => 'Select your role';
+
+  @override
+  String get roleSelectSubtitle => 'One app. Four workflows.';
+
+  @override
+  String get roleCurrent => 'Current';
+
+  @override
+  String get roleSwitchKeepsRecords =>
+      'Switching role keeps every record on this phone. You can switch back at any time.';
+
+  @override
+  String roleSaveFailed(String detail) {
+    return 'Could not save your role: $detail';
+  }
+
+  @override
+  String startDataError(String detail) {
+    return 'Kernel could not open its local data on this phone. Please restart the app.\n\nDetails: $detail';
+  }
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingBack => 'Back';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String onboardingStep(int step, int total) {
+    return 'Step $step of $total';
+  }
+
+  @override
+  String get onboardingPrivacyTitle => 'Audio stays on your phone';
+
+  @override
+  String get onboardingPrivacy1 =>
+      'Kernel listens to grain for 2 seconds and checks the sound right here on this phone.';
+
+  @override
+  String get onboardingPrivacy2 =>
+      'Nothing is uploaded. There is no account and no cloud, and everything works offline.';
+
+  @override
+  String get onboardingPrivacy3 =>
+      'Recordings are deleted after the check unless you choose to keep them in Settings.';
+
+  @override
+  String get onboardingHowTitle => 'How to scan';
+
+  @override
+  String get onboardingHow1 =>
+      'Lay the phone flat against the sack or container, microphone touching it.';
+
+  @override
+  String get onboardingHow2 =>
+      'Choose a quiet room. Stop talking and switch off fans if you can.';
+
+  @override
+  String get onboardingHow3 => 'Hold still for 2 seconds while Kernel listens.';
+
+  @override
+  String get onboardingHow4 =>
+      'Results are experimental. Always inspect the grain yourself before deciding.';
+
+  @override
+  String get onboardingRoleTitle => 'Pick your role';
+
+  @override
+  String get heroEyebrowListen => 'Listen to your grain';
+
+  @override
+  String get heroStartScan => 'Start scan';
+
+  @override
+  String get heroStartBatch => 'Start batch';
+
+  @override
+  String get loading => 'Loading…';
+
+  @override
+  String get farmerHomeTitle => 'Farmer dashboard';
+
+  @override
+  String farmerHomeHarvestSubtitle(String name) {
+    return 'Harvest: $name';
+  }
+
+  @override
+  String get farmerHeroTitle => 'Scan grain';
+
+  @override
+  String get farmerHeroSubtitle => 'Start a guided 2-second recording';
+
+  @override
+  String get farmerEmptyDetail =>
+      'Register a sack to start scanning and tracking it.';
+
+  @override
+  String registeredSacks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count registered sacks',
+      one: '1 registered sack',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noFollowUps => 'No follow-up inspections open';
+
+  @override
+  String sacksRequireFollowUp(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sacks require follow-up inspection',
+      one: '1 sack requires follow-up inspection',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get harvestsTitle => 'Harvests';
+
+  @override
+  String get harvestsEmptyCard =>
+      'Create a harvest to group its sacks for the pre-sale report';
+
+  @override
+  String harvestsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count harvests · open the latest',
+      one: '1 harvest · open the latest',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get queueTitle => 'Inspection queue';
+
+  @override
+  String get queueCardSubtitle => 'Which sacks to check first';
+
+  @override
+  String get preSaleCardSubtitle =>
+      'Export a summary built from your stored records';
+
+  @override
+  String preSaleCardHarvest(String name) {
+    return 'Pre-sale summary for $name';
+  }
+
+  @override
+  String get householdHomeTitle => 'Household storage';
+
+  @override
+  String get householdHomeSubtitle => 'Home grain tracker';
+
+  @override
+  String get householdHeroTitle => 'Scan a container';
+
+  @override
+  String get householdHeroSubtitle => 'Record grain condition';
+
+  @override
+  String get householdEmptyDetail =>
+      'Add a grain container to track its storage time.';
+
+  @override
+  String get remindersCardTitle => 'Inspection reminders';
+
+  @override
+  String get remindersCardEmpty =>
+      'No reminders scheduled. Open a container to set one.';
+
+  @override
+  String remindersScheduled(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reminders scheduled',
+      one: '1 reminder scheduled',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String containerTitle(String grain, String place) {
+    return '$grain / $place';
+  }
+
+  @override
+  String storedDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Stored $days days',
+      one: 'Stored 1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewNeverScanned => 'Not scanned yet — review due';
+
+  @override
+  String reviewDueSince(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Review due — last scanned $days days ago',
+      one: 'Review due — last scanned 1 day ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reviewNextIn(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Next review in $days days',
+      one: 'Next review in 1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewDue => 'Review due';
+
+  @override
+  String reminderOn(String date) {
+    return 'Reminder $date';
+  }
+
+  @override
+  String get recheckAction => 'Recheck';
+
+  @override
+  String get remindMeAction => 'Remind me';
+
+  @override
+  String get reminderSheetTitle => 'Set a re-check reminder';
+
+  @override
+  String reminderSheetSubtitle(String label) {
+    return 'For $label. Kernel reminds you on this phone.';
+  }
+
+  @override
+  String reminderInDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'In $days days',
+      one: 'In 1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reminderDateLabel => 'Date';
+
+  @override
+  String get reminderTimeLabel => 'Time';
+
+  @override
+  String get reminderOnDeviceNote =>
+      'The reminder is scheduled on this phone and works offline.';
+
+  @override
+  String get reminderSave => 'Save reminder';
+
+  @override
+  String get reminderPastError => 'Choose a time in the future.';
+
+  @override
+  String get reminderSet => 'Reminder set';
+
+  @override
+  String get reminderSetNotificationsOff =>
+      'Reminder saved. Notifications are off, so it will only show inside the app.';
+
+  @override
+  String reminderFailed(String detail) {
+    return 'Could not set reminder: $detail';
+  }
+
+  @override
+  String get fpoHomeTitle => 'Warehouse overview';
+
+  @override
+  String get fpoHomeSubtitle => 'Warehouses, rooms and stacks';
+
+  @override
+  String get fpoEmptyDetail =>
+      'Register sacks, then scan them one at a time to build an inspection queue.';
+
+  @override
+  String sacksScannedToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sacks scanned today',
+      one: '1 sack scanned today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String queueSummary(int flagged, int needScan) {
+    String _temp0 = intl.Intl.pluralLogic(
+      needScan,
+      locale: localeName,
+      other: '$needScan sacks need a scan',
+      one: '1 sack needs a scan',
+    );
+    return '$flagged flagged · $_temp0';
+  }
+
+  @override
+  String get assignedTitle => 'Assigned inspections';
+
+  @override
+  String get assignedNone => 'No open inspections';
+
+  @override
+  String inspectionsOpen(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count inspections open',
+      one: '1 inspection open',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get fpoAddLocationTitle => 'Add warehouse, room or stack';
+
+  @override
+  String get fpoAddLocationSubtitle =>
+      'Organise sacks by where they are stored';
+
+  @override
+  String get buyerHomeTitle => 'Incoming lots';
+
+  @override
+  String get buyerHomeSubtitle => 'Procurement screening';
+
+  @override
+  String get heroEyebrowDelivery => 'New delivery';
+
+  @override
+  String get buyerHeroTitle => 'Register delivery';
+
+  @override
+  String get buyerHeroSubtitle => 'Supplier, lot, grain, quantity';
+
+  @override
+  String get buyerHeroAction => 'Register';
+
+  @override
+  String get lotsEmptyMessage => 'No lots yet';
+
+  @override
+  String get lotsEmptyDetail => 'Register a delivery to screen its sacks.';
+
+  @override
+  String get lotsEmptyAction => 'Register your first delivery';
+
+  @override
+  String get buyerReportCardTitle => 'Inspection report';
+
+  @override
+  String get buyerReportCardSubtitle =>
+      'Export lot screening from your stored records';
+
+  @override
+  String lotTitle(String code, String grain) {
+    return '$code / $grain';
+  }
+
+  @override
+  String get lotNoSacks => 'No sacks registered in this lot yet';
+
+  @override
+  String lotScreenedCount(int screened, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$total sacks',
+      one: '1 sack',
+    );
+    return '$screened of $_temp0 screened';
+  }
+
+  @override
+  String supplierChip(String name) {
+    return 'Supplier: $name';
+  }
+
+  @override
   String get scanAppBarTitle => 'Scan';
 
   @override

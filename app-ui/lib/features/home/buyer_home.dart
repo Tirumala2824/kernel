@@ -6,6 +6,8 @@ import 'package:kernel_contracts/kernel_contracts.dart';
 import '../../app/copy.dart';
 import '../../app/data_providers.dart';
 import '../../app/routes.dart';
+import '../../brand/illustrations.dart';
+import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_card.dart';
 import '../../widgets/status_chip.dart';
@@ -15,19 +17,18 @@ class BuyerHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
     final lots = ref.watch(lotsProvider);
     return PageList(
       children: [
-        const ScreenHeader(
-          title: 'Incoming lots',
-          subtitle: 'Procurement screening',
-        ),
-        KernelCard(
+        ScreenHeader(title: l.buyerHomeTitle, subtitle: l.buyerHomeSubtitle),
+        HeroActionCard(
           key: const Key('hero-register-lot'),
-          tone: KernelCardTone.hero,
-          icon: Icons.local_shipping_outlined,
-          title: 'Register delivery',
-          subtitle: 'Supplier, lot, grain, quantity',
+          eyebrow: l.heroEyebrowDelivery,
+          title: l.buyerHeroTitle,
+          subtitle: l.buyerHeroSubtitle,
+          actionLabel: l.buyerHeroAction,
+          icon: Icons.local_shipping_rounded,
           onTap: () => context.push(Routes.newLot),
         ),
         AsyncView<List<Lot>>(
@@ -36,9 +37,10 @@ class BuyerHome extends ConsumerWidget {
             if (lots.isEmpty) {
               return EmptyState(
                 key: const Key('empty-lots'),
-                message: 'No lots yet',
-                detail: 'Register a delivery to screen its sacks.',
-                actionLabel: 'Register your first delivery',
+                illustration: KernelIllustrations.lots,
+                message: l.lotsEmptyMessage,
+                detail: l.lotsEmptyDetail,
+                actionLabel: l.lotsEmptyAction,
                 onAction: () => context.push(Routes.newLot),
               );
             }
@@ -57,9 +59,9 @@ class BuyerHome extends ConsumerWidget {
         ),
         KernelCard(
           tone: KernelCardTone.ivory,
-          icon: Icons.description_outlined,
-          title: 'Inspection report',
-          subtitle: 'Export lot screening from your stored records',
+          icon: Icons.description_rounded,
+          title: l.buyerReportCardTitle,
+          subtitle: l.buyerReportCardSubtitle,
           onTap: () => context.go(Routes.reports),
         ),
       ],
@@ -82,6 +84,7 @@ class LotCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
     final queue = ref
         .watch(
           inspectionQueueProvider((
@@ -97,26 +100,28 @@ class LotCard extends ConsumerWidget {
         : queue.ranked.length + queue.needsScan.length;
     return KernelCard(
       key: Key('lot-${lot.id}'),
-      icon: Icons.inventory_outlined,
-      title: '${lot.code} / ${lot.grainType}',
+      tone: KernelCardTone.ivory,
+      icon: Icons.inventory_rounded,
+      title: l.lotTitle(lot.code, lot.grainType),
       subtitle: queue == null
-          ? 'Loading sacks'
+          ? l.loading
           : total == 0
-          ? 'No sacks registered in this lot yet'
-          : '$screened of ${countLabel(total, 'sack', 'sacks')} screened',
+          ? l.lotNoSacks
+          : l.lotScreenedCount(screened, total),
       onTap: () => context.push(Routes.lot(lot.id)),
       child: Wrap(
         spacing: 8,
         runSpacing: 8,
         children: [
           StatusChip(
-            label: lot.screeningStatus.label,
+            label: lot.screeningStatus.label(l),
             tone: screeningTone(lot.screeningStatus),
+            icon: Icons.fact_check_rounded,
           ),
           if (lot.supplierName case final supplier? when supplier.isNotEmpty)
             StatusChip(
-              label: 'Supplier: $supplier',
-              icon: Icons.store_outlined,
+              label: l.supplierChip(supplier),
+              icon: Icons.storefront_rounded,
             ),
         ],
       ),
