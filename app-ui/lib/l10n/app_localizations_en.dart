@@ -10,6 +10,178 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get languageTitle => 'Language';
+
+  @override
+  String get languageFollowDevice => 'Follow phone language';
+
+  @override
+  String get languageSheetBody =>
+      'Kernel\'s words change straight away. More Indian languages are on the way.';
+
+  @override
+  String get settingsSubtitle =>
+      'Language, scanning, privacy and on-device information';
+
+  @override
+  String get settingsScanning => 'Scanning';
+
+  @override
+  String get settingsHaptics => 'Vibrate at start and end';
+
+  @override
+  String get settingsHapticsBody =>
+      'A short vibration when recording starts and stops, so you can keep the phone pressed against the sack.';
+
+  @override
+  String get settingsVoice => 'Spoken prompts';
+
+  @override
+  String get settingsVoiceBody =>
+      'Off by default. Says \"Place phone on the sack\", \"Listening\" and \"Done\" with a voice installed on this phone. Nothing is fetched online.';
+
+  @override
+  String get settingsRetain => 'Keep recordings on this phone';
+
+  @override
+  String get settingsRetainBody =>
+      'Off by default: each 2-second recording is deleted right after it is checked. When on, recordings are kept privately inside the app so they can be checked again. They are never uploaded. \"Delete all history\" removes them.';
+
+  @override
+  String get settingsResearchSection => 'Research';
+
+  @override
+  String get settingsResearch => 'Research recording mode';
+
+  @override
+  String get settingsResearchBody =>
+      'Record labelled samples to help build a grain-pest model. Separate from keeping recordings; off by default.';
+
+  @override
+  String get researchConsentTitle => 'Turn on research recording?';
+
+  @override
+  String get researchConsentBody =>
+      'When you choose \"Record labelled sample\", that 2-second recording is kept privately on this phone with the label you give it. Clean or Infested labels need a physical inspection that confirms them. Nothing is uploaded: you can export a dataset file and decide yourself who receives it. Turn this off at any time; \"Delete all history\" removes every recording and label.';
+
+  @override
+  String get researchConsentAgree => 'I agree, turn on';
+
+  @override
+  String get settingsSamplesCard => 'Counts per label and dataset export';
+
+  @override
+  String get settingsPrivacy => 'Privacy';
+
+  @override
+  String get deleteHistoryTitle => 'Delete all history';
+
+  @override
+  String get deleteHistoryBody =>
+      'Removes scans, inspections and their photos, reminders, labelled samples and kept recordings.';
+
+  @override
+  String get deleteHistoryConfirmTitle => 'Delete all history?';
+
+  @override
+  String get deleteHistoryConfirmBody =>
+      'This deletes every scan, inspection (with its photos), reminder, labelled sample and kept recording on this phone. Your registered items, places, harvests and lots stay. This cannot be undone.';
+
+  @override
+  String get deleteHistoryConfirmAction => 'Delete history';
+
+  @override
+  String get deleteHistoryDone => 'All history deleted';
+
+  @override
+  String deleteHistoryFailed(String detail) {
+    return 'Could not delete history: $detail';
+  }
+
+  @override
+  String get settingsOnDevice => 'On-device scanning';
+
+  @override
+  String get engineUnavailable => 'Scan engine information is unavailable';
+
+  @override
+  String get engineModelPresent => 'Results are experimental and not verified.';
+
+  @override
+  String get engineNoModel =>
+      'No model is installed, so scans check recording quality only and results show \"Not evaluated\".';
+
+  @override
+  String get settingsFooter =>
+      'All scanning runs on this phone. Kernel works without a network connection and never uploads audio.';
+
+  @override
+  String get diagnosticsTitle => 'Diagnostics';
+
+  @override
+  String get diagnosticsCard =>
+      'Model, processor, sample rates and device details for testing';
+
+  @override
+  String get diagnosticsSubtitle =>
+      'What the scan engine reports on this phone';
+
+  @override
+  String get notMeasured => 'Not measured yet';
+
+  @override
+  String get yes => 'Yes';
+
+  @override
+  String get no => 'No';
+
+  @override
+  String get diagModelInstalled => 'Model installed';
+
+  @override
+  String get diagModelNote => 'Model note';
+
+  @override
+  String get diagDelegate => 'Processor';
+
+  @override
+  String get diagAudioTitle => 'Audio input';
+
+  @override
+  String get diagTargetRate => 'Target sample rate';
+
+  @override
+  String get diagEffectiveRate => 'Effective sample rate';
+
+  @override
+  String get diagDeviceRate => 'Device input rate';
+
+  @override
+  String get diagAudioSource => 'Audio source';
+
+  @override
+  String get diagDeviceTitle => 'Device';
+
+  @override
+  String get diagOs => 'Android';
+
+  @override
+  String get diagAppVersion => 'App version';
+
+  @override
+  String get diagLogRowTitle => 'Device-log row';
+
+  @override
+  String get diagLogRowBody =>
+      'Paste this row into the device log in docs/device-validation.md and add your name.';
+
+  @override
+  String get diagCopyRow => 'Copy device-log row';
+
+  @override
+  String get diagCopied => 'Row copied';
+
+  @override
   String get qrTitle => 'Open from a QR label';
 
   @override

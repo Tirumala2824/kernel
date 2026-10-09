@@ -94,6 +94,318 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('en')];
 
+  /// Settings row and picker title.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageTitle;
+
+  /// Use the device locale.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow phone language'**
+  String get languageFollowDevice;
+
+  /// Language picker explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Kernel\'s words change straight away. More Indian languages are on the way.'**
+  String get languageSheetBody;
+
+  /// Settings subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Language, scanning, privacy and on-device information'**
+  String get settingsSubtitle;
+
+  /// Settings section.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning'**
+  String get settingsScanning;
+
+  /// Haptics toggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vibrate at start and end'**
+  String get settingsHaptics;
+
+  /// Haptics toggle explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'A short vibration when recording starts and stops, so you can keep the phone pressed against the sack.'**
+  String get settingsHapticsBody;
+
+  /// Voice prompts toggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Spoken prompts'**
+  String get settingsVoice;
+
+  /// Voice prompts explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Off by default. Says \"Place phone on the sack\", \"Listening\" and \"Done\" with a voice installed on this phone. Nothing is fetched online.'**
+  String get settingsVoiceBody;
+
+  /// Audio retention opt-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep recordings on this phone'**
+  String get settingsRetain;
+
+  /// Audio retention explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Off by default: each 2-second recording is deleted right after it is checked. When on, recordings are kept privately inside the app so they can be checked again. They are never uploaded. \"Delete all history\" removes them.'**
+  String get settingsRetainBody;
+
+  /// Settings section.
+  ///
+  /// In en, this message translates to:
+  /// **'Research'**
+  String get settingsResearchSection;
+
+  /// Research opt-in toggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Research recording mode'**
+  String get settingsResearch;
+
+  /// Research toggle explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Record labelled samples to help build a grain-pest model. Separate from keeping recordings; off by default.'**
+  String get settingsResearchBody;
+
+  /// Consent dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on research recording?'**
+  String get researchConsentTitle;
+
+  /// Consent explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'When you choose \"Record labelled sample\", that 2-second recording is kept privately on this phone with the label you give it. Clean or Infested labels need a physical inspection that confirms them. Nothing is uploaded: you can export a dataset file and decide yourself who receives it. Turn this off at any time; \"Delete all history\" removes every recording and label.'**
+  String get researchConsentBody;
+
+  /// Consent button.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree, turn on'**
+  String get researchConsentAgree;
+
+  /// Link to research samples.
+  ///
+  /// In en, this message translates to:
+  /// **'Counts per label and dataset export'**
+  String get settingsSamplesCard;
+
+  /// Settings section.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get settingsPrivacy;
+
+  /// Privacy action.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all history'**
+  String get deleteHistoryTitle;
+
+  /// Privacy action explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Removes scans, inspections and their photos, reminders, labelled samples and kept recordings.'**
+  String get deleteHistoryBody;
+
+  /// Confirm dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all history?'**
+  String get deleteHistoryConfirmTitle;
+
+  /// Confirm dialog body.
+  ///
+  /// In en, this message translates to:
+  /// **'This deletes every scan, inspection (with its photos), reminder, labelled sample and kept recording on this phone. Your registered items, places, harvests and lots stay. This cannot be undone.'**
+  String get deleteHistoryConfirmBody;
+
+  /// Confirm button.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete history'**
+  String get deleteHistoryConfirmAction;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'All history deleted'**
+  String get deleteHistoryDone;
+
+  /// Error.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete history: {detail}'**
+  String deleteHistoryFailed(String detail);
+
+  /// Settings section.
+  ///
+  /// In en, this message translates to:
+  /// **'On-device scanning'**
+  String get settingsOnDevice;
+
+  /// Error prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan engine information is unavailable'**
+  String get engineUnavailable;
+
+  /// Engine card with a model.
+  ///
+  /// In en, this message translates to:
+  /// **'Results are experimental and not verified.'**
+  String get engineModelPresent;
+
+  /// Engine card without a model.
+  ///
+  /// In en, this message translates to:
+  /// **'No model is installed, so scans check recording quality only and results show \"Not evaluated\".'**
+  String get engineNoModel;
+
+  /// Settings footer.
+  ///
+  /// In en, this message translates to:
+  /// **'All scanning runs on this phone. Kernel works without a network connection and never uploads audio.'**
+  String get settingsFooter;
+
+  /// Diagnostics screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostics'**
+  String get diagnosticsTitle;
+
+  /// Link to diagnostics.
+  ///
+  /// In en, this message translates to:
+  /// **'Model, processor, sample rates and device details for testing'**
+  String get diagnosticsCard;
+
+  /// Diagnostics subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What the scan engine reports on this phone'**
+  String get diagnosticsSubtitle;
+
+  /// Value not reported by the engine yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not measured yet'**
+  String get notMeasured;
+
+  /// Boolean value.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// Boolean value.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
+
+  /// Field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Model installed'**
+  String get diagModelInstalled;
+
+  /// Field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Model note'**
+  String get diagModelNote;
+
+  /// Inference delegate field.
+  ///
+  /// In en, this message translates to:
+  /// **'Processor'**
+  String get diagDelegate;
+
+  /// Card title.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio input'**
+  String get diagAudioTitle;
+
+  /// Field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Target sample rate'**
+  String get diagTargetRate;
+
+  /// Field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Effective sample rate'**
+  String get diagEffectiveRate;
+
+  /// Hardware input rate before resampling.
+  ///
+  /// In en, this message translates to:
+  /// **'Device input rate'**
+  String get diagDeviceRate;
+
+  /// Field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio source'**
+  String get diagAudioSource;
+
+  /// Card title.
+  ///
+  /// In en, this message translates to:
+  /// **'Device'**
+  String get diagDeviceTitle;
+
+  /// OS version field.
+  ///
+  /// In en, this message translates to:
+  /// **'Android'**
+  String get diagOs;
+
+  /// Field label.
+  ///
+  /// In en, this message translates to:
+  /// **'App version'**
+  String get diagAppVersion;
+
+  /// Section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Device-log row'**
+  String get diagLogRowTitle;
+
+  /// Instructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste this row into the device log in docs/device-validation.md and add your name.'**
+  String get diagLogRowBody;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy device-log row'**
+  String get diagCopyRow;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Row copied'**
+  String get diagCopied;
+
   /// QR screen title.
   ///
   /// In en, this message translates to:

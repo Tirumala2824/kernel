@@ -8,27 +8,26 @@ import '../l10n/l10n.dart';
 import '../theme/tokens.dart';
 import 'status_chip.dart';
 
-BoxDecoration _tileDecoration({Color? border}) => BoxDecoration(
+const _tileDecoration = BoxDecoration(
   color: KernelColors.paper,
-  borderRadius: BorderRadius.circular(KernelRadii.md),
-  border: Border.all(color: border ?? KernelColors.hairline),
+  borderRadius: BorderRadius.all(Radius.circular(KernelRadii.md)),
+  border: Border.fromBorderSide(BorderSide(color: KernelColors.hairline)),
   boxShadow: KernelShadows.soft,
 );
 
 /// Tappable tile shell with a >=56dp target.
 class _TileShell extends StatelessWidget {
-  const _TileShell({required this.child, this.onTap, this.border});
+  const _TileShell({required this.child, this.onTap});
 
   final Widget child;
   final VoidCallback? onTap;
-  final Color? border;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: KernelSpace.sm),
       child: Container(
-        decoration: _tileDecoration(border: border),
+        decoration: _tileDecoration,
         child: Material(
           type: MaterialType.transparency,
           borderRadius: BorderRadius.circular(KernelRadii.md),
