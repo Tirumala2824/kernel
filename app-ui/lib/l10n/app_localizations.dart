@@ -94,6 +94,594 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('en')];
 
+  /// Share sheet subject for an exported file.
+  ///
+  /// In en, this message translates to:
+  /// **'Kernel {title}'**
+  String shareSubject(String title);
+
+  /// Export error.
+  ///
+  /// In en, this message translates to:
+  /// **'The report could not be created or shared. {detail}'**
+  String exportFailed(String detail);
+
+  /// Export panel explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Built only from records stored on this phone. Every scan shows its model version and experimental status. AI predictions and verified inspection findings are listed separately.'**
+  String get exportPanelBody;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Export CSV'**
+  String get exportCsv;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Export PDF'**
+  String get exportPdf;
+
+  /// Sack labels export button.
+  ///
+  /// In en, this message translates to:
+  /// **'Create labels PDF'**
+  String get exportLabelsPdf;
+
+  /// Where the exported file was written.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on this phone: {path}'**
+  String exportSavedAt(String path);
+
+  /// Sack label export card.
+  ///
+  /// In en, this message translates to:
+  /// **'Print sack labels'**
+  String get sackLabelsTitle;
+
+  /// Sack label export explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'A PDF of QR labels for these sacks. Print it and stick each label on its sack; scanning a label opens that sack in Kernel.'**
+  String get sackLabelsBody;
+
+  /// Reports tab title.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get reportsTitle;
+
+  /// Where to find the harvest pre-sale report.
+  ///
+  /// In en, this message translates to:
+  /// **'The pre-sale summary for one harvest is on that harvest\'s page.'**
+  String get reportsFarmerHint;
+
+  /// Where to find the lot summary report.
+  ///
+  /// In en, this message translates to:
+  /// **'The lot summary report is on each lot\'s page.'**
+  String get reportsBuyerHint;
+
+  /// Section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent scans'**
+  String get recentScans;
+
+  /// Empty list.
+  ///
+  /// In en, this message translates to:
+  /// **'No scans yet. Scans you record appear here.'**
+  String get recentScansEmpty;
+
+  /// Inventory subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your harvests and registered sacks'**
+  String get inventorySubtitleFarmer;
+
+  /// Inventory subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your grain containers and where they are kept'**
+  String get inventorySubtitleHousehold;
+
+  /// Inventory subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouses, rooms, stacks and sacks'**
+  String get inventorySubtitleFpo;
+
+  /// Inventory subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming lots and their sacks'**
+  String get inventorySubtitleBuyer;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'New harvest'**
+  String get newHarvestAction;
+
+  /// Register an item.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, container{Add container} other{Register sack}}'**
+  String registerItemAction(String kind);
+
+  /// Household: add a place.
+  ///
+  /// In en, this message translates to:
+  /// **'Add place'**
+  String get addPlace;
+
+  /// Add a warehouse, room or stack.
+  ///
+  /// In en, this message translates to:
+  /// **'Add location'**
+  String get addLocation;
+
+  /// Section title.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, container{Containers} other{Sacks}}'**
+  String itemsSectionTitle(String kind);
+
+  /// Empty section.
+  ///
+  /// In en, this message translates to:
+  /// **'No lots yet. Register a delivery to add one.'**
+  String get lotsSectionEmpty;
+
+  /// Household places section.
+  ///
+  /// In en, this message translates to:
+  /// **'Places'**
+  String get placesTitle;
+
+  /// FPO locations section.
+  ///
+  /// In en, this message translates to:
+  /// **'Locations'**
+  String get locationsTitle;
+
+  /// Empty section.
+  ///
+  /// In en, this message translates to:
+  /// **'No places yet. Add one to say where containers are kept.'**
+  String get placesEmpty;
+
+  /// Empty section.
+  ///
+  /// In en, this message translates to:
+  /// **'No warehouse yet. Add one, then its rooms and stacks.'**
+  String get locationsEmpty;
+
+  /// Empty section.
+  ///
+  /// In en, this message translates to:
+  /// **'No harvests yet. Create one to group its sacks and build a pre-sale summary.'**
+  String get harvestsSectionEmpty;
+
+  /// Harvest card subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{grain} · harvested {date}'**
+  String harvestCardSubtitle(String grain, String date);
+
+  /// Sack count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No sacks yet} =1{1 sack} other{{count} sacks}}'**
+  String sackCount(int count);
+
+  /// App bar title.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get itemDetailAppBar;
+
+  /// Unknown item id.
+  ///
+  /// In en, this message translates to:
+  /// **'This item was not found on this phone.'**
+  String get itemNotFound;
+
+  /// Menu item.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, container{Archive container} other{Archive sack}}'**
+  String archiveItemMenu(String kind);
+
+  /// Snackbar after archiving.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived. Its history is kept on this phone.'**
+  String get archivedSnack;
+
+  /// Banner on an archived item.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden from lists, queues and new reports. Its scan history and inspections are kept.'**
+  String get archivedItemNotice;
+
+  /// Unarchive button.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get restoreAction;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, container{Scan this container} other{Scan this sack}}'**
+  String scanThisItem(String kind);
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Set re-check reminder'**
+  String get setReminderAction;
+
+  /// Research mode entry on an item.
+  ///
+  /// In en, this message translates to:
+  /// **'Record labelled sample'**
+  String get researchRecordTitle;
+
+  /// Research mode entry subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Research mode: keep a 2-second recording and label it for training data'**
+  String get researchRecordSubtitle;
+
+  /// Field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get fieldQuantity;
+
+  /// Field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Stored since'**
+  String get fieldStoredSince;
+
+  /// Storage date and days.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} ({days, plural, =1{1 day} other{{days} days}})'**
+  String storedSinceValue(String date, int days);
+
+  /// Field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get fieldLocation;
+
+  /// Field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot'**
+  String get fieldLot;
+
+  /// Field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Harvest'**
+  String get fieldHarvest;
+
+  /// A name with its type.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} ({type})'**
+  String nameWithType(String name, String type);
+
+  /// Which role registered the item.
+  ///
+  /// In en, this message translates to:
+  /// **'Registered as {role}'**
+  String registeredAs(String role);
+
+  /// Section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan history'**
+  String get scanHistoryTitle;
+
+  /// Append-only explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Every scan is kept as recorded. A new scan never changes an earlier one.'**
+  String get scanHistoryAppendOnly;
+
+  /// Empty history.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, container{No scans yet. Use \"Scan this container\" to record one.} other{No scans yet. Use \"Scan this sack\" to record one.}}'**
+  String scanHistoryEmpty(String kind);
+
+  /// Section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspections'**
+  String get inspectionsTitle;
+
+  /// Empty list.
+  ///
+  /// In en, this message translates to:
+  /// **'No inspections recorded yet.'**
+  String get inspectionsEmpty;
+
+  /// Section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get remindersTitle;
+
+  /// Empty list.
+  ///
+  /// In en, this message translates to:
+  /// **'No reminders set.'**
+  String get remindersEmpty;
+
+  /// Reminder row.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-check on {when}'**
+  String recheckOn(String when);
+
+  /// Tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark done'**
+  String get reminderMarkDone;
+
+  /// Tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel reminder'**
+  String get reminderCancel;
+
+  /// Dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign inspection'**
+  String get assignDialogTitle;
+
+  /// Text field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned to'**
+  String get assignDialogLabel;
+
+  /// Text field helper.
+  ///
+  /// In en, this message translates to:
+  /// **'Who will do the follow-up check'**
+  String get assignDialogHelper;
+
+  /// Clears the assignee.
+  ///
+  /// In en, this message translates to:
+  /// **'Unassign'**
+  String get assignClear;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved {name}'**
+  String savedNamed(String name);
+
+  /// Error.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save: {detail}'**
+  String saveFailed(String detail);
+
+  /// Form button.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, container{Save container} other{Save sack}}'**
+  String saveItem(String kind);
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, container{Container label} other{Sack label}}'**
+  String itemLabelField(String kind);
+
+  /// Form helper.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, container{The name written on the container} other{The name written on the sack}}'**
+  String itemLabelHelper(String kind);
+
+  /// Form validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a label'**
+  String get validationLabel;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Grain type'**
+  String get grainTypeField;
+
+  /// Form validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the grain type'**
+  String get validationGrain;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get quantityField;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get unitField;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage date'**
+  String get storageDateField;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Harvest (optional)'**
+  String get harvestFieldOptional;
+
+  /// Form helper.
+  ///
+  /// In en, this message translates to:
+  /// **'No harvests yet. Create one from My Grain.'**
+  String get harvestFieldNone;
+
+  /// Empty picker option.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get none;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Location (optional)'**
+  String get locationFieldOptional;
+
+  /// Form helper.
+  ///
+  /// In en, this message translates to:
+  /// **'No places yet. You can add them from {where}.'**
+  String locationFieldNone(String where);
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot (optional)'**
+  String get lotFieldOptional;
+
+  /// Form helper.
+  ///
+  /// In en, this message translates to:
+  /// **'No lots registered yet.'**
+  String get lotFieldNone;
+
+  /// App bar title.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get locationAppBar;
+
+  /// Unknown location id.
+  ///
+  /// In en, this message translates to:
+  /// **'This location was not found on this phone.'**
+  String get locationNotFound;
+
+  /// Archived location note.
+  ///
+  /// In en, this message translates to:
+  /// **'This place is archived. Its sacks and their history are kept.'**
+  String get archivedLocationNotice;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, container{Add container here} other{Register sack here}}'**
+  String registerHere(String kind);
+
+  /// Add a child location.
+  ///
+  /// In en, this message translates to:
+  /// **'Add inside'**
+  String get addInside;
+
+  /// Start a batch session for this place.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch scan here'**
+  String get batchHere;
+
+  /// Child locations section.
+  ///
+  /// In en, this message translates to:
+  /// **'Inside'**
+  String get insideTitle;
+
+  /// Empty section.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing inside this location yet.'**
+  String get insideEmpty;
+
+  /// Section title.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, container{Containers here} other{Sacks here}}'**
+  String itemsHereTitle(String kind);
+
+  /// Empty section.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, container{No containers stored here yet.} other{No sacks stored here yet.}}'**
+  String itemsHereEmpty(String kind);
+
+  /// Form button.
+  ///
+  /// In en, this message translates to:
+  /// **'Save location'**
+  String get saveLocation;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get typeField;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get nameField;
+
+  /// Form validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a name'**
+  String get validationName;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Inside (optional)'**
+  String get parentFieldOptional;
+
+  /// Form helper.
+  ///
+  /// In en, this message translates to:
+  /// **'For example a room inside a warehouse'**
+  String get parentFieldHelper;
+
+  /// Top-level option.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing (top level)'**
+  String get parentTopLevel;
+
   /// Role selection title (PRD wireframe).
   ///
   /// In en, this message translates to:

@@ -5,34 +5,70 @@ import 'package:kernel_contracts/kernel_contracts.dart';
 
 import '../../app/copy.dart';
 import '../../app/data_providers.dart';
-import '../../app/platform_providers.dart';
 import '../../app/providers.dart';
 import '../../app/routes.dart';
+import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
+import '../../widgets/dialogs.dart';
 import '../../widgets/kernel_app_bar.dart';
 import '../../widgets/kernel_card.dart';
-import '../../widgets/record_tiles.dart';
 import '../../widgets/status_chip.dart';
+import '../household/reminder_sheet.dart';
+import 'item_sections.dart';
 
-/// Item fields, its immutable scan history (newest first), inspections and
-/// re-check reminders.
+/// Item fields, its immutable scan history (newest first), inspections,
+/// re-check reminders, archive, and (research mode) labelled recordings.
 class ItemDetailScreen extends ConsumerWidget {
   const ItemDetailScreen({super.key, required this.itemId});
 
   final String itemId;
 
+  Future<void> _archive(BuildContext context, WidgetRef ref, GrainItem item) async {
+    final l = context.l10n;
+    final ok = await confirmArchive(
+      context,
+      kind: ArchiveKind.item,
+      name: item.label,
+    );
+    if (!ok || !context.mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    await ref.read(itemRepositoryProvider).archive(item.id);
+    messenger.showSnackBar(SnackBar(content: Text(l.archivedSnack)));
+    ref.invalidate(itemProvider(item.id));
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
     final item = ref.watch(itemProvider(itemId));
+    final loaded = item.value;
     return Scaffold(
-      appBar: const KernelAppBar(title: 'Details'),
+      appBar: KernelAppBar(
+        title: l.itemDetailAppBar,
+        actions: [
+          if (loaded != null && !loaded.isArchived)
+            PopupMenuButton<String>(
+              key: const Key('item-menu'),
+              tooltip: l.menuTooltip,
+              icon: const Icon(Icons.more_horiz_rounded),
+              onSelected: (_) => _archive(context, ref, loaded),
+              itemBuilder: (_) => [
+                PopupMenuItem(
+                  key: const Key('archive-item'),
+                  value: 'archive',
+                  child: ListTile(
+                    leading: const Icon(Icons.inventory_rounded),
+                    title: Text(l.archiveItemMenu(loaded.ownerRole.itemKind)),
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
       body: AsyncView<GrainItem?>(
         value: item,
         data: (item) => item == null
-            ? const Padding(
-                padding: EdgeInsets.all(16),
-                child: Text('This item was not found on this phone.'),
-              )
+            ? NotFoundNote(l.itemNotFound)
             : _ItemDetailBody(item: item),
       ),
     );
@@ -46,173 +82,73 @@ class _ItemDetailBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final scans = ref.watch(scansForItemProvider(item.id));
-    final inspections = ref.watch(inspectionsForItemProvider(item.id));
-    final reminders = ref.watch(remindersForItemProvider(item.id));
-    final noun = item.ownerRole.itemNoun;
+    final l = context.l10n;
+    final kind = item.ownerRole.itemKind;
+    final research = ref.watch(researchModeProvider).value ?? false;
 
     return PageList(
       children: [
         ScreenHeader(title: item.label, subtitle: item.grainType),
+        if (item.isArchived)
+          NoticeBanner(
+            key: const Key('archived-banner'),
+            title: l.archivedBadge,
+            text: l.archivedItemNotice,
+            tone: StatusTone.neutral,
+            icon: Icons.inventory_rounded,
+          ),
+        if (item.isArchived)
+          OutlinedButton.icon(
+            key: const Key('restore-item'),
+            onPressed: () async {
+              await ref.read(itemRepositoryProvider).unarchive(item.id);
+              ref.invalidate(itemProvider(item.id));
+            },
+            icon: const Icon(Icons.unarchive_rounded),
+            label: Text(l.restoreAction),
+          ),
         ItemSummaryCard(item: item),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: [
-            FilledButton.icon(
-              key: const Key('action-scan-item'),
-              onPressed: () => context.push(Routes.scanItem(item.id)),
-              icon: const Icon(Icons.graphic_eq),
-              label: Text('Scan this $noun'),
-            ),
-            OutlinedButton.icon(
-              key: const Key('action-inspect'),
-              onPressed: () => context.push(Routes.inspect(item.id)),
-              icon: const Icon(Icons.person_search),
-              label: const Text('Record inspection'),
-            ),
-            OutlinedButton.icon(
-              key: const Key('action-reminder'),
-              onPressed: () => _scheduleReminder(context, ref),
-              icon: const Icon(Icons.alarm_add),
-              label: const Text('Set re-check reminder'),
-            ),
-          ],
-        ),
-        const SectionTitle('Scan history'),
-        const Text(
-          'Every scan is kept as recorded. A new scan never changes an '
-          'earlier one.',
-        ),
-        AsyncView<List<ScanRecord>>(
-          value: scans,
-          data: (scans) => scans.isEmpty
-              ? Text('No scans yet. Use "Scan this $noun" to record one.')
-              : Column(
-                  key: const Key('scan-history'),
-                  children: [
-                    for (final scan in scans)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: ScanRecordTile(
-                          scan: scan,
-                          onTap: () =>
-                              context.push(Routes.result(item.id, scan.id)),
-                        ),
-                      ),
-                  ],
+        if (!item.isArchived)
+          ActionWrap(
+            children: [
+              FilledButton.icon(
+                key: const Key('action-scan-item'),
+                onPressed: () => context.push(Routes.scanItem(item.id)),
+                icon: const Icon(Icons.graphic_eq_rounded),
+                label: Text(l.scanThisItem(kind)),
+              ),
+              OutlinedButton.icon(
+                key: const Key('action-inspect'),
+                onPressed: () => context.push(Routes.inspect(item.id)),
+                icon: const Icon(Icons.person_search_rounded),
+                label: Text(l.actionRecordInspection),
+              ),
+              OutlinedButton.icon(
+                key: const Key('action-reminder'),
+                onPressed: () => showReminderSheet(
+                  context,
+                  itemId: item.id,
+                  itemLabel: item.label,
                 ),
-        ),
-        const SectionTitle('Inspections'),
-        AsyncView<List<Inspection>>(
-          value: inspections,
-          data: (inspections) => inspections.isEmpty
-              ? const Text('No inspections recorded yet.')
-              : Column(
-                  children: [
-                    for (final inspection in inspections)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: InspectionTile(
-                          inspection: inspection,
-                          onFollowUpChanged: (status) => ref
-                              .read(inspectionRepositoryProvider)
-                              .updateFollowUp(inspection.id, status),
-                        ),
-                      ),
-                  ],
-                ),
-        ),
-        const SectionTitle('Reminders'),
-        AsyncView<List<Reminder>>(
-          value: reminders,
-          data: (reminders) {
-            final active =
-                reminders
-                    .where(
-                      (r) =>
-                          r.status == ReminderStatus.scheduled ||
-                          r.status == ReminderStatus.fired,
-                    )
-                    .toList()
-                  ..sort((a, b) => a.dueAt.compareTo(b.dueAt));
-            if (active.isEmpty) return const Text('No reminders set.');
-            return Column(
-              children: [
-                for (final reminder in active)
-                  Card(
-                    color: Colors.white,
-                    child: ListTile(
-                      minTileHeight: 56,
-                      leading: const Icon(Icons.alarm),
-                      title: Text(
-                        'Re-check on ${formatDate(context, reminder.dueAt)}',
-                      ),
-                      subtitle: Text(reminder.status.label),
-                      trailing: Wrap(
-                        children: [
-                          IconButton(
-                            tooltip: 'Mark done',
-                            icon: const Icon(Icons.check),
-                            onPressed: () => ref
-                                .read(reminderRepositoryProvider)
-                                .markDone(reminder.id),
-                          ),
-                          IconButton(
-                            tooltip: 'Cancel reminder',
-                            icon: const Icon(Icons.close),
-                            onPressed: () => ref
-                                .read(reminderRepositoryProvider)
-                                .cancel(reminder.id),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-              ],
-            );
-          },
-        ),
+                icon: const Icon(Icons.alarm_add_rounded),
+                label: Text(l.setReminderAction),
+              ),
+            ],
+          ),
+        if (research && !item.isArchived)
+          KernelCard(
+            key: const Key('action-research'),
+            tone: KernelCardTone.ivory,
+            icon: Icons.science_rounded,
+            title: l.researchRecordTitle,
+            subtitle: l.researchRecordSubtitle,
+            onTap: () => context.push(Routes.researchScan(item.id)),
+          ),
+        ScanHistorySection(item: item),
+        InspectionsSection(item: item),
+        RemindersSection(item: item),
       ],
     );
-  }
-
-  Future<void> _scheduleReminder(BuildContext context, WidgetRef ref) async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: now.add(const Duration(days: 7)),
-      firstDate: DateUtils.dateOnly(now),
-      lastDate: now.add(const Duration(days: 366)),
-      helpText: 'Re-check date',
-    );
-    if (picked == null || !context.mounted) return;
-    final messenger = ScaffoldMessenger.of(context);
-    final access = await ref
-        .read(devicePermissionsProvider)
-        .requestNotifications();
-    try {
-      await ref
-          .read(reminderRepositoryProvider)
-          .schedule(
-            item.id,
-            DateTime(picked.year, picked.month, picked.day, 9),
-          );
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(
-            access == PermissionAccess.granted
-                ? 'Reminder set'
-                : 'Reminder saved. Notifications are off, so it will only '
-                      'show inside the app.',
-          ),
-        ),
-      );
-    } on Object catch (e) {
-      messenger.showSnackBar(
-        SnackBar(content: Text('Could not set reminder: $e')),
-      );
-    }
   }
 }
 
@@ -225,40 +161,50 @@ class ItemSummaryCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
     final locationId = item.locationId;
     final lotId = item.lotId;
+    final harvestId = item.harvestId;
     final location = locationId == null
         ? null
         : ref.watch(locationProvider(locationId)).value;
     final lot = lotId == null ? null : ref.watch(lotProvider(lotId)).value;
+    final harvest = harvestId == null
+        ? null
+        : ref.watch(harvestProvider(harvestId)).value;
     return KernelCard(
       key: const Key('item-card'),
       title: item.label,
       subtitle: item.grainType,
-      icon: Icons.inventory_2_outlined,
+      icon: item.ownerRole == Role.household
+          ? Icons.kitchen_rounded
+          : Icons.inventory_2_rounded,
       onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           FieldRow(
-            label: 'Quantity',
+            label: l.fieldQuantity,
             value: formatQuantity(item.quantity, item.quantityUnit),
           ),
           FieldRow(
-            label: 'Stored since',
-            value:
-                '${formatDate(context, item.storageDate)} '
-                '(${countLabel(daysSince(item.storageDate), 'day', 'days')})',
+            label: l.fieldStoredSince,
+            value: l.storedSinceValue(
+              formatDate(context, item.storageDate),
+              daysSince(item.storageDate),
+            ),
           ),
           if (location != null)
             FieldRow(
-              label: 'Location',
-              value: '${location.name} (${location.type.label})',
+              label: l.fieldLocation,
+              value: l.nameWithType(location.name, location.type.label(l)),
             ),
-          if (lot != null) FieldRow(label: 'Lot', value: lot.code),
+          if (lot != null) FieldRow(label: l.fieldLot, value: lot.code),
+          if (harvest != null)
+            FieldRow(label: l.fieldHarvest, value: harvest.name),
           const SizedBox(height: 4),
           StatusChip(
-            label: 'Registered as ${item.ownerRole.title}',
+            label: l.registeredAs(item.ownerRole.title(l)),
             icon: item.ownerRole.icon,
           ),
         ],

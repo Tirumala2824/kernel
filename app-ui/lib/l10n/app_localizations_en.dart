@@ -10,6 +10,415 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String shareSubject(String title) {
+    return 'Kernel $title';
+  }
+
+  @override
+  String exportFailed(String detail) {
+    return 'The report could not be created or shared. $detail';
+  }
+
+  @override
+  String get exportPanelBody =>
+      'Built only from records stored on this phone. Every scan shows its model version and experimental status. AI predictions and verified inspection findings are listed separately.';
+
+  @override
+  String get exportCsv => 'Export CSV';
+
+  @override
+  String get exportPdf => 'Export PDF';
+
+  @override
+  String get exportLabelsPdf => 'Create labels PDF';
+
+  @override
+  String exportSavedAt(String path) {
+    return 'Saved on this phone: $path';
+  }
+
+  @override
+  String get sackLabelsTitle => 'Print sack labels';
+
+  @override
+  String get sackLabelsBody =>
+      'A PDF of QR labels for these sacks. Print it and stick each label on its sack; scanning a label opens that sack in Kernel.';
+
+  @override
+  String get reportsTitle => 'Reports';
+
+  @override
+  String get reportsFarmerHint =>
+      'The pre-sale summary for one harvest is on that harvest\'s page.';
+
+  @override
+  String get reportsBuyerHint =>
+      'The lot summary report is on each lot\'s page.';
+
+  @override
+  String get recentScans => 'Recent scans';
+
+  @override
+  String get recentScansEmpty => 'No scans yet. Scans you record appear here.';
+
+  @override
+  String get inventorySubtitleFarmer => 'Your harvests and registered sacks';
+
+  @override
+  String get inventorySubtitleHousehold =>
+      'Your grain containers and where they are kept';
+
+  @override
+  String get inventorySubtitleFpo => 'Warehouses, rooms, stacks and sacks';
+
+  @override
+  String get inventorySubtitleBuyer => 'Incoming lots and their sacks';
+
+  @override
+  String get newHarvestAction => 'New harvest';
+
+  @override
+  String registerItemAction(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'Add container',
+      'other': 'Register sack',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get addPlace => 'Add place';
+
+  @override
+  String get addLocation => 'Add location';
+
+  @override
+  String itemsSectionTitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'Containers',
+      'other': 'Sacks',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get lotsSectionEmpty => 'No lots yet. Register a delivery to add one.';
+
+  @override
+  String get placesTitle => 'Places';
+
+  @override
+  String get locationsTitle => 'Locations';
+
+  @override
+  String get placesEmpty =>
+      'No places yet. Add one to say where containers are kept.';
+
+  @override
+  String get locationsEmpty =>
+      'No warehouse yet. Add one, then its rooms and stacks.';
+
+  @override
+  String get harvestsSectionEmpty =>
+      'No harvests yet. Create one to group its sacks and build a pre-sale summary.';
+
+  @override
+  String harvestCardSubtitle(String grain, String date) {
+    return '$grain · harvested $date';
+  }
+
+  @override
+  String sackCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sacks',
+      one: '1 sack',
+      zero: 'No sacks yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get itemDetailAppBar => 'Details';
+
+  @override
+  String get itemNotFound => 'This item was not found on this phone.';
+
+  @override
+  String archiveItemMenu(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'Archive container',
+      'other': 'Archive sack',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get archivedSnack => 'Archived. Its history is kept on this phone.';
+
+  @override
+  String get archivedItemNotice =>
+      'Hidden from lists, queues and new reports. Its scan history and inspections are kept.';
+
+  @override
+  String get restoreAction => 'Restore';
+
+  @override
+  String scanThisItem(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'Scan this container',
+      'other': 'Scan this sack',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get setReminderAction => 'Set re-check reminder';
+
+  @override
+  String get researchRecordTitle => 'Record labelled sample';
+
+  @override
+  String get researchRecordSubtitle =>
+      'Research mode: keep a 2-second recording and label it for training data';
+
+  @override
+  String get fieldQuantity => 'Quantity';
+
+  @override
+  String get fieldStoredSince => 'Stored since';
+
+  @override
+  String storedSinceValue(String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return '$date ($_temp0)';
+  }
+
+  @override
+  String get fieldLocation => 'Location';
+
+  @override
+  String get fieldLot => 'Lot';
+
+  @override
+  String get fieldHarvest => 'Harvest';
+
+  @override
+  String nameWithType(String name, String type) {
+    return '$name ($type)';
+  }
+
+  @override
+  String registeredAs(String role) {
+    return 'Registered as $role';
+  }
+
+  @override
+  String get scanHistoryTitle => 'Scan history';
+
+  @override
+  String get scanHistoryAppendOnly =>
+      'Every scan is kept as recorded. A new scan never changes an earlier one.';
+
+  @override
+  String scanHistoryEmpty(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'No scans yet. Use \"Scan this container\" to record one.',
+      'other': 'No scans yet. Use \"Scan this sack\" to record one.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get inspectionsTitle => 'Inspections';
+
+  @override
+  String get inspectionsEmpty => 'No inspections recorded yet.';
+
+  @override
+  String get remindersTitle => 'Reminders';
+
+  @override
+  String get remindersEmpty => 'No reminders set.';
+
+  @override
+  String recheckOn(String when) {
+    return 'Re-check on $when';
+  }
+
+  @override
+  String get reminderMarkDone => 'Mark done';
+
+  @override
+  String get reminderCancel => 'Cancel reminder';
+
+  @override
+  String get assignDialogTitle => 'Assign inspection';
+
+  @override
+  String get assignDialogLabel => 'Assigned to';
+
+  @override
+  String get assignDialogHelper => 'Who will do the follow-up check';
+
+  @override
+  String get assignClear => 'Unassign';
+
+  @override
+  String savedNamed(String name) {
+    return 'Saved $name';
+  }
+
+  @override
+  String saveFailed(String detail) {
+    return 'Could not save: $detail';
+  }
+
+  @override
+  String saveItem(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'Save container',
+      'other': 'Save sack',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String itemLabelField(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'Container label',
+      'other': 'Sack label',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String itemLabelHelper(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'The name written on the container',
+      'other': 'The name written on the sack',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get validationLabel => 'Enter a label';
+
+  @override
+  String get grainTypeField => 'Grain type';
+
+  @override
+  String get validationGrain => 'Enter the grain type';
+
+  @override
+  String get quantityField => 'Quantity';
+
+  @override
+  String get unitField => 'Unit';
+
+  @override
+  String get storageDateField => 'Storage date';
+
+  @override
+  String get harvestFieldOptional => 'Harvest (optional)';
+
+  @override
+  String get harvestFieldNone => 'No harvests yet. Create one from My Grain.';
+
+  @override
+  String get none => 'None';
+
+  @override
+  String get locationFieldOptional => 'Location (optional)';
+
+  @override
+  String locationFieldNone(String where) {
+    return 'No places yet. You can add them from $where.';
+  }
+
+  @override
+  String get lotFieldOptional => 'Lot (optional)';
+
+  @override
+  String get lotFieldNone => 'No lots registered yet.';
+
+  @override
+  String get locationAppBar => 'Location';
+
+  @override
+  String get locationNotFound => 'This location was not found on this phone.';
+
+  @override
+  String get archivedLocationNotice =>
+      'This place is archived. Its sacks and their history are kept.';
+
+  @override
+  String registerHere(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'Add container here',
+      'other': 'Register sack here',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get addInside => 'Add inside';
+
+  @override
+  String get batchHere => 'Batch scan here';
+
+  @override
+  String get insideTitle => 'Inside';
+
+  @override
+  String get insideEmpty => 'Nothing inside this location yet.';
+
+  @override
+  String itemsHereTitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'Containers here',
+      'other': 'Sacks here',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String itemsHereEmpty(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'No containers stored here yet.',
+      'other': 'No sacks stored here yet.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get saveLocation => 'Save location';
+
+  @override
+  String get typeField => 'Type';
+
+  @override
+  String get nameField => 'Name';
+
+  @override
+  String get validationName => 'Enter a name';
+
+  @override
+  String get parentFieldOptional => 'Inside (optional)';
+
+  @override
+  String get parentFieldHelper => 'For example a room inside a warehouse';
+
+  @override
+  String get parentTopLevel => 'Nothing (top level)';
+
+  @override
   String get roleSelectTitle => 'Select your role';
 
   @override
