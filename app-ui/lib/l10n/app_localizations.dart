@@ -94,6 +94,162 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('en')];
 
+  /// Inspection form title.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical inspection'**
+  String get inspectionTitle;
+
+  /// Form button.
+  ///
+  /// In en, this message translates to:
+  /// **'Save inspection'**
+  String get saveInspection;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection saved'**
+  String get inspectionSaved;
+
+  /// Read-only AI panel, kept apart from the human finding.
+  ///
+  /// In en, this message translates to:
+  /// **'AI prediction (not verified)'**
+  String get aiPanelTitle;
+
+  /// AI panel loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading the linked scan…'**
+  String get aiPanelLoading;
+
+  /// AI panel without a scan.
+  ///
+  /// In en, this message translates to:
+  /// **'No scan linked. This inspection stands on its own.'**
+  String get aiPanelNoScan;
+
+  /// When the linked scan was taken.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanned {when}'**
+  String scannedAt(String when);
+
+  /// The prediction never pre-fills the finding.
+  ///
+  /// In en, this message translates to:
+  /// **'Not used to fill in your finding'**
+  String get aiPanelNotUsed;
+
+  /// Human finding panel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your verified finding'**
+  String get findingPanelTitle;
+
+  /// Human finding explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'What you saw yourself when you checked the grain. This is stored separately from the AI prediction.'**
+  String get findingPanelBody;
+
+  /// Validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what you found'**
+  String get findingMissing;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspector name'**
+  String get inspectorField;
+
+  /// Validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter who inspected'**
+  String get validationInspector;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection date'**
+  String get inspectionDateField;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Observations'**
+  String get observationsField;
+
+  /// Form helper.
+  ///
+  /// In en, this message translates to:
+  /// **'What you saw, where, and how much'**
+  String get observationsHelper;
+
+  /// Form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign follow-up to (optional)'**
+  String get assigneeFieldOptional;
+
+  /// Form section.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow-up status'**
+  String get followUpStatusTitle;
+
+  /// Form section.
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence photos (optional)'**
+  String get photosTitle;
+
+  /// Photo privacy note.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos stay privately on this phone with this inspection. They are evidence of what you saw, not acoustic results, and are never uploaded.'**
+  String get photosBody;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Take photo'**
+  String get photoTake;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get photoPick;
+
+  /// Snackbar when the camera is denied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is off. Allow it in the phone settings to take evidence photos.'**
+  String get cameraDeniedPhoto;
+
+  /// Error.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not add the photo: {detail}'**
+  String photoFailed(String detail);
+
+  /// Filter chip.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// Empty filtered list.
+  ///
+  /// In en, this message translates to:
+  /// **'No open inspections match this filter.'**
+  String get filterNoMatch;
+
   /// Batch setup title.
   ///
   /// In en, this message translates to:

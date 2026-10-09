@@ -10,6 +10,92 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get inspectionTitle => 'Physical inspection';
+
+  @override
+  String get saveInspection => 'Save inspection';
+
+  @override
+  String get inspectionSaved => 'Inspection saved';
+
+  @override
+  String get aiPanelTitle => 'AI prediction (not verified)';
+
+  @override
+  String get aiPanelLoading => 'Loading the linked scan…';
+
+  @override
+  String get aiPanelNoScan =>
+      'No scan linked. This inspection stands on its own.';
+
+  @override
+  String scannedAt(String when) {
+    return 'Scanned $when';
+  }
+
+  @override
+  String get aiPanelNotUsed => 'Not used to fill in your finding';
+
+  @override
+  String get findingPanelTitle => 'Your verified finding';
+
+  @override
+  String get findingPanelBody =>
+      'What you saw yourself when you checked the grain. This is stored separately from the AI prediction.';
+
+  @override
+  String get findingMissing => 'Choose what you found';
+
+  @override
+  String get inspectorField => 'Inspector name';
+
+  @override
+  String get validationInspector => 'Enter who inspected';
+
+  @override
+  String get inspectionDateField => 'Inspection date';
+
+  @override
+  String get observationsField => 'Observations';
+
+  @override
+  String get observationsHelper => 'What you saw, where, and how much';
+
+  @override
+  String get assigneeFieldOptional => 'Assign follow-up to (optional)';
+
+  @override
+  String get followUpStatusTitle => 'Follow-up status';
+
+  @override
+  String get photosTitle => 'Evidence photos (optional)';
+
+  @override
+  String get photosBody =>
+      'Photos stay privately on this phone with this inspection. They are evidence of what you saw, not acoustic results, and are never uploaded.';
+
+  @override
+  String get photoTake => 'Take photo';
+
+  @override
+  String get photoPick => 'Choose from gallery';
+
+  @override
+  String get cameraDeniedPhoto =>
+      'Camera access is off. Allow it in the phone settings to take evidence photos.';
+
+  @override
+  String photoFailed(String detail) {
+    return 'Could not add the photo: $detail';
+  }
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterNoMatch => 'No open inspections match this filter.';
+
+  @override
   String get batchSetupTitle => 'Choose a room or stack';
 
   @override
