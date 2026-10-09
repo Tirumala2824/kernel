@@ -1,5 +1,5 @@
 name: audio_ai
-description: "Kernel on-device acoustic scan engine"
+description: "Kernel on-device acoustic scan engine (AudioRecord, quality gate, log-mel, LiteRT). No network code."
 publish_to: none
 version: 0.1.0
 
@@ -14,11 +14,13 @@ dependencies:
     sdk: flutter
   kernel_contracts:
     path: ../contracts
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  pigeon: ^29.0.0
 
 flutter:
   plugin:

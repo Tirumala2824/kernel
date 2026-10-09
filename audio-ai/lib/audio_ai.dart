@@ -1,8 +1,7 @@
+/// Kernel on-device acoustic scan engine.
+///
+/// The only public entry point is [NativeScanEngine], an implementation of
+/// the contracts `ScanEngine`. The pigeon bridge and mapping are internal.
+library;
 
-import 'audio_ai_platform_interface.dart';
-
-class AudioAi {
-  Future<String?> getPlatformVersion() {
-    return AudioAiPlatform.instance.getPlatformVersion();
-  }
-}
+export 'src/native_scan_engine.dart' show NativeScanEngine;

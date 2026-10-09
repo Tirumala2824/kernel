@@ -1,3 +1,6 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.kernel.audio_ai">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Microphone capture for the on-device scan. The app requests it at runtime. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Start / finish / retry haptic cues. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
 </manifest>
