@@ -1,11 +1,50 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../theme/tokens.dart';
 
 enum StatusTone { neutral, positive, attention, danger, info }
 
-/// Status label. Colour is always paired with text and an icon, never used
-/// on its own.
+/// Colours for a [StatusTone]: background, foreground (text and icon) and
+/// border. Every pair meets 4.5:1 (see test/theme_test.dart).
+(Color, Color, Color) statusColors(StatusTone tone) => switch (tone) {
+  StatusTone.neutral => (
+    KernelColors.paper,
+    KernelColors.ink,
+    KernelColors.outline,
+  ),
+  StatusTone.positive => (
+    KernelColors.sage,
+    KernelColors.forest,
+    KernelColors.forestSoft,
+  ),
+  StatusTone.attention => (
+    KernelColors.amberSoft,
+    KernelColors.amberInk,
+    KernelColors.amber,
+  ),
+  StatusTone.danger => (
+    KernelColors.dangerSoft,
+    KernelColors.danger,
+    KernelColors.danger,
+  ),
+  StatusTone.info => (
+    KernelColors.paper,
+    KernelColors.forest,
+    KernelColors.forest,
+  ),
+};
+
+IconData _defaultIcon(StatusTone tone) => switch (tone) {
+  StatusTone.neutral => Icons.info_outline_rounded,
+  StatusTone.positive => Icons.check_circle_outline_rounded,
+  StatusTone.attention => Icons.warning_amber_rounded,
+  StatusTone.danger => Icons.error_outline_rounded,
+  StatusTone.info => Icons.science_outlined,
+};
+
+/// Status label. Colour is always paired with an icon and text, never used
+/// on its own. Wraps instead of clipping at large font sizes.
 class StatusChip extends StatelessWidget {
   const StatusChip({
     super.key,
@@ -20,38 +59,7 @@ class StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (bg, fg, border, defaultIcon) = switch (tone) {
-      StatusTone.neutral => (
-        KernelColors.ivory,
-        KernelColors.ink,
-        KernelColors.outline,
-        Icons.info_outline,
-      ),
-      StatusTone.positive => (
-        KernelColors.sage,
-        KernelColors.forest,
-        KernelColors.forest,
-        Icons.check_circle_outline,
-      ),
-      StatusTone.attention => (
-        KernelColors.amber,
-        KernelColors.ink,
-        KernelColors.amber,
-        Icons.warning_amber_rounded,
-      ),
-      StatusTone.danger => (
-        KernelColors.danger,
-        KernelColors.onForest,
-        KernelColors.danger,
-        Icons.error_outline,
-      ),
-      StatusTone.info => (
-        Colors.white,
-        KernelColors.forest,
-        KernelColors.forest,
-        Icons.science_outlined,
-      ),
-    };
+    final (bg, fg, border) = statusColors(tone);
     return Semantics(
       label: label,
       excludeSemantics: true,
@@ -59,19 +67,20 @@ class StatusChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
           color: bg,
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(KernelRadii.pill),
           border: Border.all(color: border),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon ?? defaultIcon, size: 18, color: fg),
+            Icon(icon ?? _defaultIcon(tone), size: 18, color: fg),
             const SizedBox(width: 6),
             Flexible(
               child: Text(
                 label,
-                style: Theme.of(context).textTheme.labelLarge
-                    ?.copyWith(color: fg, fontWeight: FontWeight.w600),
+                style: Theme.of(
+                  context,
+                ).textTheme.labelLarge?.copyWith(color: fg),
               ),
             ),
           ],
@@ -86,6 +95,9 @@ class ExperimentalBadge extends StatelessWidget {
   const ExperimentalBadge({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      const StatusChip(label: 'Experimental', tone: StatusTone.info);
+  Widget build(BuildContext context) => StatusChip(
+    label: context.l10n.experimentalBadge,
+    tone: StatusTone.info,
+    icon: Icons.science_rounded,
+  );
 }

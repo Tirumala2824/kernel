@@ -6,6 +6,8 @@ import 'package:kernel_contracts/kernel_contracts.dart';
 import '../../app/copy.dart';
 import '../../app/data_providers.dart';
 import '../../app/routes.dart';
+import '../../brand/illustrations.dart';
+import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_app_bar.dart';
 import '../../widgets/kernel_card.dart';
@@ -33,20 +35,37 @@ class _ScanPicker extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
     final items = ref.watch(itemsByRoleProvider(role));
+    final kind = role.itemKind;
     return PageList(
       children: [
         ScreenHeader(
-          title: 'Guided acoustic scan',
-          subtitle: 'Choose the ${role.itemNoun} to listen to',
+          title: l.guidedScanTitle,
+          subtitle: l.scanTabSubtitle(kind),
         ),
-        const KernelCard(
+        if (role == Role.storageFpo)
+          KernelCard(
+            key: const Key('scan-tab-batch'),
+            tone: KernelCardTone.sage,
+            icon: Icons.playlist_play_rounded,
+            title: l.batchScanTitle,
+            subtitle: l.batchScanSubtitle,
+            onTap: () => context.push(Routes.batchSetup),
+          ),
+        KernelCard(
+          key: const Key('scan-tab-qr'),
           tone: KernelCardTone.ivory,
-          icon: Icons.touch_app_outlined,
-          title: 'One at a time',
-          subtitle:
-              'Each recording belongs to one item. Scan items one after '
-              'another; a scan never covers several at once.',
+          icon: Icons.qr_code_scanner_rounded,
+          title: l.qrCardTitle,
+          subtitle: l.qrCardSubtitle(kind),
+          onTap: () => context.push(Routes.qr),
+        ),
+        KernelCard(
+          tone: KernelCardTone.ivory,
+          icon: Icons.touch_app_rounded,
+          title: l.oneAtATimeTitle,
+          subtitle: l.oneAtATimeBody,
         ),
         AsyncView<List<GrainItem>>(
           value: items,
@@ -54,11 +73,12 @@ class _ScanPicker extends ConsumerWidget {
             if (items.isEmpty) {
               return EmptyState(
                 key: const Key('empty-items'),
-                message: 'No ${role.itemNounPlural} yet',
-                detail: 'Register one first, then come back to scan it.',
-                actionLabel: role == Role.household
-                    ? 'Add your first container'
-                    : 'Register your first sack',
+                illustration: role == Role.household
+                    ? KernelIllustrations.container
+                    : KernelIllustrations.sacks,
+                message: l.emptyItemsMessage(kind),
+                detail: l.scanTabEmptyDetail,
+                actionLabel: l.emptyItemsAction(kind),
                 onAction: () => context.push(Routes.newItem()),
               );
             }
@@ -72,7 +92,10 @@ class _ScanPicker extends ConsumerWidget {
                 for (final item in sorted)
                   ItemTile(
                     item: item,
-                    trailing: const Icon(Icons.graphic_eq),
+                    trailing: const Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child: Icon(Icons.graphic_eq_rounded),
+                    ),
                     onTap: () => context.push(Routes.scanItem(item.id)),
                   ),
               ],

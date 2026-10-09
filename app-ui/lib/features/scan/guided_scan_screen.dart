@@ -1,173 +1,136 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kernel_contracts/kernel_contracts.dart';
 
 import '../../app/copy.dart';
 import '../../app/data_providers.dart';
 import '../../app/platform_providers.dart';
-import '../../app/providers.dart';
 import '../../app/routes.dart';
-import '../../theme/tokens.dart';
+import '../../brand/illustrations.dart';
+import '../../brand/kernel_brand.dart';
+import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_app_bar.dart';
 import '../../widgets/kernel_card.dart';
+import '../../widgets/status_chip.dart';
+import 'capture_panel.dart';
 import 'mic_denied_view.dart';
 
-/// Nominal capture length shown by the progress bar (the engine records
-/// ~2 s; the bar never waits longer than the engine does).
-const captureDuration = Duration(seconds: 2);
-
-/// Positioning tip shown before every scan.
-const positioningTip = 'Press phone against sack, keep still and quiet';
-
-enum _Phase { ready, requesting, denied, capturing, saving, failed }
-
-/// F03 guided scan: positioning tip, mic permission, ~2 s capture with
-/// progress, then the outcome is persisted and the result screen opens.
+/// F03 guided scan: positioning tip, mic permission, ~2 s capture with live
+/// levels, then the outcome is persisted and the result (or, in research
+/// mode, the labelling form) opens.
 class GuidedScanScreen extends ConsumerStatefulWidget {
-  const GuidedScanScreen({super.key, required this.itemId});
+  const GuidedScanScreen({
+    super.key,
+    required this.itemId,
+    this.research = false,
+  });
 
   final String itemId;
+
+  /// Research recording: audio is retained and the label form follows.
+  final bool research;
 
   @override
   ConsumerState<GuidedScanScreen> createState() => _GuidedScanScreenState();
 }
 
-class _GuidedScanScreenState extends ConsumerState<GuidedScanScreen>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _progress = AnimationController(
-    vsync: this,
-    duration: captureDuration,
-  );
-  _Phase _phase = _Phase.ready;
-  PermissionAccess _access = PermissionAccess.denied;
-  String? _error;
-
-  @override
-  void dispose() {
-    _progress.dispose();
-    super.dispose();
-  }
-
-  Future<void> _start() async {
-    setState(() {
-      _phase = _Phase.requesting;
-      _error = null;
-    });
-
-    final permissions = ref.read(devicePermissionsProvider);
-    var access = await permissions.microphoneStatus();
-    if (access != PermissionAccess.granted) {
-      access = await permissions.requestMicrophone();
-    }
-    if (!mounted) return;
-    if (access != PermissionAccess.granted) {
-      setState(() {
-        _access = access;
-        _phase = _Phase.denied;
-      });
-      return;
-    }
-
-    // Explicit opt-in only; anything other than a loaded `true` discards
-    // the audio after analysis.
-    final retainAudio = ref.read(retainAudioOptInProvider).value ?? false;
-    final feedback = ref.read(scanFeedbackProvider);
-    final engine = ref.read(scanEngineProvider);
-    final scans = ref.read(scanRepositoryProvider);
-
-    setState(() => _phase = _Phase.capturing);
-    _progress.forward(from: 0);
-    await feedback.captureStarted();
-
-    final ScanOutcome outcome;
-    try {
-      outcome = await engine.captureAndAnalyze(
-        widget.itemId,
-        retainAudio: retainAudio,
-      );
-    } on Object catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _phase = _Phase.failed;
-        _error = 'The scan could not run: $e';
-      });
-      return;
-    }
-    await feedback.captureFinished(outcome.quality);
-    if (!mounted) return;
-    setState(() => _phase = _Phase.saving);
-
-    try {
-      final record = await scans.record(outcome);
-      if (!mounted) return;
-      context.pushReplacement(Routes.result(widget.itemId, record.id));
-    } on Object catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _phase = _Phase.failed;
-        _error =
-            'The scan result could not be saved, so nothing was stored. '
-            'Details: $e';
-      });
-    }
-  }
+class _GuidedScanScreenState extends ConsumerState<GuidedScanScreen> {
+  PermissionAccess? _denied;
+  int _attempt = 0;
+  bool _autoStart = false;
 
   @override
   Widget build(BuildContext context) {
-    // Keep the opt-in stream alive so its value is ready when capture starts.
-    ref.watch(retainAudioOptInProvider);
+    final l = context.l10n;
     final item = ref.watch(itemProvider(widget.itemId)).value;
     final info = ref.watch(engineInfoProvider).value;
+    final kind = item?.ownerRole.itemKind ?? 'sack';
+    final denied = _denied;
+    final note = info?.modelNote?.trim();
+    final modelNote = note == null || note.isEmpty ? null : note;
 
     return Scaffold(
-      appBar: const KernelAppBar(title: 'Scan'),
-      body: _phase == _Phase.denied
-          ? MicDeniedView(access: _access, onTryAgain: _start)
+      appBar: KernelAppBar(title: l.scanAppBarTitle),
+      body: denied != null
+          ? MicDeniedView(
+              access: denied,
+              onTryAgain: () => setState(() {
+                _denied = null;
+                _attempt++;
+                _autoStart = true;
+              }),
+            )
           : PageList(
               children: [
                 ScreenHeader(
-                  title: 'Guided acoustic scan',
+                  title: widget.research
+                      ? l.researchScanTitle
+                      : l.guidedScanTitle,
                   subtitle: item == null
                       ? null
-                      : '${item.grainType} • ${item.label}',
+                      : l.grainAndLabel(item.grainType, item.label),
                 ),
-                const KernelCard(
-                  key: Key('positioning-tip'),
+                if (widget.research)
+                  NoticeBanner(
+                    title: l.researchScanNoticeTitle,
+                    text: l.researchScanNotice,
+                    tone: StatusTone.info,
+                    icon: Icons.science_rounded,
+                  ),
+                KernelCard(
+                  key: const Key('positioning-tip'),
                   tone: KernelCardTone.ivory,
-                  icon: Icons.back_hand_outlined,
-                  title: positioningTip,
-                  subtitle:
-                      'Hold the phone flat on the sack with the microphone '
-                      'touching it. Stop talking and avoid moving the sack.',
+                  icon: Icons.back_hand_rounded,
+                  title: l.positioningTip(kind),
+                  subtitle: l.positioningTipDetail(kind),
+                  child: Center(
+                    child: KernelIllustration(
+                      KernelIllustrations.howToScan,
+                      height: 96,
+                    ),
+                  ),
                 ),
-                _HeroCapture(
-                  phase: _phase,
-                  progress: _progress,
-                  onStart: _start,
+                CapturePanel(
+                  key: ValueKey('capture-$_attempt'),
+                  itemId: widget.itemId,
+                  research: widget.research,
+                  autoStart: _autoStart,
+                  onDenied: (access) => setState(() => _denied = access),
+                  onRecorded: (record) => context.pushReplacement(
+                    widget.research
+                        ? Routes.labelSample(widget.itemId, record.id)
+                        : Routes.result(widget.itemId, record.id),
+                  ),
                 ),
-                if (_error != null) ErrorNote(_error!),
                 KernelCard(
-                  icon: Icons.tune,
-                  title: 'Recording quality',
-                  subtitle:
-                      'Checked for background noise, clipping and silence '
-                      'before any result is shown.',
+                  icon: Icons.tune_rounded,
+                  title: l.infoQualityTitle,
+                  subtitle: l.infoQualityBody,
                 ),
                 KernelCard(
-                  icon: Icons.timer_outlined,
-                  title: 'Capture duration',
+                  icon: Icons.timer_rounded,
+                  title: l.infoDurationTitle,
                   subtitle: info == null
-                      ? '2 s'
-                      : '2 s at ${_khz(info.targetSampleRate)} kHz',
+                      ? l.infoDurationShort
+                      : l.infoDurationRate(_khz(info.targetSampleRate)),
                 ),
                 KernelCard(
-                  icon: Icons.phonelink_lock,
-                  title: 'On-device inference',
+                  key: const Key('on-device-card'),
+                  icon: Icons.phonelink_lock_rounded,
+                  title: l.infoOnDeviceTitle,
                   subtitle: info == null
-                      ? 'No upload required'
-                      : 'No upload required. ${provenanceLine(modelVersion: info.modelVersion, experimental: info.experimental)}',
+                      ? l.infoOnDeviceBody
+                      : l.infoOnDeviceWithModel(
+                          provenanceLine(
+                            l,
+                            modelVersion: info.modelVersion,
+                            experimental: info.experimental,
+                          ),
+                        ),
+                  child: modelNote == null
+                      ? null
+                      : Text(modelNote, key: const Key('scan-model-note')),
                 ),
               ],
             ),
@@ -177,87 +140,5 @@ class _GuidedScanScreenState extends ConsumerState<GuidedScanScreen>
   static String _khz(int hz) {
     final khz = hz / 1000;
     return khz == khz.roundToDouble() ? khz.toStringAsFixed(0) : '$khz';
-  }
-}
-
-class _HeroCapture extends StatelessWidget {
-  const _HeroCapture({
-    required this.phase,
-    required this.progress,
-    required this.onStart,
-  });
-
-  final _Phase phase;
-  final AnimationController progress;
-  final VoidCallback onStart;
-
-  @override
-  Widget build(BuildContext context) {
-    final busy =
-        phase == _Phase.requesting ||
-        phase == _Phase.capturing ||
-        phase == _Phase.saving;
-    return KernelCard(
-      key: const Key('hero-capture'),
-      tone: KernelCardTone.hero,
-      icon: Icons.hearing,
-      title: switch (phase) {
-        _Phase.capturing => 'Listening — keep still',
-        _Phase.saving => 'Saving on this phone',
-        _Phase.requesting => 'Checking microphone access',
-        _ => 'Ready to listen',
-      },
-      subtitle: 'Press phone against sack',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (phase == _Phase.capturing)
-            AnimatedBuilder(
-              animation: progress,
-              builder: (context, _) {
-                final done = progress.value >= 1;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Semantics(
-                      label: 'Recording progress',
-                      value: '${(progress.value * 100).round()} percent',
-                      child: LinearProgressIndicator(
-                        key: const Key('capture-progress'),
-                        value: progress.value,
-                        minHeight: 10,
-                        color: KernelColors.amber,
-                        backgroundColor: KernelColors.sage,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      done
-                          ? 'Checking the recording on this phone…'
-                          : '${(progress.value * captureDuration.inMilliseconds / 1000).toStringAsFixed(1)} s of 2 s',
-                      style: const TextStyle(color: KernelColors.onForest),
-                    ),
-                  ],
-                );
-              },
-            )
-          else
-            FilledButton.icon(
-              key: const Key('start-capture'),
-              style: FilledButton.styleFrom(
-                backgroundColor: KernelColors.amber,
-                foregroundColor: KernelColors.ink,
-              ),
-              onPressed: busy ? null : onStart,
-              icon: const Icon(Icons.mic),
-              label: Text(
-                phase == _Phase.failed
-                    ? 'Try the 2-second recording again'
-                    : 'Start 2-second recording',
-              ),
-            ),
-        ],
-      ),
-    );
   }
 }
