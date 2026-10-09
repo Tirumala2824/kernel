@@ -1,17 +1,27 @@
-# kernel_app
+# kernel_app (app-ui)
 
-Kernel offline acoustic grain screening app
+Flutter app shell for Kernel. Owner: `ui-dev`. Read `docs/guardrails.md` and
+`docs/design-tokens.md` first.
 
-## Getting Started
+## Layout
+- `lib/app/providers.dart`: one riverpod provider per `kernel_contracts`
+  interface. They are unbound by default and throw until they are overridden.
+- `lib/bootstrap.dart`: `bootstrapOverrides()` is where the lead binds
+  `NativeScanEngine` and `DataOperations`.
+- `lib/app/data_providers.dart`: reactive read models (stream/future
+  providers) over the repositories. Every on-screen count comes from these.
+- `lib/app/platform_providers.dart`: connectivity (informational), runtime
+  permissions, report sharing, and scan haptics, each behind a small interface.
+- `lib/app/router.dart`: go_router with the role-gated redirect and the
+  bottom-nav shell.
+- `lib/features/**`: screens. `lib/widgets/**`: shared components.
+  `lib/theme/**`: design tokens and the Material 3 theme.
 
-This project is a starting point for a Flutter application.
+## Tests
+Test doubles (in-memory repositories, a scripted scan engine and permissions)
+live only in `test/support/`.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter analyze
+flutter test
+```

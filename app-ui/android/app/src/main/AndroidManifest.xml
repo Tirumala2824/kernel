@@ -1,6 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- On-device 2 s acoustic capture (audio never leaves the phone). -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Android 13+ runtime permission for on-device re-check reminders. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Haptic feedback at capture start/end. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
-        android:label="kernel_app"
+        android:label="Kernel"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
