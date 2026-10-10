@@ -1,0 +1,2309 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Hindi (`hi`).
+class AppLocalizationsHi extends AppLocalizations {
+  AppLocalizationsHi([String locale = 'hi']) : super(locale);
+
+  @override
+  String get languageTitle => 'भाषा';
+
+  @override
+  String get languageFollowDevice => 'फ़ोन की भाषा अपनाएँ';
+
+  @override
+  String get languageSheetBody =>
+      'Kernel के शब्द तुरंत बदल जाते हैं। और भारतीय भाषाएँ जल्द आ रही हैं।';
+
+  @override
+  String get settingsSubtitle =>
+      'भाषा, आवाज़-जाँच, निजता और फ़ोन पर चलने वाली जानकारी';
+
+  @override
+  String get settingsScanning => 'आवाज़-जाँच';
+
+  @override
+  String get settingsHaptics => 'शुरू और खत्म होने पर कंपन';
+
+  @override
+  String get settingsHapticsBody =>
+      'रिकॉर्डिंग शुरू और बंद होने पर फ़ोन थोड़ा काँपता है, ताकि आप फ़ोन को बोरी पर दबाए रख सकें।';
+
+  @override
+  String get settingsVoice => 'बोलकर निर्देश';
+
+  @override
+  String get settingsVoiceBody =>
+      'शुरू में बंद रहता है। इस फ़ोन में लगी आवाज़ से “फ़ोन बोरी पर रखें”, “सुन रहा है” और “हो गया” बोलता है। इंटरनेट से कुछ नहीं लिया जाता।';
+
+  @override
+  String get settingsRetain => 'रिकॉर्डिंग इस फ़ोन पर रखें';
+
+  @override
+  String get settingsRetainBody =>
+      'शुरू में बंद रहता है: हर 2 सेकंड की रिकॉर्डिंग जाँच के तुरंत बाद मिटा दी जाती है। चालू करने पर रिकॉर्डिंग ऐप के अंदर निजी रूप से रखी जाती हैं ताकि उन्हें फिर से जाँचा जा सके। ये कभी अपलोड नहीं होतीं। “सारा इतिहास मिटाएँ” इन्हें हटा देता है।';
+
+  @override
+  String get settingsResearchSection => 'शोध';
+
+  @override
+  String get settingsResearch => 'शोध रिकॉर्डिंग मोड';
+
+  @override
+  String get settingsResearchBody =>
+      'अनाज के कीड़ों का मॉडल बनाने में मदद के लिए लेबल वाले नमूने रिकॉर्ड करें। यह रिकॉर्डिंग रखने वाली सेटिंग से अलग है; शुरू में बंद रहता है।';
+
+  @override
+  String get researchConsentTitle => 'शोध रिकॉर्डिंग चालू करें?';
+
+  @override
+  String get researchConsentBody =>
+      'जब आप “लेबल वाला नमूना रिकॉर्ड करें” चुनते हैं, तो वह 2 सेकंड की रिकॉर्डिंग आपके दिए लेबल के साथ इस फ़ोन पर निजी रूप से रखी जाती है। “कोई निशान नहीं” या “कीड़े लगे” लेबल के लिए खुद देखकर की गई जाँच से पुष्टि ज़रूरी है। कुछ भी अपलोड नहीं होता: आप डेटासेट फ़ाइल बना सकते हैं और खुद तय कर सकते हैं कि उसे किसे देना है। इसे कभी भी बंद करें; “सारा इतिहास मिटाएँ” हर रिकॉर्डिंग और लेबल हटा देता है।';
+
+  @override
+  String get researchConsentAgree => 'मैं सहमत हूँ, चालू करें';
+
+  @override
+  String get settingsSamplesCard => 'हर लेबल की गिनती और डेटासेट फ़ाइल';
+
+  @override
+  String get settingsPrivacy => 'निजता';
+
+  @override
+  String get deleteHistoryTitle => 'सारा इतिहास मिटाएँ';
+
+  @override
+  String get deleteHistoryBody =>
+      'आवाज़-जाँच, देखकर जाँच और उनकी फ़ोटो, रिमाइंडर, लेबल वाले नमूने और रखी गई रिकॉर्डिंग हटाता है।';
+
+  @override
+  String get deleteHistoryConfirmTitle => 'सारा इतिहास मिटाएँ?';
+
+  @override
+  String get deleteHistoryConfirmBody =>
+      'इससे इस फ़ोन पर हर आवाज़-जाँच, देखकर जाँच (फ़ोटो सहित), रिमाइंडर, लेबल वाला नमूना और रखी गई रिकॉर्डिंग मिट जाएगी। आपकी दर्ज चीज़ें, जगहें, फ़सलें और लॉट बने रहेंगे। इसे वापस नहीं किया जा सकता।';
+
+  @override
+  String get deleteHistoryConfirmAction => 'इतिहास मिटाएँ';
+
+  @override
+  String get deleteHistoryDone => 'सारा इतिहास मिट गया';
+
+  @override
+  String deleteHistoryFailed(String detail) {
+    return 'इतिहास नहीं मिट सका: $detail';
+  }
+
+  @override
+  String get settingsOnDevice => 'फ़ोन पर ही आवाज़-जाँच';
+
+  @override
+  String get engineUnavailable => 'आवाज़-जाँच इंजन की जानकारी नहीं मिली';
+
+  @override
+  String get engineModelPresent =>
+      'नतीजे प्रायोगिक हैं और उनकी पुष्टि नहीं हुई है।';
+
+  @override
+  String get engineNoModel =>
+      'कोई मॉडल नहीं लगा है, इसलिए आवाज़-जाँच सिर्फ़ रिकॉर्डिंग की गुणवत्ता देखती है और नतीजों में “नतीजा नहीं बना” दिखता है।';
+
+  @override
+  String get settingsFooter =>
+      'सारी आवाज़-जाँच इसी फ़ोन पर होती है। Kernel बिना इंटरनेट के चलता है और कभी आवाज़ अपलोड नहीं करता।';
+
+  @override
+  String get diagnosticsTitle => 'तकनीकी जानकारी';
+
+  @override
+  String get diagnosticsCard =>
+      'टेस्टिंग के लिए मॉडल, प्रोसेसर, सैंपल रेट और फ़ोन की जानकारी';
+
+  @override
+  String get diagnosticsSubtitle => 'इस फ़ोन पर आवाज़-जाँच इंजन क्या बताता है';
+
+  @override
+  String get notMeasured => 'अभी नापा नहीं गया';
+
+  @override
+  String get yes => 'हाँ';
+
+  @override
+  String get no => 'नहीं';
+
+  @override
+  String get diagModelInstalled => 'मॉडल लगा है';
+
+  @override
+  String get diagModelNote => 'मॉडल की जानकारी';
+
+  @override
+  String get diagDelegate => 'प्रोसेसर';
+
+  @override
+  String get diagAudioTitle => 'आवाज़ इनपुट';
+
+  @override
+  String get diagTargetRate => 'लक्ष्य सैंपल रेट';
+
+  @override
+  String get diagEffectiveRate => 'असल सैंपल रेट';
+
+  @override
+  String get diagDeviceRate => 'फ़ोन का इनपुट रेट';
+
+  @override
+  String get diagAudioSource => 'आवाज़ का स्रोत';
+
+  @override
+  String get diagDeviceTitle => 'फ़ोन';
+
+  @override
+  String get diagOs => 'एंड्रॉइड';
+
+  @override
+  String get diagAppVersion => 'ऐप वर्ज़न';
+
+  @override
+  String get diagLogRowTitle => 'डिवाइस-लॉग की पंक्ति';
+
+  @override
+  String get diagLogRowBody =>
+      'यह पंक्ति docs/device-validation.md के डिवाइस लॉग में चिपकाएँ और अपना नाम जोड़ें।';
+
+  @override
+  String get diagCopyRow => 'डिवाइस-लॉग पंक्ति कॉपी करें';
+
+  @override
+  String get diagCopied => 'पंक्ति कॉपी हो गई';
+
+  @override
+  String get qrTitle => 'QR लेबल से खोलें';
+
+  @override
+  String get qrInstructions =>
+      'लेबल को चौखटे के अंदर रखें। पढ़ते ही यह खुल जाएगा।';
+
+  @override
+  String get qrNotKernel =>
+      'यह QR कोड Kernel का बोरी लेबल नहीं है। कैमरा Kernel से छपे लेबल की ओर करें।';
+
+  @override
+  String get qrUnknownItem =>
+      'यह लेबल ऐसी बोरी का है जो इस फ़ोन पर दर्ज नहीं है।';
+
+  @override
+  String qrLookupFailed(String detail) {
+    return 'बोरी नहीं खुल सकी: $detail';
+  }
+
+  @override
+  String get qrScanAnother => 'दूसरा लेबल पढ़ें';
+
+  @override
+  String get qrRationaleTitle =>
+      'बोरी के लेबल पढ़ने के लिए कैमरा इस्तेमाल करें';
+
+  @override
+  String get qrRationaleBody =>
+      'Kernel कैमरे का इस्तेमाल सिर्फ़ बोरी के QR लेबल पढ़ने और जाँच की फ़ोटो लेने के लिए करता है। लेबल इसी फ़ोन पर पढ़े जाते हैं; कैमरे की तस्वीरें न सेव होती हैं, न अपलोड।';
+
+  @override
+  String get qrAllowCamera => 'कैमरे की अनुमति दें';
+
+  @override
+  String get qrCameraDenied =>
+      'कैमरे की अनुमति नहीं मिली। आप फिर भी अपने भंडार से बोरियाँ खोल सकते हैं।';
+
+  @override
+  String get qrCameraBlocked =>
+      'Kernel के लिए कैमरा बंद है। फ़ोन की सेटिंग खोलें, अनुमतियाँ चुनें, फिर कैमरे की अनुमति दें।';
+
+  @override
+  String get qrPrivacyNote =>
+      'लेबल इसी फ़ोन पर पढ़ा जाता है। कुछ भी अपलोड नहीं होता।';
+
+  @override
+  String get labelSampleTitle => 'शोध रिकॉर्डिंग पर लेबल लगाएँ';
+
+  @override
+  String get labelRuleNote =>
+      '“कोई निशान नहीं” या “कीड़े लगे” तभी चुनें जब इस बोरी की खुद देखकर जाँच ने इसकी पुष्टि की हो। नहीं तो “पता नहीं” चुनें।';
+
+  @override
+  String get labelCleanHelp =>
+      'देखकर जाँच में कीड़े नहीं मिले, इसकी पुष्टि हुई';
+
+  @override
+  String get labelCleanNeedsInspection =>
+      'इस बोरी की ऐसी देखकर जाँच चाहिए जिसमें कीड़े न मिले हों';
+
+  @override
+  String get labelInfestedHelp => 'देखकर जाँच में कीड़े मिले, इसकी पुष्टि हुई';
+
+  @override
+  String get labelInfestedNeedsInspection =>
+      'इस बोरी की ऐसी देखकर जाँच चाहिए जिसमें कीड़े मिले हों';
+
+  @override
+  String get labelUnknownHelp =>
+      'किसी जाँच से इस बोरी की हालत की पुष्टि नहीं होती';
+
+  @override
+  String get labelNeedsEvidence =>
+      '“कोई निशान नहीं” और “कीड़े लगे” के लिए इस बोरी की मेल खाती देखकर जाँच चाहिए। “पता नहीं” चुनें या पहले देखकर जाँच दर्ज करें।';
+
+  @override
+  String get evidenceTitle => 'पुष्टि करने वाली जाँच';
+
+  @override
+  String get evidenceBody => 'इस रिकॉर्डिंग के लिए की गई देखकर जाँच चुनें।';
+
+  @override
+  String get sackMaterialField => 'बोरी या डिब्बे का सामान';
+
+  @override
+  String get notRecorded => 'दर्ज नहीं';
+
+  @override
+  String get environmentField => 'माहौल';
+
+  @override
+  String get environmentHelper =>
+      'कहाँ रिकॉर्ड किया, जैसे शांत कमरा या पंखों वाला गोदाम';
+
+  @override
+  String get envQuietRoom => 'शांत कमरा';
+
+  @override
+  String get envWarehouse => 'गोदाम';
+
+  @override
+  String get envFansOn => 'पंखे या मशीनें चालू';
+
+  @override
+  String get envOutdoors => 'बाहर खुले में';
+
+  @override
+  String get materialJute => 'जूट';
+
+  @override
+  String get materialWovenPp => 'प्लास्टिक की बुनी बोरी (PP)';
+
+  @override
+  String get materialCotton => 'सूती';
+
+  @override
+  String get materialPlastic => 'प्लास्टिक का डिब्बा';
+
+  @override
+  String get materialMetal => 'धातु का डिब्बा';
+
+  @override
+  String get materialOther => 'अन्य';
+
+  @override
+  String get sampleSave => 'लेबल वाला नमूना सेव करें';
+
+  @override
+  String get sampleSaved => 'लेबल वाला नमूना इस फ़ोन पर सेव हुआ';
+
+  @override
+  String sampleRejected(String detail) {
+    return 'लेबल सेव नहीं हुआ: $detail';
+  }
+
+  @override
+  String get sampleUnusableRetry =>
+      'यह रिकॉर्डिंग काम की नहीं थी, इसलिए इस पर लेबल नहीं लग सकता। किसी शांत जगह पर फिर से रिकॉर्ड करें।';
+
+  @override
+  String get sampleUnusableNotKept =>
+      'इस रिकॉर्डिंग की आवाज़ रखी नहीं गई, इसलिए इस पर लेबल नहीं लग सकता।';
+
+  @override
+  String get sampleRecordAgain => 'फिर से रिकॉर्ड करें';
+
+  @override
+  String get samplesTitle => 'शोध नमूने';
+
+  @override
+  String samplesSubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'इस फ़ोन पर $count लेबल वाली रिकॉर्डिंग',
+      one: 'इस फ़ोन पर 1 लेबल वाली रिकॉर्डिंग',
+      zero: 'अभी कोई लेबल वाली रिकॉर्डिंग नहीं',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get samplesResearchOff =>
+      'शोध रिकॉर्डिंग मोड बंद है। नए नमूने रिकॉर्ड करने के लिए इसे सेटिंग में चालू करें।';
+
+  @override
+  String get samplesEmpty => 'अभी कोई लेबल वाला नमूना नहीं';
+
+  @override
+  String get samplesEmptyDetail =>
+      'शोध मोड चालू करके कोई बोरी खोलें और “लेबल वाला नमूना रिकॉर्ड करें” चुनें।';
+
+  @override
+  String get datasetTitle => 'ट्रेनिंग डेटासेट';
+
+  @override
+  String get datasetBody =>
+      'रखी गई रिकॉर्डिंग की एक ZIP फ़ाइल और उनके लेबल की एक CSV फ़ाइल, जो इसी फ़ोन पर बनती है। इसे कहाँ भेजना है, आप तय करते हैं; Kernel इसे कभी अपलोड नहीं करता।';
+
+  @override
+  String get datasetExport => 'डेटासेट फ़ाइल बनाएँ';
+
+  @override
+  String datasetExportFailed(String detail) {
+    return 'डेटासेट नहीं बन सका या भेजा नहीं जा सका। $detail';
+  }
+
+  @override
+  String sampleLabelChip(String label) {
+    return 'लेबल: $label';
+  }
+
+  @override
+  String get sampleConfirmed => 'देखकर जाँच से पुष्टि हुई';
+
+  @override
+  String get inspectionTitle => 'खुद देखकर जाँच';
+
+  @override
+  String get saveInspection => 'जाँच सेव करें';
+
+  @override
+  String get inspectionSaved => 'जाँच सेव हुई';
+
+  @override
+  String get aiPanelTitle => 'AI का अनुमान (पुष्टि नहीं)';
+
+  @override
+  String get aiPanelLoading => 'जुड़ी हुई आवाज़-जाँच खुल रही है…';
+
+  @override
+  String get aiPanelNoScan =>
+      'कोई आवाज़-जाँच नहीं जुड़ी। यह देखकर जाँच अपने आप में पूरी है।';
+
+  @override
+  String scannedAt(String when) {
+    return 'आवाज़-जाँच $when';
+  }
+
+  @override
+  String get aiPanelNotUsed => 'आपका नतीजा भरने में इसका इस्तेमाल नहीं हुआ';
+
+  @override
+  String get findingPanelTitle => 'आपका पक्का नतीजा';
+
+  @override
+  String get findingPanelBody =>
+      'अनाज जाँचते समय आपने खुद जो देखा। इसे AI के अनुमान से अलग रखा जाता है।';
+
+  @override
+  String get findingMissing => 'चुनें कि आपको क्या मिला';
+
+  @override
+  String get inspectorField => 'जाँच करने वाले का नाम';
+
+  @override
+  String get validationInspector => 'लिखें कि जाँच किसने की';
+
+  @override
+  String get inspectionDateField => 'जाँच की तारीख';
+
+  @override
+  String get observationsField => 'क्या देखा';
+
+  @override
+  String get observationsHelper => 'आपने क्या देखा, कहाँ और कितना';
+
+  @override
+  String get assigneeFieldOptional => 'आगे की जाँच किसे सौंपें (ज़रूरी नहीं)';
+
+  @override
+  String get followUpStatusTitle => 'आगे की जाँच की स्थिति';
+
+  @override
+  String get photosTitle => 'सबूत की फ़ोटो (ज़रूरी नहीं)';
+
+  @override
+  String get photosBody =>
+      'फ़ोटो इस जाँच के साथ इसी फ़ोन पर निजी रूप से रहती हैं। ये आपकी देखी बात का सबूत हैं, आवाज़-जाँच का नतीजा नहीं, और कभी अपलोड नहीं होतीं।';
+
+  @override
+  String get photoTake => 'फ़ोटो लें';
+
+  @override
+  String get photoPick => 'गैलरी से चुनें';
+
+  @override
+  String get cameraDeniedPhoto =>
+      'कैमरा बंद है। सबूत की फ़ोटो लेने के लिए फ़ोन की सेटिंग में इसकी अनुमति दें।';
+
+  @override
+  String photoFailed(String detail) {
+    return 'फ़ोटो नहीं जुड़ सकी: $detail';
+  }
+
+  @override
+  String get filterAll => 'सभी';
+
+  @override
+  String get filterNoMatch => 'इस फ़िल्टर से कोई खुली जाँच नहीं मिली।';
+
+  @override
+  String get batchSetupTitle => 'कमरा या ढेर चुनें';
+
+  @override
+  String get batchSetupSubtitle =>
+      'Kernel आपको इसकी बोरियों तक एक-एक करके ले जाता है।';
+
+  @override
+  String get batchSequentialNote =>
+      'हर बोरी की एक रिकॉर्डिंग। Kernel कभी कई बोरियों की एक साथ आवाज़-जाँच नहीं करता।';
+
+  @override
+  String get batchNoPlaces => 'अभी कोई कमरा या ढेर नहीं';
+
+  @override
+  String get batchNoPlacesDetail =>
+      'एक गोदाम उसके कमरों और ढेरों के साथ जोड़ें, फिर उनमें बोरियाँ दर्ज करें।';
+
+  @override
+  String batchPlaceSubtitle(String type, int total, int needScan) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$total बोरियाँ',
+      one: '1 बोरी',
+    );
+    return '$type · $_temp0 · $needScan की आवाज़-जाँच बाकी';
+  }
+
+  @override
+  String batchIntroSubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count बोरियाँ, एक-एक करके जाँचें',
+      one: '1 बोरी, एक-एक करके जाँचें',
+      zero: 'जाँचने को कोई बोरी नहीं',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get batchSkipToday => 'आज जाँची गई बोरियाँ छोड़ें';
+
+  @override
+  String get batchSkipTodayBody =>
+      'जिन बोरियों की आज की रिकॉर्डिंग पहले से है, उन्हें छोड़ दें।';
+
+  @override
+  String batchWalkLine(int position, String label, String grain) {
+    return '$position. $label · $grain';
+  }
+
+  @override
+  String batchStart(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count बोरियों से शुरू करें',
+      one: '1 बोरी से शुरू करें',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get batchNothingToWalk =>
+      'यहाँ हर बोरी की पहले से काम की आवाज़-जाँच है या आज जाँच हो चुकी है।';
+
+  @override
+  String batchProgress(int position, int total) {
+    return '$total में से बोरी $position';
+  }
+
+  @override
+  String get batchSkipSack => 'यह बोरी छोड़ें';
+
+  @override
+  String get batchStop => 'दौर रोकें';
+
+  @override
+  String batchNextIn(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: '$seconds सेकंड में अगली बोरी',
+      one: '1 सेकंड में अगली बोरी',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String batchSummaryIn(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: '$seconds सेकंड में सारांश',
+      one: '1 सेकंड में सारांश',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get batchNextSack => 'अगली बोरी';
+
+  @override
+  String get batchFinish => 'पूरा करें';
+
+  @override
+  String get batchRetrySack => 'इस बोरी को फिर से रिकॉर्ड करें';
+
+  @override
+  String get batchSummaryTitle => 'दौर का सारांश';
+
+  @override
+  String batchSummarySubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'इस दौर में $count बोरियाँ',
+      one: 'इस दौर में 1 बोरी',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get batchStatRecorded => 'रिकॉर्ड हुईं';
+
+  @override
+  String get batchStatSkipped => 'छोड़ी गईं';
+
+  @override
+  String get batchStatRetry => 'फिर से करनी हैं';
+
+  @override
+  String get rankedTitle => 'क्रम में';
+
+  @override
+  String rankLabel(int rank) {
+    return '#$rank';
+  }
+
+  @override
+  String get queueSuggestionNote =>
+      'यह क्रम सिर्फ़ सुझाव है कि पहले क्या जाँचें। कोई भी फ़ैसला लेने से पहले खुद देखकर जाँच करें।';
+
+  @override
+  String get queueNothingRanked =>
+      'अभी किसी चीज़ का काम का मॉडल नतीजा नहीं है, इसलिए कुछ भी क्रम में नहीं है। जिनका नतीजा नहीं है, वे “आवाज़-जाँच बाकी” में दिखती हैं।';
+
+  @override
+  String get queueNothingRankedShort => 'अभी कुछ क्रम में नहीं';
+
+  @override
+  String needsScanTitle(int count) {
+    return 'आवाज़-जाँच बाकी ($count)';
+  }
+
+  @override
+  String get needsScanChip => 'आवाज़-जाँच बाकी';
+
+  @override
+  String get needsScanEmpty => 'हर चीज़ की काम की आवाज़-जाँच है।';
+
+  @override
+  String get saveHarvest => 'फ़सल सेव करें';
+
+  @override
+  String get harvestNameField => 'फ़सल का नाम';
+
+  @override
+  String get harvestNameHelper => 'जैसे “रबी गेहूँ 2026”';
+
+  @override
+  String get harvestedOnField => 'कटाई की तारीख';
+
+  @override
+  String get notesFieldOptional => 'नोट (ज़रूरी नहीं)';
+
+  @override
+  String get harvestAppBar => 'फ़सल';
+
+  @override
+  String get harvestNotFound => 'यह फ़सल इस फ़ोन पर नहीं मिली।';
+
+  @override
+  String get harvestAddSack => 'इस फ़सल में बोरी दर्ज करें';
+
+  @override
+  String get harvestSacksTitle => 'इस फ़सल की बोरियाँ';
+
+  @override
+  String get harvestSacksEmpty => 'इस फ़सल में अभी कोई बोरी नहीं';
+
+  @override
+  String get harvestSacksEmptyDetail =>
+      'इस फ़सल से भरी बोरियाँ दर्ज करें, फिर बेचने से पहले उनकी आवाज़-जाँच करें।';
+
+  @override
+  String get preSaleBody =>
+      'खरीदार के लिए इस फ़सल की बोरियों का सारांश। हर आवाज़-जाँच के साथ उसका मॉडल वर्ज़न और प्रायोगिक स्थिति दिखती है, और देखकर जाँच के पक्के नतीजे अलग लिखे जाते हैं। यह गुणवत्ता का प्रमाणपत्र नहीं है।';
+
+  @override
+  String get notScannedYet => 'अभी आवाज़-जाँच नहीं हुई';
+
+  @override
+  String get lotAppBar => 'लॉट';
+
+  @override
+  String get lotNotFound => 'यह लॉट इस फ़ोन पर नहीं मिला।';
+
+  @override
+  String get supplierNotRecorded => 'सप्लायर दर्ज नहीं';
+
+  @override
+  String get fieldDeclaredQuantity => 'बताई गई मात्रा';
+
+  @override
+  String get fieldReceived => 'मिलने की तारीख';
+
+  @override
+  String get fieldScreened => 'जाँची गईं';
+
+  @override
+  String get screeningStatusTitle => 'जाँच की स्थिति';
+
+  @override
+  String get screeningStatusBody =>
+      'आवाज़-जाँच और खोलकर जाँच देखने के बाद इसे आप तय करते हैं। आवाज़-जाँच इसे कभी नहीं बदलती, और Kernel कभी किसी लॉट को मंज़ूर या नामंज़ूर नहीं करता।';
+
+  @override
+  String currentStatus(String status) {
+    return 'अभी: $status';
+  }
+
+  @override
+  String get lotSacksTitle => 'इस लॉट की बोरियाँ';
+
+  @override
+  String get lotSacksEmpty => 'इस लॉट में अभी कोई बोरी नहीं';
+
+  @override
+  String get lotSacksEmptyAction => 'इस लॉट में बोरी दर्ज करें';
+
+  @override
+  String get sampleScansTitle => 'नमूना आवाज़-जाँच';
+
+  @override
+  String get sampleScansBody =>
+      'इस माल की बोरियों की एक-एक करके आवाज़-जाँच करें। हर नतीजा मॉडल का बिना पुष्टि वाला अनुमान है और इससे लॉट की स्थिति नहीं बदलती।';
+
+  @override
+  String get sampleScansStart => 'नमूना आवाज़-जाँच शुरू करें';
+
+  @override
+  String get physicalChecksTitle => 'खोलकर जाँच';
+
+  @override
+  String get physicalChecksBody =>
+      'हर बोरी खोलकर अंदर देखें, फिर जो मिला वह दर्ज करें। आपके नतीजे आवाज़-जाँच से अलग रखे जाते हैं।';
+
+  @override
+  String get recordPhysicalCheck => 'खोलकर जाँच दर्ज करें';
+
+  @override
+  String get noPhysicalCheckYet => 'अभी खोलकर जाँच नहीं हुई';
+
+  @override
+  String lotSummaryTitle(String code) {
+    return 'लॉट $code की सारांश रिपोर्ट';
+  }
+
+  @override
+  String get lotSummaryBody =>
+      'इस फ़ोन के रिकॉर्ड से बनी: मॉडल की जानकारी के साथ नमूना आवाज़-जाँच, और खोलकर जाँच के नतीजे अलग से। इसे अपने फ़ैसले में मदद के लिए इस्तेमाल करें।';
+
+  @override
+  String savedLot(String code) {
+    return 'लॉट $code सेव हुआ';
+  }
+
+  @override
+  String get saveLot => 'लॉट सेव करें';
+
+  @override
+  String get lotCodeField => 'लॉट कोड';
+
+  @override
+  String get lotCodeHelper => 'माल की पर्ची पर लिखा नंबर';
+
+  @override
+  String get validationLotCode => 'लॉट कोड लिखें';
+
+  @override
+  String get supplierFieldOptional => 'सप्लायर का नाम (ज़रूरी नहीं)';
+
+  @override
+  String get declaredQuantityField => 'बताई गई मात्रा';
+
+  @override
+  String get receivedOnField => 'मिलने की तारीख';
+
+  @override
+  String shareSubject(String title) {
+    return 'Kernel $title';
+  }
+
+  @override
+  String exportFailed(String detail) {
+    return 'रिपोर्ट नहीं बन सकी या भेजी नहीं जा सकी। $detail';
+  }
+
+  @override
+  String get exportPanelBody =>
+      'सिर्फ़ इस फ़ोन में रखे रिकॉर्ड से बनी। हर आवाज़-जाँच के साथ उसका मॉडल वर्ज़न और प्रायोगिक स्थिति दिखती है। AI के अनुमान और देखकर जाँच के पक्के नतीजे अलग-अलग लिखे जाते हैं।';
+
+  @override
+  String get exportCsv => 'CSV बनाएँ';
+
+  @override
+  String get exportPdf => 'PDF बनाएँ';
+
+  @override
+  String get exportLabelsPdf => 'लेबल की PDF बनाएँ';
+
+  @override
+  String exportSavedAt(String path) {
+    return 'इस फ़ोन पर सेव हुई: $path';
+  }
+
+  @override
+  String get sackLabelsTitle => 'बोरी के लेबल छापें';
+
+  @override
+  String get sackLabelsBody =>
+      'इन बोरियों के QR लेबल की एक PDF। इसे छापें और हर लेबल उसकी बोरी पर चिपकाएँ; लेबल पढ़ने पर Kernel में वह बोरी खुल जाती है।';
+
+  @override
+  String get reportsTitle => 'रिपोर्ट';
+
+  @override
+  String get reportsFarmerHint =>
+      'किसी फ़सल का बिक्री से पहले का सारांश उसी फ़सल के पेज पर है।';
+
+  @override
+  String get reportsBuyerHint => 'लॉट की सारांश रिपोर्ट हर लॉट के पेज पर है।';
+
+  @override
+  String get recentScans => 'हाल की आवाज़-जाँच';
+
+  @override
+  String get recentScansEmpty =>
+      'अभी कोई आवाज़-जाँच नहीं। आपकी रिकॉर्ड की गई आवाज़-जाँच यहाँ दिखेंगी।';
+
+  @override
+  String get inventorySubtitleFarmer => 'आपकी फ़सलें और दर्ज बोरियाँ';
+
+  @override
+  String get inventorySubtitleHousehold =>
+      'आपके अनाज के डिब्बे और वे कहाँ रखे हैं';
+
+  @override
+  String get inventorySubtitleFpo => 'गोदाम, कमरे, ढेर और बोरियाँ';
+
+  @override
+  String get inventorySubtitleBuyer => 'आने वाले लॉट और उनकी बोरियाँ';
+
+  @override
+  String get newHarvestAction => 'नई फ़सल';
+
+  @override
+  String registerItemAction(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'डिब्बा जोड़ें',
+      'other': 'बोरी दर्ज करें',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get addPlace => 'जगह जोड़ें';
+
+  @override
+  String get addLocation => 'जगह जोड़ें';
+
+  @override
+  String itemsSectionTitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'डिब्बे',
+      'other': 'बोरियाँ',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get lotsSectionEmpty =>
+      'अभी कोई लॉट नहीं। जोड़ने के लिए आया माल दर्ज करें।';
+
+  @override
+  String get placesTitle => 'जगहें';
+
+  @override
+  String get locationsTitle => 'जगहें';
+
+  @override
+  String get placesEmpty =>
+      'अभी कोई जगह नहीं। डिब्बे कहाँ रखे हैं, यह बताने के लिए एक जोड़ें।';
+
+  @override
+  String get locationsEmpty =>
+      'अभी कोई गोदाम नहीं। एक जोड़ें, फिर उसके कमरे और ढेर।';
+
+  @override
+  String get harvestsSectionEmpty =>
+      'अभी कोई फ़सल नहीं। उसकी बोरियों को एक साथ रखने और बिक्री से पहले का सारांश बनाने के लिए एक फ़सल बनाएँ।';
+
+  @override
+  String harvestCardSubtitle(String grain, String date) {
+    return '$grain · कटाई $date';
+  }
+
+  @override
+  String sackCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count बोरियाँ',
+      one: '1 बोरी',
+      zero: 'अभी कोई बोरी नहीं',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get itemDetailAppBar => 'जानकारी';
+
+  @override
+  String get itemNotFound => 'यह चीज़ इस फ़ोन पर नहीं मिली।';
+
+  @override
+  String archiveItemMenu(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'डिब्बा अलग रखें',
+      'other': 'बोरी अलग रखें',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get archivedSnack => 'अलग रखा गया। इसका इतिहास इस फ़ोन पर बना रहेगा।';
+
+  @override
+  String get archivedItemNotice =>
+      'सूचियों, कतारों और नई रिपोर्टों में नहीं दिखेगा। इसकी आवाज़-जाँच का इतिहास और देखकर जाँच बनी रहती हैं।';
+
+  @override
+  String get restoreAction => 'वापस लाएँ';
+
+  @override
+  String scanThisItem(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'इस डिब्बे की आवाज़-जाँच करें',
+      'other': 'इस बोरी की आवाज़-जाँच करें',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get setReminderAction => 'दोबारा जाँच का रिमाइंडर लगाएँ';
+
+  @override
+  String get researchRecordTitle => 'लेबल वाला नमूना रिकॉर्ड करें';
+
+  @override
+  String get researchRecordSubtitle =>
+      'शोध मोड: 2 सेकंड की रिकॉर्डिंग रखें और ट्रेनिंग डेटा के लिए उस पर लेबल लगाएँ';
+
+  @override
+  String get fieldQuantity => 'मात्रा';
+
+  @override
+  String get fieldStoredSince => 'कब से रखा है';
+
+  @override
+  String storedSinceValue(String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days दिन',
+      one: '1 दिन',
+    );
+    return '$date ($_temp0)';
+  }
+
+  @override
+  String get fieldLocation => 'जगह';
+
+  @override
+  String get fieldLot => 'लॉट';
+
+  @override
+  String get fieldHarvest => 'फ़सल';
+
+  @override
+  String nameWithType(String name, String type) {
+    return '$name ($type)';
+  }
+
+  @override
+  String registeredAs(String role) {
+    return '$role के रूप में दर्ज';
+  }
+
+  @override
+  String get scanHistoryTitle => 'आवाज़-जाँच का इतिहास';
+
+  @override
+  String get scanHistoryAppendOnly =>
+      'हर आवाज़-जाँच जैसी रिकॉर्ड हुई वैसी ही रखी जाती है। नई आवाज़-जाँच पुरानी को कभी नहीं बदलती।';
+
+  @override
+  String scanHistoryEmpty(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'अभी कोई आवाज़-जाँच नहीं। एक रिकॉर्ड करने के लिए “इस डिब्बे की आवाज़-जाँच करें” दबाएँ।',
+      'other': 'अभी कोई आवाज़-जाँच नहीं। एक रिकॉर्ड करने के लिए “इस बोरी की आवाज़-जाँच करें” दबाएँ।',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get inspectionsTitle => 'देखकर जाँच';
+
+  @override
+  String get inspectionsEmpty => 'अभी कोई देखकर जाँच दर्ज नहीं।';
+
+  @override
+  String get remindersTitle => 'रिमाइंडर';
+
+  @override
+  String get remindersEmpty => 'कोई रिमाइंडर नहीं लगा।';
+
+  @override
+  String recheckOn(String when) {
+    return '$when को दोबारा जाँच';
+  }
+
+  @override
+  String get reminderMarkDone => 'हो गया मानें';
+
+  @override
+  String get reminderCancel => 'रिमाइंडर रद्द करें';
+
+  @override
+  String get assignDialogTitle => 'जाँच सौंपें';
+
+  @override
+  String get assignDialogLabel => 'किसे सौंपा';
+
+  @override
+  String get assignDialogHelper => 'आगे की जाँच कौन करेगा';
+
+  @override
+  String get assignClear => 'सौंपना हटाएँ';
+
+  @override
+  String savedNamed(String name) {
+    return '$name सेव हुआ';
+  }
+
+  @override
+  String saveFailed(String detail) {
+    return 'सेव नहीं हो सका: $detail';
+  }
+
+  @override
+  String saveItem(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'डिब्बा सेव करें',
+      'other': 'बोरी सेव करें',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String itemLabelField(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'डिब्बे का लेबल',
+      'other': 'बोरी का लेबल',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String itemLabelHelper(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'डिब्बे पर लिखा नाम',
+      'other': 'बोरी पर लिखा नाम',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get validationLabel => 'लेबल लिखें';
+
+  @override
+  String get grainTypeField => 'अनाज का प्रकार';
+
+  @override
+  String get validationGrain => 'अनाज का प्रकार लिखें';
+
+  @override
+  String get quantityField => 'मात्रा';
+
+  @override
+  String get unitField => 'इकाई';
+
+  @override
+  String get storageDateField => 'रखने की तारीख';
+
+  @override
+  String get harvestFieldOptional => 'फ़सल (ज़रूरी नहीं)';
+
+  @override
+  String get harvestFieldNone => 'अभी कोई फ़सल नहीं। “मेरा अनाज” से एक बनाएँ।';
+
+  @override
+  String get none => 'कोई नहीं';
+
+  @override
+  String get locationFieldOptional => 'जगह (ज़रूरी नहीं)';
+
+  @override
+  String locationFieldNone(String where) {
+    return 'अभी कोई जगह नहीं। आप इन्हें $where से जोड़ सकते हैं।';
+  }
+
+  @override
+  String get lotFieldOptional => 'लॉट (ज़रूरी नहीं)';
+
+  @override
+  String get lotFieldNone => 'अभी कोई लॉट दर्ज नहीं।';
+
+  @override
+  String get locationAppBar => 'जगह';
+
+  @override
+  String get locationNotFound => 'यह जगह इस फ़ोन पर नहीं मिली।';
+
+  @override
+  String get archivedLocationNotice =>
+      'यह जगह अलग रखी गई है। इसकी बोरियाँ और उनका इतिहास बना रहता है।';
+
+  @override
+  String registerHere(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'यहाँ डिब्बा जोड़ें',
+      'other': 'यहाँ बोरी दर्ज करें',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get addInside => 'अंदर जोड़ें';
+
+  @override
+  String get batchHere => 'यहाँ बारी-बारी जाँच';
+
+  @override
+  String get insideTitle => 'अंदर';
+
+  @override
+  String get insideEmpty => 'इस जगह के अंदर अभी कुछ नहीं।';
+
+  @override
+  String itemsHereTitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'यहाँ के डिब्बे',
+      'other': 'यहाँ की बोरियाँ',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String itemsHereEmpty(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'यहाँ अभी कोई डिब्बा नहीं रखा।',
+      'other': 'यहाँ अभी कोई बोरी नहीं रखी।',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get saveLocation => 'जगह सेव करें';
+
+  @override
+  String get typeField => 'प्रकार';
+
+  @override
+  String get nameField => 'नाम';
+
+  @override
+  String get validationName => 'नाम लिखें';
+
+  @override
+  String get parentFieldOptional => 'किसके अंदर (ज़रूरी नहीं)';
+
+  @override
+  String get parentFieldHelper => 'जैसे गोदाम के अंदर कोई कमरा';
+
+  @override
+  String get parentTopLevel => 'किसी के अंदर नहीं (सबसे ऊपर)';
+
+  @override
+  String get roleSelectTitle => 'अपनी भूमिका चुनें';
+
+  @override
+  String get roleSelectSubtitle => 'एक ऐप। चार तरह के काम।';
+
+  @override
+  String get roleCurrent => 'अभी वाली';
+
+  @override
+  String get roleSwitchKeepsRecords =>
+      'भूमिका बदलने पर इस फ़ोन का हर रिकॉर्ड बना रहता है। आप कभी भी वापस बदल सकते हैं।';
+
+  @override
+  String roleSaveFailed(String detail) {
+    return 'आपकी भूमिका सेव नहीं हो सकी: $detail';
+  }
+
+  @override
+  String startDataError(String detail) {
+    return 'Kernel इस फ़ोन पर अपना डेटा नहीं खोल सका। कृपया ऐप फिर से शुरू करें।\n\nजानकारी: $detail';
+  }
+
+  @override
+  String get onboardingSkip => 'छोड़ें';
+
+  @override
+  String get onboardingBack => 'पीछे';
+
+  @override
+  String get onboardingNext => 'आगे';
+
+  @override
+  String onboardingStep(int step, int total) {
+    return '$total में से चरण $step';
+  }
+
+  @override
+  String get onboardingPrivacyTitle => 'आवाज़ आपके फ़ोन पर ही रहती है';
+
+  @override
+  String get onboardingPrivacy1 =>
+      'Kernel अनाज की आवाज़ 2 सेकंड सुनता है और उसे यहीं इसी फ़ोन पर जाँचता है।';
+
+  @override
+  String get onboardingPrivacy2 =>
+      'कुछ भी अपलोड नहीं होता। कोई खाता नहीं, कोई क्लाउड नहीं, और सब कुछ बिना इंटरनेट के चलता है।';
+
+  @override
+  String get onboardingPrivacy3 =>
+      'जाँच के बाद रिकॉर्डिंग मिटा दी जाती हैं, जब तक आप सेटिंग में उन्हें रखना न चुनें।';
+
+  @override
+  String get onboardingHowTitle => 'आवाज़-जाँच कैसे करें';
+
+  @override
+  String get onboardingHow1 =>
+      'फ़ोन को बोरी या डिब्बे पर सपाट रखें, माइक उससे छूता रहे।';
+
+  @override
+  String get onboardingHow2 =>
+      'शांत कमरा चुनें। बात करना बंद करें और हो सके तो पंखे बंद करें।';
+
+  @override
+  String get onboardingHow3 => 'Kernel के सुनते समय 2 सेकंड बिना हिले रहें।';
+
+  @override
+  String get onboardingHow4 =>
+      'नतीजे प्रायोगिक हैं। फ़ैसला लेने से पहले हमेशा अनाज को खुद देखकर जाँचें।';
+
+  @override
+  String get onboardingRoleTitle => 'अपनी भूमिका चुनें';
+
+  @override
+  String get heroEyebrowListen => 'अपने अनाज की आवाज़ सुनें';
+
+  @override
+  String get heroStartScan => 'आवाज़-जाँच शुरू करें';
+
+  @override
+  String get heroStartBatch => 'बारी-बारी जाँच शुरू करें';
+
+  @override
+  String get loading => 'खुल रहा है…';
+
+  @override
+  String get farmerHomeTitle => 'किसान का पन्ना';
+
+  @override
+  String farmerHomeHarvestSubtitle(String name) {
+    return 'फ़सल: $name';
+  }
+
+  @override
+  String get farmerHeroTitle => 'अनाज की आवाज़-जाँच';
+
+  @override
+  String get farmerHeroSubtitle =>
+      'बताए तरीके से 2 सेकंड की रिकॉर्डिंग शुरू करें';
+
+  @override
+  String get farmerEmptyDetail =>
+      'आवाज़-जाँच और हिसाब रखना शुरू करने के लिए एक बोरी दर्ज करें।';
+
+  @override
+  String registeredSacks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count दर्ज बोरियाँ',
+      one: '1 दर्ज बोरी',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noFollowUps => 'आगे की कोई देखकर जाँच बाकी नहीं';
+
+  @override
+  String sacksRequireFollowUp(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count बोरियों की आगे देखकर जाँच ज़रूरी',
+      one: '1 बोरी की आगे देखकर जाँच ज़रूरी',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get harvestsTitle => 'फ़सलें';
+
+  @override
+  String get harvestsEmptyCard =>
+      'फ़सल बनाएँ, ताकि उसकी बोरियाँ बिक्री से पहले की रिपोर्ट के लिए एक साथ रहें';
+
+  @override
+  String harvestsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count फ़सलें · सबसे नई खोलें',
+      one: '1 फ़सल · सबसे नई खोलें',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get queueTitle => 'जाँच की कतार';
+
+  @override
+  String get queueCardSubtitle => 'पहले कौन-सी बोरियाँ जाँचें';
+
+  @override
+  String get preSaleCardSubtitle => 'अपने रखे रिकॉर्ड से बना सारांश निकालें';
+
+  @override
+  String preSaleCardHarvest(String name) {
+    return '$name का बिक्री से पहले का सारांश';
+  }
+
+  @override
+  String get householdHomeTitle => 'घर का भंडार';
+
+  @override
+  String get householdHomeSubtitle => 'घर के अनाज का हिसाब';
+
+  @override
+  String get householdHeroTitle => 'डिब्बे की आवाज़-जाँच करें';
+
+  @override
+  String get householdHeroSubtitle => 'अनाज की हालत दर्ज करें';
+
+  @override
+  String get householdEmptyDetail =>
+      'कितने दिन से रखा है, यह देखने के लिए अनाज का डिब्बा जोड़ें।';
+
+  @override
+  String get remindersCardTitle => 'जाँच के रिमाइंडर';
+
+  @override
+  String get remindersCardEmpty =>
+      'कोई रिमाइंडर तय नहीं। लगाने के लिए कोई डिब्बा खोलें।';
+
+  @override
+  String remindersScheduled(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count रिमाइंडर तय',
+      one: '1 रिमाइंडर तय',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String containerTitle(String grain, String place) {
+    return '$grain / $place';
+  }
+
+  @override
+  String storedDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days दिन से रखा है',
+      one: '1 दिन से रखा है',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewNeverScanned => 'अभी आवाज़-जाँच नहीं हुई — जाँच का समय';
+
+  @override
+  String reviewDueSince(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'जाँच का समय — आखिरी आवाज़-जाँच $days दिन पहले',
+      one: 'जाँच का समय — आखिरी आवाज़-जाँच 1 दिन पहले',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reviewNextIn(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'अगली जाँच $days दिन में',
+      one: 'अगली जाँच 1 दिन में',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewDue => 'जाँच का समय';
+
+  @override
+  String reminderOn(String date) {
+    return 'रिमाइंडर $date';
+  }
+
+  @override
+  String get recheckAction => 'फिर जाँचें';
+
+  @override
+  String get remindMeAction => 'याद दिलाएँ';
+
+  @override
+  String get reminderSheetTitle => 'दोबारा जाँच का रिमाइंडर लगाएँ';
+
+  @override
+  String reminderSheetSubtitle(String label) {
+    return '$label के लिए। Kernel आपको इसी फ़ोन पर याद दिलाएगा।';
+  }
+
+  @override
+  String reminderInDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days दिन में',
+      one: '1 दिन में',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reminderDateLabel => 'तारीख';
+
+  @override
+  String get reminderTimeLabel => 'समय';
+
+  @override
+  String get reminderOnDeviceNote =>
+      'रिमाइंडर इसी फ़ोन पर तय होता है और बिना इंटरनेट के चलता है।';
+
+  @override
+  String get reminderSave => 'रिमाइंडर सेव करें';
+
+  @override
+  String get reminderPastError => 'आगे का कोई समय चुनें।';
+
+  @override
+  String get reminderSet => 'रिमाइंडर लग गया';
+
+  @override
+  String get reminderSetNotificationsOff =>
+      'रिमाइंडर सेव हुआ। सूचनाएँ बंद हैं, इसलिए यह सिर्फ़ ऐप के अंदर दिखेगा।';
+
+  @override
+  String reminderFailed(String detail) {
+    return 'रिमाइंडर नहीं लग सका: $detail';
+  }
+
+  @override
+  String get fpoHomeTitle => 'गोदाम की झलक';
+
+  @override
+  String get fpoHomeSubtitle => 'गोदाम, कमरे और ढेर';
+
+  @override
+  String get fpoEmptyDetail =>
+      'बोरियाँ दर्ज करें, फिर एक-एक करके उनकी आवाज़-जाँच करें ताकि जाँच की कतार बने।';
+
+  @override
+  String sacksScannedToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'आज $count बोरियों की आवाज़-जाँच हुई',
+      one: 'आज 1 बोरी की आवाज़-जाँच हुई',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String queueSummary(int flagged, int needScan) {
+    String _temp0 = intl.Intl.pluralLogic(
+      needScan,
+      locale: localeName,
+      other: '$needScan बोरियों की आवाज़-जाँच बाकी',
+      one: '1 बोरी की आवाज़-जाँच बाकी',
+    );
+    return '$flagged पर ध्यान दें · $_temp0';
+  }
+
+  @override
+  String get assignedTitle => 'सौंपी गई जाँच';
+
+  @override
+  String get assignedNone => 'कोई खुली जाँच नहीं';
+
+  @override
+  String inspectionsOpen(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count जाँच खुली हैं',
+      one: '1 जाँच खुली है',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get fpoAddLocationTitle => 'गोदाम, कमरा या ढेर जोड़ें';
+
+  @override
+  String get fpoAddLocationSubtitle =>
+      'बोरियाँ कहाँ रखी हैं, उसके हिसाब से सजाएँ';
+
+  @override
+  String get buyerHomeTitle => 'आने वाले लॉट';
+
+  @override
+  String get buyerHomeSubtitle => 'खरीद से पहले जाँच';
+
+  @override
+  String get heroEyebrowDelivery => 'नया माल';
+
+  @override
+  String get buyerHeroTitle => 'आया माल दर्ज करें';
+
+  @override
+  String get buyerHeroSubtitle => 'सप्लायर, लॉट, अनाज, मात्रा';
+
+  @override
+  String get buyerHeroAction => 'दर्ज करें';
+
+  @override
+  String get lotsEmptyMessage => 'अभी कोई लॉट नहीं';
+
+  @override
+  String get lotsEmptyDetail => 'बोरियों की जाँच के लिए आया माल दर्ज करें।';
+
+  @override
+  String get lotsEmptyAction => 'अपना पहला आया माल दर्ज करें';
+
+  @override
+  String get buyerReportCardTitle => 'जाँच रिपोर्ट';
+
+  @override
+  String get buyerReportCardSubtitle =>
+      'अपने रखे रिकॉर्ड से लॉट की जाँच रिपोर्ट निकालें';
+
+  @override
+  String lotTitle(String code, String grain) {
+    return '$code / $grain';
+  }
+
+  @override
+  String get lotNoSacks => 'इस लॉट में अभी कोई बोरी दर्ज नहीं';
+
+  @override
+  String lotScreenedCount(int screened, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$total बोरियों',
+      one: '1 बोरी',
+    );
+    return '$_temp0 में से $screened की जाँच हुई';
+  }
+
+  @override
+  String supplierChip(String name) {
+    return 'सप्लायर: $name';
+  }
+
+  @override
+  String get scanAppBarTitle => 'आवाज़-जाँच';
+
+  @override
+  String get guidedScanTitle => 'बताए तरीके से आवाज़-जाँच';
+
+  @override
+  String get researchScanTitle => 'लेबल वाला नमूना रिकॉर्ड करें';
+
+  @override
+  String grainAndLabel(String grain, String label) {
+    return '$grain • $label';
+  }
+
+  @override
+  String get researchScanNoticeTitle => 'शोध रिकॉर्डिंग';
+
+  @override
+  String get researchScanNotice =>
+      'यह 2 सेकंड की रिकॉर्डिंग इसी फ़ोन पर निजी रूप से रखी जाती है ताकि आप ट्रेनिंग डेटा के लिए उस पर लेबल लगा सकें। इसे कीड़ों के नतीजे के रूप में नहीं दिखाया जाता और कभी अपलोड नहीं किया जाता।';
+
+  @override
+  String positioningTip(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'फ़ोन को डिब्बे पर दबाएँ, बिना हिले और चुप रहें',
+      'other': 'फ़ोन को बोरी पर दबाएँ, बिना हिले और चुप रहें',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String positioningTipDetail(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'शांत कमरे में फ़ोन को डिब्बे पर सपाट रखें, माइक उससे छूता रहे। 2 सेकंड तक बात न करें और इसे न हिलाएँ।',
+      'other': 'शांत जगह पर फ़ोन को बोरी पर सपाट रखें, माइक उससे छूता रहे। 2 सेकंड तक बात न करें और बोरी को न हिलाएँ।',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get infoQualityTitle => 'रिकॉर्डिंग की गुणवत्ता';
+
+  @override
+  String get infoQualityBody =>
+      'कोई भी नतीजा दिखाने से पहले पीछे का शोर, फटी आवाज़ और चुप्पी जाँची जाती है।';
+
+  @override
+  String get infoDurationTitle => 'रिकॉर्डिंग का समय';
+
+  @override
+  String get infoDurationShort => '2 सेकंड';
+
+  @override
+  String infoDurationRate(String khz) {
+    return '$khz kHz पर 2 सेकंड';
+  }
+
+  @override
+  String get infoOnDeviceTitle => 'फ़ोन पर ही जाँच';
+
+  @override
+  String get infoOnDeviceBody => 'अपलोड की ज़रूरत नहीं';
+
+  @override
+  String infoOnDeviceWithModel(String provenance) {
+    return 'अपलोड की ज़रूरत नहीं। $provenance';
+  }
+
+  @override
+  String get micDeniedTitle => 'माइक की अनुमति बंद है';
+
+  @override
+  String get micDeniedSubtitle =>
+      'अनाज की आवाज़ सुनने के लिए Kernel को माइक चाहिए।';
+
+  @override
+  String get micDeniedPrivacy =>
+      'आवाज़-जाँच 2 सेकंड की आवाज़ रिकॉर्ड करती है और उसे इसी फ़ोन पर जाँचती है। आवाज़ कभी अपलोड नहीं होती, और जाँच के बाद मिटा दी जाती है, जब तक आप सेटिंग में रिकॉर्डिंग रखना न चुनें।';
+
+  @override
+  String get micDeniedBlocked =>
+      'Kernel के लिए माइक बंद है। फ़ोन की सेटिंग खोलें, अनुमतियाँ चुनें, फिर माइक की अनुमति दें।';
+
+  @override
+  String get micDeniedAskAgain =>
+      'अगली बार Kernel के पूछने पर, या फ़ोन की सेटिंग में, आप अनुमति दे सकते हैं।';
+
+  @override
+  String get micDeniedStillUsable =>
+      'माइक के बिना भी आप चीज़ें दर्ज कर सकते हैं, अपना भंडार देख सकते हैं, खोलकर जाँच दर्ज कर सकते हैं और रिपोर्ट बना सकते हैं।';
+
+  @override
+  String get actionOpenSettings => 'सेटिंग खोलें';
+
+  @override
+  String get actionTryAgain => 'फिर कोशिश करें';
+
+  @override
+  String get actionBrowseInventory => 'भंडार देखें';
+
+  @override
+  String get resultAppBarTitle => 'नतीजा';
+
+  @override
+  String get resultTitle => 'जाँच का नतीजा';
+
+  @override
+  String get scanNotFound => 'यह आवाज़-जाँच इस फ़ोन पर नहीं मिली।';
+
+  @override
+  String get retryNothingSaved =>
+      'इस रिकॉर्डिंग के लिए कीड़ों के बारे में कुछ भी सेव नहीं हुआ।';
+
+  @override
+  String predictedClassLine(String label) {
+    return 'मॉडल का अनुमान (पुष्टि नहीं): $label';
+  }
+
+  @override
+  String modelScoreLine(String score) {
+    return 'मॉडल स्कोर: $score (प्रायोगिक, यह सटीकता का आँकड़ा नहीं है)';
+  }
+
+  @override
+  String get modelNoteTitleExperimental => 'प्रायोगिक मॉडल — परखा नहीं गया';
+
+  @override
+  String get modelNoteTitle => 'इस मॉडल के बारे में';
+
+  @override
+  String modelNoteOtherVersion(String version) {
+    return 'इस आवाज़-जाँच में मॉडल $version इस्तेमाल हुआ था, जो अब फ़ोन पर नहीं है। उसकी जानकारी इस आवाज़-जाँच के साथ नहीं रखी गई, इसलिए नतीजे को प्रायोगिक ही मानें।';
+  }
+
+  @override
+  String get physicalInspectionNote =>
+      'आवाज़ से जाँच प्रायोगिक है। भंडारण या बिक्री का कोई भी फ़ैसला लेने से पहले खुद देखकर जाँच ज़रूरी है।';
+
+  @override
+  String get actionRetry => 'फिर से करें';
+
+  @override
+  String get actionRecordInspection => 'देखकर जाँच दर्ज करें';
+
+  @override
+  String get actionScanAnother => 'दूसरी आवाज़-जाँच';
+
+  @override
+  String get recordingDetails => 'रिकॉर्डिंग की जानकारी';
+
+  @override
+  String get fieldCaptured => 'रिकॉर्ड हुई';
+
+  @override
+  String get fieldDuration => 'समय';
+
+  @override
+  String get fieldSampleRate => 'सैंपल रेट';
+
+  @override
+  String get fieldAnalysisTime => 'जाँच में लगा समय';
+
+  @override
+  String get fieldDevice => 'फ़ोन';
+
+  @override
+  String unitMs(int value) {
+    return '$value ms';
+  }
+
+  @override
+  String unitHz(int value) {
+    return '$value Hz';
+  }
+
+  @override
+  String deviceAndOs(String device, String os) {
+    return '$device ($os)';
+  }
+
+  @override
+  String scanTabSubtitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'वह डिब्बा चुनें जिसकी आवाज़ सुननी है',
+      'other': 'वह बोरी चुनें जिसकी आवाज़ सुननी है',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get batchScanTitle => 'बारी-बारी आवाज़-जाँच';
+
+  @override
+  String get batchScanSubtitle => 'बोरियों की एक-एक करके आवाज़-जाँच करें';
+
+  @override
+  String get qrCardTitle => 'QR लेबल से खोलें';
+
+  @override
+  String qrCardSubtitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'वह डिब्बा खोलने के लिए कैमरा Kernel लेबल की ओर करें',
+      'other': 'वह बोरी खोलने के लिए कैमरा Kernel बोरी लेबल की ओर करें',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get oneAtATimeTitle => 'एक बार में एक';
+
+  @override
+  String get oneAtATimeBody =>
+      'हर रिकॉर्डिंग एक ही चीज़ की होती है। चीज़ों की एक के बाद एक आवाज़-जाँच करें; एक आवाज़-जाँच कभी कई चीज़ों को एक साथ नहीं जाँचती।';
+
+  @override
+  String emptyItemsMessage(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'अभी कोई डिब्बा नहीं',
+      'other': 'अभी कोई बोरी नहीं',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String emptyItemsAction(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'अपना पहला डिब्बा जोड़ें',
+      'other': 'अपनी पहली बोरी दर्ज करें',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get scanTabEmptyDetail =>
+      'पहले एक दर्ज करें, फिर उसकी आवाज़-जाँच के लिए वापस आएँ।';
+
+  @override
+  String get scansTodayTitle => 'आज की आवाज़-जाँच';
+
+  @override
+  String scansTodaySummary(int scans, int items) {
+    String _temp0 = intl.Intl.pluralLogic(
+      items,
+      locale: localeName,
+      other: '$items चीज़ों',
+      one: '1 चीज़',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      scans,
+      locale: localeName,
+      other: '$scans आवाज़-जाँच',
+      one: '1 आवाज़-जाँच',
+    );
+    return 'आधी रात से $_temp0 की $_temp1';
+  }
+
+  @override
+  String get scansTodayEmpty =>
+      'आज अभी कोई आवाज़-जाँच नहीं। आपकी रिकॉर्ड की गई आवाज़-जाँच तुरंत यहाँ दिखेंगी।';
+
+  @override
+  String get experimentalBadge => 'प्रायोगिक';
+
+  @override
+  String get errorCouldNotLoad => 'खुल नहीं सका';
+
+  @override
+  String errorWithDetail(String prefix, String detail) {
+    return '$prefix: $detail';
+  }
+
+  @override
+  String fieldLabel(String label) {
+    return '$label:';
+  }
+
+  @override
+  String get validationQuantityEmpty => 'मात्रा लिखें';
+
+  @override
+  String get validationQuantityPositive => '0 से बड़ी संख्या लिखें';
+
+  @override
+  String get actionCancel => 'रद्द करें';
+
+  @override
+  String get actionSave => 'सेव करें';
+
+  @override
+  String get offlineLabel => 'ऑफ़लाइन';
+
+  @override
+  String get onlineLabel => 'ऑनलाइन';
+
+  @override
+  String get offlineSemantics => 'ऑफ़लाइन। इस फ़ोन पर सब कुछ चलता रहता है।';
+
+  @override
+  String get onlineSemantics => 'ऑनलाइन। Kernel को इंटरनेट की ज़रूरत नहीं।';
+
+  @override
+  String get qrTooltip => 'QR लेबल से बोरी खोलें';
+
+  @override
+  String get menuTooltip => 'मेनू';
+
+  @override
+  String get menuSwitchRole => 'भूमिका बदलें';
+
+  @override
+  String get menuSettings => 'सेटिंग';
+
+  @override
+  String itemTileSubtitle(String grain, String quantity, String date) {
+    return '$grain · $quantity · रखा $date';
+  }
+
+  @override
+  String get archivedBadge => 'अलग रखा';
+
+  @override
+  String get chipRetryNeeded => 'फिर से करना है';
+
+  @override
+  String chipAiUnverified(String label) {
+    return 'AI: $label (पुष्टि नहीं)';
+  }
+
+  @override
+  String scanTileTitle(String item, String when) {
+    return '$item · $when';
+  }
+
+  @override
+  String qualityChip(String quality) {
+    return 'गुणवत्ता: $quality';
+  }
+
+  @override
+  String get chipAudioKept => 'आवाज़ फ़ोन पर रखी है';
+
+  @override
+  String photoSemantics(int number) {
+    return 'सबूत की फ़ोटो $number। पूरी बड़ी खुलेगी।';
+  }
+
+  @override
+  String get photoMissing => 'यह फ़ोटो अब इस फ़ोन पर नहीं है।';
+
+  @override
+  String get photoRemove => 'फ़ोटो हटाएँ';
+
+  @override
+  String verifiedFindingLine(String finding) {
+    return 'पक्का नतीजा: $finding';
+  }
+
+  @override
+  String inspectorLine(String inspector, String when) {
+    return '$inspector · $when';
+  }
+
+  @override
+  String followUpChip(String status) {
+    return 'आगे की जाँच: $status';
+  }
+
+  @override
+  String get unassigned => 'किसी को नहीं सौंपी';
+
+  @override
+  String assignedToChip(String name) {
+    return '$name को सौंपी';
+  }
+
+  @override
+  String get followUpChangeTooltip => 'आगे की जाँच की स्थिति बदलें';
+
+  @override
+  String get followUpUpdate => 'स्थिति बदलें';
+
+  @override
+  String get assignAction => 'सौंपें';
+
+  @override
+  String get archiveAction => 'अलग रखें';
+
+  @override
+  String archiveConfirmTitle(String name) {
+    return '$name को अलग रखें?';
+  }
+
+  @override
+  String get archiveConfirmItemBody =>
+      'यह सूचियों, कतारों और नई रिपोर्टों में नहीं दिखेगा। इसकी आवाज़-जाँच का इतिहास और देखकर जाँच इस फ़ोन पर बनी रहेंगी और मिटेंगी नहीं।';
+
+  @override
+  String get archiveConfirmLotBody =>
+      'लॉट आपकी सूचियों और नई रिपोर्टों में नहीं दिखेगा। इसकी बोरियाँ, उनका आवाज़-जाँच इतिहास और देखकर जाँच इस फ़ोन पर बनी रहेंगी।';
+
+  @override
+  String get archiveConfirmLocationBody =>
+      'यह जगह सूचियों और चुनने की लिस्ट में नहीं दिखेगी। वहाँ रखी बोरियाँ, उनका आवाज़-जाँच इतिहास और देखकर जाँच इस फ़ोन पर बनी रहेंगी।';
+
+  @override
+  String get archiveConfirmHarvestBody =>
+      'फ़सल आपकी सूचियों और नई रिपोर्टों में नहीं दिखेगी। इसकी बोरियाँ, उनका आवाज़-जाँच इतिहास और देखकर जाँच इस फ़ोन पर बनी रहेंगी।';
+
+  @override
+  String get levelMeterLabel => 'माइक की आवाज़ का स्तर';
+
+  @override
+  String get levelMeterWaiting => 'आवाज़ का इंतज़ार';
+
+  @override
+  String levelMeterValue(int dbfs) {
+    return '$dbfs dBFS';
+  }
+
+  @override
+  String get voicePlacePhone => 'फ़ोन बोरी पर रखें';
+
+  @override
+  String get voiceListening => 'सुन रहा है';
+
+  @override
+  String get voiceDone => 'हो गया';
+
+  @override
+  String scanCouldNotRun(String detail) {
+    return 'आवाज़-जाँच नहीं चल सकी: $detail';
+  }
+
+  @override
+  String scanCouldNotSave(String detail) {
+    return 'आवाज़-जाँच का नतीजा सेव नहीं हो सका, इसलिए कुछ भी नहीं रखा गया। जानकारी: $detail';
+  }
+
+  @override
+  String get captureReady => 'सुनने को तैयार';
+
+  @override
+  String get captureListening => 'सुन रहा है — बिना हिले रहें';
+
+  @override
+  String get captureSaving => 'इस फ़ोन पर सेव हो रहा है';
+
+  @override
+  String get captureCheckingMic => 'माइक की अनुमति देखी जा रही है';
+
+  @override
+  String get captureGetReady => 'तैयार हो जाएँ — फ़ोन रखें';
+
+  @override
+  String captureSubtitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'फ़ोन को डिब्बे पर दबाएँ',
+      'other': 'फ़ोन को बोरी पर दबाएँ',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get captureResearchSubtitle =>
+      'शोध रिकॉर्डिंग: ये 2 सेकंड लेबल लगाने के लिए इसी फ़ोन पर निजी रूप से रखे जाते हैं';
+
+  @override
+  String get captureStart => '2 सेकंड की रिकॉर्डिंग शुरू करें';
+
+  @override
+  String get captureStartAgain => '2 सेकंड की रिकॉर्डिंग फिर से करें';
+
+  @override
+  String get captureStartResearch => 'लेबल वाला नमूना रिकॉर्ड करें (2 सेकंड)';
+
+  @override
+  String get captureProgressLabel => 'रिकॉर्डिंग कितनी हुई';
+
+  @override
+  String percentValue(int percent) {
+    return '$percent प्रतिशत';
+  }
+
+  @override
+  String captureElapsed(String elapsed, String target) {
+    return '$target में से $elapsed सेकंड';
+  }
+
+  @override
+  String get captureChecking => 'इस फ़ोन पर रिकॉर्डिंग जाँची जा रही है…';
+
+  @override
+  String get hintWaiting => 'सुन रहा है…';
+
+  @override
+  String get hintTooQuiet => 'बहुत धीमा — और पास दबाएँ';
+
+  @override
+  String get hintTooLoud => 'बहुत तेज़ / रगड़ की आवाज़';
+
+  @override
+  String get hintHoldStill => 'बिना हिले रहें';
+
+  @override
+  String get appTitle => 'Kernel';
+
+  @override
+  String get roleFarmer => 'किसान';
+
+  @override
+  String get roleHousehold => 'घर';
+
+  @override
+  String get roleStorageFpo => 'भंडारण/FPO';
+
+  @override
+  String get roleBuyer => 'खरीदार';
+
+  @override
+  String get roleFarmerTagline => 'फ़सल और बिक्री से पहले की जाँच';
+
+  @override
+  String get roleHouseholdTagline => 'डिब्बे और रिमाइंडर';
+
+  @override
+  String get roleStorageFpoTagline => 'गोदाम और बारी-बारी जाँच';
+
+  @override
+  String get roleBuyerTagline => 'सप्लायर और लॉट की जाँच';
+
+  @override
+  String get navHome => 'होम';
+
+  @override
+  String get navScan => 'आवाज़-जाँच';
+
+  @override
+  String get navInventory => 'भंडार';
+
+  @override
+  String get navReports => 'रिपोर्ट';
+
+  @override
+  String get navInventoryFarmer => 'मेरा अनाज';
+
+  @override
+  String get navInventoryHousehold => 'मेरे डिब्बे';
+
+  @override
+  String get navInventoryFpo => 'गोदाम';
+
+  @override
+  String get navInventoryBuyer => 'लॉट';
+
+  @override
+  String get reportTitleFarmer => 'बिक्री से पहले की रिपोर्ट';
+
+  @override
+  String get reportTitleHousehold => 'भंडारण रिपोर्ट';
+
+  @override
+  String get reportTitleFpo => 'गोदाम रिपोर्ट';
+
+  @override
+  String get reportTitleBuyer => 'लॉट जाँच रिपोर्ट';
+
+  @override
+  String get locationTypeHome => 'घर';
+
+  @override
+  String get locationTypeContainer => 'डिब्बा';
+
+  @override
+  String get locationTypeWarehouse => 'गोदाम';
+
+  @override
+  String get locationTypeRoom => 'कमरा';
+
+  @override
+  String get locationTypeStack => 'ढेर';
+
+  @override
+  String get screeningPending => 'बाकी';
+
+  @override
+  String get screeningScreening => 'जाँच चल रही है';
+
+  @override
+  String get screeningNeedsPhysicalCheck => 'खोलकर जाँच बाकी';
+
+  @override
+  String get screeningReviewed => 'देख लिया';
+
+  @override
+  String get findingNoneFound => 'कुछ नहीं मिला';
+
+  @override
+  String get findingPestsFound => 'कीड़े मिले';
+
+  @override
+  String get findingInconclusive => 'पता नहीं चला';
+
+  @override
+  String get findingNoneFoundHelp =>
+      'मैंने जाँचा और कोई कीड़ा या नुकसान नहीं दिखा';
+
+  @override
+  String get findingPestsFoundHelp =>
+      'मुझे कीड़े, इल्लियाँ, जाले या नुकसान दिखा';
+
+  @override
+  String get findingInconclusiveHelp => 'जाँच से मैं तय नहीं कर पाया';
+
+  @override
+  String get followUpOpen => 'खुली';
+
+  @override
+  String get followUpInProgress => 'चल रही है';
+
+  @override
+  String get followUpDone => 'हो गई';
+
+  @override
+  String get reminderScheduled => 'तय है';
+
+  @override
+  String get reminderFired => 'अभी का समय';
+
+  @override
+  String get reminderDone => 'हो गया';
+
+  @override
+  String get reminderCancelled => 'रद्द';
+
+  @override
+  String get reasonSilence =>
+      'बहुत धीमा: माइक तक लगभग कोई आवाज़ नहीं पहुँची। फ़ोन को अनाज पर ज़ोर से दबाएँ।';
+
+  @override
+  String get reasonClipping =>
+      'बहुत तेज़: आवाज़ फट गई। रिकॉर्डिंग के समय थपथपाएँ, रगड़ें या ठोकें नहीं।';
+
+  @override
+  String get reasonHighNoise =>
+      'पीछे बहुत शोर है। किसी शांत जगह जाएँ और बिना हिले रहें।';
+
+  @override
+  String get reasonTooShort =>
+      'रिकॉर्डिंग बहुत छोटी थी। पूरे 2 सेकंड फ़ोन बिना हिलाए रखें।';
+
+  @override
+  String get reasonPermissionDenied =>
+      'माइक की अनुमति बंद है। आवाज़-जाँच के लिए फ़ोन की सेटिंग में इसकी अनुमति दें।';
+
+  @override
+  String get reasonCaptureError =>
+      'माइक रिकॉर्ड नहीं कर सका। माइक इस्तेमाल करने वाले दूसरे ऐप बंद करें और फिर कोशिश करें।';
+
+  @override
+  String get qualityPass => 'काम की';
+
+  @override
+  String get qualityRetry => 'फिर से करें';
+
+  @override
+  String get predictionClean => 'कोई संकेत नहीं मिला';
+
+  @override
+  String get predictionUncertain => 'पक्का नहीं';
+
+  @override
+  String get predictionInfested => 'कीड़े होने की आशंका';
+
+  @override
+  String get predictionNotEvaluated => 'नतीजा नहीं बना';
+
+  @override
+  String get sampleLabelClean => 'कोई निशान नहीं';
+
+  @override
+  String get sampleLabelInfested => 'कीड़े लगे';
+
+  @override
+  String get sampleLabelUnknown => 'पता नहीं';
+
+  @override
+  String get headlineRetry => 'रिकॉर्डिंग काम की नहीं — फिर से करें';
+
+  @override
+  String get headlineNotEvaluated =>
+      'नतीजा नहीं बना — कोई मॉडल नहीं लगा है। अनाज को खुद देखकर जाँचें।';
+
+  @override
+  String get headlineNotEvaluatedWithModel =>
+      'नतीजा नहीं बना — मॉडल इस रिकॉर्डिंग को जाँच नहीं सका। अनाज को खुद देखकर जाँचें।';
+
+  @override
+  String get headlineInspectionNeeded =>
+      'देखकर जाँच ज़रूरी — मॉडल के नतीजे की पुष्टि नहीं हुई है';
+
+  @override
+  String get headlineClean =>
+      'कोई संकेत नहीं मिला — यह गारंटी नहीं है; बेचने/रखने का फ़ैसला करने से पहले खुद देखकर जाँचें';
+
+  @override
+  String get provenanceNone => 'मॉडल: कोई नहीं — नतीजा नहीं बना';
+
+  @override
+  String provenanceExperimental(String version) {
+    return 'मॉडल $version — प्रायोगिक';
+  }
+
+  @override
+  String provenanceValidated(String version) {
+    return 'मॉडल $version — परखा हुआ';
+  }
+
+  @override
+  String dateTimeJoin(String date, String time) {
+    return '$date, $time';
+  }
+}
