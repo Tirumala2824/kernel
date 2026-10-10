@@ -1,3 +1,32 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.kernel.sense_ai">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Pest ID camera (preview, Stage 0, stills) and the Measure screen. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Listen mode: own AudioRecord on the built-in mic. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Night listening: microphone-type foreground service, started only while the app is visible. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.flash" android:required="false" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+
+    <application>
+        <!-- ARCore is optional: support is checked at run time (the global iQOO 15 I2501 is not on the list). -->
+        <meta-data android:name="com.google.ar.core" android:value="optional" />
+
+        <activity
+            android:name="com.kernel.sense_ai.MeasureActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" />
+
+        <service
+            android:name="com.kernel.sense_ai.NightListenService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
+    </application>
 </manifest>
