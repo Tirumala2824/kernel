@@ -1,3 +1,30 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.kernel.model_hub">
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- Network for model catalogs and pinned model files only
+         (docs/guardrails.md §7). Nothing captured is ever uploaded. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- API 34+: user-initiated data-transfer job for large model files. -->
+    <uses-permission android:name="android.permission.RUN_USER_INITIATED_JOBS" />
+    <!-- Below API 34: WorkManager foreground worker of type dataSync. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <!-- Download progress notification (runtime-granted on API 33+). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Reads the installed AI Edge Gallery versionName to pick its catalog. -->
+    <queries>
+        <package android:name="com.google.ai.edge.gallery" />
+    </queries>
+
+    <application>
+        <service
+            android:name="com.kernel.model_hub.ModelDownloadJobService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="dataSync"
+            tools:node="merge" />
+    </application>
 </manifest>

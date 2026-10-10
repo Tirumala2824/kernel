@@ -19,6 +19,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  pigeon: ^29.0.0
 
 flutter:
   plugin:
@@ -26,3 +27,8 @@ flutter:
       android:
         package: com.kernel.model_hub
         pluginClass: ModelHubPlugin
+  # Catalog metadata only (names, pinned revisions, sizes, sha256, licences).
+  # No model files and no records.
+  assets:
+    - assets/gallery_allowlist_1_0_20.json
+    - assets/kernel_catalog.json

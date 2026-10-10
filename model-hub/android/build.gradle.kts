@@ -1,5 +1,5 @@
 group = "com.kernel.model_hub"
-version = "1.0-SNAPSHOT"
+version = "0.1.0"
 
 buildscript {
     val kotlinVersion = "2.4.0"
@@ -50,15 +50,12 @@ android {
 
     testOptions {
         unitTests {
-            isIncludeAndroidResources = true
             all {
                 it.useJUnitPlatform()
-
                 it.outputs.upToDateWhen { false }
-
                 it.testLogging {
-                    events("passed", "skipped", "failed", "standardOut", "standardError")
-                    showStandardStreams = true
+                    events("passed", "skipped", "failed")
+                    showStandardStreams = false
                 }
             }
         }
@@ -72,6 +69,17 @@ kotlin {
 }
 
 dependencies {
+    // Required by the pigeon-generated bridge (suspend host methods).
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
+    // Fallback downloader below API 34: a foreground (dataSync) Worker.
+    // API 34+ uses a user-initiated data-transfer JobService instead.
+    implementation("androidx.work:work-runtime:2.11.2")
+
+    // Unit tests are pure JVM: the resumable downloader runs against a local
+    // JDK HttpServer on 127.0.0.1 (no external network), plus path, hash
+    // cache and free-space logic.
+    testImplementation(platform("org.junit:junit-bom:5.14.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.mockito:mockito-core:5.0.0")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2026-10-10",
+  "note": "Kernel's own catalog metadata (no model files). Same entry shape as the AI Edge Gallery allowlist, plus sha256, license, gated and Kernel capabilities. Every entry is pinned to an immutable revision and verified by sha256 on download.",
+  "models": [
+    {
+      "name": "Gemma-4-E2B-it",
+      "modelId": "litert-community/gemma-4-E2B-it-litert-lm",
+      "modelFile": "gemma-4-E2B-it.litertlm",
+      "commitHash": "6e5c4f1e395deb959c494953478fa5cec4b8008f",
+      "revisionKind": "git",
+      "sizeInBytes": 2588147712,
+      "sha256": "181938105e0eefd105961417e8da75903eacda102c4fce9ce90f50b97139a63c",
+      "license": "apache-2.0",
+      "gated": false,
+      "licenseEvidence": "HF /api/models/litert-community/gemma-4-E2B-it-litert-lm/revision/6e5c4f1e395deb959c494953478fa5cec4b8008f: tags license:apache-2.0, cardData.license apache-2.0, gated false (checked 2026-10-10)",
+      "capabilities": ["textGen", "imageIn", "audioIn"],
+      "preference": 100,
+      "description": "Gemma 4 E2B instruction-tuned for LiteRT-LM on Android: text generation with image and audio input, up to 32K context. Runs fully on the phone (GPU, then CPU).",
+      "minDeviceMemoryInGb": 8,
+      "defaultConfig": {
+        "topK": 64,
+        "topP": 0.95,
+        "temperature": 1.0,
+        "maxContextLength": 32000,
+        "maxTokens": 4000,
+        "accelerators": "gpu,cpu",
+        "visionAccelerator": "gpu"
+      }
+    },
+    {
+      "name": "EmbeddingGemma-2 740M",
+      "modelId": "litert-community/embeddinggemma-2-740m-litert-lm",
+      "modelFile": "embeddinggemma-2-740m.litertlm",
+      "commitHash": "86b903a293f96d042bb92e1b7af333d94114458f",
+      "revisionKind": "git",
+      "sizeInBytes": 484622336,
+      "sha256": "e7a8a2204b91e0f96e92960e84a09a89212e1633dcb7575a9bf3378b4df77f4c",
+      "license": "apache-2.0",
+      "gated": false,
+      "licenseEvidence": "HF /api/models/litert-community/embeddinggemma-2-740m-litert-lm/revision/86b903a293f96d042bb92e1b7af333d94114458f: tags license:apache-2.0, cardData.license apache-2.0, gated false; same file and sha256 as main 24d962e906c7d332c6428e71c9676855024569e2 (checked 2026-10-10). Generic GPU/CPU build; the SoC-specific NPU files in the repo are not used.",
+      "capabilities": ["embedText", "embedImage", "embedAudio"],
+      "preference": 100,
+      "description": "EmbeddingGemma 2 multimodal embedding model (text, image, audio) for on-device semantic search and retrieval. Matryoshka output sizes 128 to 768.",
+      "defaultConfig": {
+        "accelerators": "gpu,cpu"
+      }
+    },
+    {
+      "name": "YAMNet sound classifier",
+      "modelId": "mediapipe/yamnet",
+      "modelFile": "yamnet.tflite",
+      "url": "https://storage.googleapis.com/mediapipe-models/audio_classifier/yamnet/float32/1/yamnet.tflite",
+      "commitHash": "4d8b4a53282dc83ef04e3e7dbc4fbc98082e34e4",
+      "revisionKind": "sha256-prefix",
+      "sizeInBytes": 4126810,
+      "sha256": "4d8b4a53282dc83ef04e3e7dbc4fbc98082e34e44ed798e16c3a0cdd4c584faf",
+      "license": "apache-2.0",
+      "gated": false,
+      "licenseEvidence": "Kaggle model google/yamnet: licenseName 'Apache 2.0' for its instances; published by Google in tensorflow/models (Apache-2.0). Object float32/1 is byte-identical to float32/latest (GCS md5 0C4bg4gTEHgXt1XQnWtWsw==, generation 1682545011401633). Measured once 2026-10-10.",
+      "capabilities": ["audioClassify"],
+      "preference": 100,
+      "description": "YAMNet audio event classifier (AudioSet, 521 sound classes) for MediaPipe Audio Classifier. Input 16 kHz mono; detects everyday sounds such as animals, insects and machinery.",
+      "defaultConfig": {
+        "accelerators": "cpu",
+        "sampleRateHz": 16000
+      }
+    },
+    {
+      "name": "Magic touch",
+      "modelId": "magic_touch",
+      "modelFile": "interactive_segmentation.task",
+      "url": "https://storage.googleapis.com/mediapipe-models/interactive_segmenter_v2/magic_touch/int8/1/interactive_segmentation.task",
+      "commitHash": "38431bc66b883404e8397f74c3579404315b9b52",
+      "revisionKind": "sha256-prefix",
+      "sizeInBytes": 30525312,
+      "sha256": "38431bc66b883404e8397f74c3579404315b9b52b04a46c6346fe906a7309b03",
+      "license": "unknown",
+      "gated": false,
+      "licenseEvidence": "Not verified: the Model Card MagicTouch.pdf linked from the MediaPipe interactive segmenter page could not be checked for a licence. Until the licence is confirmed this entry is listed but never downloaded. Object int8/1 is byte-identical to Gallery's int8/latest (GCS md5 7/lZM2KQakcRKIYxHG00xg==). Measured once 2026-10-10.",
+      "capabilities": ["segment"],
+      "preference": 50,
+      "description": "MediaPipe interactive segmenter (Magic touch): segments the object under a tapped point in an image.",
+      "defaultConfig": {
+        "accelerators": "cpu"
+      }
+    }
+  ]
+}

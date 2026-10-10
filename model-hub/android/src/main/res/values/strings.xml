@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="model_hub_download_title">Downloading on-device AI model</string>
+    <string name="model_hub_channel_name">AI model downloads</string>
+</resources>
