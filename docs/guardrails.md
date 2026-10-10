@@ -62,7 +62,7 @@ Every contributor and every subagent reads this file before changing code. If a 
 - **Three separate records:** the AI analysis, the user's validation or correction, and a human verified finding, in both data and UI. The AI analysis is never edited after saving.
 - **Dangerous animals:**
   - Venomous or medically important ones (widow or recluse spiders, scorpions, rats, Aedes, Anopheles): advise keeping distance and getting medical care for bites or stings. No home remedies.
-  - Protected wildlife (e.g. monitor lizards, Wild Life (Protection) Act Schedule I): do not harm, capture or kill; contact the State Forest Department or a licensed rescuer.
+  - Protected wildlife (e.g. monitor lizards, Wild Life (Protection) Act Schedule I): do not harm, catch or injure it; contact the State Forest Department or a licensed rescuer.
 - **No poisons.** No pesticide, rodenticide or fumigant dosing or recommendations, from the LLM or the cards. Guidance is sanitation, exclusion, traps where lawful, and professional help. The output guard covers rodenticides, poisons and pesticides.
 - **Grounding.** Guidance is grounded in the curated knowledge cards (sourced, marked "needs expert review"). The LLM may only rephrase and explain card content.
 - **Distance** is shown only when the method's reliability gates pass. Otherwise the app says "Distance not available" and gives the reason.
