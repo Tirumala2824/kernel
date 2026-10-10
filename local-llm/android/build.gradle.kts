@@ -47,6 +47,8 @@ android {
     defaultConfig {
         // LiteRT-LM 0.18.0 declares minSdkVersion 24.
         minSdk = 24
+        // Keeps LiteRT-LM classes that its JNI library looks up by name.
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     testOptions {
@@ -82,6 +84,10 @@ dependencies {
     // is liblitertlm_jni.so (arm64-v8a, x86_64), which does not clash with
     // audio-ai's LiteRT 1.4.2 (libtensorflowlite_jni.so).
     implementation("com.google.ai.edge.litertlm:litertlm-android:0.18.0")
+
+    // Sidecar JSON (tree API only, no reflection). Same version LiteRT-LM
+    // already brings in, so it adds nothing to the APK.
+    implementation("com.google.code.gson:gson:2.14.0")
 
     // Unit tests are pure JVM (engine config builder, sidecar, import
     // checks). No Android framework and no test doubles of the runtime.
