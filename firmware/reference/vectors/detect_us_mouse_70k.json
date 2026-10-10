@@ -1,0 +1,56 @@
+{
+ "schema": "kernel-sensor-detect-vector/1",
+ "scenario": "us_mouse_70k",
+ "description": "64->76 kHz FM sweep, 30 ms",
+ "synthetic": true,
+ "sensorType": 1,
+ "sensorTypeName": "usAir",
+ "seconds": 2.6,
+ "epochBaseMs": 1767225600000,
+ "expect": {
+  "classes": [
+   "fmSweep"
+  ],
+  "signature": "mouse_usv",
+  "jammed": false,
+  "clipped": false
+ },
+ "result": {
+  "jammed": false,
+  "clipped": false,
+  "eventCount": 1,
+  "healthLog": [
+   [
+    0.0,
+    4
+   ],
+   [
+    1000.0,
+    0
+   ]
+  ]
+ },
+ "events": [
+  {
+   "seq": 1,
+   "tStartS": 1767225601,
+   "tStartMs": 500,
+   "durationMs": 31,
+   "eventClass": 1,
+   "flags": 1,
+   "peakHz10": 7038,
+   "minHz10": 6463,
+   "maxHz10": 7512,
+   "slopeDHzPerMs": 3805,
+   "snrHalfDb": 49,
+   "peakDbfs": -59,
+   "impulses": 0,
+   "harmonics": 0,
+   "repRateCHz": 0,
+   "ipiCvPct": 255,
+   "bootLow": 7,
+   "hex": "0100000001b95569f4011f0001017e1b3f19581ddd0e31c500000000ff07",
+   "className": "fmSweep"
+  }
+ ]
+}

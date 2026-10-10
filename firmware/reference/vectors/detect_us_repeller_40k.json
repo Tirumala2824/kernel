@@ -1,0 +1,36 @@
+{
+ "schema": "kernel-sensor-detect-vector/1",
+ "scenario": "us_repeller_40k",
+ "description": "stationary 40 kHz repeller tone present from power-on",
+ "synthetic": true,
+ "sensorType": 1,
+ "sensorTypeName": "usAir",
+ "seconds": 6.0,
+ "epochBaseMs": 1767225600000,
+ "expect": {
+  "classes": [],
+  "signature": null,
+  "jammed": true,
+  "clipped": false
+ },
+ "result": {
+  "jammed": true,
+  "clipped": false,
+  "eventCount": 0,
+  "healthLog": [
+   [
+    0.0,
+    4
+   ],
+   [
+    1000.0,
+    0
+   ],
+   [
+    2004.0,
+    1
+   ]
+  ]
+ },
+ "events": []
+}

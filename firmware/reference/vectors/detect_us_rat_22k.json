@@ -1,0 +1,56 @@
+{
+ "schema": "kernel-sensor-detect-vector/1",
+ "scenario": "us_rat_22k",
+ "description": "near-constant 23.0->21.8 kHz call, 600 ms, 25 dB bin SNR",
+ "synthetic": true,
+ "sensorType": 1,
+ "sensorTypeName": "usAir",
+ "seconds": 2.6,
+ "epochBaseMs": 1767225600000,
+ "expect": {
+  "classes": [
+   "flatTone"
+  ],
+  "signature": "rat_22k",
+  "jammed": false,
+  "clipped": false
+ },
+ "result": {
+  "jammed": false,
+  "clipped": false,
+  "eventCount": 1,
+  "healthLog": [
+   [
+    0.0,
+    4
+   ],
+   [
+    1000.0,
+    0
+   ]
+  ]
+ },
+ "events": [
+  {
+   "seq": 1,
+   "tStartS": 1767225601,
+   "tStartMs": 519,
+   "durationMs": 561,
+   "eventClass": 2,
+   "flags": 1,
+   "peakHz10": 2282,
+   "minHz10": 2185,
+   "maxHz10": 2297,
+   "slopeDHzPerMs": -20,
+   "snrHalfDb": 55,
+   "peakDbfs": -57,
+   "impulses": 0,
+   "harmonics": 0,
+   "repRateCHz": 0,
+   "ipiCvPct": 255,
+   "bootLow": 7,
+   "hex": "0100000001b95569070231020201ea088908f908ecff37c700000000ff07",
+   "className": "flatTone"
+  }
+ ]
+}

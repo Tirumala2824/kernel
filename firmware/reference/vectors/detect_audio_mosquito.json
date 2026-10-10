@@ -1,0 +1,56 @@
+{
+ "schema": "kernel-sensor-detect-vector/1",
+ "scenario": "audio_mosquito",
+ "description": "450 Hz flight tone with 3 overtones, 1.5 s",
+ "synthetic": true,
+ "sensorType": 4,
+ "sensorTypeName": "audioAir",
+ "seconds": 3.5,
+ "epochBaseMs": 1767225600000,
+ "expect": {
+  "classes": [
+   "harmonic"
+  ],
+  "signature": "mosquito_wingbeat",
+  "jammed": false,
+  "clipped": false
+ },
+ "result": {
+  "jammed": false,
+  "clipped": false,
+  "eventCount": 1,
+  "healthLog": [
+   [
+    0.0,
+    4
+   ],
+   [
+    1000.0,
+    0
+   ]
+  ]
+ },
+ "events": [
+  {
+   "seq": 1,
+   "tStartS": 1767225601,
+   "tStartMs": 516,
+   "durationMs": 1456,
+   "eventClass": 4,
+   "flags": 1,
+   "peakHz10": 45,
+   "minHz10": 44,
+   "maxHz10": 46,
+   "slopeDHzPerMs": 0,
+   "snrHalfDb": 72,
+   "peakDbfs": -51,
+   "impulses": 0,
+   "harmonics": 3,
+   "repRateCHz": 0,
+   "ipiCvPct": 255,
+   "bootLow": 7,
+   "hex": "0100000001b955690402b00504012d002c002e00000048cd00030000ff07",
+   "className": "harmonic"
+  }
+ ]
+}

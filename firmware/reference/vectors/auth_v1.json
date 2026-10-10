@@ -1,0 +1,79 @@
+{
+ "schema": "kernel-sensor-auth-vectors/1",
+ "labels": {
+  "node": "KRNL-AUTH-N1",
+  "app": "KRNL-AUTH-A1",
+  "nodeNonce": "KRNL-NONCE",
+  "appNonce": "KRNL-APPNONCE"
+ },
+ "rfc4231": [
+  {
+   "name": "tc1",
+   "keyHex": "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
+   "dataHex": "4869205468657265",
+   "hmacHex": "b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7"
+  },
+  {
+   "name": "tc2",
+   "keyHex": "4a656665",
+   "dataHex": "7768617420646f2079612077616e7420666f72206e6f7468696e673f",
+   "hmacHex": "5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843"
+  },
+  {
+   "name": "tc3",
+   "keyHex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "dataHex": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+   "hmacHex": "773ea91e36800e46854db8ebd09181a72959098b3ef8c122d9635514ced565fe"
+  },
+  {
+   "name": "tc4",
+   "keyHex": "0102030405060708090a0b0c0d0e0f10111213141516171819",
+   "dataHex": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+   "hmacHex": "82558a389a443c0ea4cc819899f2083a85f0faa3e578f8077a2e3ff46729665b"
+  },
+  {
+   "name": "tc6",
+   "keyHex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "dataHex": "54657374205573696e67204c6172676572205468616e20426c6f636b2d53697a65204b6579202d2048617368204b6579204669727374",
+   "hmacHex": "60e431591ee0b67f0d8a26aacbf5b77f8e0bc6213728c5140546040f0ee37f54"
+  },
+  {
+   "name": "tc7",
+   "keyHex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "dataHex": "5468697320697320612074657374207573696e672061206c6172676572207468616e20626c6f636b2d73697a65206b657920616e642061206c6172676572207468616e20626c6f636b2d73697a6520646174612e20546865206b6579206e6565647320746f20626520686173686564206265666f7265206265696e6720757365642062792074686520484d414320616c676f726974686d2e",
+   "hmacHex": "9b09ffa71b942fcb27635fbcd5b0e944bfdc63644f0713938a7f51535c3a35e2"
+  }
+ ],
+ "handshakes": [
+  {
+   "name": "handshake_1",
+   "keyHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+   "address": "C0:FF:EE:12:34:56",
+   "bootCount": 7,
+   "nodeCounter": 1,
+   "uptimeUs": 123456789,
+   "appCounter": 1,
+   "appEpochMs": 1767225600000,
+   "appNonceHex": "df2ee7da0e196dbd99faa5ebee01faac",
+   "nodeNonceHex": "54e1d999259f04add39d36daa92fdd65",
+   "nodeProofHex": "9daea5fee094b6f8d94aa4f401927aff62bfbb96657881e1f9c218225ecb7e22",
+   "appProofHex": "109b023f88ea799a65ee5db7f7602552ddfa632893819d18276b4477c092411f",
+   "fingerprint": "630dcd29"
+  },
+  {
+   "name": "handshake_2",
+   "keyHex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+   "address": "AA:BB:CC:DD:EE:FF",
+   "bootCount": 65535,
+   "nodeCounter": 4294967295,
+   "uptimeUs": 9223372036854775808,
+   "appCounter": 1099511627776,
+   "appEpochMs": 1767312000000,
+   "appNonceHex": "09189f777ab143503a6c1943f44e8b14",
+   "nodeNonceHex": "7c003dafd558305c82d91b88c5a1ecb1",
+   "nodeProofHex": "4ebfd197ad7d93216548d2ddad7880c3d03a9360368b4ea6da80f3f437681878",
+   "appProofHex": "0e931b5ce1e4dd868e9fa92f56dafd53e340164ed6bc6559a1b12fac7f8648cc",
+   "fingerprint": "fc8b6400"
+  }
+ ]
+}

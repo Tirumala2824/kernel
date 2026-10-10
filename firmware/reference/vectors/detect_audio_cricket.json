@@ -1,0 +1,100 @@
+{
+ "schema": "kernel-sensor-detect-vector/1",
+ "scenario": "audio_cricket",
+ "description": "3 chirps of 4 x 15 ms pulses at 4.6 kHz",
+ "synthetic": true,
+ "sensorType": 4,
+ "sensorTypeName": "audioAir",
+ "seconds": 3.5,
+ "epochBaseMs": 1767225600000,
+ "expect": {
+  "classes": [
+   "pulsedChirp",
+   "pulsedChirp",
+   "pulsedChirp"
+  ],
+  "signature": "cricket_chirp",
+  "jammed": false,
+  "clipped": false
+ },
+ "result": {
+  "jammed": false,
+  "clipped": false,
+  "eventCount": 3,
+  "healthLog": [
+   [
+    0.0,
+    4
+   ],
+   [
+    1000.0,
+    0
+   ]
+  ]
+ },
+ "events": [
+  {
+   "seq": 1,
+   "tStartS": 1767225601,
+   "tStartMs": 492,
+   "durationMs": 124,
+   "eventClass": 5,
+   "flags": 3,
+   "peakHz10": 459,
+   "minHz10": 458,
+   "maxHz10": 459,
+   "slopeDHzPerMs": 0,
+   "snrHalfDb": 72,
+   "peakDbfs": -52,
+   "impulses": 4,
+   "harmonics": 0,
+   "repRateCHz": 2885,
+   "ipiCvPct": 5,
+   "bootLow": 7,
+   "hex": "0100000001b95569ec017c000503cb01ca01cb01000048cc0400450b0507",
+   "className": "pulsedChirp"
+  },
+  {
+   "seq": 2,
+   "tStartS": 1767225602,
+   "tStartMs": 92,
+   "durationMs": 124,
+   "eventClass": 5,
+   "flags": 3,
+   "peakHz10": 459,
+   "minHz10": 458,
+   "maxHz10": 459,
+   "slopeDHzPerMs": 0,
+   "snrHalfDb": 72,
+   "peakDbfs": -52,
+   "impulses": 4,
+   "harmonics": 0,
+   "repRateCHz": 2885,
+   "ipiCvPct": 5,
+   "bootLow": 7,
+   "hex": "0200000002b955695c007c000503cb01ca01cb01000048cc0400450b0507",
+   "className": "pulsedChirp"
+  },
+  {
+   "seq": 3,
+   "tStartS": 1767225602,
+   "tStartMs": 692,
+   "durationMs": 124,
+   "eventClass": 5,
+   "flags": 3,
+   "peakHz10": 459,
+   "minHz10": 457,
+   "maxHz10": 459,
+   "slopeDHzPerMs": 0,
+   "snrHalfDb": 72,
+   "peakDbfs": -52,
+   "impulses": 4,
+   "harmonics": 0,
+   "repRateCHz": 2885,
+   "ipiCvPct": 5,
+   "bootLow": 7,
+   "hex": "0300000002b95569b4027c000503cb01c901cb01000048cc0400450b0507",
+   "className": "pulsedChirp"
+  }
+ ]
+}
