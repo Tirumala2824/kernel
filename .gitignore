@@ -42,3 +42,7 @@ model-training/data/
 model-training/.venv/
 model-training/**/__pycache__/
 model-training/runs/
+
+# On-device LLM model files (user-imported, never committed)
+*.litertlm
+*.litertlm.part

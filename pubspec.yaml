@@ -10,3 +10,5 @@ workspace:
   - audio-ai
   - audio-ai/example
   - data-operations
+  - local-llm
+  - local-llm/example

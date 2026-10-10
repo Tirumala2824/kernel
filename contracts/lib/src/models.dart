@@ -1,3 +1,4 @@
+import 'advice.dart';
 import 'enums.dart';
 
 /// Columns every persisted entity carries, for optional sync later.
@@ -421,10 +422,24 @@ class LabeledSampleDraft {
 }
 
 class QueueEntry {
-  const QueueEntry({required this.item, required this.latestValidScan});
+  const QueueEntry({
+    required this.item,
+    required this.latestValidScan,
+    this.ageDays,
+  });
 
   final GrainItem item;
   final ScanRecord latestValidScan;
+
+  /// Whole days since [latestValidScan] was captured, when computed.
+  final int? ageDays;
+
+  /// Why the item ranks where it does. The UI localizes it.
+  RankReason get reason => switch (latestValidScan.result) {
+    Classification.infested => RankReason.infested,
+    Classification.uncertain => RankReason.uncertain,
+    _ => RankReason.clean,
+  };
 }
 
 /// Output of RankingService: ranked items plus items with no comparable scan.
@@ -456,6 +471,7 @@ class ReportScope {
     this.lotId,
     this.harvestId,
     this.itemIds,
+    this.narrative,
   });
 
   final Role role;
@@ -464,4 +480,8 @@ class ReportScope {
   final String? lotId;
   final String? harvestId;
   final List<String>? itemIds;
+
+  /// Optional on-phone LLM draft the user chose to include. Reports render
+  /// it in its own labelled section, separate from records and findings.
+  final AdviceText? narrative;
 }

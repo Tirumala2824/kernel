@@ -36,6 +36,9 @@ enum ReportFormat { csv, pdf }
 /// lotSummary: buyer screening report. sackLabels: printable QR labels (PDF only).
 enum ReportKind { history, preSale, lotSummary, sackLabels }
 
+/// Why an item sits where it does in the inspection queue. The UI localizes.
+enum RankReason { infested, uncertain, clean }
+
 /// Label on a research recording. clean/infested require a linked human
 /// inspection that confirms it; otherwise the label is unknown.
 enum SampleLabel { clean, infested, unknown }

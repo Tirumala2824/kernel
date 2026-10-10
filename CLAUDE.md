@@ -23,7 +23,9 @@ An offline-first Android app (Flutter UI + native Kotlin audio/AI plugin) for ac
 | `docs/` | PRD split, decisions log, device log | lead (agents may append to device-validation.md log and propose decisions) |
 | root (`pubspec.yaml`, `CLAUDE.md`, `.claude/`) | Workspace config | **lead only** |
 
-Dependency direction: `app-ui → audio-ai, data-operations → contracts`. `audio-ai` and `data-operations` never import each other or `app-ui`.
+| `local-llm/` | Flutter plugin: opt-in on-device LLM advice (LiteRT-LM), Dart `AdviceEngine`/`AdviceModelManager` + Kotlin bridge. Text in, text out; never audio | `audio-ai-dev` |
+
+Dependency direction: `app-ui → audio-ai, local-llm, data-operations → contracts`. `audio-ai`, `local-llm` and `data-operations` never import each other or `app-ui`. The pest path (`audio-ai`) and the advice path (`local-llm`) are completely separate (guardrails §8).
 
 ## Working with subagents
 - Delegate module work to `ui-dev`, `audio-ai-dev` and `data-ops-dev`. They can run in parallel because their directories don't overlap.

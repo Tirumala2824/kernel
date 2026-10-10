@@ -110,6 +110,35 @@ The source of truth is `contracts/lib/src/`. New fields are optional with defaul
 
 **Model manifest keys** (`models/<name>.properties`, owned by audio-ai): the v1 keys plus `validation=proxy|field` and `note=<text>`. `note` becomes `EngineInfo.modelNote`. A proxy model is always `experimental=true`.
 
+## Contracts v3 (2026-10-10): analytics + on-device LLM advice
+The source of truth is `contracts/lib/src/analytics.dart`, `advice.dart` and `repositories.dart`.
+
+**Analytics** (`AnalyticsService`, implemented by data-operations). Computed locally from stored records, excluding archived ones:
+- `watchResultRates`, `watchQualityFailures`, `watchItemFreshness`, `watchInspectionStats` and `watchScanActivity`, all taking an optional `AnalyticsFilter {role, locationId (nested), lotId, window}`.
+- `watchNextActions(role)`: `NextAction {kind, priority (lower = more urgent), count, itemId?, lotId?, harvestId?, locationId?, label?}`. The UI localizes `NextActionKind`.
+- `summarize(scope)` returns an `AnalyticsSummary`.
+
+**Ranking**
+- `watchQueue(..., {Classification? result, Duration? maxAge})`. `result` filters the ranked entries. `maxAge` moves entries whose latest valid scan is older than that into needsScan.
+- `QueueEntry.ageDays` and the computed `QueueEntry.reason` (`RankReason`).
+
+**Reminders:** `suggestDueAt(itemId)` is rule-based, always in the future, and only a suggestion. The user confirms.
+
+**Settings:** `watchLocalAdviceOptIn` / `setLocalAdviceOptIn` (default false).
+
+**Advice** (`AdviceEngine` + `AdviceModelManager`, implemented by `local-llm`)
+- **Never throws.** An empty stream, or a stream that ends without `complete`, means "use static copy".
+- **Inputs:**
+  - `ResultAdviceInput`
+  - `ReminderAdviceInput`
+  - `ReportNarrativeInput` (wraps `AnalyticsSummary`)
+
+  All are primitives and enums only. There are no paths, bytes or ScanRecords, so audio cannot reach the LLM by construction.
+- **Output:** `AdviceText {text, complete, modelVersion, languageTag, generatedAt, experimental = true}`.
+- **Model management:** `AdviceModelManager.importFromUri(contentUri)` streams `ModelImportProgress`; also `deleteModel()` and `freeSpaceBytes()`.
+
+**Reports:** `ReportScope.narrative` (`AdviceText?`). data-operations only renders it, in a labelled section, and never calls an LLM.
+
 ## Package entry points (what the lead wires in `app-ui/lib/bootstrap.dart`)
 - `package:audio_ai/audio_ai.dart` exports `class NativeScanEngine implements ScanEngine` with a no-arg constructor.
 - `package:data_operations/data_operations.dart` exports `class DataOperations` with:

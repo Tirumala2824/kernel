@@ -1,3 +1,4 @@
+import 'analytics.dart';
 import 'enums.dart';
 import 'models.dart';
 import 'scan_outcome.dart';
@@ -92,6 +93,10 @@ abstract interface class ReminderRepository {
   /// Item id of the reminder notification that launched the app, if any.
   /// Consumed once.
   Future<String?> takeLaunchItemId();
+
+  /// Rule-based suggestion for the next check, always in the future. The
+  /// user confirms or changes it; nothing is scheduled by this call.
+  Future<DateTime> suggestDueAt(String itemId);
 }
 
 /// Research recordings for building training data. Requires the research
@@ -128,11 +133,42 @@ abstract interface class SettingsRepository {
   /// Default false until onboarding is completed once.
   Stream<bool> watchOnboardingDone();
   Future<void> setOnboardingDone(bool value);
+
+  /// On-phone AI assistant (local LLM advice). Default false.
+  Stream<bool> watchLocalAdviceOptIn();
+  Future<void> setLocalAdviceOptIn(bool value);
 }
 
 abstract interface class RankingService {
   /// Ranks items by their latest valid scan; see docs/contracts.md.
-  Stream<InspectionQueue> watchQueue({Role? role, String? locationId, String? lotId});
+  /// [result] keeps only ranked entries whose latest valid scan has that
+  /// class; [maxAge] moves entries whose latest valid scan is older than
+  /// this into needsScan. The ranking rule itself is unchanged.
+  Stream<InspectionQueue> watchQueue({
+    Role? role,
+    String? locationId,
+    String? lotId,
+    Classification? result,
+    Duration? maxAge,
+  });
+}
+
+/// On-device analytics computed from stored records only. No network.
+/// Archived records are excluded, like every other list.
+abstract interface class AnalyticsService {
+  Stream<ResultRates> watchResultRates([AnalyticsFilter filter = const AnalyticsFilter()]);
+  Stream<QualityFailures> watchQualityFailures([AnalyticsFilter filter = const AnalyticsFilter()]);
+
+  /// Most stale first; never-scanned items first of all.
+  Stream<List<ItemFreshness>> watchItemFreshness([AnalyticsFilter filter = const AnalyticsFilter()]);
+  Stream<InspectionStats> watchInspectionStats([AnalyticsFilter filter = const AnalyticsFilter()]);
+  Stream<ScanActivity> watchScanActivity([AnalyticsFilter filter = const AnalyticsFilter()]);
+
+  /// Prioritized next steps for [role], most urgent first.
+  Stream<List<NextAction>> watchNextActions(Role role);
+
+  /// Aggregates for a report scope (input to an optional narrative).
+  Future<AnalyticsSummary> summarize(ReportScope scope);
 }
 
 abstract interface class ReportService {

@@ -39,3 +39,11 @@ Every contributor and every subagent reads this file before changing code. If a 
 ## 7. Offline first
 - Core flows (role select, item entry, scan, history, inspections, reminders, local report export) make **zero** network calls.
 - GCP is optional, metadata-only and deferred (see gcp-deferred.md). No secrets or service-account keys are ever placed in the APK.
+
+## 8. Local LLM advice (on-device, opt-in)
+- The advice layer lives in `local-llm/` (LiteRT-LM) and is **completely separate** from the pest path (`audio-ai/`). `local_llm` never imports `audio_ai`, and `audio_ai` never imports `local_llm`.
+- **No audio, ever.** The LLM receives only the typed DTOs in `contracts/lib/src/advice.dart`: primitives and enums. It never gets PCM, WAV paths, spectrograms, log-mel tensors or retained files. Multimodal backends (`audioBackend`, `visionBackend`) are never configured.
+- **Opt-in and offline.** It is off by default. The model is a user-imported `.litertlm` in app-specific storage. Nothing is downloaded by the app, and the release APK has no INTERNET permission.
+- **Never blocking.** If the model is missing, busy, out of memory, slow (25 s timeout) or filtered, the UI falls back silently to the static localized copy. Generation never runs during a capture.
+- **Output safety.** Text that recommends treatment or chemicals (fumigation, phosphine, pesticides…), claims grain is safe or pest-free, or accepts or rejects a lot is dropped on the device. Prompts and outputs are never logged.
+- **Provenance.** Generated text is always labelled "Generated on this phone — experimental" with its `modelVersion`. It is never presented as a record, a verified finding or a decision. A report narrative appears only if the user chooses to include it, in its own labelled section.

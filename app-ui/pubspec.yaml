@@ -17,6 +17,8 @@ dependencies:
     path: ../contracts
   audio_ai:
     path: ../audio-ai
+  local_llm:
+    path: ../local-llm
   data_operations:
     path: ../data-operations
   flutter_riverpod: ^3.4.3

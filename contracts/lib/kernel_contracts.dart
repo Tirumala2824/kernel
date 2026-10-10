@@ -2,6 +2,8 @@
 /// update docs/contracts.md and all three module owners to agree.
 library;
 
+export 'src/advice.dart';
+export 'src/analytics.dart';
 export 'src/enums.dart';
 export 'src/models.dart';
 export 'src/repositories.dart';
