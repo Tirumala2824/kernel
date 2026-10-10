@@ -76,6 +76,23 @@ void main() {
     },
   );
 
+  test('localAdviceOptIn defaults to false, with no row, and can be '
+      'toggled', () async {
+    final stream = h.ops.settings.watchLocalAdviceOptIn();
+    expect(await stream.first, isFalse);
+    // Independent of the other opt-ins.
+    await h.ops.settings.setRetainAudioOptIn(true);
+    await h.ops.settings.setResearchModeOptIn(true);
+    expect(await h.ops.settings.watchLocalAdviceOptIn().first, isFalse);
+
+    await h.ops.settings.setLocalAdviceOptIn(true);
+    expect(await firstWhere(stream, (v) => v), isTrue);
+    expect(await h.ops.settings.watchRetainAudioOptIn().first, isTrue);
+
+    await h.ops.settings.setLocalAdviceOptIn(false);
+    expect(await firstWhere(stream, (v) => !v), isFalse);
+  });
+
   test('retainAudioOptIn defaults to false and can be toggled', () async {
     final stream = h.ops.settings.watchRetainAudioOptIn();
     expect(await stream.first, isFalse);

@@ -122,10 +122,7 @@ void main() {
       locationId: room.id,
       lotId: lot.id,
     );
-    final inWarehouse = await h.addItem(
-      label: 'F3',
-      locationId: warehouse.id,
-    );
+    final inWarehouse = await h.addItem(label: 'F3', locationId: warehouse.id);
     for (final item in [inRoomLot, inShed, fpoInRoom, inWarehouse]) {
       await h.recordModelScan(item.id, Classification.clean);
     }
@@ -136,9 +133,7 @@ void main() {
     expect(await count(AnalyticsFilter(locationId: warehouse.id)), 3);
     expect(await count(AnalyticsFilter(locationId: room.id)), 2);
     expect(
-      await count(
-        AnalyticsFilter(role: Role.farmer, locationId: warehouse.id),
-      ),
+      await count(AnalyticsFilter(role: Role.farmer, locationId: warehouse.id)),
       2,
     );
     expect(
@@ -256,10 +251,7 @@ void main() {
     expect(list[2].lastResult, Classification.infested);
     expect(list[3].daysSinceLastScan, 1);
     expect(list[3].lastResult, Classification.notEvaluated);
-    expect(
-      list[3].lastScanAt,
-      now.subtract(const Duration(days: 1, hours: 2)),
-    );
+    expect(list[3].lastScanAt, now.subtract(const Duration(days: 1, hours: 2)));
   });
 
   test('inspection stats count by follow-up status', () async {
