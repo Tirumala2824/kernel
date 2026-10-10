@@ -194,6 +194,7 @@ class LlmEngineHost(
     /** Model files changed (import or delete): forget a sticky load failure. */
     fun modelChanged() {
         failedKey = null
+        if (state == NativeEngineState.FAILED) state = NativeEngineState.UNLOADED
         publish()
     }
 
