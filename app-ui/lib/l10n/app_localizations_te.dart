@@ -2912,505 +2912,510 @@ class AppLocalizationsTe extends AppLocalizations {
   }
 
   @override
-  String get hubTitle => 'Model Hub';
+  String get hubTitle => 'మోడల్ హబ్';
 
   @override
   String get hubSubtitle =>
-      'On-phone models for Pest ID. They run only on this phone.';
+      'పురుగు గుర్తింపు కోసం ఫోన్‌లో నడిచే మోడల్స్. ఇవి ఈ ఫోన్‌లో మాత్రమే నడుస్తాయి.';
 
   @override
-  String get hubNeedsTitle => 'Pest ID needs';
+  String get hubNeedsTitle => 'పురుగు గుర్తింపుకు కావాల్సినవి';
 
   @override
-  String get hubNeedImage => 'Image understanding';
+  String get hubNeedImage => 'ఫోటోను అర్థం చేసుకోవడం';
 
   @override
-  String get hubNeedEmbeddings => 'Embeddings';
+  String get hubNeedEmbeddings => 'ఎంబెడ్డింగ్స్ (వెతకడానికి)';
 
   @override
-  String get hubNeedSound => 'Sound classifier';
+  String get hubNeedSound => 'శబ్దాన్ని గుర్తించే మోడల్';
 
   @override
-  String get hubInstalledChip => 'Installed';
+  String get hubInstalledChip => 'ఇన్‌స్టాల్ అయింది';
 
   @override
-  String get hubMissingChip => 'Missing';
+  String get hubMissingChip => 'లేదు';
 
   @override
-  String get hubAllInstalled => 'Everything Pest ID needs is on this phone.';
+  String get hubAllInstalled =>
+      'పురుగు గుర్తింపుకు కావాల్సినవన్నీ ఈ ఫోన్‌లో ఉన్నాయి.';
 
   @override
   String get hubNothingToDownload =>
-      'No download is available for the missing parts yet.';
+      'లేని భాగాల కోసం ఇప్పుడు ఏ డౌన్‌లోడ్ అందుబాటులో లేదు.';
 
   @override
   String hubDownloadSummary(int count, String size) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count models to download, about $size',
-      one: '1 model to download, about $size',
+      other: '$count మోడల్స్ డౌన్‌లోడ్ చేయాలి, సుమారు $size',
+      one: '1 మోడల్ డౌన్‌లోడ్ చేయాలి, సుమారు $size',
     );
     return '$_temp0';
   }
 
   @override
-  String get hubDownloadAction => 'Download models';
+  String get hubDownloadAction => 'మోడల్స్ డౌన్‌లోడ్ చేయండి';
 
   @override
   String hubDownloadFailed(String error) {
-    return 'Download could not start: $error';
+    return 'డౌన్‌లోడ్ మొదలవలేదు: $error';
   }
 
   @override
-  String get hubCatalogUnavailable => 'Could not read the model list';
+  String get hubCatalogUnavailable => 'మోడల్ జాబితాను చదవలేకపోయాం';
 
   @override
-  String get hubInstalledUnavailable => 'Could not read installed models';
+  String get hubInstalledUnavailable =>
+      'ఇన్‌స్టాల్ అయిన మోడల్స్‌ను చదవలేకపోయాం';
 
   @override
   String get hubGalleryNote =>
-      'Kernel can\'t use files AI Edge Gallery already downloaded (Android keeps each app\'s files private), so it downloads the same models once.';
+      'AI Edge Gallery ఇప్పటికే డౌన్‌లోడ్ చేసిన ఫైళ్లను Kernel వాడలేదు (Android ప్రతి యాప్ ఫైళ్లను వేరుగా, గోప్యంగా ఉంచుతుంది), అందుకే అవే మోడల్స్‌ను ఒక్కసారి డౌన్‌లోడ్ చేస్తుంది.';
 
   @override
-  String get hubConsentTitle => 'Download Pest ID models?';
+  String get hubConsentTitle => 'పురుగు గుర్తింపు మోడల్స్ డౌన్‌లోడ్ చేయాలా?';
 
   @override
   String get hubConsentBody =>
-      'These models are downloaded once and then run only on this phone. Nothing you capture is ever uploaded.';
+      'ఈ మోడల్స్ ఒక్కసారి డౌన్‌లోడ్ అవుతాయి, తర్వాత ఈ ఫోన్‌లో మాత్రమే నడుస్తాయి. మీరు రికార్డ్ చేసేది ఏదీ ఎప్పుడూ అప్‌లోడ్ కాదు.';
 
   @override
   String hubConsentSize(String size) {
-    return 'Size: $size';
+    return 'పరిమాణం: $size';
   }
 
   @override
   String hubConsentLicense(String license) {
-    return 'Licence: $license';
+    return 'లైసెన్స్: $license';
   }
 
   @override
   String hubConsentModelCard(String url) {
-    return 'Model card: $url';
+    return 'మోడల్ కార్డ్: $url';
   }
 
   @override
-  String get hubSourceHf => 'Downloaded from Hugging Face';
+  String get hubSourceHf => 'Hugging Face నుంచి డౌన్‌లోడ్';
 
   @override
-  String get hubSourceGoogle => 'Downloaded from Google AI Edge';
+  String get hubSourceGoogle => 'Google AI Edge నుంచి డౌన్‌లోడ్';
 
   @override
   String hubSourceOther(String host) {
-    return 'Downloaded from $host';
+    return '$host నుంచి డౌన్‌లోడ్';
   }
 
   @override
-  String get hubWifiOnly => 'Wi-Fi only';
+  String get hubWifiOnly => 'Wi-Fi లో మాత్రమే';
 
   @override
   String get hubWifiOnlyBody =>
-      'Wait for Wi-Fi before downloading. These files are large.';
+      'డౌన్‌లోడ్ చేసే ముందు Wi-Fi కోసం ఆగండి. ఈ ఫైళ్లు పెద్దవి.';
 
   @override
   String hubConsentTotal(String size) {
-    return 'Total: about $size';
+    return 'మొత్తం: సుమారు $size';
   }
 
   @override
-  String get hubConsentAgree => 'Agree and download';
+  String get hubConsentAgree => 'ఒప్పుకుంటున్నాను, డౌన్‌లోడ్ చేయండి';
 
   @override
-  String get hubConsentNotNow => 'Not now';
+  String get hubConsentNotNow => 'ఇప్పుడు కాదు';
 
   @override
-  String get hubConsentGrantedTitle => 'Model downloads allowed';
+  String get hubConsentGrantedTitle => 'మోడల్ డౌన్‌లోడ్‌కు అనుమతి ఇచ్చారు';
 
   @override
-  String get hubDownloadsTitle => 'Downloads';
+  String get hubDownloadsTitle => 'డౌన్‌లోడ్‌లు';
 
   @override
-  String get hubPhaseQueued => 'Waiting to start';
+  String get hubPhaseQueued => 'మొదలవ్వడానికి ఎదురుచూస్తోంది';
 
   @override
-  String get hubPhaseWifi => 'Waiting for Wi-Fi';
+  String get hubPhaseWifi => 'Wi-Fi కోసం ఎదురుచూస్తోంది';
 
   @override
   String hubPhaseSpace(String size) {
-    return 'Waiting for free space: needs $size';
+    return 'ఖాళీ స్థలం కోసం ఎదురుచూస్తోంది: $size కావాలి';
   }
 
   @override
   String hubFreeSpace(String free) {
-    return '$free free on this phone';
+    return 'ఈ ఫోన్‌లో $free ఖాళీ';
   }
 
   @override
   String hubPhaseDownloading(String done, String total) {
-    return 'Downloading: $done of $total';
+    return 'డౌన్‌లోడ్ అవుతోంది: $total లో $done';
   }
 
   @override
-  String get hubPhaseVerifying => 'Checking the file';
+  String get hubPhaseVerifying => 'ఫైల్‌ను తనిఖీ చేస్తోంది';
 
   @override
-  String get hubPhasePaused => 'Paused';
+  String get hubPhasePaused => 'ఆగింది';
 
   @override
   String hubPhaseFailed(String reason) {
-    return 'Failed: $reason';
+    return 'కాలేదు: $reason';
   }
 
   @override
-  String get hubCancel => 'Cancel';
+  String get hubCancel => 'రద్దు చేయండి';
 
   @override
-  String get hubInstalledTitle => 'Installed models';
+  String get hubInstalledTitle => 'ఇన్‌స్టాల్ అయిన మోడల్స్';
 
   @override
-  String get hubInstalledEmpty => 'No models installed yet';
+  String get hubInstalledEmpty => 'ఇంకా ఏ మోడల్ ఇన్‌స్టాల్ కాలేదు';
 
   @override
   String get hubInstalledEmptyDetail =>
-      'Pest ID works after its models are downloaded once.';
+      'మోడల్స్ ఒక్కసారి డౌన్‌లోడ్ అయ్యాక పురుగు గుర్తింపు పనిచేస్తుంది.';
 
   @override
-  String get hubFieldPath => 'File';
+  String get hubFieldPath => 'ఫైల్';
 
   @override
-  String get hubFieldSize => 'Size';
+  String get hubFieldSize => 'పరిమాణం';
 
   @override
-  String get hubFieldVersion => 'Version';
+  String get hubFieldVersion => 'వెర్షన్';
 
   @override
-  String get hubFieldCapabilities => 'Can do';
+  String get hubFieldCapabilities => 'చేయగలిగేవి';
 
   @override
-  String get hubFieldBackends => 'Runs on';
+  String get hubFieldBackends => 'దేనిపై నడుస్తుంది';
 
   @override
-  String get hubMatchesGallery => 'Matches AI Edge Gallery';
+  String get hubMatchesGallery => 'AI Edge Gallery ఫైల్‌తో సరిపోతుంది';
 
   @override
-  String get hubRemove => 'Remove';
+  String get hubRemove => 'తీసివేయండి';
 
   @override
-  String get hubRemoveConfirmTitle => 'Remove this model?';
+  String get hubRemoveConfirmTitle => 'ఈ మోడల్‌ను తీసివేయాలా?';
 
   @override
   String get hubRemoveConfirmBody =>
-      'The file is deleted from this phone. Pest ID parts that need it stop until it is downloaded again.';
+      'ఫైల్ ఈ ఫోన్ నుంచి తొలగిపోతుంది. దీని అవసరం ఉన్న భాగాలు మళ్లీ డౌన్‌లోడ్ అయ్యే వరకు ఆగిపోతాయి.';
 
   @override
   String hubRemoveFailed(String error) {
-    return 'Could not remove: $error';
+    return 'తీసివేయలేకపోయాం: $error';
   }
 
   @override
-  String get hubCapTextGen => 'Text writing';
+  String get hubCapTextGen => 'రాయడం';
 
   @override
-  String get hubCapImageIn => 'Image understanding';
+  String get hubCapImageIn => 'ఫోటోను అర్థం చేసుకోవడం';
 
   @override
-  String get hubCapAudioIn => 'Audio understanding';
+  String get hubCapAudioIn => 'శబ్దాన్ని అర్థం చేసుకోవడం';
 
   @override
-  String get hubCapEmbedText => 'Text embeddings';
+  String get hubCapEmbedText => 'పాఠ్య ఎంబెడ్డింగ్స్';
 
   @override
-  String get hubCapEmbedImage => 'Image embeddings';
+  String get hubCapEmbedImage => 'ఫోటో ఎంబెడ్డింగ్స్';
 
   @override
-  String get hubCapEmbedAudio => 'Audio embeddings';
+  String get hubCapEmbedAudio => 'శబ్ద ఎంబెడ్డింగ్స్';
 
   @override
-  String get hubCapAudioClassify => 'Sound classifier';
+  String get hubCapAudioClassify => 'శబ్దం గుర్తింపు';
 
   @override
-  String get hubCapImageClassify => 'Image classifier';
+  String get hubCapImageClassify => 'ఫోటో గుర్తింపు';
 
   @override
-  String get hubCapObjectDetect => 'Object finder';
+  String get hubCapObjectDetect => 'వస్తువులను వెతకడం';
 
   @override
-  String get hubCapSegment => 'Outline finder';
+  String get hubCapSegment => 'ఆకార గీతలు వెతకడం';
 
   @override
-  String get hubCapSensorClassify => 'Sensor classifier';
+  String get hubCapSensorClassify => 'సెన్సార్ సంకేతాల గుర్తింపు';
 
   @override
-  String get hubSearchHint => 'Search models & pest info';
+  String get hubSearchHint => 'మోడల్స్ & పురుగు సమాచారం వెతకండి';
 
   @override
-  String get hubSearchAction => 'Search';
+  String get hubSearchAction => 'వెతకండి';
 
   @override
-  String get hubSearchModels => 'Models';
+  String get hubSearchModels => 'మోడల్స్';
 
   @override
-  String get hubSearchPestInfo => 'Pest info';
+  String get hubSearchPestInfo => 'పురుగు సమాచారం';
 
   @override
   String hubSearchScore(String score) {
-    return 'Similarity $score';
+    return 'పోలిక $score';
   }
 
   @override
-  String get hubSearchNoResults => 'No matches. Try other words.';
+  String get hubSearchNoResults => 'ఏదీ దొరకలేదు. వేరే పదాలు ప్రయత్నించండి.';
 
   @override
   String hubSearchFailed(String error) {
-    return 'Search is not available right now: $error';
+    return 'వెతకడం ఇప్పుడు అందుబాటులో లేదు: $error';
   }
 
   @override
   String get hubSearchNote =>
-      'Search runs on this phone. Similarity is not confidence.';
+      'వెతకడం ఈ ఫోన్‌లోనే జరుగుతుంది. పోలిక అంకె నమ్మకపు అంకె కాదు.';
 
   @override
-  String get hubNeedsReview => 'Needs expert review';
+  String get hubNeedsReview => 'నిపుణుల పరిశీలన బాకీ';
 
   @override
-  String get hubSettingsSection => 'Pest ID, maps and sensors';
+  String get hubSettingsSection => 'పురుగు గుర్తింపు, మ్యాపులు, సెన్సార్లు';
 
   @override
   String get hubSettingsCard =>
-      'Download and manage the on-phone models Pest ID uses.';
+      'పురుగు గుర్తింపు వాడే ఫోన్ మోడల్స్‌ను డౌన్‌లోడ్ చేసి నిర్వహించండి.';
 
   @override
-  String get hubMapsToggle => 'Use Google Maps';
+  String get hubMapsToggle => 'Google Maps వాడండి';
 
   @override
   String get hubMapsToggleBody =>
-      'Only the map area and route start and end are sent to Google. Never species, notes, photos or audio.';
+      'Google కు మ్యాప్ భాగం, దారి మొదలు, చివర మాత్రమే పంపుతాం. పురుగు పేరు, నోట్స్, ఫోటోలు, శబ్దం ఎప్పుడూ కాదు.';
 
   @override
-  String get hubMapsConfirmTitle => 'Allow Google Maps?';
+  String get hubMapsConfirmTitle => 'Google Maps కు అనుమతి ఇవ్వాలా?';
 
   @override
   String get hubMapsConfirmBody =>
-      'Maps need the internet. Google receives only the part of the map you look at and a route\'s start and end. Kernel never sends species, notes, photos, audio or sensor data. You can turn this off at any time.';
+      'మ్యాపులకు ఇంటర్నెట్ కావాలి. మీరు చూసే మ్యాప్ భాగం, దారి మొదలు, చివర మాత్రమే Google కు అందుతాయి. Kernel ఎప్పుడూ పురుగు పేరు, నోట్స్, ఫోటోలు, శబ్దం లేదా సెన్సార్ సమాచారం పంపదు. ఎప్పుడైనా దీన్ని ఆపవచ్చు.';
 
   @override
-  String get hubMapsConfirmAgree => 'Allow maps';
+  String get hubMapsConfirmAgree => 'మ్యాపులు ఆన్ చేయండి';
 
   @override
-  String get hubKeepMediaToggle => 'Keep photos and clips with sightings';
+  String get hubKeepMediaToggle =>
+      'కనిపించిన పురుగులతో ఫోటోలు, క్లిప్‌లు ఉంచండి';
 
   @override
   String get hubKeepMediaToggleBody =>
-      'When off, the photo or sound clip is deleted after analysis. Kept media stays on this phone.';
+      'ఆఫ్‌లో ఉంటే, విశ్లేషణ తర్వాత ఫోటో లేదా శబ్ద క్లిప్ తొలగిపోతుంది. ఉంచిన ఫైళ్లు ఈ ఫోన్‌లోనే ఉంటాయి.';
 
   @override
-  String get sensorTitle => 'Sensors';
+  String get sensorTitle => 'సెన్సార్లు';
 
   @override
   String get sensorSubtitle =>
-      'Paired listening nodes. They send signals, not diagnoses.';
+      'జత చేసిన వినే పరికరాలు. ఇవి సంకేతాలు పంపుతాయి, నిర్ధారణ కాదు.';
 
   @override
-  String get sensorEmpty => 'No sensors paired yet';
+  String get sensorEmpty => 'ఇంకా ఏ సెన్సార్ జత కాలేదు';
 
   @override
   String get sensorEmptyDetail =>
-      'Pair a Kernel sensor node by scanning the QR label on it.';
+      'Kernel సెన్సార్‌పై ఉన్న QR లేబుల్‌ను స్కాన్ చేసి దాన్ని జత చేయండి.';
 
   @override
-  String get sensorPairAction => 'Pair a sensor';
+  String get sensorPairAction => 'సెన్సార్ జత చేయండి';
 
   @override
   String get sensorPrivacyNote =>
-      'Sensors send sound features only, never audio. Everything stays on this phone.';
+      'సెన్సార్లు శబ్ద లక్షణాలు మాత్రమే పంపుతాయి, శబ్దం ఎప్పుడూ కాదు. అంతా ఈ ఫోన్‌లోనే ఉంటుంది.';
 
   @override
-  String get sensorSettingsCard => 'Pair and check Bluetooth sensor nodes.';
+  String get sensorSettingsCard => 'బ్లూటూత్ సెన్సార్లను జత చేసి చూసుకోండి.';
 
   @override
-  String get sensorTypeUsAir => 'Ultrasonic (air)';
+  String get sensorTypeUsAir => 'అల్ట్రాసోనిక్ (గాలి)';
 
   @override
-  String get sensorTypeContactPiezo => 'Contact (piezo)';
+  String get sensorTypeContactPiezo => 'తాకి (పీజో)';
 
   @override
-  String get sensorTypeContactAccel => 'Contact (vibration)';
+  String get sensorTypeContactAccel => 'తాకి (కంపనం)';
 
   @override
-  String get sensorTypeAudioAir => 'Sound (air)';
+  String get sensorTypeAudioAir => 'శబ్దం (గాలి)';
 
   @override
-  String get sensorLinkUnpaired => 'Not paired';
+  String get sensorLinkUnpaired => 'జత కాలేదు';
 
   @override
-  String get sensorLinkPairing => 'Pairing';
+  String get sensorLinkPairing => 'జత అవుతోంది';
 
   @override
-  String get sensorLinkConnecting => 'Connecting';
+  String get sensorLinkConnecting => 'కనెక్ట్ అవుతోంది';
 
   @override
-  String get sensorLinkConnected => 'Connected';
+  String get sensorLinkConnected => 'కనెక్ట్ అయింది';
 
   @override
-  String get sensorLinkAuthenticated => 'Connected securely';
+  String get sensorLinkAuthenticated => 'సురక్షితంగా కనెక్ట్ అయింది';
 
   @override
-  String get sensorLinkDisconnected => 'Not connected';
+  String get sensorLinkDisconnected => 'కనెక్ట్ కాలేదు';
 
   @override
-  String get sensorLinkError => 'Link problem';
+  String get sensorLinkError => 'కనెక్షన్ సమస్య';
 
   @override
-  String get sensorStatusUnknown => 'Status unknown';
+  String get sensorStatusUnknown => 'స్థితి తెలియదు';
 
   @override
   String sensorBattery(int percent) {
-    return 'Battery $percent%';
+    return 'బ్యాటరీ $percent%';
   }
 
   @override
-  String get sensorBatteryUnknown => 'Battery unknown';
+  String get sensorBatteryUnknown => 'బ్యాటరీ తెలియదు';
 
   @override
-  String get sensorHealthOk => 'Sensor working';
+  String get sensorHealthOk => 'సెన్సార్ పనిచేస్తోంది';
 
   @override
   String get sensorHealthJammed =>
-      'Jammed — ultrasonic source nearby (e.g. a repeller); results not evaluated';
+      'జామ్ — దగ్గర్లో అల్ట్రాసోనిక్ మూలం ఉంది (ఉదా. పురుగులను తరిమే యంత్రం); ఫలితాలు పరిశీలించలేదు';
 
   @override
-  String get sensorHealthClipped => 'Clipped';
+  String get sensorHealthClipped => 'శబ్దం చాలా ఎక్కువ (క్లిప్)';
 
   @override
-  String get sensorHealthLowBattery => 'Low battery';
+  String get sensorHealthLowBattery => 'బ్యాటరీ తక్కువ';
 
   @override
-  String get sensorHealthSurveyNeeded => 'Survey needed';
+  String get sensorHealthSurveyNeeded => 'సర్వే అవసరం';
 
   @override
-  String get sensorHealthAuthFailed => 'Security check failed — pair again';
+  String get sensorHealthAuthFailed =>
+      'భద్రతా తనిఖీ విఫలమైంది — మళ్లీ జత చేయండి';
 
   @override
-  String get sensorNotEvaluatedTitle => 'Not evaluated';
+  String get sensorNotEvaluatedTitle => 'పరిశీలించలేదు';
 
   @override
   String get sensorNotEvaluatedBody =>
-      'This sensor can\'t check right now. This does not mean nothing is there. Inspect physically.';
+      'ఈ సెన్సార్ ఇప్పుడు పరిశీలించలేదు. అక్కడ ఏమీ లేదని దీని అర్థం కాదు. స్వయంగా తెరిచి తనిఖీ చేయండి.';
 
   @override
-  String get sensorPairTitle => 'Pair a sensor';
+  String get sensorPairTitle => 'సెన్సార్ జత చేయండి';
 
   @override
   String get sensorPairInstructions =>
-      'Point the camera at the QR label on the sensor node.';
+      'కెమెరాను సెన్సార్‌పై ఉన్న QR లేబుల్ వైపు పెట్టండి.';
 
   @override
   String get sensorPairPrivacy =>
-      'The label holds the sensor\'s security key. It is kept in protected storage on this phone and is never shown or sent.';
+      'లేబుల్‌లో సెన్సార్ భద్రతా కీ ఉంది. అది ఈ ఫోన్‌లో రక్షిత నిల్వలో ఉంటుంది, ఎప్పుడూ చూపించం లేదా పంపం.';
 
   @override
-  String get sensorPairNotSensor => 'This isn\'t a Kernel sensor label.';
+  String get sensorPairNotSensor => 'ఇది Kernel సెన్సార్ లేబుల్ కాదు.';
 
   @override
-  String get sensorPairing => 'Pairing. Accept the Android pairing request.';
+  String get sensorPairing =>
+      'జత అవుతోంది. Android జత అభ్యర్థనను అంగీకరించండి.';
 
   @override
-  String get sensorPairCancelled => 'Pairing was cancelled.';
+  String get sensorPairCancelled => 'జత చేయడం రద్దయింది.';
 
   @override
   String sensorPairFailed(String error) {
-    return 'Could not pair: $error';
+    return 'జత చేయలేకపోయాం: $error';
   }
 
   @override
-  String get sensorPairTryAgain => 'Scan again';
+  String get sensorPairTryAgain => 'మళ్లీ స్కాన్ చేయండి';
 
   @override
   String sensorPairedSnack(String name) {
-    return '$name paired';
+    return '$name జత అయింది';
   }
 
   @override
-  String get sensorCameraTitle => 'Allow the camera to read the label';
+  String get sensorCameraTitle => 'లేబుల్ చదవడానికి కెమెరాకు అనుమతి ఇవ్వండి';
 
   @override
   String get sensorCameraBody =>
-      'Kernel uses the camera only to read the sensor\'s QR label. Nothing is recorded or sent.';
+      'Kernel కెమెరాను సెన్సార్ QR లేబుల్ చదవడానికి మాత్రమే వాడుతుంది. ఏదీ రికార్డ్ చేయదు, పంపదు.';
 
   @override
-  String get sensorPlaceTitle => 'Where is this sensor?';
+  String get sensorPlaceTitle => 'ఈ సెన్సార్ ఎక్కడ ఉంది?';
 
   @override
   String get sensorPlaceSubtitle =>
-      'Choose the place, and the sack or container if it sits on one.';
+      'స్థలాన్ని ఎంచుకోండి, ఏదైనా బస్తా లేదా డబ్బాపై ఉంటే దాన్ని కూడా.';
 
   @override
-  String get sensorPlaceLocation => 'Place';
+  String get sensorPlaceLocation => 'స్థలం';
 
   @override
-  String get sensorPlaceItem => 'Sack or container';
+  String get sensorPlaceItem => 'బస్తా లేదా డబ్బా';
 
   @override
-  String get sensorPlaceNone => 'Not set';
+  String get sensorPlaceNone => 'ఎంచుకోలేదు';
 
   @override
   String get sensorPlaceNote =>
-      'Sensor evidence then shows on that sack or container, separate from scans and inspections.';
+      'తర్వాత సెన్సార్ ఆధారాలు ఆ బస్తా లేదా డబ్బాపై కనిపిస్తాయి, స్కాన్లు, తనిఖీలకు వేరుగా.';
 
   @override
-  String get sensorPlaceSave => 'Save placement';
+  String get sensorPlaceSave => 'స్థలం సేవ్ చేయండి';
 
   @override
-  String get sensorPlaceSkip => 'Later';
+  String get sensorPlaceSkip => 'తర్వాత';
 
   @override
-  String get sensorPlaceSaved => 'Placement saved';
+  String get sensorPlaceSaved => 'స్థలం సేవ్ అయింది';
 
   @override
   String sensorPlaceFailed(String error) {
-    return 'Could not save the placement: $error';
+    return 'స్థలం సేవ్ కాలేదు: $error';
   }
 
   @override
   String get sensorPlaceNoLocations =>
-      'No places yet — add a room or store first';
+      'ఇంకా స్థలాలు లేవు — ముందు గది లేదా గోదాం చేర్చండి';
 
   @override
-  String get sensorPlaceChange => 'Change placement';
+  String get sensorPlaceChange => 'స్థలం మార్చండి';
 
   @override
-  String get sensorNotFound => 'This sensor is not on this phone.';
+  String get sensorNotFound => 'ఈ సెన్సార్ ఈ ఫోన్‌లో లేదు.';
 
   @override
-  String get sensorDetailsTitle => 'Sensor details';
+  String get sensorDetailsTitle => 'సెన్సార్ వివరాలు';
 
   @override
-  String get sensorFieldType => 'Type';
+  String get sensorFieldType => 'రకం';
 
   @override
-  String get sensorFieldPlace => 'Place';
+  String get sensorFieldPlace => 'స్థలం';
 
   @override
-  String get sensorFieldItem => 'Placed on';
+  String get sensorFieldItem => 'దేనిపై ఉంచారు';
 
   @override
-  String get sensorFieldFirmware => 'Firmware';
+  String get sensorFieldFirmware => 'ఫర్మ్‌వేర్';
 
   @override
-  String get sensorFieldKey => 'Key fingerprint';
+  String get sensorFieldKey => 'కీ గుర్తు';
 
   @override
-  String get sensorFieldLastSeen => 'Last seen';
+  String get sensorFieldLastSeen => 'చివరిసారి కనిపించింది';
 
   @override
-  String get sensorLiveTitle => 'Live bands';
+  String get sensorLiveTitle => 'లైవ్ బ్యాండ్లు';
 
   @override
   String get sensorLiveNote =>
-      'Energy per frequency band only. The sensor sends no audio.';
+      'ప్రతి పౌనఃపున్య బ్యాండ్ శక్తి మాత్రమే. సెన్సార్ శబ్దం పంపదు.';
 
   @override
-  String get sensorLiveWaiting => 'Waiting for the sensor';
+  String get sensorLiveWaiting => 'సెన్సార్ కోసం ఎదురుచూస్తోంది';
 
   @override
   String sensorBandRange(String low, String high) {
@@ -3419,16 +3424,16 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String sensorBandLevel(String db) {
-    return '$db dB above background';
+    return 'నేపథ్యం కంటే $db dB ఎక్కువ';
   }
 
   @override
   String sensorLivePeak(String khz) {
-    return 'Strongest at $khz kHz';
+    return 'అత్యధికం $khz kHz వద్ద';
   }
 
   @override
-  String get sensorSurveyTitle => 'Survey';
+  String get sensorSurveyTitle => 'సర్వే';
 
   @override
   String sensorSurveyBody(int minutes) {
@@ -3436,8 +3441,8 @@ class AppLocalizationsTe extends AppLocalizations {
       minutes,
       locale: localeName,
       other:
-          'Keep the place quiet for $minutes minutes so the sensor learns its normal background.',
-      one: 'Keep the place quiet for 1 minute so the sensor learns its normal background.',
+          'సెన్సార్ సాధారణ నేపథ్యం నేర్చుకునేలా ఆ స్థలాన్ని $minutes నిమిషాలు నిశ్శబ్దంగా ఉంచండి.',
+      one: 'సెన్సార్ సాధారణ నేపథ్యం నేర్చుకునేలా ఆ స్థలాన్ని 1 నిమిషం నిశ్శబ్దంగా ఉంచండి.',
     );
     return '$_temp0';
   }
@@ -3447,131 +3452,131 @@ class AppLocalizationsTe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       minutes,
       locale: localeName,
-      other: 'Start survey ($minutes min)',
-      one: 'Start survey (1 min)',
+      other: 'సర్వే మొదలుపెట్టండి ($minutes నిమి)',
+      one: 'సర్వే మొదలుపెట్టండి (1 నిమి)',
     );
     return '$_temp0';
   }
 
   @override
   String sensorSurveyRunning(int done, int total) {
-    return 'Surveying: $done of $total min';
+    return 'సర్వే జరుగుతోంది: $total నిమిషాల్లో $done';
   }
 
   @override
-  String get sensorSurveyDone => 'Survey finished';
+  String get sensorSurveyDone => 'సర్వే పూర్తయింది';
 
   @override
   String sensorSurveyFailed(String error) {
-    return 'Survey failed: $error';
+    return 'సర్వే కాలేదు: $error';
   }
 
   @override
-  String get sensorSessionTitle => 'Overnight monitoring';
+  String get sensorSessionTitle => 'రాత్రంతా పర్యవేక్షణ';
 
   @override
   String get sensorSessionBody =>
-      'Kernel keeps listening to this sensor in the background. Android shows a notification while it runs. To keep it running all night, open app settings and set battery use to Unrestricted (no battery optimisation).';
+      'Kernel వెనుక నుంచి ఈ సెన్సార్‌ను వింటూ ఉంటుంది. ఇది నడుస్తున్నప్పుడు Android ఒక నోటిఫికేషన్ చూపిస్తుంది. రాత్రంతా నడవాలంటే యాప్ సెట్టింగ్స్ తెరిచి బ్యాటరీ వాడకాన్ని \'పరిమితి లేదు\' (బ్యాటరీ ఆప్టిమైజేషన్ ఆఫ్) గా పెట్టండి.';
 
   @override
-  String get sensorSessionStart => 'Start overnight session';
+  String get sensorSessionStart => 'రాత్రి పర్యవేక్షణ మొదలుపెట్టండి';
 
   @override
-  String get sensorSessionStop => 'Stop session';
+  String get sensorSessionStop => 'పర్యవేక్షణ ఆపండి';
 
   @override
-  String get sensorSessionRunning => 'Session running';
+  String get sensorSessionRunning => 'పర్యవేక్షణ జరుగుతోంది';
 
   @override
   String sensorSessionFailed(String error) {
-    return 'Could not change the session: $error';
+    return 'పర్యవేక్షణను మార్చలేకపోయాం: $error';
   }
 
   @override
-  String get sensorBatterySettings => 'Open app settings';
+  String get sensorBatterySettings => 'యాప్ సెట్టింగ్స్ తెరవండి';
 
   @override
-  String get sensorSyncAction => 'Sync events';
+  String get sensorSyncAction => 'సంఘటనలు తీసుకురండి';
 
   @override
   String sensorSynced(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count new events',
-      one: '1 new event',
-      zero: 'No new events',
+      other: '$count కొత్త సంఘటనలు',
+      one: '1 కొత్త సంఘటన',
+      zero: 'కొత్త సంఘటనలు లేవు',
     );
     return '$_temp0';
   }
 
   @override
   String sensorSyncFailed(String error) {
-    return 'Could not sync: $error';
+    return 'తీసుకురాలేకపోయాం: $error';
   }
 
   @override
-  String get sensorTimelineTitle => 'Event timeline';
+  String get sensorTimelineTitle => 'సంఘటనల వరుస';
 
   @override
-  String get sensorTimelineEmpty => 'No events recorded yet';
+  String get sensorTimelineEmpty => 'ఇంకా ఏ సంఘటనా నమోదు కాలేదు';
 
   @override
   String get sensorTimelineEmptyDetail =>
-      'This is not proof that nothing is there. Sync to fetch events stored on the sensor.';
+      'అక్కడ ఏమీ లేదని ఇది రుజువు కాదు. సెన్సార్‌లో దాచిన సంఘటనలు తెచ్చేందుకు \'సంఘటనలు తీసుకురండి\' నొక్కండి.';
 
   @override
-  String get sensorSummaryTitle => 'Signals';
+  String get sensorSummaryTitle => 'సంకేతాలు';
 
   @override
   String sensorEventsSummary(int count, int minutes) {
     String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count events',
-      one: '1 event',
-    );
-    String _temp1 = intl.Intl.pluralLogic(
       minutes,
       locale: localeName,
-      other: '$minutes minutes',
-      one: '1 minute',
+      other: '$minutes నిమిషాల్లో',
+      one: '1 నిమిషంలో',
     );
-    return '$_temp0 in $_temp1';
+    String _temp1 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count సంఘటనలు',
+      one: '1 సంఘటన',
+    );
+    return '$_temp0 $_temp1';
   }
 
   @override
   String get sensorSignalNotDiagnosis =>
-      'Signals, not a diagnosis. Inspect physically.';
+      'ఇవి సంకేతాలు, నిర్ధారణ కాదు. స్వయంగా తెరిచి తనిఖీ చేయండి.';
 
   @override
-  String get sensorUnmatched => 'Unmatched signal';
+  String get sensorUnmatched => 'సరిపోని సంకేతం';
 
   @override
-  String get sensorSigMouseUsv => 'Mouse-like ultrasonic calls';
+  String get sensorSigMouseUsv => 'ఎలుక లాంటి అల్ట్రాసోనిక్ అరుపులు';
 
   @override
-  String get sensorSigRat22k => 'Rat-like 22 kHz calls';
+  String get sensorSigRat22k => 'పందికొక్కు లాంటి 22 kHz అరుపులు';
 
   @override
-  String get sensorSigGrainLarva => 'Grain-larva-like feeding clicks';
+  String get sensorSigGrainLarva => 'ధాన్యపు లార్వా లాంటి కొరుకుడు చప్పుళ్లు';
 
   @override
-  String get sensorSigTermiteDrum => 'Termite-like drumming';
+  String get sensorSigTermiteDrum => 'చెదపురుగు లాంటి టకటక';
 
   @override
   String sensorSigOther(String id) {
-    return 'Signature: $id';
+    return 'సంకేత గుర్తు: $id';
   }
 
   @override
   String sensorPack(String version) {
-    return 'Signature pack $version';
+    return 'సంకేత ప్యాక్ $version';
   }
 
   @override
   String sensorScore(String score) {
-    return 'Rule score $score (not a probability)';
+    return 'నియమ అంకె $score (సంభావ్యత కాదు)';
   }
 
   @override
@@ -3580,35 +3585,35 @@ class AppLocalizationsTe extends AppLocalizations {
   }
 
   @override
-  String get sensorClassTonal => 'Tone';
+  String get sensorClassTonal => 'స్వరం';
 
   @override
-  String get sensorClassFmSweep => 'Sweep';
+  String get sensorClassFmSweep => 'పైకీ కిందకీ జారే శబ్దం';
 
   @override
-  String get sensorClassFlatTone => 'Flat tone';
+  String get sensorClassFlatTone => 'ఒకే స్వరం';
 
   @override
-  String get sensorClassImpulse => 'Clicks';
+  String get sensorClassImpulse => 'టిక్ టిక్';
 
   @override
-  String get sensorClassHarmonic => 'Harmonic tone';
+  String get sensorClassHarmonic => 'ప్రతిధ్వని స్వరం';
 
   @override
-  String get sensorClassChirp => 'Pulsed chirps';
+  String get sensorClassChirp => 'ఆగి ఆగి కిచకిచ';
 
   @override
-  String get sensorClassEmitter => 'Continuous emitter';
+  String get sensorClassEmitter => 'ఆగకుండా నడిచే యంత్రం';
 
   @override
-  String get sensorEvidenceTitle => 'Sensor evidence';
+  String get sensorEvidenceTitle => 'సెన్సార్ ఆధారాలు';
 
   @override
   String get sensorEvidenceBody =>
-      'Signals from sensors placed here. Experimental, and kept separate from scans and inspections.';
+      'ఇక్కడ ఉంచిన సెన్సార్ల సంకేతాలు. ప్రయోగాత్మకం, స్కాన్లు, తనిఖీలకు వేరుగా ఉంచాం.';
 
   @override
-  String get sensorEvidenceOpen => 'Open sensor';
+  String get sensorEvidenceOpen => 'సెన్సార్ తెరవండి';
 
   @override
   String sensorEvidenceEmpty(int days) {
@@ -3616,8 +3621,9 @@ class AppLocalizationsTe extends AppLocalizations {
       days,
       locale: localeName,
       other:
-          'No sensor events in the last $days days. This is not proof that nothing is there.',
-      one: 'No sensor events in the last day. This is not proof that nothing is there.',
+          'గత $days రోజుల్లో సెన్సార్ సంఘటనలు లేవు. అక్కడ ఏమీ లేదని ఇది రుజువు కాదు.',
+      one:
+          'గత 1 రోజులో సెన్సార్ సంఘటనలు లేవు. అక్కడ ఏమీ లేదని ఇది రుజువు కాదు.',
     );
     return '$_temp0';
   }
@@ -3627,15 +3633,15 @@ class AppLocalizationsTe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       days,
       locale: localeName,
-      other: 'Last $days days',
-      one: 'Last day',
+      other: 'గత $days రోజులు',
+      one: 'గత 1 రోజు',
     );
     return '$_temp0';
   }
 
   @override
   String sensorNextActivityOne(String name) {
-    return 'Sensor signals at $name';
+    return '$name వద్ద సెన్సార్ సంకేతాలు';
   }
 
   @override
@@ -3643,19 +3649,19 @@ class AppLocalizationsTe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Sensor signals in $count places',
-      one: 'Sensor signals in 1 place',
+      other: '$count చోట్ల సెన్సార్ సంకేతాలు',
+      one: '1 చోట సెన్సార్ సంకేతాలు',
     );
     return '$_temp0';
   }
 
   @override
   String get sensorNextActivityBody =>
-      'Signals, not a diagnosis. Inspect physically.';
+      'ఇవి సంకేతాలు, నిర్ధారణ కాదు. స్వయంగా తెరిచి తనిఖీ చేయండి.';
 
   @override
   String sensorNextAttentionOne(String name) {
-    return 'Check sensor $name';
+    return 'సెన్సార్ $name చూడండి';
   }
 
   @override
@@ -3663,16 +3669,16 @@ class AppLocalizationsTe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sensors need attention',
-      one: '1 sensor needs attention',
+      other: '$count సెన్సార్లను చూడాలి',
+      one: '1 సెన్సార్‌ను చూడాలి',
     );
     return '$_temp0';
   }
 
   @override
   String get sensorNextAttentionBody =>
-      'Jammed, clipped, low battery or survey needed. Its results are not evaluated.';
+      'జామ్, శబ్దం చాలా ఎక్కువ, బ్యాటరీ తక్కువ లేదా సర్వే అవసరం. దీని ఫలితాలు పరిశీలించలేదు.';
 
   @override
-  String get sensorNextOpen => 'Open sensors';
+  String get sensorNextOpen => 'సెన్సార్లు తెరవండి';
 }

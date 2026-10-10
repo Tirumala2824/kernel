@@ -9,6 +9,19 @@ import 'package:kernel_contracts/kernel_contracts.dart';
 import 'support/harness.dart';
 import 'support/in_memory.dart';
 
+/// Lazily built list rows only exist once scrolled near.
+Future<void> scrollTo(
+  WidgetTester tester,
+  Finder finder, {
+  Finder? within,
+}) async {
+  final scrollables = within == null
+      ? find.byType(Scrollable)
+      : find.descendant(of: within, matching: find.byType(Scrollable));
+  await tester.scrollUntilVisible(finder, 300, scrollable: scrollables.first);
+  await tester.pumpAndSettle();
+}
+
 void main() {
   group('Settings: Pest ID, maps and sensors', () {
     testWidgets('maps consent is off by default and asks before turning on', (
@@ -17,6 +30,7 @@ void main() {
       final env = TestEnv(role: Role.farmer);
       await pumpKernelApp(tester, env, location: Routes.settings);
       final toggle = find.byKey(const Key('maps-consent-toggle'));
+      await scrollTo(tester, toggle);
       expect(tester.widget<SwitchListTile>(toggle).value, isFalse);
 
       await tapVisible(tester, toggle);
@@ -42,6 +56,7 @@ void main() {
       final env = TestEnv(role: Role.household);
       await pumpKernelApp(tester, env, location: Routes.settings);
       final toggle = find.byKey(const Key('keep-media-toggle'));
+      await scrollTo(tester, toggle);
       expect(tester.widget<SwitchListTile>(toggle).value, isFalse);
       expect(find.text(en.hubKeepMediaToggleBody), findsOneWidget);
 
@@ -55,11 +70,13 @@ void main() {
       final env = TestEnv(role: Role.buyer);
       await pumpKernelApp(tester, env, location: Routes.settings);
 
+      await scrollTo(tester, find.byKey(const Key('open-model-hub')));
       await tapVisible(tester, find.byKey(const Key('open-model-hub')));
       expect(find.byType(ModelHubScreen), findsOneWidget);
       routerOf(tester).pop();
       await tester.pumpAndSettle();
 
+      await scrollTo(tester, find.byKey(const Key('open-sensors')));
       await tapVisible(tester, find.byKey(const Key('open-sensors')));
       expect(find.byType(SensorsScreen), findsOneWidget);
     });
@@ -69,23 +86,6 @@ void main() {
     void largeText(WidgetTester tester) {
       tester.platformDispatcher.textScaleFactorTestValue = 2;
       addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    }
-
-    /// Lazily built list rows only exist once scrolled near.
-    Future<void> scrollTo(
-      WidgetTester tester,
-      Finder finder, {
-      Finder? within,
-    }) async {
-      final scrollables = within == null
-          ? find.byType(Scrollable)
-          : find.descendant(of: within, matching: find.byType(Scrollable));
-      await tester.scrollUntilVisible(
-        finder,
-        300,
-        scrollable: scrollables.first,
-      );
-      await tester.pumpAndSettle();
     }
 
     final vision = testEntry(

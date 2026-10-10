@@ -112,8 +112,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           SectionTitle(l.settingsAdviceSection),
           const AdviceSettingsSection(),
-          SectionTitle(l.hubSettingsSection),
-          const PestIdSettingsSection(),
           SectionTitle(l.settingsOnDevice),
           const EngineCard(),
           KernelCard(
@@ -124,6 +122,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             subtitle: l.diagnosticsCard,
             onTap: () => context.push(Routes.diagnostics),
           ),
+          SectionTitle(l.hubSettingsSection),
+          const PestIdSettingsSection(),
           QuietNote(l.settingsFooter, icon: Icons.phonelink_lock_rounded),
         ],
       ),
