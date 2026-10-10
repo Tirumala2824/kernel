@@ -3,19 +3,33 @@ import 'llm_api.g.dart'
     as bridge
     show engineStatus, generationProgress, importProgress;
 
-/// The native side as seen by [LocalAdviceEngine] and [LocalModelManager].
-/// Production uses [PigeonLlmHost]; tests substitute their own host from
-/// `test/`.
+/// The native side as seen by the engines in this package. Production uses
+/// [PigeonLlmHost]; tests substitute their own host from `test/`.
+///
+/// `modelPath` everywhere is an absolute path in the app's own storage
+/// (from an injected resolver, e.g. model-hub) or null for the legacy
+/// getExternalFilesDir("llm") discovery.
 abstract interface class LlmHost {
   Future<NativeEngineStatus> status();
-  Future<NativeModelInfo?> modelInfo();
-  Future<NativeEngineStatus> load();
+  Future<NativeModelInfo?> modelInfo(String? modelPath, NativeRuntimeSlot slot);
+  Future<NativeEngineStatus> load(String? modelPath);
+
+  /// Grain advice: text-only.
   Future<NativeGenerateResult> generate(
     String requestId,
+    String? modelPath,
     String systemInstruction,
     String prompt,
     int timeoutMs,
   );
+
+  /// Pest ID mode only (guardrails §8 amendment).
+  Future<NativeGenerateResult> pestGenerate(
+    String requestId,
+    NativePestRequest request,
+  );
+  Future<NativeEmbedResult> embed(String requestId, NativeEmbedRequest request);
+  Future<NativeProbeResult?> probe(String absolutePath);
   Future<void> cancel(String requestId);
   Future<void> unload();
   Future<NativeImportProgress> importFromUri(
@@ -57,18 +71,44 @@ class PigeonLlmHost implements LlmHost {
   Future<NativeEngineStatus> status() => _api.status();
 
   @override
-  Future<NativeModelInfo?> modelInfo() => _api.modelInfo();
+  Future<NativeModelInfo?> modelInfo(
+    String? modelPath,
+    NativeRuntimeSlot slot,
+  ) => _api.modelInfo(modelPath, slot);
 
   @override
-  Future<NativeEngineStatus> load() => _api.load();
+  Future<NativeEngineStatus> load(String? modelPath) => _api.load(modelPath);
 
   @override
   Future<NativeGenerateResult> generate(
     String requestId,
+    String? modelPath,
     String systemInstruction,
     String prompt,
     int timeoutMs,
-  ) => _api.generate(requestId, systemInstruction, prompt, timeoutMs);
+  ) => _api.generate(
+    requestId,
+    modelPath,
+    systemInstruction,
+    prompt,
+    timeoutMs,
+  );
+
+  @override
+  Future<NativeGenerateResult> pestGenerate(
+    String requestId,
+    NativePestRequest request,
+  ) => _api.pestGenerate(requestId, request);
+
+  @override
+  Future<NativeEmbedResult> embed(
+    String requestId,
+    NativeEmbedRequest request,
+  ) => _api.embed(requestId, request);
+
+  @override
+  Future<NativeProbeResult?> probe(String absolutePath) =>
+      _api.probe(absolutePath);
 
   @override
   Future<void> cancel(String requestId) => _api.cancel(requestId);

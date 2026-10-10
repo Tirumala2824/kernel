@@ -47,6 +47,25 @@ class ModelStoreTest {
     }
 
     @Test
+    fun `discovery by kind uses the header first and the file name as fallback`() {
+        file("alpha.litertlm")
+        file("beta.litertlm")
+        file("embeddinggemma-300m.litertlm")
+        // Header says alpha is an embedding model; beta is unreadable.
+        val byHeader = ModelStore(dir) { f -> if (f.name == "alpha.litertlm") ModelKind.EMBEDDING else null }
+        assertEquals("beta", byHeader.findModel(ModelKind.LLM)!!.id)
+        assertEquals("alpha", byHeader.findModel(ModelKind.EMBEDDING)!!.id)
+        // Without a header reader the name decides.
+        assertEquals("alpha", store.findModel(ModelKind.LLM)!!.id)
+        assertEquals("embeddinggemma-300m", store.findModel(ModelKind.EMBEDDING)!!.id)
+        // A classifier that throws is treated as unknown.
+        val broken = ModelStore(dir) { throw IllegalStateException("no runtime") }
+        assertEquals("alpha", broken.findModel()!!.id)
+        assertEquals(ModelKind.EMBEDDING, ModelStore.kindByName("EmbeddingGemma-2.litertlm"))
+        assertEquals(ModelKind.LLM, ModelStore.kindByName("gemma-4-E2B-it.litertlm"))
+    }
+
+    @Test
     fun `sidecar is written once and versioned by id and sha256 prefix`() {
         val bytes = "hello".toByteArray()
         file("gemma-4-E2B-it.litertlm", bytes)

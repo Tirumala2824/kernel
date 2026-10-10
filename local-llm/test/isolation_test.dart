@@ -38,15 +38,57 @@ void main() {
     }
   });
 
-  test('no multimodal input or backend is ever used', () {
-    final forbidden = RegExp(
-      r'AudioBytes|AudioFile|ImageBytes|ImageFile|audioBackend|visionBackend',
-    );
+  // Guardrails §8 amendment: multimodal input exists in Pest ID mode only.
+  // The native engine configs that may name an encoder or image/audio
+  // content are exactly these two files; every other source, including the
+  // grain advice config, never does.
+  const multimodalAllowed = {'PestIdConfig.kt', 'EmbedConfig.kt'};
+  final multimodal = RegExp(
+    r'\b(AudioBytes|AudioFile|ImageBytes|ImageFile|audioBackend|visionBackend|'
+    r'InputData\.(Image|Audio))\b',
+  );
+
+  test('multimodal encoders and content appear only in the Pest ID configs', () {
     for (final f in _sources()) {
-      final text = f.readAsStringSync();
-      final hit = forbidden.firstMatch(text);
+      final name = f.uri.pathSegments.last;
+      if (multimodalAllowed.contains(name)) continue;
+      final hit = multimodal.firstMatch(f.readAsStringSync());
       expect(hit, isNull, reason: '${f.path}: ${hit?.group(0)}');
     }
+    for (final name in multimodalAllowed) {
+      final file = _sources().where((f) => f.uri.pathSegments.last == name);
+      expect(file, hasLength(1), reason: name);
+    }
+  });
+
+  test('the grain advice path stays text-only', () {
+    // Dart: the advice engine and its prompts never touch bytes, media or
+    // the Pest ID / embedding bridge calls.
+    final adviceDart = RegExp(
+      r'Uint8List|ByteData|Float32List|pestGenerate|\.embed\(|NativePestRequest|'
+      r'NativeEmbedRequest|media\.dart|dart:io',
+    );
+    for (final path in [
+      'lib/src/local_advice_engine.dart',
+      'lib/src/prompts.dart',
+    ]) {
+      final hit = adviceDart.firstMatch(File(path).readAsStringSync());
+      expect(hit, isNull, reason: '$path: ${hit?.group(0)}');
+    }
+    // Kotlin: the advice engine config builds a text-only Engine.
+    final config = File(
+      'android/src/main/kotlin/com/kernel/local_llm/LlmConfig.kt',
+    ).readAsStringSync();
+    expect(config, isNot(contains('maxNumImages')));
+    expect(config, isNot(contains('ExperimentalFlags')));
+    // The pigeon advice call carries strings only.
+    final pigeon = File('pigeons/llm_api.dart').readAsStringSync();
+    final generate = RegExp(
+      r'NativeGenerateResult generate\(([^)]*)\)',
+    ).firstMatch(pigeon);
+    expect(generate, isNotNull);
+    expect(generate!.group(1), isNot(contains('Uint8List')));
+    expect(generate.group(1), isNot(contains('List<')));
   });
 
   test('no network code and no INTERNET permission', () {

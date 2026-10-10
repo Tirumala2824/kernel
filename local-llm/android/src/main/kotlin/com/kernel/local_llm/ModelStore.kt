@@ -7,6 +7,15 @@ import java.io.InputStream
 import java.security.MessageDigest
 import java.time.Instant
 
+/** What a model file is for. */
+enum class ModelKind {
+    /** Gemma: grain advice (text-only engine) and Pest ID (multimodal engine). */
+    LLM,
+
+    /** EmbeddingGemma. */
+    EMBEDDING,
+}
+
 /** An installed `.litertlm` file. */
 class ModelFile(val file: File) {
     /** File name without the extension, e.g. "gemma-4-E2B-it". */
@@ -32,15 +41,30 @@ data class Sidecar(
  * Pure java.io so it is unit-testable on the JVM. Never reads or logs model
  * content beyond hashing it.
  */
-class ModelStore(val dir: File?) {
-    /** First `*.litertlm` by name. Partial copies (`.part`) are ignored. */
-    fun findModel(): ModelFile? {
+class ModelStore(
+    val dir: File?,
+    /**
+     * Kind of a model file (production: the LiteRT-LM ModelInfo header,
+     * cached). Null when unknown; the file name decides then.
+     */
+    private val classify: (File) -> ModelKind? = { null },
+) {
+    /**
+     * First `*.litertlm` of [kind] by name. Partial copies (`.part`) are
+     * ignored. With only a Gemma file present this is the first file by name,
+     * as before; an EmbeddingGemma file next to it is never picked for advice.
+     */
+    fun findModel(kind: ModelKind = ModelKind.LLM): ModelFile? {
         val files = dir?.listFiles() ?: return null
         return files
             .filter { it.isFile && it.name.endsWith(EXTENSION, ignoreCase = false) && it.length() > 0 }
-            .minByOrNull { it.name }
+            .sortedBy { it.name }
+            .firstOrNull { kindOf(it) == kind }
             ?.let(::ModelFile)
     }
+
+    private fun kindOf(file: File): ModelKind =
+        runCatching { classify(file) }.getOrNull() ?: kindByName(file.name)
 
     fun sidecarFile(model: ModelFile): File = File(model.file.parentFile, "${model.id}$SIDECAR_EXTENSION")
 
@@ -148,6 +172,10 @@ class ModelStore(val dir: File?) {
         private const val MAX_NAME_CHARS = 120
 
         fun versionOf(id: String, sha256Hex: String): String = "$id@${sha256Hex.take(VERSION_HASH_CHARS)}"
+
+        /** Fallback when the header cannot be read: "embed" in the name means EmbeddingGemma. */
+        fun kindByName(name: String): ModelKind =
+            if (name.lowercase().contains("embed")) ModelKind.EMBEDDING else ModelKind.LLM
 
         /** Space needed to import a file of [sizeBytes]: size plus 10 %. */
         fun requiredFreeBytes(sizeBytes: Long): Long = sizeBytes + sizeBytes / 10

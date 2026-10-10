@@ -28,6 +28,10 @@ enum GuardCategory {
 
   /// Markdown headings or code fences.
   markup,
+
+  /// Pest ID only: claims to be sure of an identification ("definitely",
+  /// "100 %", "this is not a pest").
+  certainty,
 }
 
 class GuardResult {
@@ -179,7 +183,20 @@ final List<RegExp> _treatmentLatin = [
   _w(r'\b(dawa|dawai|davai|dava|daway|davaa|dawaa)\b'),
   _w(r'\bch?hi(d|r)ka\w*'), // chhidkav, chidkaav, chhirkav
   _w(r'\b(zahar|jahar|zehar|zeher)\b'),
+  _w(r'\b(zahr|zehr|jahr|zaher|zeher)\w*'), // zehreela, jahrila, ...
   _w(r'\b(rasayan|rasayanik|keemiyai)\w*'),
+  // Rodenticides, poisons and doses (guardrails §9).
+  _w(
+    r'\b(bromadiolone|brodifacoum|difenacoum|difethialone|flocoumafen|'
+    r'coumatetralyl|warfarin|strychnine|bromethalin|cholecalciferol|ratol)\b',
+  ),
+  _w(r'\b(zinc|aluminium|aluminum|magnesium|calcium) phosphide\b'),
+  _w(r'\brats? ?(poison\w*|kill\w*|baits?|cakes?)\b'),
+  _w(r'\bbait(s|ed|ing)? ?(station|box|block)\w*'),
+  _w(r'\bpoison(ed|ing|ous)? ?baits?\b'),
+  _w(r'\b(chuha|chuhe|chooha|choohe|chuho|chuhon) ?(maar|mar|maaro|maro|maarne|marne)\w*'),
+  _w(r'\b(dose|doses|dosage|dosing)\b'),
+  _w(r'\b\d+ ?(mg|ml|g|gm|grams?) ?(per\b|/|for each\b)'),
 ];
 
 /// Matched as substrings of the normalized text (\b does not work for
@@ -207,6 +224,12 @@ final List<String> _treatmentIndic = [
   'କୀଟନାଶକ', 'ସ୍ପ୍ରେ', 'ରାସାୟନିକ',
   // Punjabi (Gurmukhi)
   'ਕੀਟਨਾਸ਼ਕ', 'ਸਪਰੇ', 'ਸਪ੍ਰੇ', 'ਦਵਾਈ', 'ਰਸਾਇਣ', 'ਜ਼ਹਿਰ',
+  // Rodent poison and poison words (guardrails §9). Hindi "chuha maar"
+  // (rat killer) and the Ratol brand; poison in other scripts, avoiding
+  // stems shared with ordinary words (e.g. "vishay", subject).
+  'चूहा मार', 'चूहे मार', 'चूहामार', 'चूहेमार', 'रैटोल', 'रेटोल', 'ज़हर', 'जहर',
+  'বিষাক্ত', 'ইঁদুর মারা', 'విషం', 'ఎలుకల మందు', 'விஷம்', 'நஞ்சு',
+  'எலி மருந்து', 'ઝેર', 'ಇಲಿ ಪಾಷಾಣ', 'വിഷം', 'എലിവിഷം', 'ବିଷାକ୍ତ', 'ਚੂਹੇ ਮਾਰ',
 ].map(_fold).toList();
 
 // ---------------------------------------------------------------------------
@@ -312,4 +335,140 @@ final List<String> _decisionIndic = [
   'ਮਨਜ਼ੂਰ',
   'ਰੱਦ',
   'ਸਵੀਕਾਰ',
+].map(_fold).toList();
+
+// ---------------------------------------------------------------------------
+// Pest ID guidance (guardrails §9)
+
+/// Longest Pest ID guidance accepted, in characters (about 120 words; more
+/// for Indic scripts).
+const int maxPestGuardedChars = 2000;
+
+/// Checks Pest ID text (guidance, a sound description, one analysis field)
+/// against every grain rule above plus the Pest ID rules: no certainty
+/// about an identification, no "harmless" / "safe to touch" claims. Pure
+/// and synchronous. Rejected text is never shown (static copy instead).
+///
+/// The card safety text uses a few phrases the grain rules would reject
+/// ("do not harm, capture or kill", "keep a safe distance", "seek medical
+/// care"); exactly those phrases are removed before checking, never the
+/// words around them.
+GuardResult checkPestOutput(String text, {int maxChars = maxPestGuardedChars}) {
+  if (text.trim().isEmpty) return const GuardResult._(GuardCategory.empty);
+  if (text.length > maxChars) {
+    return const GuardResult._(GuardCategory.tooLong);
+  }
+  if (_markup.any((r) => r.hasMatch(text))) {
+    return const GuardResult._(GuardCategory.markup);
+  }
+  final n = normalizeForGuard(text);
+  if (_url.any((r) => r.hasMatch(n))) {
+    return const GuardResult._(GuardCategory.url);
+  }
+  final p = _stripPestAllowances(n);
+  if (_treatmentLatin.any((r) => r.hasMatch(p)) ||
+      _treatmentIndic.any(p.contains)) {
+    return const GuardResult._(GuardCategory.treatment);
+  }
+  if (_certaintyLatin.any((r) => r.hasMatch(p)) ||
+      _certaintyIndic.any(p.contains)) {
+    return const GuardResult._(GuardCategory.certainty);
+  }
+  final s = _stripAllowedNegations(p);
+  if (_safetyLatin.any((r) => r.hasMatch(s)) ||
+      _safetyIndic.any(s.contains) ||
+      _pestSafetyLatin.any((r) => r.hasMatch(s)) ||
+      _pestSafetyIndic.any(s.contains)) {
+    return const GuardResult._(GuardCategory.safetyClaim);
+  }
+  if (_decisionLatin.any((r) => r.hasMatch(p)) ||
+      _decisionIndic.any(p.contains)) {
+    return const GuardResult._(GuardCategory.decision);
+  }
+  return GuardResult.pass;
+}
+
+/// Card safety phrases (docs/knowledge-cards.md) that would otherwise trip
+/// the treatment or safety rules. Matched on normalized text.
+final List<RegExp> _pestAllowances = [
+  // "do not harm, capture or kill", "never touch or kill it"
+  _w(
+    r"\b(do not|don't|dont|never|must not|should not|shouldn't|please do not) "
+    r'(try to )?(harm|hurt|capture|catch|kill|touch|handle|trap|disturb)'
+    r'((,| or| and|, or|, and) (harm|hurt|capture|catch|kill|touch|handle|trap|disturb))*'
+    r'( (it|them|the animal|the snake|the lizard))?\b',
+  ),
+  _w(r'\b(seek|get|find|need) (urgent |immediate |prompt )?medical (care|help|attention|treatment|advice)\b'),
+  _w(r'\bmedical (care|help|attention|treatment)\b'),
+  _w(r'\b(keep|stay|remain|move|step) (at )?(a )?safe distance( away)?\b'),
+  _w(r'\b(at|from) a safe distance\b'),
+  _w(r'\bfor (your|their|everyone.s) safety\b'),
+  _w(r'\bstay safe\b'),
+  // Hedges, not claims: "until confirmed by an expert".
+  _w(r'\b(not|until|unless|to be|needs to be|must be|should be|can be|be) confirmed\b'),
+  _w(r'\bsafety (text|advice|guidance|notes?|information)\b'),
+  RegExp(_fold('सुरक्षित दूरी')),
+  RegExp(_fold('मारें नहीं')),
+  RegExp(_fold('न मारें')),
+];
+
+String _stripPestAllowances(String normalized) {
+  var s = normalized;
+  for (final r in _pestAllowances) {
+    s = s.replaceAll(r, ' ');
+  }
+  return s;
+}
+
+final List<RegExp> _certaintyLatin = [
+  _w(r'\b(definitely|definite|certainly|undoubtedly|unquestionably|surely|absolutely)\b'),
+  _w(r'\b(for sure|for certain|without (a |any )?doubt|no doubt|beyond (any )?doubt)\b'),
+  _w(r"\b(i am|i'm|im|we are|we're) (sure|certain|confident|positive)\b"),
+  _w(r'\b(confirmed|confirms|confirm that|positively identified|proven)\b'),
+  _w(r'\b100 ?(%|percent|per cent)'),
+  _w(r'\b(clearly|obviously) (is|are|a|an|the)\b'),
+  _w(r"\b(it is|this is|that is|it's|they are|these are) (clearly|obviously|exactly)\b"),
+  // "Not a pest" / "no match" is never proof of absence (§9).
+  _w(r"\b(is|are|it's|this is) not (a |an )?(pest|pests|threat|problem)\b"),
+  _w(r'\b(pakka|pakki|nishchit roop|yakeenan|yakinan|beshak|nissandeh)\w*'),
+];
+
+final List<String> _certaintyIndic = [
+  // Hindi / Marathi
+  'निश्चित रूप से', 'निश्चित ही', 'पक्का', 'पक्की', 'यकीनन', 'निःसंदेह',
+  'निसंदेह', 'बेशक', 'बिना किसी संदेह', 'नक्कीच',
+  // Bengali
+  'নিশ্চিতভাবে', 'নিঃসন্দেহে',
+  // Telugu
+  'ఖచ్చితంగా', 'నిస్సందేహంగా',
+  // Tamil
+  'நிச்சயமாக', 'சந்தேகமின்றி',
+  // Gujarati
+  'ચોક્કસપણે', 'નિઃશંક',
+  // Kannada
+  'ಖಂಡಿತವಾಗಿ', 'ನಿಸ್ಸಂದೇಹವಾಗಿ',
+  // Malayalam
+  'തീർച്ചയായും', 'സംശയമില്ല',
+  // Odia
+  'ନିଶ୍ଚିତ ଭାବେ', 'ନିଶ୍ଚିତଭାବେ',
+  // Punjabi
+  'ਯਕੀਨਨ', 'ਪੱਕਾ', 'ਬੇਸ਼ੱਕ',
+].map(_fold).toList();
+
+final List<RegExp> _pestSafetyLatin = [
+  _w(r'\b(harmless|non-?venomous|non-?poisonous|non-?toxic|innocuous)\b'),
+  _w(r'\bnot (dangerous|venomous|poisonous|harmful|a danger|a risk|a threat)\b'),
+  _w(r'\bno (danger|risk|threat|health risk)\b'),
+  _w(
+    r"\b(won't|will not|cannot|can't|can not|does not|doesn't|do not|don't) "
+    r'(bite|sting|harm|hurt|attack)\b',
+  ),
+  _w(r'\bno need to (worry|call|see|seek)\b'),
+  _w(r'\b(nothing|no reason) to (worry|fear)\b'),
+];
+
+final List<String> _pestSafetyIndic = [
+  'हानिरहित', 'नुकसान नहीं', 'खतरनाक नहीं', 'ख़तरनाक नहीं', 'काटता नहीं',
+  'डरने की बात नहीं', 'চিন্তার কিছু নেই', 'ক্ষতিকর নয়', 'ప్రమాదం లేదు',
+  'ஆபத்து இல்லை', 'ಅಪಾಯವಿಲ್ಲ', 'അപകടമില്ല', 'ਖ਼ਤਰਨਾਕ ਨਹੀਂ',
 ].map(_fold).toList();
