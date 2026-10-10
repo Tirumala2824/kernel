@@ -159,6 +159,86 @@ class _CapturePanelState extends ConsumerState<CapturePanel> {
     }
   }
 
+  Future<void> _uploadAudio() async {
+    final picker = ref.read(mediaPickerServiceProvider);
+    final sensor = await showModalBottomSheet<SensorType>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Select Audio Sensor Transducer',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'Identifies the physical recording transducer for calibrated screening.',
+                  style: TextStyle(fontSize: 13, color: Colors.grey),
+                ),
+                const Divider(height: 24),
+                ListTile(
+                  leading: const Icon(Icons.touch_app, color: Color(0xFF1B4D3E)),
+                  title: const Text('Contact Piezo Sensor (Grain Probe)'),
+                  subtitle: const Text('Direct acoustic contact coupling'),
+                  onTap: () => Navigator.pop(ctx, SensorType.contactPiezo),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.mic, color: Color(0xFF2E7D32)),
+                  title: const Text('Acoustic Air Microphone'),
+                  subtitle: const Text('Air-coupled microphone recording'),
+                  onTap: () => Navigator.pop(ctx, SensorType.audioAir),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.waves, color: Color(0xFF0277BD)),
+                  title: const Text('Ultrasonic Air Transducer'),
+                  subtitle: const Text('Ultrasonic sensor recording'),
+                  onTap: () => Navigator.pop(ctx, SensorType.usAir),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.vibration, color: Color(0xFFF57F17)),
+                  title: const Text('Contact Accelerometer'),
+                  subtitle: const Text('Vibration sensor probe'),
+                  onTap: () => Navigator.pop(ctx, SensorType.contactAccel),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (sensor == null || _disposed) return;
+    final media = await picker.pickAudioFile(sensorType: sensor);
+    if (media == null || media.path.isEmpty || _disposed) return;
+
+    _set(CapturePhase.saving);
+    final engine = ref.read(scanEngineProvider);
+    final scans = ref.read(scanRepositoryProvider);
+    final retainAudio = widget.research || (ref.read(retainAudioOptInProvider).value ?? false);
+
+    try {
+      final outcome = await engine.analyzeAudioFile(
+        widget.itemId,
+        media.path,
+        sensorType: sensor,
+        retainAudio: retainAudio,
+      );
+      final record = await scans.record(outcome);
+      if (_disposed) return;
+      widget.onRecorded(record);
+    } catch (e) {
+      _set(CapturePhase.failed, error: 'Could not analyze audio file: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Keep the settings streams alive so their values are ready on start.
@@ -257,7 +337,7 @@ class _CapturePanelState extends ConsumerState<CapturePanel> {
               if (_phase == CapturePhase.capturing ||
                   _phase == CapturePhase.saving)
                 _LiveSection(levels: _levels, hint: hint, saving: _phase == CapturePhase.saving)
-              else
+              else ...[
                 FilledButton.icon(
                   key: const Key('start-capture'),
                   style: FilledButton.styleFrom(
@@ -281,6 +361,22 @@ class _CapturePanelState extends ConsumerState<CapturePanel> {
                     textAlign: TextAlign.center,
                   ),
                 ),
+                const SizedBox(height: KernelSpace.sm),
+                OutlinedButton.icon(
+                  key: const Key('upload-audio-file'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: KernelColors.onForest,
+                    side: BorderSide(
+                      color: KernelColors.onForest.withValues(alpha: 0.5),
+                    ),
+                    minimumSize: const Size.fromHeight(48),
+                    shape: const StadiumBorder(),
+                  ),
+                  onPressed: busy ? null : _uploadAudio,
+                  icon: const Icon(Icons.audio_file_outlined),
+                  label: const Text('Upload Grain Audio (.wav) with Sensor Tag'),
+                ),
+              ],
             ],
           ),
         ),

@@ -38,7 +38,7 @@ void main() {
     expect(hits.length, 3);
     final docs = e.calls.where((c) => c.$2 == EmbeddingTask.searchDocument);
     final queries = e.calls.where((c) => c.$2 == EmbeddingTask.searchQuery);
-    expect(docs.length, 12, reason: 'every catalog entry indexed once');
+    expect(docs.length, 13, reason: 'every catalog entry indexed once');
     expect(queries.single.$1, 'sound classifier for insects');
 
     final emb = await h.search.search('semantic embedding retrieval', limit: 1);
@@ -48,7 +48,7 @@ void main() {
   test('document vectors are cached as app-private JSON and reused', () async {
     final e = BagOfWordsEmbedder();
     await hub(embedder: e).search.search('chat');
-    expect(e.documentCalls, 12);
+    expect(e.documentCalls, 13);
     expect(File('${dir.path}/search_index.json').existsSync(), isTrue);
 
     final e2 = BagOfWordsEmbedder();
@@ -57,11 +57,11 @@ void main() {
 
     final e3 = BagOfWordsEmbedder()..version = 'bow-2';
     await hub(embedder: e3).search.search('chat');
-    expect(e3.documentCalls, 12, reason: 'new model version re-embeds');
+    expect(e3.documentCalls, 13, reason: 'new model version re-embeds');
 
     final h4 = hub(embedder: e3);
     await h4.search.reindex();
-    expect(e3.documentCalls, 24);
+    expect(e3.documentCalls, 26);
   });
 
   test('keyword fallback without an embedder or when it is unavailable', () async {

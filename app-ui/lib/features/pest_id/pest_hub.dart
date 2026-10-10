@@ -43,8 +43,17 @@ class PestHubPanel extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         KernelCard(
-          key: const Key('pest-hub-camera'),
+          key: const Key('pest-hub-agent-chat'),
           tone: KernelCardTone.hero,
+          icon: Icons.smart_toy_outlined,
+          title: 'Autonomous Multimodal Agent',
+          subtitle: 'ChatGPT-style screening with InsectSet32 bioacoustics & safe IPM',
+          onTap: () => context.push(Routes.chat),
+        ),
+        const SizedBox(height: 12),
+        KernelCard(
+          key: const Key('pest-hub-camera'),
+          tone: KernelCardTone.sage,
           icon: Icons.photo_camera_rounded,
           title: l.pestCameraCardTitle,
           subtitle: l.pestCameraCardBody,

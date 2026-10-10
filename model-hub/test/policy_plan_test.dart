@@ -70,7 +70,7 @@ void main() {
       );
       expect(downloadBlockReason(entry('z', size: 0)), 'size_unknown');
       expect(downloadBlockReason(entry('n', soc: 'sm8850')), 'npu_build');
-      expect(approvedLicenses, {'apache-2.0', 'mit', 'bsd-3-clause'});
+      expect(approvedLicenses, {'apache-2.0', 'mit', 'bsd-3-clause', 'cc-by-4.0'});
     });
   });
 

@@ -18,12 +18,32 @@ class EmbeddingVector {
     if (other.dim != dim) {
       throw ArgumentError('dimension mismatch: $dim vs ${other.dim}');
     }
-    var dot = 0.0;
-    for (var i = 0; i < dim; i++) {
-      dot += values[i] * other.values[i];
-    }
-    return dot;
+    return cosineSimilarityFloat32(values, other.values);
   }
+}
+
+/// Standard stop words for search index tokenization across the platform.
+const standardStopWords = <String>{
+  'a', 'an', 'and', 'the', 'for', 'of', 'to', 'in', 'on', 'with', 'is',
+  'model', 'models', 'that', 'this', 'it', 'by', 'or', 'up',
+};
+
+/// Splits text into clean lowercase search tokens, filtering out stop words.
+List<String> tokenizeText(String s) => [
+  for (final t in s.toLowerCase().split(RegExp(r'[^a-z0-9]+')))
+    if (t.length > 1 && !standardStopWords.contains(t)) t,
+];
+
+/// Computes cosine similarity between two Float32 lists.
+double cosineSimilarityFloat32(Float32List a, Float32List b) {
+  if (a.length != b.length) {
+    throw ArgumentError('Vector dimension mismatch: ${a.length} vs ${b.length}');
+  }
+  var dot = 0.0;
+  for (var i = 0; i < a.length; i++) {
+    dot += a[i] * b[i];
+  }
+  return dot;
 }
 
 /// Never throws for model problems: returns null (no model, busy, failed).

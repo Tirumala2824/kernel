@@ -54,6 +54,39 @@ class ScriptedScanEngine implements ScanEngine {
   }
 
   @override
+  Future<ScanOutcome> analyzeAudioFile(
+    String itemId,
+    String filePath, {
+    SensorType sensorType = SensorType.audioAir,
+    String? sensorNodeId,
+    bool retainAudio = false,
+  }) async {
+    final outcome = next(itemId);
+    return ScanOutcome(
+      scanId: outcome.scanId,
+      itemId: outcome.itemId,
+      capturedAt: outcome.capturedAt,
+      quality: outcome.quality,
+      qualityReasons: outcome.qualityReasons,
+      classification: outcome.classification,
+      confidence: outcome.confidence,
+      experimental: outcome.experimental,
+      modelVersion: outcome.modelVersion,
+      latencyMs: outcome.latencyMs,
+      durationMs: outcome.durationMs,
+      sampleRate: outcome.sampleRate,
+      deviceModel: outcome.deviceModel,
+      osVersion: outcome.osVersion,
+      audioRetained: retainAudio || outcome.audioRetained,
+      inputSource: AudioInputSource.fileUpload,
+      sensorType: sensorType,
+      sensorNodeId: sensorNodeId,
+      sourceFileName: filePath.split(RegExp(r'[/\\]')).last,
+      asqiScore: outcome.asqiScore ?? 0.85,
+    );
+  }
+
+  @override
   Stream<CaptureLevel> captureLevels() => _levels.stream;
 
   @override

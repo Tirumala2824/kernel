@@ -25,6 +25,7 @@ abstract final class Routes {
   static const newLot = '/lots/new';
   static const newHarvest = '/harvests/new';
   static const insights = '/insights';
+  static const chat = '/chat';
 
   /// Model Hub: Pest ID model status, one-time download consent, installed
   /// models and semantic search (Settings and Pest ID screens link here).

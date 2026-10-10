@@ -88,6 +88,43 @@ class ScanEngineHost(
         }
     }
 
+    override suspend fun analyzeFile(scanId: String, filePath: String, retainAudio: Boolean): NativeScanResult {
+        val calledAt = System.currentTimeMillis()
+        val file = java.io.File(filePath)
+        if (!file.exists() || !file.canRead()) {
+            Log.w(TAG, "file $filePath not found or unreadable")
+            return notRecorded(NativeQualityReason.CAPTURE_ERROR, calledAt)
+        }
+        if (!busy.compareAndSet(false, true)) {
+            Log.w(TAG, "analyzeFile requested while another scan is running")
+            return notRecorded(NativeQualityReason.CAPTURE_ERROR, calledAt)
+        }
+        return try {
+            withContext(captureDispatcher) {
+                val decoded = WavReader.read(file)
+                processPcm(
+                    scanId = scanId,
+                    pcm = decoded.pcm,
+                    sampleRate = decoded.sampleRate,
+                    deviceInputRate = null,
+                    clientSilenced = false,
+                    retainAudio = retainAudio,
+                    calledAt = calledAt,
+                    captureStartNanos = SystemClock.elapsedRealtimeNanos(),
+                    endedAtElapsedNanos = SystemClock.elapsedRealtimeNanos(),
+                    hapticsOn = false,
+                )
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            Log.e(TAG, "analyzeFile $scanId failed: ${e.javaClass.simpleName}")
+            notRecorded(NativeQualityReason.CAPTURE_ERROR, calledAt)
+        } finally {
+            busy.set(false)
+        }
+    }
+
     override suspend fun info(): NativeEngineInfo = withContext(Dispatchers.IO) {
         val handle = model.handle()
         val present = handle.version != NO_MODEL_VERSION
@@ -148,78 +185,115 @@ class ScanEngineHost(
         }
 
         try {
-            lastEffectiveRate = recording.sampleRate
-            recording.deviceInputRate?.let { lastDeviceInputRate = it }
-            logCaptureConfigOnce(recording)
-            val handle = model.handle()
-
-            val reasons: List<NativeQualityReason>
-            val prediction: Prediction?
-            var analysis: Analysis? = null
-            if (recording.clientSilenced) {
-                // Android handed the mic to another app and fed us zeros. That
-                // is not "silence" in the room.
-                Log.w(TAG, "capture was silenced by the system (mic in use elsewhere)")
-                reasons = listOf(NativeQualityReason.CAPTURE_ERROR)
-                prediction = null
-            } else {
-                val a = analyzer.analyze(recording.pcm, recording.sampleRate, handle)
-                analysis = a
-                reasons = a.reasons.map(::toNative)
-                prediction = a.prediction
-                if (debuggable) logMetrics(scanId, a)
-            }
-
-            val pass = reasons.isEmpty()
-            if (hapticsOn) {
-                if (pass) haptics.finish() else haptics.retry()
-            }
-            val retainStart = SystemClock.elapsedRealtimeNanos()
-            val retained = retainAudio && retain(scanId, recording)
-
-            val classified = if (pass) prediction else null
-            val resultReady = SystemClock.elapsedRealtimeNanos()
-            val latencyMs = (resultReady - recording.endedAtElapsedNanos) / 1_000_000L
-            if (debuggable) {
-                logBenchmark(
-                    scanId = scanId,
-                    settleNanos = captureStart - scanStart,
-                    captureNanos = recording.endedAtElapsedNanos - captureStart,
-                    timings = analysis?.timings,
-                    retainNanos = resultReady - retainStart,
-                    latencyMs = latencyMs,
-                    totalNanos = resultReady - scanStart,
-                )
-            }
-            return NativeScanResult(
-                qualityPass = pass,
-                qualityReasons = reasons,
-                classification = classified?.let { toNative(it.label) } ?: NativeClassification.NOT_EVALUATED,
-                confidence = classified?.confidence,
-                experimental = handle.experimental,
-                modelVersion = handle.version,
-                capturedAtEpochMs = recording.startedAtEpochMs,
-                latencyMs = latencyMs,
-                durationMs = recording.durationMs.toLong(),
-                sampleRate = recording.sampleRate.toLong(),
-                deviceModel = DEVICE_MODEL,
-                osVersion = OS_VERSION,
-                audioRetained = retained,
+            return processPcm(
+                scanId = scanId,
+                pcm = recording.pcm,
+                sampleRate = recording.sampleRate,
+                deviceInputRate = recording.deviceInputRate,
+                clientSilenced = recording.clientSilenced,
+                retainAudio = retainAudio,
+                calledAt = recording.startedAtEpochMs,
+                captureStartNanos = captureStart,
+                endedAtElapsedNanos = recording.endedAtElapsedNanos,
+                hapticsOn = hapticsOn,
+                settleNanos = captureStart - scanStart,
             )
         } finally {
             recording.discard()
         }
     }
 
+    private fun processPcm(
+        scanId: String,
+        pcm: ShortArray,
+        sampleRate: Int,
+        deviceInputRate: Int?,
+        clientSilenced: Boolean,
+        retainAudio: Boolean,
+        calledAt: Long,
+        captureStartNanos: Long,
+        endedAtElapsedNanos: Long,
+        hapticsOn: Boolean,
+        settleNanos: Long = 0L,
+    ): NativeScanResult {
+        lastEffectiveRate = sampleRate
+        deviceInputRate?.let { lastDeviceInputRate = it }
+        val handle = model.handle()
+
+        val reasons: List<NativeQualityReason>
+        val prediction: Prediction?
+        var analysis: Analysis? = null
+        var asqiScore: Double? = null
+        if (clientSilenced) {
+            // Android handed the mic to another app and fed us zeros.
+            Log.w(TAG, "capture was silenced by the system (mic in use elsewhere)")
+            reasons = listOf(NativeQualityReason.CAPTURE_ERROR)
+            prediction = null
+        } else {
+            val a = analyzer.analyze(pcm, sampleRate, handle)
+            analysis = a
+            reasons = a.reasons.map(::toNative)
+            prediction = a.prediction
+            if (debuggable) logMetrics(scanId, a)
+
+            // Calculate on-device Audio Signal Quality Index (ASQI)
+            val m = a.metrics
+            val durSec = (m.durationMs / 1000.0).coerceIn(0.5, 1.0)
+            val snrFraction = ((m.snrDb - 6.0) / 18.0).coerceIn(0.4, 1.0)
+            val clipPenalty = (1.0 - m.clipFraction * 10.0).coerceIn(0.2, 1.0)
+            val rateFraction = if (sampleRate >= 16000) 1.0 else 0.8
+            asqiScore = ((snrFraction * clipPenalty) * durSec * rateFraction).coerceIn(0.1, 1.0)
+        }
+
+        val pass = reasons.isEmpty()
+        if (hapticsOn) {
+            if (pass) haptics.finish() else haptics.retry()
+        }
+        val retainStart = SystemClock.elapsedRealtimeNanos()
+        val retained = retainAudio && retain(scanId, pcm, sampleRate, clientSilenced)
+
+        val classified = if (pass) prediction else null
+        val resultReady = SystemClock.elapsedRealtimeNanos()
+        val latencyMs = (resultReady - endedAtElapsedNanos) / 1_000_000L
+        if (debuggable) {
+            logBenchmark(
+                scanId = scanId,
+                settleNanos = settleNanos,
+                captureNanos = endedAtElapsedNanos - captureStartNanos,
+                timings = analysis?.timings,
+                retainNanos = resultReady - retainStart,
+                latencyMs = latencyMs,
+                totalNanos = resultReady - captureStartNanos,
+            )
+        }
+        val durationMs = (pcm.size.toLong() * 1000L / sampleRate).toInt()
+        return NativeScanResult(
+            qualityPass = pass,
+            qualityReasons = reasons,
+            classification = classified?.let { toNative(it.label) } ?: NativeClassification.NOT_EVALUATED,
+            confidence = classified?.confidence,
+            experimental = handle.experimental,
+            modelVersion = handle.version,
+            capturedAtEpochMs = calledAt,
+            latencyMs = latencyMs,
+            durationMs = durationMs.toLong(),
+            sampleRate = sampleRate.toLong(),
+            deviceModel = DEVICE_MODEL,
+            osVersion = OS_VERSION,
+            audioRetained = retained,
+            asqiScore = asqiScore,
+        )
+    }
+
     /** Returns true only if the WAV was actually written. */
-    private fun retain(scanId: String, recording: Recording): Boolean {
-        if (recording.clientSilenced) {
+    private fun retain(scanId: String, pcm: ShortArray, sampleRate: Int, clientSilenced: Boolean): Boolean {
+        if (clientSilenced) {
             // The system replaced the audio with zeros; there is nothing real to keep.
             Log.w(TAG, "retain-audio skipped for scan $scanId (capture silenced by the system)")
             return false
         }
         return try {
-            if (store.save(scanId, recording.pcm, recording.sampleRate) == null) {
+            if (store.save(scanId, pcm, sampleRate) == null) {
                 Log.w(TAG, "retain-audio skipped for scan $scanId (invalid id or storage unavailable)")
                 false
             } else {

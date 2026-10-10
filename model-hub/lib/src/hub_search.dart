@@ -92,15 +92,7 @@ String textHash(String s) {
   return h.toRadixString(16).padLeft(8, '0');
 }
 
-const _stop = {
-  'a', 'an', 'and', 'the', 'for', 'of', 'to', 'in', 'on', 'with', 'is', //
-  'model', 'models', 'that', 'this', 'it', 'by', 'or', 'up',
-};
-
-List<String> tokens(String s) => [
-  for (final t in s.toLowerCase().split(RegExp(r'[^a-z0-9]+')))
-    if (t.length > 1 && !_stop.contains(t)) t,
-];
+List<String> tokens(String s) => tokenizeText(s);
 
 /// Keyword fallback: share of query tokens found (title hits count double),
 /// in [0, 1].

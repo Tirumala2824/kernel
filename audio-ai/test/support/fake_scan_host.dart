@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 const _prefix = 'dev.flutter.pigeon.audio_ai.ScanHostApi';
 const _methods = [
   'captureAndAnalyze',
+  'analyzeFile',
   'info',
   'deleteRetainedAudio',
   'retainedAudioPath',
@@ -27,11 +28,14 @@ class FakeScanHost {
   /// native error reply.
   NativeScanResult Function(String scanId, bool retainAudio, bool haptics)?
   onCapture;
+  NativeScanResult Function(String scanId, String filePath, bool retainAudio)?
+  onAnalyzeFile;
   NativeEngineInfo Function()? onInfo;
   int Function()? onDelete;
   String? Function(String scanId)? onRetainedPath;
 
   final List<(String scanId, bool retainAudio, bool haptics)> captureCalls = [];
+  final List<(String scanId, String filePath, bool retainAudio)> analyzeFileCalls = [];
 
   /// Event-channel side: set while Dart is listening.
   MockStreamHandlerEventSink? _levelSink;
@@ -47,6 +51,13 @@ class FakeScanHost {
       final haptics = args[2]! as bool;
       captureCalls.add((scanId, retain, haptics));
       return onCapture!(scanId, retain, haptics);
+    });
+    _handle('analyzeFile', (args) {
+      final scanId = args![0]! as String;
+      final filePath = args[1]! as String;
+      final retain = args[2]! as bool;
+      analyzeFileCalls.add((scanId, filePath, retain));
+      return onAnalyzeFile!(scanId, filePath, retain);
     });
     _handle('info', (_) => onInfo!());
     _handle('deleteRetainedAudio', (_) => onDelete!());
@@ -120,6 +131,7 @@ NativeScanResult nativeResult({
   String deviceModel = 'TEST-DEVICE',
   String osVersion = 'Android 16 (SDK 36)',
   bool audioRetained = false,
+  double? asqiScore,
 }) {
   return NativeScanResult(
     qualityPass: qualityPass,
@@ -135,6 +147,7 @@ NativeScanResult nativeResult({
     deviceModel: deviceModel,
     osVersion: osVersion,
     audioRetained: audioRetained,
+    asqiScore: asqiScore,
   );
 }
 

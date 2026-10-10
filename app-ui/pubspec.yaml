@@ -37,6 +37,7 @@ dependencies:
   flutter_tts: ^4.2.5 # Android system TTS; offline voices only (see VoicePrompter)
   mobile_scanner: ^7.4.2 # bundled ML Kit barcode model (no Play services download)
   image_picker: ^1.2.4
+  file_picker: ^13.1.0
   path_provider: ^2.1.6
   package_info_plus: ^10.2.2
   google_maps_flutter: ^2.18.2 # sightings map, only after maps consent

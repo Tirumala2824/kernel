@@ -277,7 +277,9 @@ data class NativeScanResult (
    * True only if the WAV for this scan was actually written to
    * app-private `files/recordings/<scanId>.wav`.
    */
-  val audioRetained: Boolean
+  val audioRetained: Boolean,
+  /** Audio Signal Quality Index (0..1) if evaluated. */
+  val asqiScore: Double? = null
 )
  {
   companion object {
@@ -295,7 +297,8 @@ data class NativeScanResult (
       val deviceModel = pigeonVar_list[10] as String
       val osVersion = pigeonVar_list[11] as String
       val audioRetained = pigeonVar_list[12] as Boolean
-      return NativeScanResult(qualityPass, qualityReasons, classification, confidence, experimental, modelVersion, capturedAtEpochMs, latencyMs, durationMs, sampleRate, deviceModel, osVersion, audioRetained)
+      val asqiScore = pigeonVar_list[13] as Double?
+      return NativeScanResult(qualityPass, qualityReasons, classification, confidence, experimental, modelVersion, capturedAtEpochMs, latencyMs, durationMs, sampleRate, deviceModel, osVersion, audioRetained, asqiScore)
     }
   }
   fun toList(): List<Any?> {
@@ -313,6 +316,7 @@ data class NativeScanResult (
       deviceModel,
       osVersion,
       audioRetained,
+      asqiScore,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -323,7 +327,7 @@ data class NativeScanResult (
       return true
     }
     val other = other as NativeScanResult
-    return ScanApiPigeonUtils.deepEquals(this.qualityPass, other.qualityPass) && ScanApiPigeonUtils.deepEquals(this.qualityReasons, other.qualityReasons) && ScanApiPigeonUtils.deepEquals(this.classification, other.classification) && ScanApiPigeonUtils.deepEquals(this.confidence, other.confidence) && ScanApiPigeonUtils.deepEquals(this.experimental, other.experimental) && ScanApiPigeonUtils.deepEquals(this.modelVersion, other.modelVersion) && ScanApiPigeonUtils.deepEquals(this.capturedAtEpochMs, other.capturedAtEpochMs) && ScanApiPigeonUtils.deepEquals(this.latencyMs, other.latencyMs) && ScanApiPigeonUtils.deepEquals(this.durationMs, other.durationMs) && ScanApiPigeonUtils.deepEquals(this.sampleRate, other.sampleRate) && ScanApiPigeonUtils.deepEquals(this.deviceModel, other.deviceModel) && ScanApiPigeonUtils.deepEquals(this.osVersion, other.osVersion) && ScanApiPigeonUtils.deepEquals(this.audioRetained, other.audioRetained)
+    return ScanApiPigeonUtils.deepEquals(this.qualityPass, other.qualityPass) && ScanApiPigeonUtils.deepEquals(this.qualityReasons, other.qualityReasons) && ScanApiPigeonUtils.deepEquals(this.classification, other.classification) && ScanApiPigeonUtils.deepEquals(this.confidence, other.confidence) && ScanApiPigeonUtils.deepEquals(this.experimental, other.experimental) && ScanApiPigeonUtils.deepEquals(this.modelVersion, other.modelVersion) && ScanApiPigeonUtils.deepEquals(this.capturedAtEpochMs, other.capturedAtEpochMs) && ScanApiPigeonUtils.deepEquals(this.latencyMs, other.latencyMs) && ScanApiPigeonUtils.deepEquals(this.durationMs, other.durationMs) && ScanApiPigeonUtils.deepEquals(this.sampleRate, other.sampleRate) && ScanApiPigeonUtils.deepEquals(this.deviceModel, other.deviceModel) && ScanApiPigeonUtils.deepEquals(this.osVersion, other.osVersion) && ScanApiPigeonUtils.deepEquals(this.audioRetained, other.audioRetained) && ScanApiPigeonUtils.deepEquals(this.asqiScore, other.asqiScore)
   }
 
   override fun hashCode(): Int {
@@ -341,10 +345,11 @@ data class NativeScanResult (
     result = 31 * result + ScanApiPigeonUtils.deepHash(this.deviceModel)
     result = 31 * result + ScanApiPigeonUtils.deepHash(this.osVersion)
     result = 31 * result + ScanApiPigeonUtils.deepHash(this.audioRetained)
+    result = 31 * result + ScanApiPigeonUtils.deepHash(this.asqiScore)
     return result
   }
   override fun toString(): String {
-    return "NativeScanResult(qualityPass=$qualityPass, qualityReasons=$qualityReasons, classification=$classification, confidence=$confidence, experimental=$experimental, modelVersion=$modelVersion, capturedAtEpochMs=$capturedAtEpochMs, latencyMs=$latencyMs, durationMs=$durationMs, sampleRate=$sampleRate, deviceModel=$deviceModel, osVersion=$osVersion, audioRetained=$audioRetained)"
+    return "NativeScanResult(qualityPass=$qualityPass, qualityReasons=$qualityReasons, classification=$classification, confidence=$confidence, experimental=$experimental, modelVersion=$modelVersion, capturedAtEpochMs=$capturedAtEpochMs, latencyMs=$latencyMs, durationMs=$durationMs, sampleRate=$sampleRate, deviceModel=$deviceModel, osVersion=$osVersion, audioRetained=$audioRetained, asqiScore=$asqiScore)"
   }
 }
 
@@ -569,6 +574,11 @@ interface ScanHostApi {
    * is true. [haptics] false means no vibration cue at all.
    */
   suspend fun captureAndAnalyze(scanId: String, retainAudio: Boolean, haptics: Boolean): NativeScanResult
+  /**
+   * Analyzes an existing audio file (.wav) on-device using the same quality gate
+   * and model pipeline.
+   */
+  suspend fun analyzeFile(scanId: String, filePath: String, retainAudio: Boolean): NativeScanResult
   suspend fun info(): NativeEngineInfo
   /**
    * Deletes every retained recording in app-private storage. Returns the
@@ -601,6 +611,27 @@ interface ScanHostApi {
             CoroutineScope(Dispatchers.Main).launch {
               val wrapped: List<Any?> = try {
                 listOf(api.captureAndAnalyze(scanIdArg, retainAudioArg, hapticsArg))
+              } catch (exception: Throwable) {
+                ScanApiPigeonUtils.wrapError(exception)
+              }
+              reply.reply(wrapped)
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.audio_ai.ScanHostApi.analyzeFile$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val scanIdArg = args[0] as String
+            val filePathArg = args[1] as String
+            val retainAudioArg = args[2] as Boolean
+            CoroutineScope(Dispatchers.Main).launch {
+              val wrapped: List<Any?> = try {
+                listOf(api.analyzeFile(scanIdArg, filePathArg, retainAudioArg))
               } catch (exception: Throwable) {
                 ScanApiPigeonUtils.wrapError(exception)
               }

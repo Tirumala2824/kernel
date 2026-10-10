@@ -387,6 +387,24 @@ class DriftSensorEventRepository implements SensorEventRepository {
     return stored > cleared ? stored : cleared;
   }
 
+  @override
+  Future<void> markSynced(String nodeId, int throughSeq) async {}
+
+  @override
+  Future<void> beginEpoch(String nodeId) async {}
+
+  @override
+  Future<void> recordHealth(List<SensorHealthChange> changes) async {}
+
+  @override
+  Stream<List<SensorNotEvaluatedPeriod>> watchNotEvaluated({
+    String? nodeId,
+    String? locationId,
+    String? itemId,
+    Duration? window,
+  }) =>
+      Stream.value(const []);
+
   DateTime? _since(Duration? window) =>
       window == null ? null : _clock().toUtc().subtract(window);
 

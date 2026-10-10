@@ -89,6 +89,12 @@ class KernelAppBar extends StatelessWidget implements PreferredSizeWidget {
         const Center(child: OfflineIndicator()),
         if (showMenu) ...[
           IconButton(
+            key: const Key('open-chat'),
+            tooltip: 'Agent Screening Chat',
+            icon: const Icon(Icons.smart_toy_outlined),
+            onPressed: () => context.push(Routes.chat),
+          ),
+          IconButton(
             key: const Key('open-qr'),
             tooltip: l.qrTooltip,
             icon: const Icon(Icons.qr_code_scanner_rounded),

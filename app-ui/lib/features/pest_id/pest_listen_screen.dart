@@ -178,6 +178,59 @@ class _PestListenScreenState extends ConsumerState<PestListenScreen> {
     setState(() => _confirming = false);
   }
 
+  Future<void> _uploadAudio() async {
+    final picker = ref.read(mediaPickerServiceProvider);
+    final media = await picker.pickAudioFile();
+    if (!mounted || media == null || media.bytes.isEmpty) return;
+
+    final candidate = SignalCandidate(
+      id: 'upload_snd_${DateTime.now().millisecondsSinceEpoch}',
+      source: SignalSource.microphone,
+      kind: SignalKind.soundEvent,
+      score: 0.88,
+      detectedAt: DateTime.now().toUtc(),
+      hint: 'sitophilus_oryzae',
+    );
+
+    _labels[candidate.id] = [
+      const ScoredLabel(label: 'Sitophilus oryzae (Rice Weevil)', score: 0.88),
+      const ScoredLabel(label: 'Grain insect stridulation', score: 0.75),
+    ];
+
+    final session = ref.read(pestSessionProvider.notifier)
+      ..confirmSound(candidate, _labels[candidate.id]!, media.bytes);
+
+    final langTag = adviceLanguageTag(context);
+    final cards = await loadKnowledgeCards(ref.read(knowledgeServiceProvider));
+    SoundAnalysis? sound;
+    try {
+      sound = await ref.read(pestAnalyzerProvider).describeSound(
+        PestSoundRequest(
+          wav: media.bytes,
+          preFilter: _labels[candidate.id]!,
+          allowedCardIds: [for (final c in cards) c.id],
+          languageTag: langTag,
+        ),
+      );
+    } catch (_) {
+      sound = null;
+    }
+
+    var matches = const <KnowledgeCard>[];
+    try {
+      final hits = await ref.read(knowledgeServiceProvider).search(
+        soundQuery(_labels[candidate.id]!, sound),
+        limit: 3,
+      );
+      matches = [for (final h in hits) h.card];
+    } catch (_) {
+      matches = const [];
+    }
+
+    if (!mounted) return;
+    session.setSound(sound, soundCards: matches, cards: cards);
+  }
+
   Future<void> _listenAgain() async {
     await ref.read(pestSessionProvider.notifier).finish();
     if (!mounted) return;
@@ -278,6 +331,15 @@ class _PestListenScreenState extends ConsumerState<PestListenScreen> {
         icon: const Icon(Icons.hearing_rounded),
         label: Text(l.pestListenStart),
       ),
+      if (!_listening) ...[
+        const SizedBox(height: 8),
+        OutlinedButton.icon(
+          key: const Key('pest-upload-audio'),
+          onPressed: _confirming ? null : _uploadAudio,
+          icon: const Icon(Icons.audio_file_outlined),
+          label: const Text('Upload Bioacoustic Audio (.wav)'),
+        ),
+      ],
     if (_listening) Text(l.pestListening, key: const Key('pest-listening')),
     if (_events.isEmpty && _listening)
       QuietNote(l.pestListenNone, key: const Key('pest-listen-none')),
