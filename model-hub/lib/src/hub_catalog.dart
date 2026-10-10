@@ -170,13 +170,16 @@ class HubModelCatalog implements ModelCatalog {
         _assets.snapshotVersion;
     var meta = await _store.readJson('gallery_meta.json');
     var cached = await _store.readText('gallery_allowlist.json');
-    if (allowNet && (meta?['version'] != version || _due(meta, 'nextCheck'))) {
+    // 'for' is the version asked for (the installed Gallery's); 'version' is
+    // the file actually served (the snapshot version after a 404).
+    if (allowNet && (meta?['for'] != version || _due(meta, 'nextCheck'))) {
       final fetched = await _fetchAllowlist(version, meta, cached);
       if (fetched == null && version != _assets.snapshotVersion) {
         // e.g. 404 for a Gallery version without its own allowlist file.
         await _fetchAllowlist(_assets.snapshotVersion, meta, cached);
       }
       meta = await _store.readJson('gallery_meta.json');
+      await _store.writeJson('gallery_meta.json', {...?meta, 'for': version});
       cached = await _store.readText('gallery_allowlist.json');
     }
     final fromCache = cached == null ? null : parseAllowlist(cached);
