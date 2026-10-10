@@ -118,7 +118,9 @@ class QuickScanAction extends StatelessWidget {
       key: const Key('quick-scan'),
       onPressed: () =>
           batch ? context.push(Routes.batchSetup) : context.go(Routes.scan),
-      icon: Icon(batch ? Icons.playlist_play_rounded : Icons.graphic_eq_rounded),
+      icon: Icon(
+        batch ? Icons.playlist_play_rounded : Icons.graphic_eq_rounded,
+      ),
       label: Text(batch ? l.heroStartBatch : l.quickScanAction),
     );
   }

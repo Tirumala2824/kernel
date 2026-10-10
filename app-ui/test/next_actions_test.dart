@@ -56,7 +56,11 @@ void main() {
     test('scanNeeded: picker, one item, or a batch for a place or lot', () {
       final many = d(
         Role.farmer,
-        const NextAction(kind: NextActionKind.scanNeeded, priority: 0, count: 3),
+        const NextAction(
+          kind: NextActionKind.scanNeeded,
+          priority: 0,
+          count: 3,
+        ),
       );
       expect(many.title, '3 sacks need a scan');
       expect(many.location, Routes.scan);
@@ -89,7 +93,11 @@ void main() {
 
       final containers = d(
         Role.household,
-        const NextAction(kind: NextActionKind.scanNeeded, priority: 0, count: 2),
+        const NextAction(
+          kind: NextActionKind.scanNeeded,
+          priority: 0,
+          count: 2,
+        ),
       );
       expect(containers.title, '2 containers need a scan');
     });
@@ -268,7 +276,10 @@ void main() {
       expect(_inHero(en.nextStepEyebrow.toUpperCase()), findsOneWidget);
       expect(_inHero('Inspect Sack R-004'), findsOneWidget);
       expect(_inRow(1, '3 sacks need a scan'), findsOneWidget);
-      expect(_inRow(2, 'Share the pre-sale report for Rabi 2026'), findsOneWidget);
+      expect(
+        _inRow(2, 'Share the pre-sale report for Rabi 2026'),
+        findsOneWidget,
+      );
       // At most two secondary rows.
       expect(find.byKey(const Key('next-step-3')), findsNothing);
       // The hero is not a scan, so scanning stays one tap away.

@@ -100,7 +100,9 @@ class FpoHome extends ConsumerWidget {
                   tone: KernelCardTone.ivory,
                   icon: Icons.assignment_ind_rounded,
                   title: l.assignedTitle,
-                  subtitle: open == 0 ? l.assignedNone : l.inspectionsOpen(open),
+                  subtitle: open == 0
+                      ? l.assignedNone
+                      : l.inspectionsOpen(open),
                   onTap: () => context.push(Routes.assignedInspections),
                 ),
               ],

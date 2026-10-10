@@ -110,8 +110,7 @@ class InMemorySettingsRepository implements SettingsRepository {
       _delayed(_changes.watch(() => _onboarding), onboardingEmitDelay);
 
   @override
-  Future<void> setOnboardingDone(bool value) =>
-      _set(() => _onboarding = value);
+  Future<void> setOnboardingDone(bool value) => _set(() => _onboarding = value);
 
   @override
   Stream<bool> watchLocalAdviceOptIn() => _changes.watch(() => _localAdvice);
@@ -181,10 +180,10 @@ class InMemoryRankingService implements RankingService {
     final ranked = <QueueEntry>[];
     final needsScan = <GrainItem>[];
     for (final item in scoped) {
-      final valid = (scans.scans.where((s) => s.itemId == item.id && s.isValid)
-            .toList()
-          ..sort((a, b) => b.capturedAt.compareTo(a.capturedAt)))
-          .firstOrNull;
+      final valid =
+          (scans.scans.where((s) => s.itemId == item.id && s.isValid).toList()
+                ..sort((a, b) => b.capturedAt.compareTo(a.capturedAt)))
+              .firstOrNull;
       if (valid == null ||
           (maxAge != null && now.difference(valid.capturedAt) > maxAge)) {
         needsScan.add(item);
@@ -199,9 +198,8 @@ class InMemoryRankingService implements RankingService {
       }
     }
     ranked.sort((a, b) {
-      final bySeverity = _severity(
-        a.latestValidScan.result,
-      ).compareTo(_severity(b.latestValidScan.result));
+      final bySeverity = _severity(a.latestValidScan.result)
+          .compareTo(_severity(b.latestValidScan.result));
       if (bySeverity != 0) return bySeverity;
       return a.latestValidScan.capturedAt.compareTo(
         b.latestValidScan.capturedAt,

@@ -153,10 +153,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(path: Routes.queue, builder: (_, _) => const QueueScreen()),
-      GoRoute(
-        path: Routes.insights,
-        builder: (_, _) => const InsightsScreen(),
-      ),
+      GoRoute(path: Routes.insights, builder: (_, _) => const InsightsScreen()),
       GoRoute(path: Routes.qr, builder: (_, _) => const QrScanScreen()),
       GoRoute(
         path: Routes.scansToday,
@@ -202,10 +199,8 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: 'scans/:scanId',
-            builder: (_, s) => ResultScreen(
-              itemId: id(s, 'itemId'),
-              scanId: id(s, 'scanId'),
-            ),
+            builder: (_, s) =>
+                ResultScreen(itemId: id(s, 'itemId'), scanId: id(s, 'scanId')),
           ),
           GoRoute(
             path: 'inspect',

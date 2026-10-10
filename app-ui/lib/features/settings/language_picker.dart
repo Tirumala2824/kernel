@@ -10,9 +10,8 @@ import '../../theme/tokens.dart';
 const _deviceLanguage = '';
 
 /// Display name for a language tag (native name when known).
-String languageName(AppLocalizations l, String? tag) => tag == null
-    ? l.languageFollowDevice
-    : nativeLanguageNames[tag] ?? tag;
+String languageName(AppLocalizations l, String? tag) =>
+    tag == null ? l.languageFollowDevice : nativeLanguageNames[tag] ?? tag;
 
 /// Picker order: English first, then the rest by native name (so a reader
 /// finds their language by its own script, not by its locale code).
@@ -83,9 +82,8 @@ class LanguagePickerSheet extends ConsumerWidget {
             children: [
               Text(
                 l.languageTitle,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: KernelColors.forest,
-                ),
+                style: Theme.of(context).textTheme.headlineSmall
+                    ?.copyWith(color: KernelColors.forest),
               ),
               const SizedBox(height: KernelSpace.xs),
               Text(l.languageSheetBody),

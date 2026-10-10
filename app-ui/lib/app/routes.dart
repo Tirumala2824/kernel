@@ -41,12 +41,15 @@ abstract final class Routes {
   static String batchRun({String? locationId, String? lotId}) =>
       _withQuery('/batch/run', {'locationId': ?locationId, 'lotId': ?lotId});
 
-  static String newItem({String? locationId, String? lotId, String? harvestId}) =>
-      _withQuery('/items/new', {
-        'locationId': ?locationId,
-        'lotId': ?lotId,
-        'harvestId': ?harvestId,
-      });
+  static String newItem({
+    String? locationId,
+    String? lotId,
+    String? harvestId,
+  }) => _withQuery('/items/new', {
+    'locationId': ?locationId,
+    'lotId': ?lotId,
+    'harvestId': ?harvestId,
+  });
 
   static String item(String itemId) => '/items/$itemId';
   static String scanItem(String itemId) => '/items/$itemId/scan';

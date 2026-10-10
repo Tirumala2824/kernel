@@ -105,40 +105,40 @@ class _BarRow extends StatelessWidget {
           const SizedBox(height: KernelSpace.xs),
           LayoutBuilder(
             builder: (context, constraints) => Row(
-            children: [
-              Expanded(
-                child: Container(
-                  height: 18,
-                  decoration: BoxDecoration(
-                    color: barTrackColor,
-                    borderRadius: BorderRadius.circular(KernelRadii.pill),
-                  ),
-                  alignment: AlignmentDirectional.centerStart,
-                  child: FractionallySizedBox(
-                    widthFactor: fraction,
-                    heightFactor: 1,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: fill,
-                        borderRadius: BorderRadius.circular(KernelRadii.pill),
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 18,
+                    decoration: BoxDecoration(
+                      color: barTrackColor,
+                      borderRadius: BorderRadius.circular(KernelRadii.pill),
+                    ),
+                    alignment: AlignmentDirectional.centerStart,
+                    child: FractionallySizedBox(
+                      widthFactor: fraction,
+                      heightFactor: 1,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: fill,
+                          borderRadius: BorderRadius.circular(KernelRadii.pill),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: KernelSpace.sm),
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: constraints.maxWidth * 0.45,
+                const SizedBox(width: KernelSpace.sm),
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: constraints.maxWidth * 0.45,
+                  ),
+                  child: Text(
+                    bar.valueLabel,
+                    key: bar.id == null ? null : Key('bar-value-${bar.id}'),
+                    style: textTheme.labelLarge?.copyWith(color: barTextColor),
+                  ),
                 ),
-                child: Text(
-                  bar.valueLabel,
-                  key: bar.id == null ? null : Key('bar-value-${bar.id}'),
-                  style: textTheme.labelLarge?.copyWith(color: barTextColor),
-                ),
-              ),
-            ],
-          ),
+              ],
+            ),
           ),
         ],
       ),

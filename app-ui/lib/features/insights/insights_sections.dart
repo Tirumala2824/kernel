@@ -359,7 +359,9 @@ class _StaleTile extends StatelessWidget {
     return KernelCard(
       key: Key('stale-${item.itemId}'),
       tone: KernelCardTone.ivory,
-      icon: attention ? Icons.event_busy_rounded : Icons.event_available_rounded,
+      icon: attention
+          ? Icons.event_busy_rounded
+          : Icons.event_available_rounded,
       title: item.label,
       onTap: () => context.push(Routes.item(item.itemId)),
       child: StatusChip(

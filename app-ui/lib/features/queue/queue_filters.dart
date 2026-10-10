@@ -104,9 +104,8 @@ class QueueFilterBar extends ConsumerWidget {
         if (maxAgeDays != null)
           Text(
             l.queueFilterAgeNote(maxAgeDays!),
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: KernelColors.inkMuted),
+            style: Theme.of(context).textTheme.bodySmall
+                ?.copyWith(color: KernelColors.inkMuted),
           ),
       ],
     );
@@ -140,9 +139,8 @@ class _FilterRow extends StatelessWidget {
         children: [
           Text(
             label,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: KernelColors.forest,
-            ),
+            style: Theme.of(context).textTheme.titleSmall
+                ?.copyWith(color: KernelColors.forest),
           ),
           const SizedBox(height: KernelSpace.xs),
           Wrap(spacing: 8, runSpacing: 8, children: chips),

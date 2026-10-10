@@ -127,7 +127,10 @@ void main() {
       expect(find.text(en.predictionInfested), findsWidgets);
       expect(find.text(en.insightsRetryLabel), findsOneWidget);
 
-      expect(_barValue(tester, 'quality-highNoise'), en.insightsBarValue(1, 50));
+      expect(
+        _barValue(tester, 'quality-highNoise'),
+        en.insightsBarValue(1, 50),
+      );
       expect(_barValue(tester, 'quality-clipping'), en.insightsBarValue(1, 50));
       expect(find.text(en.qualityShortHighNoise), findsOneWidget);
 

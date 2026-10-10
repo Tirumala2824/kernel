@@ -68,7 +68,11 @@ NextStep describeNextAction(AppLocalizations l, Role role, NextAction a) {
     case NextActionKind.scanNeeded:
       final batch = a.itemId == null && batchScope;
       return NextStep(
-        title: name != null ? l.nextScanOne(name) : (kind == 'container' ? l.nextScanContainers(a.count) : l.nextScanSacks(a.count)),
+        title: name != null
+            ? l.nextScanOne(name)
+            : (kind == 'container'
+                  ? l.nextScanContainers(a.count)
+                  : l.nextScanSacks(a.count)),
         subtitle: l.nextScanBody(kind),
         actionLabel: batch ? l.nextActionBatch : l.nextActionScan,
         icon: batch ? Icons.playlist_play_rounded : Icons.graphic_eq_rounded,
@@ -84,7 +88,9 @@ NextStep describeNextAction(AppLocalizations l, Role role, NextAction a) {
       return NextStep(
         title: name != null
             ? l.nextInspectOne(name)
-            : (kind == 'container' ? l.nextInspectContainers(a.count) : l.nextInspectSacks(a.count)),
+            : (kind == 'container'
+                  ? l.nextInspectContainers(a.count)
+                  : l.nextInspectSacks(a.count)),
         subtitle: l.nextInspectBody,
         actionLabel: a.itemId != null ? l.nextActionOpen : l.nextActionQueue,
         icon: Icons.person_search_rounded,
@@ -93,7 +99,11 @@ NextStep describeNextAction(AppLocalizations l, Role role, NextAction a) {
       );
     case NextActionKind.reviewDue:
       return NextStep(
-        title: name != null ? l.nextReviewOne(name) : (kind == 'container' ? l.nextReviewContainers(a.count) : l.nextReviewSacks(a.count)),
+        title: name != null
+            ? l.nextReviewOne(name)
+            : (kind == 'container'
+                  ? l.nextReviewContainers(a.count)
+                  : l.nextReviewSacks(a.count)),
         subtitle: l.nextReviewBody,
         actionLabel: l.nextActionOpen,
         icon: Icons.event_repeat_rounded,
@@ -103,7 +113,9 @@ NextStep describeNextAction(AppLocalizations l, Role role, NextAction a) {
       );
     case NextActionKind.reminderDue:
       return NextStep(
-        title: name != null ? l.nextReminderOne(name) : l.nextReminderMany(a.count),
+        title: name != null
+            ? l.nextReminderOne(name)
+            : l.nextReminderMany(a.count),
         subtitle: l.nextReminderBody,
         actionLabel: l.nextActionOpen,
         icon: Icons.alarm_rounded,
@@ -113,7 +125,9 @@ NextStep describeNextAction(AppLocalizations l, Role role, NextAction a) {
       );
     case NextActionKind.physicalCheckPending:
       return NextStep(
-        title: name != null ? l.nextPhysicalOne(name) : l.nextPhysicalMany(a.count),
+        title: name != null
+            ? l.nextPhysicalOne(name)
+            : l.nextPhysicalMany(a.count),
         subtitle: l.nextPhysicalBody,
         actionLabel: l.nextActionOpenLot,
         icon: Icons.fact_check_rounded,

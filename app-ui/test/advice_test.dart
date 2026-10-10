@@ -45,7 +45,11 @@ void main() {
       env.advice
         ..info = testAdviceModel
         ..status = AdviceStatus.ready;
-      await pumpKernelApp(tester, env, location: Routes.result(item.id, scan.id));
+      await pumpKernelApp(
+        tester,
+        env,
+        location: Routes.result(item.id, scan.id),
+      );
       expect(find.text(en.headlineInspectionNeeded), findsOneWidget);
       expect(find.byKey(const Key('explain-result')), findsNothing);
       expect(env.advice.explainCalls, isEmpty);
@@ -56,7 +60,11 @@ void main() {
     ) async {
       final (env, item, scan) = await _resultEnv();
       await env.settings.setLocalAdviceOptIn(true);
-      await pumpKernelApp(tester, env, location: Routes.result(item.id, scan.id));
+      await pumpKernelApp(
+        tester,
+        env,
+        location: Routes.result(item.id, scan.id),
+      );
       expect(find.byKey(const Key('explain-result')), findsNothing);
     });
 
@@ -68,7 +76,11 @@ void main() {
       await env.enableAdvice();
       final controller = StreamController<AdviceText>();
       env.advice.explainController = controller;
-      await pumpKernelApp(tester, env, location: Routes.result(item.id, scan.id));
+      await pumpKernelApp(
+        tester,
+        env,
+        location: Routes.result(item.id, scan.id),
+      );
 
       await tapVisible(tester, find.byKey(const Key('explain-result')));
       expect(find.byKey(const Key('advice-shimmer')), findsOneWidget);
@@ -119,7 +131,11 @@ void main() {
       env.advice.explainScript = adviceEvents([
         'Partial text',
       ], complete: false);
-      await pumpKernelApp(tester, env, location: Routes.result(item.id, scan.id));
+      await pumpKernelApp(
+        tester,
+        env,
+        location: Routes.result(item.id, scan.id),
+      );
 
       await tapVisible(tester, find.byKey(const Key('explain-result')));
       expect(find.byKey(const Key('explain-static')), findsOneWidget);
@@ -131,11 +147,13 @@ void main() {
     testWidgets('an empty stream (busy, filtered) also falls back', (
       tester,
     ) async {
-      final (env, item, scan) = await _resultEnv(
-        result: Classification.clean,
-      );
+      final (env, item, scan) = await _resultEnv(result: Classification.clean);
       await env.enableAdvice();
-      await pumpKernelApp(tester, env, location: Routes.result(item.id, scan.id));
+      await pumpKernelApp(
+        tester,
+        env,
+        location: Routes.result(item.id, scan.id),
+      );
       await tapVisible(tester, find.byKey(const Key('explain-result')));
       expect(find.text(en.adviceStaticClean), findsOneWidget);
     });
@@ -145,7 +163,11 @@ void main() {
       await env.enableAdvice();
       await env.settings.setLanguageTag('hi');
       env.advice.explainScript = adviceEvents(['ठीक'], languageTag: 'hi');
-      await pumpKernelApp(tester, env, location: Routes.result(item.id, scan.id));
+      await pumpKernelApp(
+        tester,
+        env,
+        location: Routes.result(item.id, scan.id),
+      );
       await tapVisible(tester, find.byKey(const Key('explain-result')));
       expect(env.advice.explainCalls.single.$2, 'hi');
     });
@@ -172,9 +194,7 @@ void main() {
   });
 
   group('Settings: on-phone AI assistant', () {
-    testWidgets('opt-in is off by default and explains itself', (
-      tester,
-    ) async {
+    testWidgets('opt-in is off by default and explains itself', (tester) async {
       final env = TestEnv(role: Role.farmer);
       await pumpKernelApp(tester, env, location: Routes.settings);
       final toggle = find.byKey(const Key('advice-toggle'));

@@ -63,7 +63,9 @@ class _AppShellState extends ConsumerState<AppShell>
 
   Future<void> _openLaunchItem() async {
     try {
-      final itemId = await ref.read(reminderRepositoryProvider).takeLaunchItemId();
+      final itemId = await ref
+          .read(reminderRepositoryProvider)
+          .takeLaunchItemId();
       if (itemId == null || !mounted) return;
       context.push(Routes.item(itemId));
     } on Object catch (error) {
@@ -80,10 +82,8 @@ class _AppShellState extends ConsumerState<AppShell>
       body: shell,
       bottomNavigationBar: NavigationBar(
         selectedIndex: shell.currentIndex,
-        onDestinationSelected: (index) => shell.goBranch(
-          index,
-          initialLocation: index == shell.currentIndex,
-        ),
+        onDestinationSelected: (index) =>
+            shell.goBranch(index, initialLocation: index == shell.currentIndex),
         destinations: [
           NavigationDestination(
             icon: const Icon(Icons.home_outlined),

@@ -76,9 +76,7 @@ void main() {
       expect(y1 < y2 && y2 < y3, isTrue);
     });
 
-    testWidgets('result, place and age chips narrow the queue', (
-      tester,
-    ) async {
+    testWidgets('result, place and age chips narrow the queue', (tester) async {
       await seed();
       await pumpKernelApp(tester, env, location: Routes.queue);
 

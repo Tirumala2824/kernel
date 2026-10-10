@@ -23,9 +23,9 @@ class FarmerHome extends ConsumerWidget {
     final items = ref.watch(itemsByRoleProvider(role));
     final stats = ref.watch(inspectionStatsProvider(roleScope(role))).value;
     final harvests = ref.watch(harvestsProvider).value ?? const <Harvest>[];
-    final latest = ([...harvests]
-          ..sort((a, b) => b.harvestedAt.compareTo(a.harvestedAt)))
-        .firstOrNull;
+    final latest = ([
+      ...harvests,
+    ]..sort((a, b) => b.harvestedAt.compareTo(a.harvestedAt))).firstOrNull;
     return PageList(
       children: [
         ScreenHeader(

@@ -78,9 +78,8 @@ class InMemoryScanRepository implements ScanRepository {
       scans.where((s) => s.id == scanId).firstOrNull;
 
   @override
-  Future<ScanRecord?> latestValidForItem(String itemId) async => _newestFirst
-      .where((s) => s.itemId == itemId && s.isValid)
-      .firstOrNull;
+  Future<ScanRecord?> latestValidForItem(String itemId) async =>
+      _newestFirst.where((s) => s.itemId == itemId && s.isValid).firstOrNull;
 
   void clear() {
     scans.clear();
@@ -95,22 +94,26 @@ class InMemoryInspectionRepository implements InspectionRepository {
   final _changes = Changes();
   Stream<void> get changes => _changes.stream;
 
-  Inspection _copy(Inspection old, {FollowUpStatus? status, String? assignee, bool setAssignee = false}) =>
-      Inspection(
-        id: old.id,
-        itemId: old.itemId,
-        scanId: old.scanId,
-        inspectedAt: old.inspectedAt,
-        inspector: old.inspector,
-        observations: old.observations,
-        verifiedFinding: old.verifiedFinding,
-        followUpStatus: status ?? old.followUpStatus,
-        assignedTo: setAssignee ? assignee : old.assignedTo,
-        photoPaths: old.photoPaths,
-        createdAt: old.createdAt,
-        updatedAt: DateTime.now().toUtc(),
-        syncState: old.syncState,
-      );
+  Inspection _copy(
+    Inspection old, {
+    FollowUpStatus? status,
+    String? assignee,
+    bool setAssignee = false,
+  }) => Inspection(
+    id: old.id,
+    itemId: old.itemId,
+    scanId: old.scanId,
+    inspectedAt: old.inspectedAt,
+    inspector: old.inspector,
+    observations: old.observations,
+    verifiedFinding: old.verifiedFinding,
+    followUpStatus: status ?? old.followUpStatus,
+    assignedTo: setAssignee ? assignee : old.assignedTo,
+    photoPaths: old.photoPaths,
+    createdAt: old.createdAt,
+    updatedAt: DateTime.now().toUtc(),
+    syncState: old.syncState,
+  );
 
   @override
   Future<Inspection> create(InspectionDraft draft) async {
@@ -288,7 +291,9 @@ class InMemoryLabeledSampleRepository implements LabeledSampleRepository {
       if (evidence == null ||
           evidence.itemId != scan.itemId ||
           evidence.verifiedFinding != needed) {
-        throw ArgumentError('Label ${draft.label.name} needs an agreeing inspection');
+        throw ArgumentError(
+          'Label ${draft.label.name} needs an agreeing inspection',
+        );
       }
     }
     final now = DateTime.now().toUtc();

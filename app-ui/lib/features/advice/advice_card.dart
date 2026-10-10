@@ -150,7 +150,10 @@ class _AdviceStreamCardState extends State<AdviceStreamCard> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.auto_awesome_rounded, color: KernelColors.forest),
+                const Icon(
+                  Icons.auto_awesome_rounded,
+                  color: KernelColors.forest,
+                ),
                 const SizedBox(width: KernelSpace.sm),
                 Expanded(
                   child: Text(

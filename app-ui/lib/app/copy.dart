@@ -220,15 +220,11 @@ String formatDate(BuildContext context, DateTime value) =>
     MaterialLocalizations.of(context).formatMediumDate(value.toLocal());
 
 String formatTime(BuildContext context, DateTime value) =>
-    MaterialLocalizations.of(
-      context,
-    ).formatTimeOfDay(TimeOfDay.fromDateTime(value.toLocal()));
+    MaterialLocalizations.of(context)
+        .formatTimeOfDay(TimeOfDay.fromDateTime(value.toLocal()));
 
-String formatDateTime(BuildContext context, DateTime value) =>
-    context.l10n.dateTimeJoin(
-      formatDate(context, value),
-      formatTime(context, value),
-    );
+String formatDateTime(BuildContext context, DateTime value) => context.l10n
+    .dateTimeJoin(formatDate(context, value), formatTime(context, value));
 
 int daysSince(DateTime date, {DateTime? now}) {
   final today = DateUtils.dateOnly(now ?? DateTime.now());

@@ -26,7 +26,10 @@ void main() {
       expect(find.byKey(const Key('photo-1')), findsOneWidget);
 
       await tapVisible(tester, find.byKey(const Key('finding-noneFound')));
-      await tester.enterText(find.byKey(const Key('field-inspector')), 'S. Rao');
+      await tester.enterText(
+        find.byKey(const Key('field-inspector')),
+        'S. Rao',
+      );
       await tapVisible(tester, find.byKey(const Key('save')));
 
       final draft = env.inspections.drafts.single;

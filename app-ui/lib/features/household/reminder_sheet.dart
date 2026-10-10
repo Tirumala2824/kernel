@@ -71,10 +71,11 @@ class _ReminderSheetState extends ConsumerState<ReminderSheet> {
   Future<void> _loadSuggestion() async {
     final DateTime suggested;
     try {
-      suggested = (await ref
-              .read(reminderRepositoryProvider)
-              .suggestDueAt(widget.itemId))
-          .toLocal();
+      suggested =
+          (await ref
+                  .read(reminderRepositoryProvider)
+                  .suggestDueAt(widget.itemId))
+              .toLocal();
     } on Object {
       return; // Keep the plain default; the user picks a date anyway.
     }
@@ -140,7 +141,9 @@ class _ReminderSheetState extends ConsumerState<ReminderSheet> {
         .read(devicePermissionsProvider)
         .requestNotifications();
     try {
-      await ref.read(reminderRepositoryProvider).schedule(widget.itemId, _dueAt);
+      await ref
+          .read(reminderRepositoryProvider)
+          .schedule(widget.itemId, _dueAt);
       navigator.pop();
       messenger.showSnackBar(
         SnackBar(

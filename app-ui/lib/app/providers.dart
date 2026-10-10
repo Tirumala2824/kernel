@@ -137,11 +137,8 @@ final adviceEngineProvider = Provider<AdviceEngine>(
 );
 
 final adviceModelManagerProvider = Provider<AdviceModelManager>(
-  (ref) => _unbound(
-    'adviceModelManagerProvider',
-    'AdviceModelManager',
-    'local_llm',
-  ),
+  (ref) =>
+      _unbound('adviceModelManagerProvider', 'AdviceModelManager', 'local_llm'),
   name: 'adviceModelManagerProvider',
 );
 

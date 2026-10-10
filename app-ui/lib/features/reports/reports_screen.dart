@@ -20,12 +20,7 @@ const reportHistoryLimit = 50;
 /// system share sheet, printable sack labels, and recent scan history for
 /// the active role.
 class ReportsScreen extends ConsumerWidget {
-  const ReportsScreen({
-    super.key,
-    this.presetKind,
-    this.harvestId,
-    this.lotId,
-  });
+  const ReportsScreen({super.key, this.presetKind, this.harvestId, this.lotId});
 
   /// Report opened from a next step ([ReportKind.preSale] for a harvest or
   /// [ReportKind.lotSummary] for a lot); shown first.
@@ -85,7 +80,10 @@ class _ReportsBody extends ConsumerWidget {
             harvestId: harvestId,
             lotId: lotId,
           ),
-        ExportPanel(scope: ReportScope(role: role), title: role.reportTitle(l)),
+        ExportPanel(
+          scope: ReportScope(role: role),
+          title: role.reportTitle(l),
+        ),
         KernelCard(
           key: const Key('reports-insights'),
           tone: KernelCardTone.ivory,

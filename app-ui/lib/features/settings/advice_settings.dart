@@ -134,9 +134,7 @@ class _ModelCardState extends ConsumerState<_ModelCard> {
     final total = p.totalBytes;
     if (total != null && total > free && p.phase == ModelImportPhase.copying) {
       unawaited(_sub?.cancel());
-      _fail(
-        l.adviceImportNoSpace(formatBytes(l, total), formatBytes(l, free)),
-      );
+      _fail(l.adviceImportNoSpace(formatBytes(l, total), formatBytes(l, free)));
       return;
     }
     switch (p.phase) {

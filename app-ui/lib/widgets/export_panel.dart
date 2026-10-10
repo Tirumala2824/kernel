@@ -60,7 +60,9 @@ class _ExportPanelState extends ConsumerState<ExportPanel> {
   Future<AdviceText?> _narrative() async {
     final AnalyticsSummary summary;
     try {
-      summary = await ref.read(analyticsServiceProvider).summarize(widget.scope);
+      summary = await ref
+          .read(analyticsServiceProvider)
+          .summarize(widget.scope);
     } on Object {
       return null;
     }
@@ -134,7 +136,9 @@ class _ExportPanelState extends ConsumerState<ExportPanel> {
               for (final format in widget.formats)
                 FilledButton.icon(
                   key: Key(
-                    history ? 'export-${format.name}' : 'export-$kind-${format.name}',
+                    history
+                        ? 'export-${format.name}'
+                        : 'export-$kind-${format.name}',
                   ),
                   onPressed: _busy == null ? () => _export(format) : null,
                   icon: _busy == format
