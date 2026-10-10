@@ -2,11 +2,16 @@ import 'package:audio_ai/audio_ai.dart';
 import 'package:data_operations/data_operations.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:local_llm/local_llm.dart';
 
 import 'app/providers.dart';
 
 /// Binds the providers in lib/app/providers.dart to the real on-device
-/// implementations: the native scan engine and the local SQLite data layer.
+/// implementations: the native scan engine, the local SQLite data layer and
+/// the opt-in on-phone advice engine.
+///
+/// The pest path (audio_ai) and the advice path (local_llm) are separate
+/// objects with no reference to each other (guardrails §8).
 ///
 /// If opening local data fails, the start screen reports an incomplete setup
 /// because the unbound providers throw.
@@ -23,6 +28,9 @@ Future<List<Override>> bootstrapOverrides() async {
     debugPrint('Kernel: local data failed to open: $error\n$stack');
     return const [];
   }
+  final advice = LocalAdviceEngine(
+    optIn: ops.settings.watchLocalAdviceOptIn(),
+  );
   return [
     scanEngineProvider.overrideWithValue(engine),
     itemRepositoryProvider.overrideWithValue(ops.items),
@@ -38,5 +46,9 @@ Future<List<Override>> bootstrapOverrides() async {
     harvestRepositoryProvider.overrideWithValue(ops.harvests),
     labeledSampleRepositoryProvider.overrideWithValue(ops.labeledSamples),
     datasetExportServiceProvider.overrideWithValue(ops.datasetExport),
+    analyticsServiceProvider.overrideWithValue(ops.analytics),
+    adviceEngineProvider.overrideWithValue(advice),
+    adviceModelManagerProvider.overrideWithValue(LocalModelManager()),
+    modelFilePickerProvider.overrideWithValue(pickLitertlmUri),
   ];
 }
