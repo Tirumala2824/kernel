@@ -4,11 +4,18 @@ import 'dart:io';
 /// Small JSON files in app-private storage (catalog cache, consent, registry
 /// state, search vectors). Writes are atomic (temp file + rename).
 class HubStore {
-  HubStore(this.dir);
+  /// [dir] is resolved once, lazily (the native side reports filesDir).
+  HubStore(Future<Directory> Function() dir) : _dirProvider = dir;
 
-  final Directory dir;
+  HubStore.at(Directory dir) : _dirProvider = (() async => dir);
 
-  File _file(String name) => File('${dir.path}${Platform.pathSeparator}$name');
+  final Future<Directory> Function() _dirProvider;
+  Future<Directory>? _dir;
+
+  Future<File> _file(String name) async {
+    final dir = await (_dir ??= _dirProvider());
+    return File('${dir.path}${Platform.pathSeparator}$name');
+  }
 
   Future<Map<String, Object?>?> readJson(String name) async {
     final text = await readText(name);
@@ -25,8 +32,8 @@ class HubStore {
       writeText(name, jsonEncode(value));
 
   Future<String?> readText(String name) async {
-    final f = _file(name);
     try {
+      final f = await _file(name);
       if (!await f.exists()) return null;
       return await f.readAsString();
     } on FileSystemException {
@@ -36,8 +43,8 @@ class HubStore {
 
   Future<void> writeText(String name, String text) async {
     try {
-      await dir.create(recursive: true);
-      final f = _file(name);
+      final f = await _file(name);
+      await f.parent.create(recursive: true);
       final tmp = File('${f.path}.tmp');
       await tmp.writeAsString(text, flush: true);
       await tmp.rename(f.path);
@@ -48,7 +55,7 @@ class HubStore {
 
   Future<void> delete(String name) async {
     try {
-      final f = _file(name);
+      final f = await _file(name);
       if (await f.exists()) await f.delete();
     } on FileSystemException {
       // Nothing to do.
