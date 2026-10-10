@@ -13,6 +13,7 @@ import 'app_localizations_kn.dart';
 import 'app_localizations_ml.dart';
 import 'app_localizations_mr.dart';
 import 'app_localizations_or.dart';
+import 'app_localizations_pa.dart';
 import 'app_localizations_ta.dart';
 import 'app_localizations_te.dart';
 
@@ -110,6 +111,7 @@ abstract class AppLocalizations {
     Locale('ml'),
     Locale('mr'),
     Locale('or'),
+    Locale('pa'),
     Locale('ta'),
     Locale('te'),
   ];
@@ -3668,6 +3670,7 @@ class _AppLocalizationsDelegate
     'ml',
     'mr',
     'or',
+    'pa',
     'ta',
     'te',
   ].contains(locale.languageCode);
@@ -3695,6 +3698,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsMr();
     case 'or':
       return AppLocalizationsOr();
+    case 'pa':
+      return AppLocalizationsPa();
     case 'ta':
       return AppLocalizationsTa();
     case 'te':
