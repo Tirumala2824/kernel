@@ -4495,6 +4495,1194 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{value} MB'**
   String unitMb(String value);
+
+  /// Model Hub screen title and Settings entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Model Hub'**
+  String get hubTitle;
+
+  /// Model Hub subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'On-phone models for Pest ID. They run only on this phone.'**
+  String get hubSubtitle;
+
+  /// Status card title; followed by each need with Installed/Missing.
+  ///
+  /// In en, this message translates to:
+  /// **'Pest ID needs'**
+  String get hubNeedsTitle;
+
+  /// Pest ID need: a model that understands photos.
+  ///
+  /// In en, this message translates to:
+  /// **'Image understanding'**
+  String get hubNeedImage;
+
+  /// Pest ID need: embedding model for on-phone search.
+  ///
+  /// In en, this message translates to:
+  /// **'Embeddings'**
+  String get hubNeedEmbeddings;
+
+  /// Pest ID need: a model that labels sounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound classifier'**
+  String get hubNeedSound;
+
+  /// Chip: the model is on the phone. Also the final download phase.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get hubInstalledChip;
+
+  /// Chip: the model is not on the phone yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing'**
+  String get hubMissingChip;
+
+  /// Status card when nothing is missing.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything Pest ID needs is on this phone.'**
+  String get hubAllInstalled;
+
+  /// Status card when a need is missing but the catalog has nothing to download.
+  ///
+  /// In en, this message translates to:
+  /// **'No download is available for the missing parts yet.'**
+  String get hubNothingToDownload;
+
+  /// What is left to download and its total size.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 model to download, about {size}} other{{count} models to download, about {size}}}'**
+  String hubDownloadSummary(int count, String size);
+
+  /// Button: start the Pest ID model downloads (asks for consent first).
+  ///
+  /// In en, this message translates to:
+  /// **'Download models'**
+  String get hubDownloadAction;
+
+  /// Error when downloads fail to start.
+  ///
+  /// In en, this message translates to:
+  /// **'Download could not start: {error}'**
+  String hubDownloadFailed(String error);
+
+  /// Error prefix when the model catalog cannot be read.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read the model list'**
+  String get hubCatalogUnavailable;
+
+  /// Error prefix when installed models cannot be read.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read installed models'**
+  String get hubInstalledUnavailable;
+
+  /// Why models already in Google's AI Edge Gallery app are downloaded again. Keep Kernel and AI Edge Gallery in Latin script.
+  ///
+  /// In en, this message translates to:
+  /// **'Kernel can\'t use files AI Edge Gallery already downloaded (Android keeps each app\'s files private), so it downloads the same models once.'**
+  String get hubGalleryNote;
+
+  /// One-time download consent sheet title.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Pest ID models?'**
+  String get hubConsentTitle;
+
+  /// Consent sheet explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'These models are downloaded once and then run only on this phone. Nothing you capture is ever uploaded.'**
+  String get hubConsentBody;
+
+  /// Consent sheet: one file's size.
+  ///
+  /// In en, this message translates to:
+  /// **'Size: {size}'**
+  String hubConsentSize(String size);
+
+  /// Consent sheet: the model's licence id (e.g. apache-2.0).
+  ///
+  /// In en, this message translates to:
+  /// **'Licence: {license}'**
+  String hubConsentLicense(String license);
+
+  /// Consent sheet: link text to the Hugging Face model card.
+  ///
+  /// In en, this message translates to:
+  /// **'Model card: {url}'**
+  String hubConsentModelCard(String url);
+
+  /// Consent sheet: where the file comes from. Keep Hugging Face in Latin script.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded from Hugging Face'**
+  String get hubSourceHf;
+
+  /// Consent sheet: where the file comes from. Keep Google AI Edge in Latin script.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded from Google AI Edge'**
+  String get hubSourceGoogle;
+
+  /// Consent sheet: where the file comes from (web host name).
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded from {host}'**
+  String hubSourceOther(String host);
+
+  /// Switch: download only on Wi-Fi (default on).
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi only'**
+  String get hubWifiOnly;
+
+  /// Explains the Wi-Fi only switch.
+  ///
+  /// In en, this message translates to:
+  /// **'Wait for Wi-Fi before downloading. These files are large.'**
+  String get hubWifiOnlyBody;
+
+  /// Consent sheet: total download size.
+  ///
+  /// In en, this message translates to:
+  /// **'Total: about {size}'**
+  String hubConsentTotal(String size);
+
+  /// Consent sheet: give consent and start downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Agree and download'**
+  String get hubConsentAgree;
+
+  /// Consent sheet: decline; nothing is downloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get hubConsentNotNow;
+
+  /// Card shown once download consent was given.
+  ///
+  /// In en, this message translates to:
+  /// **'Model downloads allowed'**
+  String get hubConsentGrantedTitle;
+
+  /// Card with per-file download progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads'**
+  String get hubDownloadsTitle;
+
+  /// Download phase.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting to start'**
+  String get hubPhaseQueued;
+
+  /// Download phase: Wi-Fi only is on and the phone is not on Wi-Fi.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Wi-Fi'**
+  String get hubPhaseWifi;
+
+  /// Download phase: not enough storage.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for free space: needs {size}'**
+  String hubPhaseSpace(String size);
+
+  /// Free storage shown while waiting for space.
+  ///
+  /// In en, this message translates to:
+  /// **'{free} free on this phone'**
+  String hubFreeSpace(String free);
+
+  /// Download phase with progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading: {done} of {total}'**
+  String hubPhaseDownloading(String done, String total);
+
+  /// Download phase: verifying the file's checksum.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking the file'**
+  String get hubPhaseVerifying;
+
+  /// Download phase.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get hubPhasePaused;
+
+  /// Download phase with a technical reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed: {reason}'**
+  String hubPhaseFailed(String reason);
+
+  /// Button: cancel one download.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get hubCancel;
+
+  /// Section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed models'**
+  String get hubInstalledTitle;
+
+  /// Empty state for installed models.
+  ///
+  /// In en, this message translates to:
+  /// **'No models installed yet'**
+  String get hubInstalledEmpty;
+
+  /// Empty state detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Pest ID works after its models are downloaded once.'**
+  String get hubInstalledEmptyDetail;
+
+  /// Installed model field: file path.
+  ///
+  /// In en, this message translates to:
+  /// **'File'**
+  String get hubFieldPath;
+
+  /// Installed model field.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get hubFieldSize;
+
+  /// Installed model field.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get hubFieldVersion;
+
+  /// Installed model field: what the model can do.
+  ///
+  /// In en, this message translates to:
+  /// **'Can do'**
+  String get hubFieldCapabilities;
+
+  /// Installed model field: GPU/CPU.
+  ///
+  /// In en, this message translates to:
+  /// **'Runs on'**
+  String get hubFieldBackends;
+
+  /// Badge: the file is the same as the one in Google's AI Edge Gallery catalog.
+  ///
+  /// In en, this message translates to:
+  /// **'Matches AI Edge Gallery'**
+  String get hubMatchesGallery;
+
+  /// Button: delete an installed model.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get hubRemove;
+
+  /// Confirm dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this model?'**
+  String get hubRemoveConfirmTitle;
+
+  /// Confirm dialog body.
+  ///
+  /// In en, this message translates to:
+  /// **'The file is deleted from this phone. Pest ID parts that need it stop until it is downloaded again.'**
+  String get hubRemoveConfirmBody;
+
+  /// Error after remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not remove: {error}'**
+  String hubRemoveFailed(String error);
+
+  /// Model capability.
+  ///
+  /// In en, this message translates to:
+  /// **'Text writing'**
+  String get hubCapTextGen;
+
+  /// Model capability.
+  ///
+  /// In en, this message translates to:
+  /// **'Image understanding'**
+  String get hubCapImageIn;
+
+  /// Model capability.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio understanding'**
+  String get hubCapAudioIn;
+
+  /// Model capability.
+  ///
+  /// In en, this message translates to:
+  /// **'Text embeddings'**
+  String get hubCapEmbedText;
+
+  /// Model capability.
+  ///
+  /// In en, this message translates to:
+  /// **'Image embeddings'**
+  String get hubCapEmbedImage;
+
+  /// Model capability.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio embeddings'**
+  String get hubCapEmbedAudio;
+
+  /// Model capability.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound classifier'**
+  String get hubCapAudioClassify;
+
+  /// Model capability.
+  ///
+  /// In en, this message translates to:
+  /// **'Image classifier'**
+  String get hubCapImageClassify;
+
+  /// Model capability: finds objects in a photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Object finder'**
+  String get hubCapObjectDetect;
+
+  /// Model capability: outlines objects in a photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Outline finder'**
+  String get hubCapSegment;
+
+  /// Model capability.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensor classifier'**
+  String get hubCapSensorClassify;
+
+  /// Search box label.
+  ///
+  /// In en, this message translates to:
+  /// **'Search models & pest info'**
+  String get hubSearchHint;
+
+  /// Search button and section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get hubSearchAction;
+
+  /// Search results group: models.
+  ///
+  /// In en, this message translates to:
+  /// **'Models'**
+  String get hubSearchModels;
+
+  /// Search results group: pest knowledge cards.
+  ///
+  /// In en, this message translates to:
+  /// **'Pest info'**
+  String get hubSearchPestInfo;
+
+  /// Search hit score (cosine similarity, e.g. 0.82).
+  ///
+  /// In en, this message translates to:
+  /// **'Similarity {score}'**
+  String hubSearchScore(String score);
+
+  /// Search group with no hits.
+  ///
+  /// In en, this message translates to:
+  /// **'No matches. Try other words.'**
+  String get hubSearchNoResults;
+
+  /// Search error.
+  ///
+  /// In en, this message translates to:
+  /// **'Search is not available right now: {error}'**
+  String hubSearchFailed(String error);
+
+  /// Note under the search box.
+  ///
+  /// In en, this message translates to:
+  /// **'Search runs on this phone. Similarity is not confidence.'**
+  String get hubSearchNote;
+
+  /// Chip on a pest info card that has not been reviewed by an expert.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs expert review'**
+  String get hubNeedsReview;
+
+  /// Settings section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pest ID, maps and sensors'**
+  String get hubSettingsSection;
+
+  /// Settings entry subtitle for Model Hub.
+  ///
+  /// In en, this message translates to:
+  /// **'Download and manage the on-phone models Pest ID uses.'**
+  String get hubSettingsCard;
+
+  /// Settings switch: maps consent. Keep Google Maps in Latin script.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Google Maps'**
+  String get hubMapsToggle;
+
+  /// Explains the maps switch.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the map area and route start and end are sent to Google. Never species, notes, photos or audio.'**
+  String get hubMapsToggleBody;
+
+  /// Maps consent dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Google Maps?'**
+  String get hubMapsConfirmTitle;
+
+  /// Maps consent dialog body.
+  ///
+  /// In en, this message translates to:
+  /// **'Maps need the internet. Google receives only the part of the map you look at and a route\'s start and end. Kernel never sends species, notes, photos, audio or sensor data. You can turn this off at any time.'**
+  String get hubMapsConfirmBody;
+
+  /// Maps consent dialog confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow maps'**
+  String get hubMapsConfirmAgree;
+
+  /// Settings switch: keep Pest ID media.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep photos and clips with sightings'**
+  String get hubKeepMediaToggle;
+
+  /// Explains the keep-media switch.
+  ///
+  /// In en, this message translates to:
+  /// **'When off, the photo or sound clip is deleted after analysis. Kept media stays on this phone.'**
+  String get hubKeepMediaToggleBody;
+
+  /// Sensors screen title and Settings entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensors'**
+  String get sensorTitle;
+
+  /// Sensors screen subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Paired listening nodes. They send signals, not diagnoses.'**
+  String get sensorSubtitle;
+
+  /// Empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'No sensors paired yet'**
+  String get sensorEmpty;
+
+  /// Empty state detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Pair a Kernel sensor node by scanning the QR label on it.'**
+  String get sensorEmptyDetail;
+
+  /// Button: pair a new sensor node.
+  ///
+  /// In en, this message translates to:
+  /// **'Pair a sensor'**
+  String get sensorPairAction;
+
+  /// Privacy note on the sensors screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensors send sound features only, never audio. Everything stays on this phone.'**
+  String get sensorPrivacyNote;
+
+  /// Settings entry subtitle for Sensors.
+  ///
+  /// In en, this message translates to:
+  /// **'Pair and check Bluetooth sensor nodes.'**
+  String get sensorSettingsCard;
+
+  /// Sensor type.
+  ///
+  /// In en, this message translates to:
+  /// **'Ultrasonic (air)'**
+  String get sensorTypeUsAir;
+
+  /// Sensor type: pressed against a sack or wall.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact (piezo)'**
+  String get sensorTypeContactPiezo;
+
+  /// Sensor type: pressed against a sack or wall.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact (vibration)'**
+  String get sensorTypeContactAccel;
+
+  /// Sensor type.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound (air)'**
+  String get sensorTypeAudioAir;
+
+  /// Link state chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Not paired'**
+  String get sensorLinkUnpaired;
+
+  /// Link state chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Pairing'**
+  String get sensorLinkPairing;
+
+  /// Link state chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting'**
+  String get sensorLinkConnecting;
+
+  /// Link state chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get sensorLinkConnected;
+
+  /// Link state chip: connected and security check passed.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected securely'**
+  String get sensorLinkAuthenticated;
+
+  /// Link state chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected'**
+  String get sensorLinkDisconnected;
+
+  /// Link state chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Link problem'**
+  String get sensorLinkError;
+
+  /// Chip while no status has arrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Status unknown'**
+  String get sensorStatusUnknown;
+
+  /// Battery chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery {percent}%'**
+  String sensorBattery(int percent);
+
+  /// Battery chip when not reported.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery unknown'**
+  String get sensorBatteryUnknown;
+
+  /// Health chip: the sensor itself works. Says nothing about pests.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensor working'**
+  String get sensorHealthOk;
+
+  /// Health chip. Must keep 'results not evaluated'; never imply nothing is there.
+  ///
+  /// In en, this message translates to:
+  /// **'Jammed — ultrasonic source nearby (e.g. a repeller); results not evaluated'**
+  String get sensorHealthJammed;
+
+  /// Health chip: the signal is too loud to measure.
+  ///
+  /// In en, this message translates to:
+  /// **'Clipped'**
+  String get sensorHealthClipped;
+
+  /// Health chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Low battery'**
+  String get sensorHealthLowBattery;
+
+  /// Health chip: the sensor must learn its background first.
+  ///
+  /// In en, this message translates to:
+  /// **'Survey needed'**
+  String get sensorHealthSurveyNeeded;
+
+  /// Health chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Security check failed — pair again'**
+  String get sensorHealthAuthFailed;
+
+  /// Banner title when jammed/clipped/survey needed.
+  ///
+  /// In en, this message translates to:
+  /// **'Not evaluated'**
+  String get sensorNotEvaluatedTitle;
+
+  /// Banner body. Keep the meaning exact.
+  ///
+  /// In en, this message translates to:
+  /// **'This sensor can\'t check right now. This does not mean nothing is there. Inspect physically.'**
+  String get sensorNotEvaluatedBody;
+
+  /// Pair screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pair a sensor'**
+  String get sensorPairTitle;
+
+  /// Pair screen instructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Point the camera at the QR label on the sensor node.'**
+  String get sensorPairInstructions;
+
+  /// Pair screen privacy note.
+  ///
+  /// In en, this message translates to:
+  /// **'The label holds the sensor\'s security key. It is kept in protected storage on this phone and is never shown or sent.'**
+  String get sensorPairPrivacy;
+
+  /// Scanned QR is not a sensor label.
+  ///
+  /// In en, this message translates to:
+  /// **'This isn\'t a Kernel sensor label.'**
+  String get sensorPairNotSensor;
+
+  /// Shown while pairing.
+  ///
+  /// In en, this message translates to:
+  /// **'Pairing. Accept the Android pairing request.'**
+  String get sensorPairing;
+
+  /// The user cancelled the Android pairing dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Pairing was cancelled.'**
+  String get sensorPairCancelled;
+
+  /// Pairing error.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not pair: {error}'**
+  String sensorPairFailed(String error);
+
+  /// Button: scan another QR label.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan again'**
+  String get sensorPairTryAgain;
+
+  /// Snackbar after pairing.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} paired'**
+  String sensorPairedSnack(String name);
+
+  /// Camera permission rationale title.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow the camera to read the label'**
+  String get sensorCameraTitle;
+
+  /// Camera permission rationale.
+  ///
+  /// In en, this message translates to:
+  /// **'Kernel uses the camera only to read the sensor\'s QR label. Nothing is recorded or sent.'**
+  String get sensorCameraBody;
+
+  /// Placement screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Where is this sensor?'**
+  String get sensorPlaceTitle;
+
+  /// Placement screen subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the place, and the sack or container if it sits on one.'**
+  String get sensorPlaceSubtitle;
+
+  /// Placement field: room/store/stack.
+  ///
+  /// In en, this message translates to:
+  /// **'Place'**
+  String get sensorPlaceLocation;
+
+  /// Placement field.
+  ///
+  /// In en, this message translates to:
+  /// **'Sack or container'**
+  String get sensorPlaceItem;
+
+  /// No placement chosen.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get sensorPlaceNone;
+
+  /// Placement note.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensor evidence then shows on that sack or container, separate from scans and inspections.'**
+  String get sensorPlaceNote;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Save placement'**
+  String get sensorPlaceSave;
+
+  /// Button: skip placement for now.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get sensorPlaceSkip;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Placement saved'**
+  String get sensorPlaceSaved;
+
+  /// Error.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the placement: {error}'**
+  String sensorPlaceFailed(String error);
+
+  /// Placement empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'No places yet — add a room or store first'**
+  String get sensorPlaceNoLocations;
+
+  /// Button on the sensor screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Change placement'**
+  String get sensorPlaceChange;
+
+  /// Unknown node id.
+  ///
+  /// In en, this message translates to:
+  /// **'This sensor is not on this phone.'**
+  String get sensorNotFound;
+
+  /// Card title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensor details'**
+  String get sensorDetailsTitle;
+
+  /// Sensor field.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get sensorFieldType;
+
+  /// Sensor field.
+  ///
+  /// In en, this message translates to:
+  /// **'Place'**
+  String get sensorFieldPlace;
+
+  /// Sensor field: the sack or container.
+  ///
+  /// In en, this message translates to:
+  /// **'Placed on'**
+  String get sensorFieldItem;
+
+  /// Sensor field: the sensor's software version.
+  ///
+  /// In en, this message translates to:
+  /// **'Firmware'**
+  String get sensorFieldFirmware;
+
+  /// Sensor field: short id of the security key (not the key).
+  ///
+  /// In en, this message translates to:
+  /// **'Key fingerprint'**
+  String get sensorFieldKey;
+
+  /// Sensor field.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen'**
+  String get sensorFieldLastSeen;
+
+  /// Live view of energy per frequency band.
+  ///
+  /// In en, this message translates to:
+  /// **'Live bands'**
+  String get sensorLiveTitle;
+
+  /// Live view note.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy per frequency band only. The sensor sends no audio.'**
+  String get sensorLiveNote;
+
+  /// Live view before data arrives.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the sensor'**
+  String get sensorLiveWaiting;
+
+  /// One frequency band.
+  ///
+  /// In en, this message translates to:
+  /// **'{low}–{high} kHz'**
+  String sensorBandRange(String low, String high);
+
+  /// Band level in words.
+  ///
+  /// In en, this message translates to:
+  /// **'{db} dB above background'**
+  String sensorBandLevel(String db);
+
+  /// Peak frequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Strongest at {khz} kHz'**
+  String sensorLivePeak(String khz);
+
+  /// Section: the sensor learns its background noise.
+  ///
+  /// In en, this message translates to:
+  /// **'Survey'**
+  String get sensorSurveyTitle;
+
+  /// Survey explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, =1{Keep the place quiet for 1 minute so the sensor learns its normal background.} other{Keep the place quiet for {minutes} minutes so the sensor learns its normal background.}}'**
+  String sensorSurveyBody(int minutes);
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, =1{Start survey (1 min)} other{Start survey ({minutes} min)}}'**
+  String sensorSurveyStart(int minutes);
+
+  /// Survey progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Surveying: {done} of {total} min'**
+  String sensorSurveyRunning(int done, int total);
+
+  /// Survey finished.
+  ///
+  /// In en, this message translates to:
+  /// **'Survey finished'**
+  String get sensorSurveyDone;
+
+  /// Survey error.
+  ///
+  /// In en, this message translates to:
+  /// **'Survey failed: {error}'**
+  String sensorSurveyFailed(String error);
+
+  /// Section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Overnight monitoring'**
+  String get sensorSessionTitle;
+
+  /// Explains the foreground notification and the battery optimisation exemption.
+  ///
+  /// In en, this message translates to:
+  /// **'Kernel keeps listening to this sensor in the background. Android shows a notification while it runs. To keep it running all night, open app settings and set battery use to Unrestricted (no battery optimisation).'**
+  String get sensorSessionBody;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Start overnight session'**
+  String get sensorSessionStart;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop session'**
+  String get sensorSessionStop;
+
+  /// Chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Session running'**
+  String get sensorSessionRunning;
+
+  /// Error.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not change the session: {error}'**
+  String sensorSessionFailed(String error);
+
+  /// Button: opens Android app settings (battery).
+  ///
+  /// In en, this message translates to:
+  /// **'Open app settings'**
+  String get sensorBatterySettings;
+
+  /// Button: fetch events stored on the sensor.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync events'**
+  String get sensorSyncAction;
+
+  /// After syncing.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No new events} =1{1 new event} other{{count} new events}}'**
+  String sensorSynced(int count);
+
+  /// Error.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not sync: {error}'**
+  String sensorSyncFailed(String error);
+
+  /// Section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Event timeline'**
+  String get sensorTimelineTitle;
+
+  /// Empty timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'No events recorded yet'**
+  String get sensorTimelineEmpty;
+
+  /// Empty timeline detail. Keep the meaning exact.
+  ///
+  /// In en, this message translates to:
+  /// **'This is not proof that nothing is there. Sync to fetch events stored on the sensor.'**
+  String get sensorTimelineEmptyDetail;
+
+  /// Summary card title.
+  ///
+  /// In en, this message translates to:
+  /// **'Signals'**
+  String get sensorSummaryTitle;
+
+  /// Required wording: N events in M minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 event} other{{count} events}} in {minutes, plural, =1{1 minute} other{{minutes} minutes}}'**
+  String sensorEventsSummary(int count, int minutes);
+
+  /// Shown under every event summary.
+  ///
+  /// In en, this message translates to:
+  /// **'Signals, not a diagnosis. Inspect physically.'**
+  String get sensorSignalNotDiagnosis;
+
+  /// Event without a signature match.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmatched signal'**
+  String get sensorUnmatched;
+
+  /// Signature name (experimental).
+  ///
+  /// In en, this message translates to:
+  /// **'Mouse-like ultrasonic calls'**
+  String get sensorSigMouseUsv;
+
+  /// Signature name (experimental).
+  ///
+  /// In en, this message translates to:
+  /// **'Rat-like 22 kHz calls'**
+  String get sensorSigRat22k;
+
+  /// Signature name (experimental).
+  ///
+  /// In en, this message translates to:
+  /// **'Grain-larva-like feeding clicks'**
+  String get sensorSigGrainLarva;
+
+  /// Signature name (experimental).
+  ///
+  /// In en, this message translates to:
+  /// **'Termite-like drumming'**
+  String get sensorSigTermiteDrum;
+
+  /// Signature without a translated name.
+  ///
+  /// In en, this message translates to:
+  /// **'Signature: {id}'**
+  String sensorSigOther(String id);
+
+  /// Chip: signature pack version.
+  ///
+  /// In en, this message translates to:
+  /// **'Signature pack {version}'**
+  String sensorPack(String version);
+
+  /// Event match score.
+  ///
+  /// In en, this message translates to:
+  /// **'Rule score {score} (not a probability)'**
+  String sensorScore(String score);
+
+  /// One event: time, sound shape, peak frequency, duration.
+  ///
+  /// In en, this message translates to:
+  /// **'{time} · {kind} · {khz} kHz · {ms} ms'**
+  String sensorEventLine(String time, String kind, String khz, int ms);
+
+  /// Event sound shape.
+  ///
+  /// In en, this message translates to:
+  /// **'Tone'**
+  String get sensorClassTonal;
+
+  /// Event sound shape: pitch slides up or down.
+  ///
+  /// In en, this message translates to:
+  /// **'Sweep'**
+  String get sensorClassFmSweep;
+
+  /// Event sound shape.
+  ///
+  /// In en, this message translates to:
+  /// **'Flat tone'**
+  String get sensorClassFlatTone;
+
+  /// Event sound shape.
+  ///
+  /// In en, this message translates to:
+  /// **'Clicks'**
+  String get sensorClassImpulse;
+
+  /// Event sound shape.
+  ///
+  /// In en, this message translates to:
+  /// **'Harmonic tone'**
+  String get sensorClassHarmonic;
+
+  /// Event sound shape.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulsed chirps'**
+  String get sensorClassChirp;
+
+  /// Event sound shape: a device that never stops (e.g. a repeller).
+  ///
+  /// In en, this message translates to:
+  /// **'Continuous emitter'**
+  String get sensorClassEmitter;
+
+  /// Item detail section, separate from scans and inspections.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensor evidence'**
+  String get sensorEvidenceTitle;
+
+  /// Sensor evidence explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Signals from sensors placed here. Experimental, and kept separate from scans and inspections.'**
+  String get sensorEvidenceBody;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Open sensor'**
+  String get sensorEvidenceOpen;
+
+  /// No events. Keep the meaning exact.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{No sensor events in the last day. This is not proof that nothing is there.} other{No sensor events in the last {days} days. This is not proof that nothing is there.}}'**
+  String sensorEvidenceEmpty(int days);
+
+  /// Time window of the summary.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Last day} other{Last {days} days}}'**
+  String sensorEvidenceWindow(int days);
+
+  /// Next step: sensor events on one record.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensor signals at {name}'**
+  String sensorNextActivityOne(String name);
+
+  /// Next step: sensor events.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Sensor signals in 1 place} other{Sensor signals in {count} places}}'**
+  String sensorNextActivityMany(int count);
+
+  /// Next step subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Signals, not a diagnosis. Inspect physically.'**
+  String get sensorNextActivityBody;
+
+  /// Next step: one node needs attention.
+  ///
+  /// In en, this message translates to:
+  /// **'Check sensor {name}'**
+  String sensorNextAttentionOne(String name);
+
+  /// Next step: nodes need attention.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 sensor needs attention} other{{count} sensors need attention}}'**
+  String sensorNextAttentionMany(int count);
+
+  /// Next step subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Jammed, clipped, low battery or survey needed. Its results are not evaluated.'**
+  String get sensorNextAttentionBody;
+
+  /// Next step action.
+  ///
+  /// In en, this message translates to:
+  /// **'Open sensors'**
+  String get sensorNextOpen;
 }
 
 class _AppLocalizationsDelegate

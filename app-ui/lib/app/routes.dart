@@ -26,6 +26,16 @@ abstract final class Routes {
   static const newHarvest = '/harvests/new';
   static const insights = '/insights';
 
+  /// Model Hub: Pest ID model status, one-time download consent, installed
+  /// models and semantic search (Settings and Pest ID screens link here).
+  static const models = '/models';
+
+  /// Paired BLE sensor nodes, and pairing from the node's QR label.
+  static const sensors = '/sensors';
+  static const sensorPair = '/sensors/pair';
+  static String sensor(String nodeId) => '/sensors/$nodeId';
+  static String sensorPlacement(String nodeId) => '/sensors/$nodeId/place';
+
   /// Reports tab with one report preset at the top (pre-sale for a harvest,
   /// lot summary for a lot). Used by next-step actions.
   static String reportPreset(

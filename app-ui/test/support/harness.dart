@@ -42,7 +42,19 @@ class TestEnv {
         samples.clear();
       },
     );
+    provisioner = ScriptedModelProvisioner(modelRegistry);
+    sensorEvents = InMemorySensorEventRepository(sensorNodes);
   }
+
+  // Phase 4: model hub, knowledge cards and sensors.
+  final modelCatalog = ScriptedModelCatalog();
+  final modelRegistry = InMemoryModelRegistry();
+  late final ScriptedModelProvisioner provisioner;
+  final modelSearch = ScriptedModelSearch();
+  final knowledge = ScriptedKnowledgeService();
+  final sensorLink = ScriptedSensorLink();
+  final sensorNodes = InMemorySensorNodeRepository();
+  late final InMemorySensorEventRepository sensorEvents;
 
   final bool offline;
   final InMemorySettingsRepository settings;
@@ -116,6 +128,14 @@ class TestEnv {
     photoImageProvider.overrideWithValue((_) => transparentPixel),
     qrScannerBuilderProvider.overrideWithValue(qr.build),
     appVersionProvider.overrideWith((ref) async => '0.1.0+1'),
+    modelCatalogProvider.overrideWithValue(modelCatalog),
+    modelRegistryProvider.overrideWithValue(modelRegistry),
+    modelProvisionerProvider.overrideWithValue(provisioner),
+    modelSearchProvider.overrideWithValue(modelSearch),
+    knowledgeServiceProvider.overrideWithValue(knowledge),
+    sensorLinkProvider.overrideWithValue(sensorLink),
+    sensorNodeRepositoryProvider.overrideWithValue(sensorNodes),
+    sensorEventRepositoryProvider.overrideWithValue(sensorEvents),
   ];
 
   Future<GrainItem> addItem({

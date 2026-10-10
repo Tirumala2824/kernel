@@ -171,5 +171,49 @@ NextStep describeNextAction(AppLocalizations l, Role role, NextAction a) {
         location: Routes.reportPreset(ReportKind.lotSummary, lotId: a.lotId),
         tab: true,
       );
+    // Sensors: signals, never diagnoses (guardrails §10).
+    case NextActionKind.sensorActivity:
+      return NextStep(
+        title: anyName != null
+            ? l.sensorNextActivityOne(anyName)
+            : l.sensorNextActivityMany(a.count),
+        subtitle: l.sensorNextActivityBody,
+        actionLabel: a.itemId != null ? l.nextActionOpen : l.sensorNextOpen,
+        icon: Icons.sensors_rounded,
+        location: a.itemId != null ? Routes.item(a.itemId!) : Routes.sensors,
+        attention: true,
+      );
+    case NextActionKind.sensorNeedsAttention:
+      return NextStep(
+        title: name != null
+            ? l.sensorNextAttentionOne(name)
+            : l.sensorNextAttentionMany(a.count),
+        subtitle: l.sensorNextAttentionBody,
+        actionLabel: l.sensorNextOpen,
+        icon: Icons.sensors_off_rounded,
+        location: Routes.sensors,
+        attention: true,
+      );
+    // Transitional until the Pest ID screens (ui-dev part A) land their own
+    // copy and routes: open the record and ask for a physical check.
+    case NextActionKind.pestSightingsRepeated ||
+        NextActionKind.pestSafetyAlert:
+      return NextStep(
+        title: name != null
+            ? l.nextInspectOne(name)
+            : (kind == 'container'
+                  ? l.nextInspectContainers(a.count)
+                  : l.nextInspectSacks(a.count)),
+        subtitle: l.nextInspectBody,
+        actionLabel: l.nextActionOpen,
+        icon: Icons.pest_control_rounded,
+        location: a.itemId != null
+            ? Routes.item(a.itemId!)
+            : a.locationId != null
+            ? Routes.location(a.locationId!)
+            : Routes.home,
+        tab: a.itemId == null && a.locationId == null,
+        attention: true,
+      );
   }
 }

@@ -151,3 +151,63 @@ final modelFilePickerProvider = Provider<ModelFilePicker>(
   (ref) => _unbound('modelFilePickerProvider', 'pickLitertlmUri', 'local_llm'),
   name: 'modelFilePickerProvider',
 );
+
+// ---------------------------------------------------------------------------
+// Phase 4: model hub (package:model_hub), Pest ID knowledge cards and BLE
+// sensor nodes (package:sensor_link, data_operations). Unbound here like the
+// rest; bootstrap.dart binds the real implementations. Sections that only
+// add to existing records (e.g. "Sensor evidence" on an item) hide
+// themselves quietly when one of these is unbound or fails.
+
+final modelCatalogProvider = Provider<ModelCatalog>(
+  (ref) => _unbound('modelCatalogProvider', 'ModelCatalog', 'model_hub'),
+  name: 'modelCatalogProvider',
+);
+
+final modelRegistryProvider = Provider<ModelRegistry>(
+  (ref) => _unbound('modelRegistryProvider', 'ModelRegistry', 'model_hub'),
+  name: 'modelRegistryProvider',
+);
+
+final modelProvisionerProvider = Provider<ModelProvisioner>(
+  (ref) =>
+      _unbound('modelProvisionerProvider', 'ModelProvisioner', 'model_hub'),
+  name: 'modelProvisionerProvider',
+);
+
+final modelSearchProvider = Provider<ModelSearch>(
+  (ref) => _unbound('modelSearchProvider', 'ModelSearch', 'model_hub'),
+  name: 'modelSearchProvider',
+);
+
+final knowledgeServiceProvider = Provider<KnowledgeService>(
+  (ref) => _unbound(
+    'knowledgeServiceProvider',
+    'KnowledgeService',
+    'data_operations',
+  ),
+  name: 'knowledgeServiceProvider',
+);
+
+final sensorLinkProvider = Provider<SensorLink>(
+  (ref) => _unbound('sensorLinkProvider', 'SensorLink', 'sensor_link'),
+  name: 'sensorLinkProvider',
+);
+
+final sensorNodeRepositoryProvider = Provider<SensorNodeRepository>(
+  (ref) => _unbound(
+    'sensorNodeRepositoryProvider',
+    'SensorNodeRepository',
+    'data_operations',
+  ),
+  name: 'sensorNodeRepositoryProvider',
+);
+
+final sensorEventRepositoryProvider = Provider<SensorEventRepository>(
+  (ref) => _unbound(
+    'sensorEventRepositoryProvider',
+    'SensorEventRepository',
+    'data_operations',
+  ),
+  name: 'sensorEventRepositoryProvider',
+);

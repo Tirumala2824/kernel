@@ -12,6 +12,7 @@ import '../../widgets/kernel_app_bar.dart';
 import '../../widgets/kernel_card.dart';
 import 'advice_settings.dart';
 import 'language_picker.dart';
+import 'pest_id_settings.dart';
 import 'settings_sections.dart';
 
 /// Language, scan feedback, privacy (F12), research mode and on-device
@@ -121,6 +122,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             subtitle: l.diagnosticsCard,
             onTap: () => context.push(Routes.diagnostics),
           ),
+          SectionTitle(l.hubSettingsSection),
+          const PestIdSettingsSection(),
           QuietNote(l.settingsFooter, icon: Icons.phonelink_lock_rounded),
         ],
       ),
