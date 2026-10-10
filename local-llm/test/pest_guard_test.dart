@@ -17,25 +17,68 @@ void main() {
       'This may be a German cockroach. The label is AI-estimated and not '
           'calibrated. Remove food and water sources and seal gaps. Call a '
           'licensed pest-control professional if you see them in daylight.',
-      'This might be a scorpion. Keep a safe distance and keep children '
-          'away. Seek medical care for any sting.',
-      'This may be a monitor lizard, which is protected wildlife. Do not '
-          'harm, capture or kill it. Contact the State Forest Department or a '
-          'licensed rescuer.',
-      'For your safety, do not touch or handle it. Get medical help for a '
-          'bite.',
+      'This might be a scorpion; it can make you very ill. Stay well back and '
+          'keep children away. If bitten or stung: get medical care.',
       'The droppings may come from rats. Store food in closed containers and '
-          'seal holes. The identification needs to be confirmed by an expert.',
+          'seal holes. Ask an expert to check the identification.',
       // Hindi: may be a rat; keep food closed; call a professional.
       'यह शायद चूहा हो सकता है। खाना बंद डिब्बों में रखें और छेद बंद करें। '
           'ज़रूरत हो तो किसी पेशेवर को बुलाएँ।',
-      // Hindi: keep a safe distance, do not kill.
-      'सुरक्षित दूरी बनाए रखें और इसे न मारें। वन विभाग से संपर्क करें।',
       // Tamil: keep away and see a doctor.
       'இதிலிருந்து விலகி இருங்கள். கடித்தால் மருத்துவரை அணுகவும்.',
     ]) {
       test(text.substring(0, 24), () => expectPestAllowed(text));
     }
+  });
+
+  group('the lead\'s required wording passes (card review)', () {
+    test('protected wildlife and stay-well-back answers, English', () {
+      expectPestAllowed(
+        'This may be a monitor lizard, which is protected wildlife; the label '
+        'is AI-estimated. Do not harm, catch or injure it; contact the State '
+        'Forest Department or a licensed rescuer.',
+      );
+      expectPestAllowed(
+        'This may be a scorpion, which has a strong sting. Stay well back and '
+        'keep children away. If bitten or stung: get medical care, see a '
+        'doctor or go to hospital.',
+      );
+    });
+
+    test('protected wildlife and stay-well-back answers, Hindi', () {
+      // "This may be a monitor lizard, which is protected. Do not harm,
+      // catch or injure it; contact the State Forest Department or a
+      // licensed rescuer."
+      expectPestAllowed(
+        'यह शायद गोह है, जो संरक्षित वन्यजीव है। इसे नुकसान न पहुँचाएँ, न '
+        'पकड़ें और न घायल करें; राज्य वन विभाग या लाइसेंस प्राप्त बचावकर्ता से '
+        'संपर्क करें।',
+      );
+      // "Stay well back. If bitten or stung: see a doctor or go to hospital."
+      expectPestAllowed(
+        'यह शायद बिच्छू है। दूर रहें और बच्चों को दूर रखें। काटने या डंक लगने '
+        'पर: डॉक्टर को दिखाएँ या अस्पताल जाएँ।',
+      );
+    });
+
+    test('the old wording is still rejected (no allowances)', () {
+      // "kill" stays blocked even when negated; the cards now say
+      // "catch or injure" instead.
+      expectPestRejected(
+        'Do not harm, capture or kill it; contact the State Forest Department.',
+        GuardCategory.treatment,
+      );
+      expectPestRejected('Keep a safe distance.', GuardCategory.safetyClaim);
+      expectPestRejected('For your safety, stay away.', GuardCategory.safetyClaim);
+      expectPestRejected('Get medical treatment for a sting.', GuardCategory.treatment);
+      expectPestRejected('First aid: wash with medicine.', GuardCategory.treatment);
+      expectPestRejected('सुरक्षित दूरी बनाए रखें।', GuardCategory.safetyClaim);
+      expectPestRejected('डॉक्टर से उपचार लें।', GuardCategory.treatment);
+      expectPestRejected(
+        'The species needs to be confirmed by an expert.',
+        GuardCategory.certainty,
+      );
+    });
   });
 
   group('rodenticides, poisons and doses are rejected', () {
@@ -129,13 +172,13 @@ void main() {
     }
   });
 
-  test('allowances never hide a treatment next to them', () {
+  test('approved wording never hides a treatment next to it', () {
     expectPestRejected(
-      'Do not touch it; spray it with insecticide instead.',
+      'Stay well back; spray it with insecticide instead.',
       GuardCategory.treatment,
     );
     expectPestRejected(
-      'Keep a safe distance and put rat poison nearby.',
+      'Do not harm, catch or injure it, but put rat poison nearby.',
       GuardCategory.treatment,
     );
     expectPestRejected('Kill it with a stick.', GuardCategory.treatment);

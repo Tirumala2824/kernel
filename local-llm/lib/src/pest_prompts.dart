@@ -94,13 +94,53 @@ String signalWords(SignalKind kind) => switch (kind) {
   SignalKind.soundEvent => 'a sound event',
 };
 
-String safetyWords(SafetyLevel s) => switch (s) {
-  SafetyLevel.low => 'low',
-  SafetyLevel.caution => 'caution',
-  SafetyLevel.medicalRisk => 'medical risk (bites, stings or disease)',
-  SafetyLevel.venomous => 'venomous',
-  SafetyLevel.protectedWildlife => 'protected wildlife',
+// ---------------------------------------------------------------------------
+// Wording (lead card review): the output guard rejects "safe", "treatment",
+// "medicine", "poison", "kill" and their Indic equivalents, so the prompts
+// ask for wording that passes it instead of loosening the guard.
+
+/// Required sentence for protected wildlife (e.g. monitor lizards).
+const String protectedWildlifeWording =
+    'Do not harm, catch or injure it; contact the State Forest Department or '
+    'a licensed rescuer.';
+
+/// Required wording for animals that bite, sting or spread disease.
+const String keepBackWording =
+    'Stay well back. If bitten or stung: get medical care, see a doctor or go '
+    'to hospital.';
+
+/// Words the Pest ID prompts forbid in generated text.
+const List<String> forbiddenPestWords = [
+  'safe',
+  'safety',
+  'treatment',
+  'medicine',
+  'first aid',
+  'poison',
+  'venom',
+];
+
+/// The required sentence for a safety level, or null when none applies.
+/// Rendered instead of the safety enum, which is never shown to the model.
+String? requiredWording(SafetyLevel s) => switch (s) {
+  SafetyLevel.low || SafetyLevel.caution => null,
+  SafetyLevel.medicalRisk || SafetyLevel.venomous => keepBackWording,
+  SafetyLevel.protectedWildlife => protectedWildlifeWording,
 };
+
+/// Shared wording rules for every Pest ID instruction that produces text.
+List<String> _wordingRules(String tag) => [
+  '- Never use these words: ${forbiddenPestWords.join(', ')}, or their '
+      'translations. Say "stay well back" instead of "safe distance", '
+      '"if bitten or stung:" instead of "first aid", "get medical care", '
+      '"see a doctor" or "go to hospital" instead of "treatment" or '
+      '"medicine", and "strong bite" or "can make you very ill" instead of '
+      '"venomous" or "poisonous". Never write "kill".',
+  if (tag == 'hi' || tag == 'mr')
+    '- Do not write सुरक्षित, सुरक्षा, उपचार, इलाज, दवा, ज़हर or विष. Write '
+        '"दूर रहें", "काटने या डंक लगने पर: डॉक्टर को दिखाएँ या अस्पताल '
+        'जाएँ" instead.',
+];
 
 String groupWords(PestGroup g) => switch (g) {
   PestGroup.insect => 'insect',
@@ -147,6 +187,7 @@ class PestScene {
 
 String analysisSystemInstruction(String? languageTag) {
   final language = _language(languageTag);
+  final tag = normalizeLanguageTag(languageTag);
   return [
     'You identify pests and other animals, or their signs, in photos for '
         'Kernel, a phone app used in homes, farms and grain stores in India.',
@@ -172,6 +213,7 @@ String analysisSystemInstruction(String? languageTag) {
     '- Write commonName, taxonomyPath, keyFeatures, anomalies and insights '
         'in $language, as short plain phrases. taxonomyPath goes from coarse '
         'to fine. No links.',
+    ..._wordingRules(tag).map((r) => r.replaceFirst('- ', '- In those fields: ')),
   ].join('\n');
 }
 
@@ -271,7 +313,9 @@ String soundSystemInstruction(String? languageTag) {
     '- Describe what can be heard: pitch, rhythm, loudness and duration.',
     '- You may say which kind of animal it might come from, using words like '
         '"may" or "might". Never claim certainty.',
-    '- Never mention pesticides, poisons, baits, sprays or any treatment.',
+    '- Never mention pesticides, rodenticides, baits, sprays or any other '
+        'product.',
+    ..._wordingRules(normalizeLanguageTag(languageTag)),
   ].join('\n');
 }
 
@@ -343,6 +387,7 @@ const int maxGuideWords = 120;
 
 String guideSystemInstruction(String? languageTag) {
   final language = _language(languageTag);
+  final tag = normalizeLanguageTag(languageTag);
   return [
     'You explain Pest ID results inside Kernel, a phone app used in homes, '
         'farms and grain stores in India.',
@@ -352,15 +397,14 @@ String guideSystemInstruction(String? languageTag) {
         'headings, no bullet points, no links, no emojis.',
     '- Use ONLY the card facts given. Do not add any other advice, numbers, '
         'products or species.',
-    '- Never mention or suggest any pesticide, rodenticide, fumigant, poison, '
-        'bait, spray, chemical or dose, not even to warn against it.',
+    '- Never mention or suggest any pesticide, rodenticide, fumigant, bait, '
+        'spray, chemical or dose, not even to warn against it.',
     '- Never say the identification is certain, and never say an animal or a '
-        'place is safe or harmless. The label is AI-estimated and not '
-        'calibrated; say so briefly.',
-    '- Follow each card\'s safety and legal text. For venomous or medically '
-        'important animals: keep your distance and get medical care for bites '
-        'or stings. For protected wildlife: do not harm, capture or kill it, '
-        'and contact the State Forest Department or a licensed rescuer.',
+        'place is harmless. The label is AI-estimated and not calibrated; say '
+        'so briefly and suggest an expert check.',
+    '- When a card gives "Required wording", include that sentence, in '
+        '$language.',
+    ..._wordingRules(tag),
     '- If the facts do not answer the question, say so and suggest a '
         'licensed professional.',
   ].join('\n');
@@ -384,21 +428,23 @@ List<String> _cardLines(int index, KnowledgeCard c, String languageTag) {
     return f.isEmpty ? null : '- $label: $f';
   }
 
+  // Never rendered: sources, the safety enum and reviewStatus (lead card
+  // review). The safety level only selects the required sentence.
   final legal = sanitizeFreeText(c.legal, maxFactChars);
+  final wording = requiredWording(c.safety);
   return [
     'Card ${index + 1}: ${cardName(c, languageTag)} (id ${c.id})',
     '- Group: ${groupWords(c.group)}',
-    '- Safety level: ${safetyWords(c.safety)}',
     if (sanitizeFreeText(c.summary, maxFactChars).isNotEmpty)
       '- Summary: ${sanitizeFreeText(c.summary, maxFactChars)}',
     ?field('Signs', c.signs),
     ?field('Look-alikes', c.lookAlikes),
     ?field('Health risks', c.healthRisks),
-    ?field('Safe steps', c.safeSteps),
+    ?field('Steps to take', c.safeSteps),
     ?field('Call a professional when', c.callProfessionalWhen),
-    ?field('First aid', c.firstAid),
+    ?field('If bitten or stung', c.firstAid),
     if (legal.isNotEmpty) '- Legal: $legal',
-    '- Review status: ${sanitizeFreeText(c.reviewStatus, 40).replaceAll('-', ' ')}',
+    if (wording != null) '- Required wording: $wording',
   ];
 }
 
@@ -408,6 +454,10 @@ PestPrompt renderGuidePrompt(PestGuideInput input) {
   final agreeing = (a.agreement.clamp(0.0, 1.0) * a.samples).round();
   final question = sanitizeFreeText(input.question, 200);
   final cards = input.cards.take(maxGuideCards).toList();
+  // The analysis' own level can be more serious than its cards (or there
+  // may be no matching card); its sentence is then required too.
+  final analysisWording = requiredWording(a.safety);
+  final covered = cards.any((c) => requiredWording(c.safety) == analysisWording);
   return PestPrompt(
     systemInstruction: guideSystemInstruction(tag),
     languageTag: tag,
@@ -417,7 +467,8 @@ PestPrompt renderGuidePrompt(PestGuideInput input) {
           '(card ${a.cardId ?? noMatchLabel})',
       '- The model\'s own confidence: ${percentWords(a.aiConfidence)}',
       '- Agreement between independent runs: $agreeing of ${a.samples}',
-      '- Safety level: ${safetyWords(a.safety)}',
+      if (analysisWording != null && !covered)
+        '- Required wording: $analysisWording',
       'Card facts:',
       for (var i = 0; i < cards.length; i++) ..._cardLines(i, cards[i], tag),
       question.isEmpty

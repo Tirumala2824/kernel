@@ -16,8 +16,10 @@ import kotlinx.coroutines.withContext
 /**
  * Registers the pigeon LlmHostApi and the LlmEvents event channels.
  *
- * No method channel, no network code, no permissions. Text in, text out;
- * see docs/guardrails.md §8 and LlmConfig for the isolation rules.
+ * No method channel, no network code, no permissions. Grain advice is text
+ * in, text out (LlmConfig); only Pest ID requests carry a validated crop or
+ * clip to the on-device engine (PestIdConfig, EmbedConfig). See
+ * docs/guardrails.md §8 and its amendment.
  */
 class LocalLlmPlugin : FlutterPlugin, ActivityAware, LlmHostApi {
     private var context: Context? = null

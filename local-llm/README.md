@@ -1,16 +1,26 @@
 # local_llm
 
-Kernel's opt-in, on-device language-model advice layer, built on Google AI Edge
-**LiteRT-LM** (`com.google.ai.edge.litertlm:litertlm-android:0.18.0`, pinned).
-It takes text in and gives text out, and it never handles audio. See
-[docs/guardrails.md §8](../docs/guardrails.md) and "Contracts v3" in
-[docs/contracts.md](../docs/contracts.md).
+Kernel's on-device LiteRT-LM layer, built on Google AI Edge **LiteRT-LM**
+(`com.google.ai.edge.litertlm:litertlm-android:0.18.0`, pinned):
+- grain advice (opt-in, text in, text out, never audio)
+- EmbeddingGemma embeddings and model-header probing
+- the Pest ID multimodal analyzer (Gemma 4 E2B, Pest ID mode only)
+
+See [docs/guardrails.md §8 (with its amendment) and §9](../docs/guardrails.md)
+and "Contracts v3/v4" in [docs/contracts.md](../docs/contracts.md).
 
 ## Public API (`package:local_llm/local_llm.dart`)
 
 | Symbol | What it does |
 |---|---|
-| `LocalAdviceEngine({required Stream<bool> optIn})` | Implements `AdviceEngine`. Pass the settings opt-in stream (`watchLocalAdviceOptIn`). |
+| `RuntimeManager({LlmHost? host})`, `RuntimeManager.shared` | Owns the native engines for every class below: one engine in memory at a time (Gemma text-only, Gemma Pest ID, or EmbeddingGemma), serialised requests, unload after 3 min idle (`runtimeIdleUnload`) and on memory pressure (`trimMemory()`; the plugin also handles `onTrimMemory`). The engines use `shared` unless one is passed. |
+| `typedef ModelPathResolver = Future<String?> Function()` | Injected model path (e.g. model-hub's registry). Null = no model, with no legacy fallback. Without a resolver the legacy `getExternalFilesDir("llm")` discovery is used. Paths must lie in the app's own storage (checked natively). |
+| `LocalAdviceEngine({required Stream<bool> optIn, ModelPathResolver? modelPath, RuntimeManager? runtime})` | Implements `AdviceEngine`. Pass the settings opt-in stream (`watchLocalAdviceOptIn`). Behaviour as in Phase 3; waiting for the runtime counts against the 25 s budget. |
+| `LocalEmbedder({ModelPathResolver? modelPath, RuntimeManager? runtime})` | Implements `Embedder` (EmbeddingGemma). Text uses the EmbeddingGemma prompts (`embeddingPrompt`); image/audio need a model whose header lists them. Matryoshka 128/256/512/768, re-normalised. Null on any failure; 15 s budget (`embedTimeout`). |
+| `LiteRtModelProbe()` | Implements `ModelProbe` via `ModelInfo.from` (header only, never loads weights, not serialised). |
+| `LocalPestAnalyzer({ModelPathResolver? modelPath, RuntimeManager? runtime, Stream<bool>? enabled})` | Implements `PestAnalyzer`. `enabled` defaults to always on. See "Pest ID" below. |
+| `checkPestOutput` | The Pest ID guard (grain rules plus certainty, "harmless" claims, rodenticides, poisons, doses). |
+| `pestPromptVersion`, `pestAnalysisBudget` (45 s), `pestGuideTimeout` (25 s), `selfConsistencySamples` (3) | Pest ID provenance and budgets. |
 | `LocalAdviceEngine.warmUp()` | Optional. Loads the model ahead of the first request, for example when a result screen opens. It does nothing unless the user has opted in. |
 | `LocalAdviceEngine.dispose()` | Stops the opt-in and native subscriptions. |
 | `LocalModelManager()` | Implements `AdviceModelManager`, with `importFromUri`, `deleteModel` and `freeSpaceBytes`. |
@@ -64,15 +74,24 @@ adb shell cp /sdcard/Android/data/com.google.ai.edge.gallery/files/Gemma_4_E2B_i
 ```
 For the example harness, use `com.kernel.local_llm_example` instead of `com.kernel.kernel_app`. A file copied this way has no sidecar. The first `modelInfo()` call (which every request makes) "adopts" it: it does one streamed sha256 pass of about 2.5 GB, takes a few seconds, and writes the sidecar.
 
+## Pest ID (`LocalPestAnalyzer`)
+- **Engine:** Gemma with `visionBackend` on the main backend (GPU, CPU fallback), `audioBackend = CPU`, `maxNumImages = 2`, `ExperimentalFlags.visualTokenBudget = 560` set before the engine is created (`PestIdConfig.kt`).
+- **`analyzeImage`:** three label-only runs (regex over the sanitized `allowedCardIds` + `none`, temperature 0.7, seeds 1-3), then one constrained-JSON analysis (cardId, commonName, group, taxonomyPath, aiConfidence, keyFeatures, anomalies, insights, safety, isPest). With a strict majority (2 or 3 of 3), the JSON cardId enum is that one label, so the label, its description and `agreement` (= majority count / 3) match. With a three-way split the JSON may pick any allowed id and `agreement` is the share of votes for the reported label. Images (crop, then the optional context frame) go before the text. The whole call has a 45 s budget, including queue wait and load; past it, null. Free-text fields go through `checkPestOutput`: failing list items are dropped, a failing name drops the analysis. `isPest: false` is reported as `PestGroup.notAPest`.
+- **`describeSound`:** a WAV (mono, 16 kHz, 16-bit, ≤ 30 s) plus the cleaned classifier labels give a one- or two-sentence experimental description. `groupHint` is a lookup of the top classifier label (score ≥ 0.3), not an LLM output.
+- **`proposeRegions`:** Gemma `box_2d` (`[ymin, xmin, ymax, xmax]`, 0-1000) as `NormalizedBox`. Empty on any failure.
+- **`guide`:** text-only, grounded in up to 3 provided cards (name in the requested language, group, summary, signs, look-alikes, health risks, steps, when to call a professional, `firstAid` as "If bitten or stung:", legal text). `sources`, the `safety` enum and `reviewStatus` are never rendered; the safety level only adds a "Required wording" line ("Stay well back. If bitten or stung: get medical care…" or "Do not harm, catch or injure it; contact the State Forest Department or a licensed rescuer."). One guarded `AdviceText` or an empty stream.
+- **Wording:** every Pest ID instruction forbids "safe", "safety", "treatment", "medicine", "first aid", "poison", "venom" and "kill" (plus सुरक्षित, उपचार, इलाज, दवा, ज़हर, विष for Hindi/Marathi), because `checkPestOutput` has no allowances: even "do not kill" or "safe distance" is rejected.
+
 ## Isolation guarantees
-- **No audio path.** Prompts are rendered in `lib/src/prompts.dart` from the typed DTO fields only:
+- **Pest ID only (amendment):** a user-validated crop or clip may reach the on-device engine through `pestGenerate`/`embed`. Only `PestIdConfig.kt` and `EmbedConfig.kt` may name an encoder or image/audio content; `test/isolation_test.dart` checks this.
+- **No audio path for grain advice.** Prompts are rendered in `lib/src/prompts.dart` from the typed DTO fields only:
   - Enums become plain words and numbers become digits with units.
   - The one free-text field, `grainType`, is sanitized: control characters, newlines, braces, quotes and path separators are removed, and it is capped at 40 characters.
 
-  No path, byte buffer or recording ever crosses the bridge. The pigeon API (`pigeons/llm_api.dart`) has no such field.
-- **Text-only engine.** `LlmConfig.engineConfig` sets only the model path, the text backend (GPU, then CPU) and the cache dir. The multimodal backends of the Gemma 4 model are never configured. `android/src/test/.../LlmConfigTest.kt` asserts this.
+  No byte buffer or recording crosses the bridge on the advice path: `generate` carries strings (and an optional model path) only.
+- **Text-only advice engine.** `LlmConfig.engineConfig` sets only the model path, the text backend (GPU, then CPU) and the cache dir. The multimodal backends of the Gemma 4 model are never configured for advice. `android/src/test/.../LlmConfigTest.kt` asserts this.
 - **No `audio_ai` dependency.** `local_llm` never imports the audio-ai plugin, and audio-ai never imports this one.
-- **No network.** There is no network code and no permission in the plugin manifest. The model is never downloaded; the user imports it.
+- **No network.** There is no network code and no permission in the plugin manifest. This package never downloads anything; model-hub provisions files and the app passes their path.
 - **No logging of prompts or outputs.** Kotlin logs only the exception class name of load or generation failures, because native messages can quote text. Native log severity is ERROR. The generation-progress event channel carries sizes and timings only, never text.
 - **Output guard** (`lib/src/output_guard.dart`). It rejects:
   - treatment and chemical wording (fumigation, phosphine, celphos, pesticides, sprays, "keetnashak", "कीटनाशक", "दवा छिड़क" and equivalents in 10 Indic scripts)
@@ -82,26 +101,28 @@ For the example harness, use `com.kernel.local_llm_example` instead of `com.kern
 
   Invisible characters and nukta variants are folded first, so they can't split a word past the guard. A rejection just means fallback.
 
-`test/isolation_test.dart` enforces these rules on the shipped sources: no `audio_ai`, no multimodal content or backend identifiers, no network APIs and no print or `Log.d/i/v`.
+`test/isolation_test.dart` enforces these rules on the shipped sources: no `audio_ai`, multimodal identifiers only in the two Pest ID configs, a text-only advice path, no network APIs and no print or `Log.d/i/v`.
 
 ## Engine behaviour (Kotlin, `LlmEngineHost`)
+- **One engine:** loading a slot (advice, Pest ID, embedder) first closes whatever else is loaded. Status events carry the `slot`.
+- **Model files:** `ModelResolver` accepts injected paths only inside the app's own storage (`PathPolicy`, canonical paths), refuses a file whose header says it is the wrong kind, and versions it as `<id>@<sha256[0..12]>` (hashed once, cached in `noBackupFilesDir/local-llm-versions`; nothing is written next to model-hub files). Legacy discovery picks the first file of the right kind (`ModelInfo` header, file-name fallback), so an EmbeddingGemma file in `llm/` is never used for advice.
 - **Loading:** lazy, on `warmUp` or the first request. It tries `Backend.GPU()` first, then `Backend.CPU()`, with `cacheDir = context.cacheDir`.
 - **Requests:**
   - Each request gets one short-lived `Conversation` with `SamplerConfig(topK = 40, topP = 0.9, temperature = 0.3)` and `maxOutputToken = 220`. The conversation is closed afterwards.
   - Only one request runs at a time. Others get `busy`.
   - The 25 s budget includes waiting for the load, but a timed-out request does not abort the load.
 - **Unloading:** after 3 minutes idle, on `onTrimMemory(>= TRIM_MEMORY_RUNNING_LOW)` (which includes the app going to the background), on opt-out, before an import replaces the model, and before a delete.
-- **GPU libraries:** the plugin manifest declares `libOpenCL.so` and `libvndksupport.so` as optional `<uses-native-library>` entries. Manifest merging copies them into the app's `<application>`, so the app manifest needs no change.
+- **GPU / NPU libraries:** the plugin manifest declares `libOpenCL.so`, `libvndksupport.so` and `libcdsprpc.so` (Qualcomm FastRPC) as optional `<uses-native-library>` entries. Manifest merging copies them into the app's `<application>`, so the app manifest needs no change.
 - **R8:** `consumer-rules.pro` keeps `com.google.ai.edge.litertlm.**`, because the JNI library calls back into it by name.
 
 ## Commands
 ```bash
 # from local-llm/
 flutter analyze
-flutter test                                   # prompts, guard, engine, manager, isolation
+flutter test                                   # prompts, guards, engines, runtime, Pest ID, isolation
 dart run pigeon --input pigeons/llm_api.dart   # after bridge changes
 # from local-llm/example/android (after one `flutter build apk` in example/)
-./gradlew :local_llm:testDebugUnitTest         # LlmConfig (text-only) + ModelStore
+./gradlew :local_llm:testDebugUnitTest         # LlmConfig (text-only), PestIdConfig, EmbedConfig, ModelStore, ModelResolver
 # on the device (lead only), from local-llm/example
 flutter test integration_test -d <device-id>
 ```
@@ -111,3 +132,4 @@ flutter test integration_test -d <device-id>
 - `liblitertlm_jni.so` looks up `libLiteRtGpuAccelerator.so`, `libLiteRtOpenClAccelerator.so` and others by name, and the AAR doesn't ship them. If GPU init fails, the engine falls back to CPU; check which one is reported.
 - Peak memory while loaded, whether it unloads when the app goes to the background, and coexistence with a scan (audio-ai LiteRT 1.4.2) in the same process.
 - Output quality in English and Hindi, and how often the guard rejects.
+- Phase 4: Pest ID load time with the vision/audio encoders and the full `analyzeImage` time (3 votes + JSON) against the 45 s budget; whether `SamplerConfig.seed` makes the votes differ; whether constrained decoding (`ResponseFormat.json/regex`) is honoured; `ModelInfo.from` cost on a 2.5 GB file; EmbeddingGemma 2 header (modalities, dimension) and embedding latency; the model-hub path passing `PathPolicy` (canonical `/storage/emulated/0/...`).

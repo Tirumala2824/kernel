@@ -349,10 +349,10 @@ const int maxPestGuardedChars = 2000;
 /// about an identification, no "harmless" / "safe to touch" claims. Pure
 /// and synchronous. Rejected text is never shown (static copy instead).
 ///
-/// The card safety text uses a few phrases the grain rules would reject
-/// ("do not harm, capture or kill", "keep a safe distance", "seek medical
-/// care"); exactly those phrases are removed before checking, never the
-/// words around them.
+/// There are no Pest ID allowances: even a negated "do not kill", "safe
+/// distance" or "medical treatment" is rejected. The Pest ID prompts ask for
+/// wording that passes instead ("Do not harm, catch or injure it", "stay
+/// well back", "if bitten or stung: get medical care"; see pest_prompts.dart).
 GuardResult checkPestOutput(String text, {int maxChars = maxPestGuardedChars}) {
   if (text.trim().isEmpty) return const GuardResult._(GuardCategory.empty);
   if (text.length > maxChars) {
@@ -365,7 +365,7 @@ GuardResult checkPestOutput(String text, {int maxChars = maxPestGuardedChars}) {
   if (_url.any((r) => r.hasMatch(n))) {
     return const GuardResult._(GuardCategory.url);
   }
-  final p = _stripPestAllowances(n);
+  final p = n;
   if (_treatmentLatin.any((r) => r.hasMatch(p)) ||
       _treatmentIndic.any(p.contains)) {
     return const GuardResult._(GuardCategory.treatment);
@@ -386,38 +386,6 @@ GuardResult checkPestOutput(String text, {int maxChars = maxPestGuardedChars}) {
     return const GuardResult._(GuardCategory.decision);
   }
   return GuardResult.pass;
-}
-
-/// Card safety phrases (docs/knowledge-cards.md) that would otherwise trip
-/// the treatment or safety rules. Matched on normalized text.
-final List<RegExp> _pestAllowances = [
-  // "do not harm, capture or kill", "never touch or kill it"
-  _w(
-    r"\b(do not|don't|dont|never|must not|should not|shouldn't|please do not) "
-    r'(try to )?(harm|hurt|capture|catch|kill|touch|handle|trap|disturb)'
-    r'((,| or| and|, or|, and) (harm|hurt|capture|catch|kill|touch|handle|trap|disturb))*'
-    r'( (it|them|the animal|the snake|the lizard))?\b',
-  ),
-  _w(r'\b(seek|get|find|need) (urgent |immediate |prompt )?medical (care|help|attention|treatment|advice)\b'),
-  _w(r'\bmedical (care|help|attention|treatment)\b'),
-  _w(r'\b(keep|stay|remain|move|step) (at )?(a )?safe distance( away)?\b'),
-  _w(r'\b(at|from) a safe distance\b'),
-  _w(r'\bfor (your|their|everyone.s) safety\b'),
-  _w(r'\bstay safe\b'),
-  // Hedges, not claims: "until confirmed by an expert".
-  _w(r'\b(not|until|unless|to be|needs to be|must be|should be|can be|be) confirmed\b'),
-  _w(r'\bsafety (text|advice|guidance|notes?|information)\b'),
-  RegExp(_fold('सुरक्षित दूरी')),
-  RegExp(_fold('मारें नहीं')),
-  RegExp(_fold('न मारें')),
-];
-
-String _stripPestAllowances(String normalized) {
-  var s = normalized;
-  for (final r in _pestAllowances) {
-    s = s.replaceAll(r, ' ');
-  }
-  return s;
 }
 
 final List<RegExp> _certaintyLatin = [
@@ -459,10 +427,14 @@ final List<RegExp> _pestSafetyLatin = [
   _w(r'\b(harmless|non-?venomous|non-?poisonous|non-?toxic|innocuous)\b'),
   _w(r'\bnot (dangerous|venomous|poisonous|harmful|a danger|a risk|a threat)\b'),
   _w(r'\bno (danger|risk|threat|health risk)\b'),
+  // Claims about the animal ("it won't bite", "it does not harm people").
+  // "Do not harm it" is an instruction to the user (protected wildlife
+  // wording), so plain "do not" only counts before bite/sting/attack.
   _w(
-    r"\b(won't|will not|cannot|can't|can not|does not|doesn't|do not|don't) "
+    r"\b(won't|will not|cannot|can't|can not|does not|doesn't) "
     r'(bite|sting|harm|hurt|attack)\b',
   ),
+  _w(r"\b(do not|don't) (bite|sting|attack)\b"),
   _w(r'\bno need to (worry|call|see|seek)\b'),
   _w(r'\b(nothing|no reason) to (worry|fear)\b'),
 ];

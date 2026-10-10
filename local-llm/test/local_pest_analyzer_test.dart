@@ -119,7 +119,7 @@ KnowledgeCard scorpionCard() => const KnowledgeCard(
   healthRisks: ['Painful sting; some species are dangerous'],
   safeSteps: ['Keep beds away from walls', 'Shake out shoes before wearing'],
   callProfessionalWhen: ['Seen indoors repeatedly'],
-  firstAid: ['Seek medical care for any sting'],
+  firstAid: ['Get medical care for any sting'],
   legal: null,
   sources: ['https://www.who.int'],
   reviewStatus: 'needs-expert-review',
@@ -136,10 +136,10 @@ KnowledgeCard monitorCard() => const KnowledgeCard(
   healthRisks: ['Can bite when cornered'],
   safeSteps: ['Keep pets and children away'],
   callProfessionalWhen: ['It is inside the house'],
-  firstAid: ['Seek medical care for any bite'],
+  firstAid: ['Get medical care for any bite'],
   legal:
       'Protected under the Wild Life (Protection) Act, Schedule I. Do not '
-      'harm, capture or kill; contact the State Forest Department or a '
+      'harm, catch or injure it; contact the State Forest Department or a '
       'licensed rescuer.',
   sources: ['https://forest.example'],
   reviewStatus: 'needs-expert-review',
@@ -325,7 +325,17 @@ void main() {
     test('the answer language is requested in the JSON run', () async {
       script(host);
       await analyzer.analyzeImage(imageRequest(languageTag: 'hi-IN'));
-      expect(host.pestCalls.last.systemInstruction, contains('in Hindi'));
+      final system = host.pestCalls.last.systemInstruction;
+      expect(system, contains('in Hindi'));
+      // Wording rules for the free-text fields (lead card review).
+      expect(system, contains('Never use these words: safe, safety'));
+      expect(system, contains('सुरक्षित'));
+      await analyzer.describeSound(soundRequest());
+      expect(
+        host.pestCalls.last.systemInstruction,
+        contains('Never use these words: safe, safety'),
+      );
+      expect(host.pestCalls.last.systemInstruction, isNot(contains('सुरक्षित')));
     });
 
     test('disabled: nothing reaches the bridge', () async {
@@ -420,9 +430,9 @@ void main() {
     test('text only, grounded in the given cards, one guarded event', () async {
       host.onPest = (_, _) async => nativeResult(
         text:
-            'This may be a scorpion; the label is AI-estimated. Keep a safe '
-            'distance, keep beds away from walls and shake out shoes. Seek '
-            'medical care for any sting.',
+            'This may be a scorpion; the label is AI-estimated. Stay well '
+            'back, keep beds away from walls and shake out shoes. If bitten '
+            'or stung: get medical care.',
       );
       final texts = await analyzer
           .guide(guideInput(question: 'What should I do?'))
@@ -439,19 +449,57 @@ void main() {
       expect(r.audioWav, isNull);
       expect(r.format, NativeResponseFormat.none);
       expect(r.prompt, contains('Shake out shoes before wearing'));
-      expect(r.prompt, contains('Seek medical care for any sting'));
-      expect(r.prompt, contains('Safety level: venomous'));
+      expect(r.prompt, contains('- If bitten or stung: Get medical care for any sting'));
+      expect(r.prompt, contains('- Steps to take: Keep beds away from walls'));
+      expect(r.prompt, contains('- Required wording: Stay well back.'));
       expect(r.prompt, contains('User question: What should I do?'));
       expect(r.prompt, contains('Agreement between independent runs: 2 of 3'));
+      // Never rendered: sources, the safety enum, reviewStatus.
+      expect(r.prompt, isNot(contains('https://')));
+      expect(r.prompt, isNot(contains('venomous')));
+      expect(r.prompt, isNot(contains('Safety level')));
+      expect(r.prompt, isNot(contains('review')));
+      expect(r.prompt, isNot(contains('First aid')));
       expect(r.systemInstruction, contains('Use ONLY the card facts'));
       expect(r.systemInstruction, contains('rodenticide'));
+      expect(
+        r.systemInstruction,
+        contains(
+          'Never use these words: safe, safety, treatment, medicine, '
+          'first aid, poison, venom',
+        ),
+      );
+      expect(r.systemInstruction, contains('"stay well back"'));
+      expect(r.systemInstruction, contains('Never write "kill"'));
+    });
+
+    test('a more serious analysis level adds its required wording', () async {
+      host.onPest = (_, _) async => nativeResult(text: 'Stay well back.');
+      await analyzer
+          .guide(
+            PestGuideInput(
+              analysis: analysis(
+                cardId: 'monitor_lizard',
+                safety: SafetyLevel.protectedWildlife,
+              ),
+              cards: [scorpionCard()],
+            ),
+          )
+          .toList();
+      expect(
+        host.pestCalls.single.prompt,
+        contains(
+          '- Required wording: Do not harm, catch or injure it; contact the '
+          'State Forest Department or a licensed rescuer.',
+        ),
+      );
     });
 
     test('legal text of protected wildlife is passed and may be echoed', () async {
       host.onPest = (_, _) async => nativeResult(
         text:
             'This may be a monitor lizard, which is protected. Do not harm, '
-            'capture or kill it. Contact the State Forest Department or a '
+            'catch or injure it; contact the State Forest Department or a '
             'licensed rescuer.',
       );
       final texts = await analyzer
@@ -477,6 +525,8 @@ void main() {
         'चूहा मार गोली रखें।',
         'This is definitely a scorpion.',
         'This scorpion is harmless.',
+        'Do not kill it.',
+        'Keep a safe distance.',
       ]) {
         host.onPest = (_, _) async => nativeResult(text: bad);
         expect(await analyzer.guide(guideInput()).toList(), isEmpty, reason: bad);
