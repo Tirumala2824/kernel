@@ -129,7 +129,7 @@ Writes must be exactly 32 B with `cfgVersion = 1`. Otherwise the node returns AT
 | 22 | u16 | burstMaxGapMs | 200 | 10..2000 |
 | 24 | u8 | impulseMinHalfMs | 2 (1 ms) | 1..40 |
 | 25 | u8 | impulseMaxMs | 10 | 1..100 |
-| 26 | u8 | trainMaxCvPct | 30 | 1..100 |
+| 26 | u8 | trainMaxCvPct (regular-train CV limit) | 15 | 1..100 |
 | 27 | u8 | lowBattPct | 15 | 5..50 |
 | 28 | u16 | chirpMaxGapMs | 120 | 10..1000 |
 | 30 | u16 | reserved | 0 | 0 |
@@ -271,7 +271,7 @@ Implemented in portable C (`kernel_detect`) and mirrored in Python (`kernel_ref.
 **US_AIR** (SPH0641LU4H-1, ultrasonic mode):
 - I2S clocks the mic at 3.072 MHz. The raw PDM bitstream goes through a CIC (order 4, R = 8) to 384 kSPS, then a 47-tap Kaiser half-band FIR (÷2) to **192 kSPS**.
 - Every PCM sample then passes a **6th-order Butterworth high-pass at 20 kHz before anything is buffered**.
-- The DMA descriptors hold ≤ 4 ms of raw PDM bits and are overwritten in place.
+- The DMA descriptors hold 3 x 4 ms of raw PDM bits and are overwritten in place. Un-filtered PCM exists only in a 32-sample (0.17 ms) scratch that is filtered immediately.
 
 **CONTACT** (piezo with a JFET buffer into a PCM1808 at 48 kSPS, or IIS3DWB at 26.7 kSPS):
 - The impulse path band-passes 200 Hz–10 kHz (2nd-order HP + 2nd-order LP) and computes 0.5 ms block energies.
@@ -281,7 +281,7 @@ Implemented in portable C (`kernel_detect`) and mirrored in Python (`kernel_ref.
 
 Spectral path (US_AIR, AUDIO_AIR):
 1. Hann window, FFT (512 points). The power spectrum is scaled so a full-scale sine reads 0 dBFS, smoothed `[1 2 1]/4` across bins and averaged over `smooth_frames` frames (3 US, 1 AUDIO).
-2. **Noise floor:** a running **5 % quantile** per bin and per band, using a stochastic quantile update in dB. The upward drift is limited to 0.5 dB/s, so the downward step is 19 times faster. It warms up at 20x speed for 300 ms, and events are suppressed during warm-up.
+2. **Noise floor:** a running **5 % quantile** per bin and per band, using a stochastic quantile update in dB. The upward drift is limited to 0.5 dB/s, so the downward step is 19 times faster. During the first 1 s the step size anneals from 20x to 1x, and events are suppressed during warm-up.
 3. **Blob detector:** each frame tracks the strongest bin whose excess over the floor is at least `detectThresh`. A blob continues while the tracked bin moves by at most `max_jump` (1.5 kHz US, 400 Hz AUDIO) and gaps stay within `maxGapMs`.
    - When a blob closes, it is checked against `minBlobMs` and the parabolic-interpolated min/max/peak frequencies, the least-squares slope, the peak excess and the peak dBFS are computed.
    - Class: `harmonic` if overtones are present in at least half of the frames (AUDIO). Otherwise:
@@ -291,9 +291,9 @@ Spectral path (US_AIR, AUDIO_AIR):
      - otherwise it is `tonal`
 4. **Chirp grouping** (AUDIO): at least `trainMinPulses` short tonal pulses within ±15 % of the first frequency, with gaps of at most `chirpMaxGapMs`, become one `pulsedChirp`. It carries the pulse count, repetition rate and inter-onset CV.
 5. **Jammer:** the node is JAMMED when any of these holds, and stays JAMMED for 5 s after the last one clears:
-   - (a) a band stays at least `jamThresh` (6 dB) above its floor for more than `jamHold` (2 s), allowing misses of 20 ms or less
+   - (a) a band stays at least `jamThresh` (6 dB) above its floor for more than `jamHold` (2 s). The run is leaky: each frame below the threshold costs 10 frames of credit, so high-variance narrow bands cannot fake a line
    - (b) a bin's 2 s minimum level sits at least 6 dB above the median floor of its neighbours at ±3..10 bins. This is a stationary line, including one that was present at power-on.
-   - (c) at least 90 % of the frames in a 2 s window have some band above the jam threshold. This catches sweeping repellers.
+   - (c) the blob detector is active (some bin at least `detectThresh` above its floor) in at least 90 % of the frames of a 2 s window. This catches sweeping repellers.
 
 Impulse path (CONTACT):
 - Block energy relative to a running 5 % quantile floor.
