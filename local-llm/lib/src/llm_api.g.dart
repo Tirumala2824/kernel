@@ -10,9 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -46,8 +46,9 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -96,38 +97,37 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
-
 /// Lifecycle of the native LiteRT-LM engine.
 enum NativeEngineState {
   /// No engine in memory (never loaded, idle-unloaded or trimmed).
   unloaded,
   loading,
   ready,
+
   /// One generation is running; others are rejected.
   busy,
+
   /// The last load attempt failed on both GPU and CPU.
-  failed;
+  failed,
 }
 
 enum NativeGenerateStatus {
   ok,
+
   /// Another generation is running.
   busy,
   noModel,
+
   /// The engine could not be loaded on GPU or CPU.
   loadFailed,
   timeout,
   cancelled,
+
   /// Native runtime error (message is never forwarded: it may echo text).
-  error;
+  error,
 }
 
-enum NativeImportPhase {
-  copying,
-  verifying,
-  done,
-  failed;
-}
+enum NativeImportPhase { copying, verifying, done, failed }
 
 /// Engine state plus whether a model file is installed.
 class NativeEngineStatus {
@@ -145,15 +145,12 @@ class NativeEngineStatus {
   String backend;
 
   List<Object?> _toList() {
-    return <Object?>[
-      state,
-      modelPresent,
-      backend,
-    ];
+    return <Object?>[state, modelPresent, backend];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static NativeEngineStatus decode(Object result) {
     result as List<Object?>;
@@ -173,7 +170,9 @@ class NativeEngineStatus {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(state, other.state) && _deepEquals(modelPresent, other.modelPresent) && _deepEquals(backend, other.backend);
+    return _deepEquals(state, other.state) &&
+        _deepEquals(modelPresent, other.modelPresent) &&
+        _deepEquals(backend, other.backend);
   }
 
   @override
@@ -206,16 +205,12 @@ class NativeModelInfo {
   String backend;
 
   List<Object?> _toList() {
-    return <Object?>[
-      id,
-      version,
-      sizeBytes,
-      backend,
-    ];
+    return <Object?>[id, version, sizeBytes, backend];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static NativeModelInfo decode(Object result) {
     result as List<Object?>;
@@ -236,7 +231,10 @@ class NativeModelInfo {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(id, other.id) && _deepEquals(version, other.version) && _deepEquals(sizeBytes, other.sizeBytes) && _deepEquals(backend, other.backend);
+    return _deepEquals(id, other.id) &&
+        _deepEquals(version, other.version) &&
+        _deepEquals(sizeBytes, other.sizeBytes) &&
+        _deepEquals(backend, other.backend);
   }
 
   @override
@@ -291,7 +289,8 @@ class NativeGenerateResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static NativeGenerateResult decode(Object result) {
     result as List<Object?>;
@@ -315,7 +314,13 @@ class NativeGenerateResult {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(status, other.status) && _deepEquals(text, other.text) && _deepEquals(modelVersion, other.modelVersion) && _deepEquals(backend, other.backend) && _deepEquals(loadMs, other.loadMs) && _deepEquals(firstTokenMs, other.firstTokenMs) && _deepEquals(totalMs, other.totalMs);
+    return _deepEquals(status, other.status) &&
+        _deepEquals(text, other.text) &&
+        _deepEquals(modelVersion, other.modelVersion) &&
+        _deepEquals(backend, other.backend) &&
+        _deepEquals(loadMs, other.loadMs) &&
+        _deepEquals(firstTokenMs, other.firstTokenMs) &&
+        _deepEquals(totalMs, other.totalMs);
   }
 
   @override
@@ -348,16 +353,12 @@ class NativeGenerationProgress {
   int elapsedMs;
 
   List<Object?> _toList() {
-    return <Object?>[
-      requestId,
-      chunks,
-      chars,
-      elapsedMs,
-    ];
+    return <Object?>[requestId, chunks, chars, elapsedMs];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static NativeGenerationProgress decode(Object result) {
     result as List<Object?>;
@@ -372,13 +373,17 @@ class NativeGenerationProgress {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! NativeGenerationProgress || other.runtimeType != runtimeType) {
+    if (other is! NativeGenerationProgress ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(requestId, other.requestId) && _deepEquals(chunks, other.chunks) && _deepEquals(chars, other.chars) && _deepEquals(elapsedMs, other.elapsedMs);
+    return _deepEquals(requestId, other.requestId) &&
+        _deepEquals(chunks, other.chunks) &&
+        _deepEquals(chars, other.chars) &&
+        _deepEquals(elapsedMs, other.elapsedMs);
   }
 
   @override
@@ -413,17 +418,12 @@ class NativeImportProgress {
   String? error;
 
   List<Object?> _toList() {
-    return <Object?>[
-      importId,
-      phase,
-      bytesCopied,
-      totalBytes,
-      error,
-    ];
+    return <Object?>[importId, phase, bytesCopied, totalBytes, error];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static NativeImportProgress decode(Object result) {
     result as List<Object?>;
@@ -445,7 +445,11 @@ class NativeImportProgress {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(importId, other.importId) && _deepEquals(phase, other.phase) && _deepEquals(bytesCopied, other.bytesCopied) && _deepEquals(totalBytes, other.totalBytes) && _deepEquals(error, other.error);
+    return _deepEquals(importId, other.importId) &&
+        _deepEquals(phase, other.phase) &&
+        _deepEquals(bytesCopied, other.bytesCopied) &&
+        _deepEquals(totalBytes, other.totalBytes) &&
+        _deepEquals(error, other.error);
   }
 
   @override
@@ -458,7 +462,6 @@ class NativeImportProgress {
   }
 }
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -466,28 +469,28 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is NativeEngineState) {
+    } else if (value is NativeEngineState) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is NativeGenerateStatus) {
+    } else if (value is NativeGenerateStatus) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is NativeImportPhase) {
+    } else if (value is NativeImportPhase) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    }    else if (value is NativeEngineStatus) {
+    } else if (value is NativeEngineStatus) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    }    else if (value is NativeModelInfo) {
+    } else if (value is NativeModelInfo) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    }    else if (value is NativeGenerateResult) {
+    } else if (value is NativeGenerateResult) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    }    else if (value is NativeGenerationProgress) {
+    } else if (value is NativeGenerationProgress) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    }    else if (value is NativeImportProgress) {
+    } else if (value is NativeImportProgress) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
     } else {
@@ -523,27 +526,30 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
+const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(
+  _PigeonCodec(),
+);
 
 class LlmHostApi {
   /// Constructor for [LlmHostApi]. The [binaryMessenger] named argument is
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   LlmHostApi({
-      BinaryMessenger? binaryMessenger, 
-      String messageChannelSuffix = '', 
-      })
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
 
-
   Future<NativeEngineStatus> status() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.status$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.local_llm.LlmHostApi.status$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -553,18 +559,18 @@ class LlmHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as NativeEngineStatus;
   }
 
   /// Null when no .litertlm is installed. Writes the sidecar on first use
   /// for a file copied in by adb (one streamed sha256 pass).
   Future<NativeModelInfo?> modelInfo() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.modelInfo$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.local_llm.LlmHostApi.modelInfo$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -574,17 +580,17 @@ class LlmHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
     return pigeonVar_replyValue as NativeModelInfo?;
   }
 
   /// Loads the engine now (GPU, then CPU). Returns the final status.
   Future<NativeEngineStatus> load() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.load$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.local_llm.LlmHostApi.load$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -594,57 +600,66 @@ class LlmHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as NativeEngineStatus;
   }
 
   /// One short-lived conversation. Rejects with busy while another runs.
   /// [timeoutMs] bounds the generation itself; loading is not counted.
-  Future<NativeGenerateResult> generate(String requestId, String systemInstruction, String prompt, int timeoutMs) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.generate$pigeonVar_messageChannelSuffix';
+  Future<NativeGenerateResult> generate(
+    String requestId,
+    String systemInstruction,
+    String prompt,
+    int timeoutMs,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.local_llm.LlmHostApi.generate$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[requestId, systemInstruction, prompt, timeoutMs]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[requestId, systemInstruction, prompt, timeoutMs],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as NativeGenerateResult;
   }
 
   /// Cancels [requestId] if it is the running generation. No-op otherwise.
   Future<void> cancel(String requestId) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.cancel$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.local_llm.LlmHostApi.cancel$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[requestId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[requestId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Frees the engine (cancels a running generation first).
   Future<void> unload() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.unload$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.local_llm.LlmHostApi.unload$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -654,38 +669,43 @@ class LlmHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Copies a SAF content:// URI into app-specific storage, verifies it and
   /// writes the sidecar. Progress arrives on [LlmEvents.importProgress];
   /// the reply is the final event.
-  Future<NativeImportProgress> importFromUri(String importId, String contentUri) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.importFromUri$pigeonVar_messageChannelSuffix';
+  Future<NativeImportProgress> importFromUri(
+    String importId,
+    String contentUri,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.local_llm.LlmHostApi.importFromUri$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[importId, contentUri]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[importId, contentUri],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as NativeImportProgress;
   }
 
   /// Unloads, then removes every model file, sidecar and partial copy.
   Future<void> deleteModel() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.deleteModel$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.local_llm.LlmHostApi.deleteModel$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -695,15 +715,15 @@ class LlmHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   Future<int> freeSpaceBytes() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.freeSpaceBytes$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.local_llm.LlmHostApi.freeSpaceBytes$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -713,18 +733,18 @@ class LlmHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as int;
   }
 
   /// System document picker (ACTION_OPEN_DOCUMENT, any MIME type). Returns the
   /// content:// URI of a picked .litertlm file, or null.
   Future<String?> pickLitertlmUri() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.pickLitertlmUri$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.local_llm.LlmHostApi.pickLitertlmUri$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -734,11 +754,10 @@ class LlmHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
     return pigeonVar_replyValue as String?;
   }
 }
@@ -751,17 +770,19 @@ class LlmHostApi {
 /// not be called multiple times for the same `instanceName`. To deliver
 /// events to multiple listeners, call this method once and listen to the
 /// returned broadcast stream multiple times instead.
-Stream<NativeEngineStatus> engineStatus( {String instanceName = ''}) {
+Stream<NativeEngineStatus> engineStatus({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel engineStatusChannel =
-      EventChannel('dev.flutter.pigeon.local_llm.LlmEvents.engineStatus$instanceName', pigeonMethodCodec);
+  final EventChannel engineStatusChannel = EventChannel(
+    'dev.flutter.pigeon.local_llm.LlmEvents.engineStatus$instanceName',
+    pigeonMethodCodec,
+  );
   return engineStatusChannel.receiveBroadcastStream().map((dynamic event) {
     return event as NativeEngineStatus;
   });
 }
-    
+
 /// Streaming progress of the running generation (sizes only, no text).
 ///
 /// Returns a broadcast [Stream] of events from the `generationProgress` event channel.
@@ -770,17 +791,23 @@ Stream<NativeEngineStatus> engineStatus( {String instanceName = ''}) {
 /// not be called multiple times for the same `instanceName`. To deliver
 /// events to multiple listeners, call this method once and listen to the
 /// returned broadcast stream multiple times instead.
-Stream<NativeGenerationProgress> generationProgress( {String instanceName = ''}) {
+Stream<NativeGenerationProgress> generationProgress({
+  String instanceName = '',
+}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel generationProgressChannel =
-      EventChannel('dev.flutter.pigeon.local_llm.LlmEvents.generationProgress$instanceName', pigeonMethodCodec);
-  return generationProgressChannel.receiveBroadcastStream().map((dynamic event) {
+  final EventChannel generationProgressChannel = EventChannel(
+    'dev.flutter.pigeon.local_llm.LlmEvents.generationProgress$instanceName',
+    pigeonMethodCodec,
+  );
+  return generationProgressChannel.receiveBroadcastStream().map((
+    dynamic event,
+  ) {
     return event as NativeGenerationProgress;
   });
 }
-    
+
 /// Import progress, throttled to about 4 per second.
 ///
 /// Returns a broadcast [Stream] of events from the `importProgress` event channel.
@@ -789,14 +816,15 @@ Stream<NativeGenerationProgress> generationProgress( {String instanceName = ''})
 /// not be called multiple times for the same `instanceName`. To deliver
 /// events to multiple listeners, call this method once and listen to the
 /// returned broadcast stream multiple times instead.
-Stream<NativeImportProgress> importProgress( {String instanceName = ''}) {
+Stream<NativeImportProgress> importProgress({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel importProgressChannel =
-      EventChannel('dev.flutter.pigeon.local_llm.LlmEvents.importProgress$instanceName', pigeonMethodCodec);
+  final EventChannel importProgressChannel = EventChannel(
+    'dev.flutter.pigeon.local_llm.LlmEvents.importProgress$instanceName',
+    pigeonMethodCodec,
+  );
   return importProgressChannel.receiveBroadcastStream().map((dynamic event) {
     return event as NativeImportProgress;
   });
 }
-    

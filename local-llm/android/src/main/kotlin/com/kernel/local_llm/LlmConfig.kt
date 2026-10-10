@@ -38,8 +38,8 @@ object LlmConfig {
     const val IDLE_UNLOAD_MS = 3 * 60 * 1000L
 
     /**
-     * Text-only engine config. [EngineConfig.visionBackend] and
-     * [EngineConfig.audioBackend] are deliberately left at their null
+     * Text-only engine config. The vision and audio backend parameters of
+     * EngineConfig are deliberately left at their null
      * defaults, so the model's audio and vision encoders are never loaded.
      */
     fun engineConfig(modelPath: String, backend: TextBackend, cacheDir: String): EngineConfig =

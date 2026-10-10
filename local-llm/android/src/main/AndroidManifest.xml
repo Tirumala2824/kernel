@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- No permissions. The model is a user-picked .litertlm copied into
          app-specific storage through the Storage Access Framework, so no
-         storage permission and no INTERNET are needed. -->
+         storage permission and no network permission are needed. -->
     <application>
         <!-- Optional vendor GPU libraries for the LiteRT-LM GPU backend.
              required="false": on phones without them the engine falls back
