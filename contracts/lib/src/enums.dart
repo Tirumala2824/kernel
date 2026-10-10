@@ -34,7 +34,8 @@ enum ReportFormat { csv, pdf }
 
 /// history: all records in scope. preSale: farmer harvest summary.
 /// lotSummary: buyer screening report. sackLabels: printable QR labels (PDF only).
-enum ReportKind { history, preSale, lotSummary, sackLabels }
+/// sightings: Pest ID sightings and sensor events in scope.
+enum ReportKind { history, preSale, lotSummary, sackLabels, sightings }
 
 /// Why an item sits where it does in the inspection queue. The UI localizes.
 enum RankReason { infested, uncertain, clean }

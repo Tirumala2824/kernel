@@ -196,6 +196,7 @@ abstract interface class DatasetExportService {
 
 abstract interface class PrivacyService {
   /// User-initiated wipe of scans, inspections (and their photos), reminders,
-  /// labeled samples and retained audio.
+  /// labeled samples, retained audio, sightings (and kept media) and sensor
+  /// events. Paired sensor nodes and their keys are kept.
   Future<void> deleteAllHistory();
 }
