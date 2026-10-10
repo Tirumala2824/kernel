@@ -26,7 +26,10 @@ void main() {
       expect(find.byKey(const Key('photo-1')), findsOneWidget);
 
       await tapVisible(tester, find.byKey(const Key('finding-noneFound')));
-      await tester.enterText(find.byKey(const Key('field-inspector')), 'S. Rao');
+      await tester.enterText(
+        find.byKey(const Key('field-inspector')),
+        'S. Rao',
+      );
       await tapVisible(tester, find.byKey(const Key('save')));
 
       final draft = env.inspections.drafts.single;
@@ -119,7 +122,7 @@ void main() {
       final a = await env.addItem(role: Role.storageFpo, label: 'S-1');
       await env.scans.record(notEvaluatedOutcome(a.id));
       await pumpKernelApp(tester, env);
-      expect(find.text(en.sacksScannedToday(1)), findsOneWidget);
+      expect(find.text(en.scansTodayCount(1)), findsOneWidget);
       await tapVisible(tester, find.byKey(const Key('items-summary')));
       expect(find.text(en.scansTodayTitle), findsWidgets);
       expect(find.textContaining('S-1'), findsWidgets);

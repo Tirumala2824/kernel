@@ -117,3 +117,37 @@ final datasetExportServiceProvider = Provider<DatasetExportService>(
   ),
   name: 'datasetExportServiceProvider',
 );
+
+final analyticsServiceProvider = Provider<AnalyticsService>(
+  (ref) => _unbound(
+    'analyticsServiceProvider',
+    'AnalyticsService',
+    'data_operations',
+  ),
+  name: 'analyticsServiceProvider',
+);
+
+// On-phone AI assistant (opt-in, experimental). Bound to local_llm in
+// bootstrap.dart. Every advice read in the UI tolerates an unbound or
+// failing engine by falling back to the static localized copy.
+
+final adviceEngineProvider = Provider<AdviceEngine>(
+  (ref) => _unbound('adviceEngineProvider', 'AdviceEngine', 'local_llm'),
+  name: 'adviceEngineProvider',
+);
+
+final adviceModelManagerProvider = Provider<AdviceModelManager>(
+  (ref) =>
+      _unbound('adviceModelManagerProvider', 'AdviceModelManager', 'local_llm'),
+  name: 'adviceModelManagerProvider',
+);
+
+/// Opens the system file picker for a `.litertlm` model and returns its
+/// SAF content:// URI, or null when the user cancels.
+typedef ModelFilePicker = Future<String?> Function();
+
+/// Platform hook, bound to local_llm's `pickLitertlmUri` in bootstrap.dart.
+final modelFilePickerProvider = Provider<ModelFilePicker>(
+  (ref) => _unbound('modelFilePickerProvider', 'pickLitertlmUri', 'local_llm'),
+  name: 'modelFilePickerProvider',
+);

@@ -16,8 +16,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get languageFollowDevice => 'ಫೋನ್‌ನ ಭಾಷೆಯನ್ನೇ ಬಳಸಿ';
 
   @override
-  String get languageSheetBody =>
-      'Kernel ಪದಗಳು ತಕ್ಷಣ ಬದಲಾಗುತ್ತವೆ. ಇನ್ನಷ್ಟು ಭಾರತೀಯ ಭಾಷೆಗಳು ಶೀಘ್ರದಲ್ಲೇ ಬರಲಿವೆ.';
+  String get languageSheetBody => 'Kernel ಪದಗಳು ತಕ್ಷಣ ಬದಲಾಗುತ್ತವೆ.';
 
   @override
   String get settingsSubtitle =>
@@ -2303,5 +2302,606 @@ class AppLocalizationsKn extends AppLocalizations {
   @override
   String dateTimeJoin(String date, String time) {
     return '$date, $time';
+  }
+
+  @override
+  String get nextStepEyebrow => 'ಮುಂದಿನ ಹೆಜ್ಜೆ';
+
+  @override
+  String get nextNothingPending =>
+      'ಈಗ ತುರ್ತು ಏನೂ ಇಲ್ಲ. ಗಮನದಲ್ಲಿಡಲು ಆಗಾಗ ಶಬ್ದ ಪರೀಕ್ಷೆ ಮಾಡಿ.';
+
+  @override
+  String get quickScanAction => 'ಈಗಲೇ ಶಬ್ದ ಪರೀಕ್ಷೆ';
+
+  @override
+  String scansTodayCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ಇಂದು $count ಶಬ್ದ ಪರೀಕ್ಷೆಗಳು',
+      one: 'ಇಂದು 1 ಶಬ್ದ ಪರೀಕ್ಷೆ',
+      zero: 'ಇಂದು ಶಬ್ದ ಪರೀಕ್ಷೆ ಇಲ್ಲ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String scanActivityLine(int today, int week) {
+    return 'ಶಬ್ದ ಪರೀಕ್ಷೆಗಳು: ಇಂದು $today · ಕಳೆದ 7 ದಿನಗಳಲ್ಲಿ $week';
+  }
+
+  @override
+  String nextRegisterFirst(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'ನಿಮ್ಮ ಮೊದಲ ಡಬ್ಬವನ್ನು ದಾಖಲಿಸಿ',
+      'other': 'ನಿಮ್ಮ ಮೊದಲ ಚೀಲವನ್ನು ದಾಖಲಿಸಿ',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get nextRegisterFirstBody =>
+      'ಹೆಸರು, ಧಾನ್ಯ ಮತ್ತು ಪ್ರಮಾಣ ಬರೆಯಿರಿ. ಒಂದು ನಿಮಿಷ ಸಾಕು.';
+
+  @override
+  String get nextRegisterFirstLot => 'ನಿಮ್ಮ ಮೊದಲ ಸರಕನ್ನು ದಾಖಲಿಸಿ';
+
+  @override
+  String get nextRegisterFirstLotBody => 'ಪೂರೈಕೆದಾರ, ಲಾಟ್, ಧಾನ್ಯ ಮತ್ತು ಪ್ರಮಾಣ.';
+
+  @override
+  String nextScanOne(String label) {
+    return '$label ಶಬ್ದ ಪರೀಕ್ಷೆ ಮಾಡಿ';
+  }
+
+  @override
+  String nextScanSacks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ಚೀಲಗಳಿಗೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಬೇಕು',
+      one: '1 ಚೀಲಕ್ಕೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಬೇಕು',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nextScanContainers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ಡಬ್ಬಗಳಿಗೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಬೇಕು',
+      one: '1 ಡಬ್ಬಕ್ಕೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಬೇಕು',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nextScanBody(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'ಫೋನನ್ನು ಡಬ್ಬಕ್ಕೆ ಒತ್ತಿ 2 ಸೆಕೆಂಡ್‌ಗಳ ಕೇಳುವ ಪರೀಕ್ಷೆ.',
+      'other': '2 ಸೆಕೆಂಡ್‌ಗಳ ಕೇಳುವ ಪರೀಕ್ಷೆ, ಒಂದು ಬಾರಿಗೆ ಒಂದು ಚೀಲ.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String nextInspectOne(String label) {
+    return '$label ಪರಿಶೀಲಿಸಿ';
+  }
+
+  @override
+  String nextInspectSacks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ಗುರುತಿಸಿದ $count ಚೀಲಗಳನ್ನು ಪರಿಶೀಲಿಸಿ',
+      one: 'ಗುರುತಿಸಿದ 1 ಚೀಲವನ್ನು ಪರಿಶೀಲಿಸಿ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nextInspectContainers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ಗುರುತಿಸಿದ $count ಡಬ್ಬಗಳನ್ನು ಪರಿಶೀಲಿಸಿ',
+      one: 'ಗುರುತಿಸಿದ 1 ಡಬ್ಬವನ್ನು ಪರಿಶೀಲಿಸಿ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nextInspectBody =>
+      'ಮಾಡೆಲ್ ಫಲಿತಾಂಶ ದೃಢಪಟ್ಟಿಲ್ಲ. ಧಾನ್ಯವನ್ನು ಕೈಯಿಂದ ಪರಿಶೀಲಿಸಿ.';
+
+  @override
+  String nextReviewOne(String label) {
+    return '$label: ಮತ್ತೆ ನೋಡುವ ಸಮಯ';
+  }
+
+  @override
+  String nextReviewSacks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ಚೀಲಗಳನ್ನು ಮತ್ತೆ ನೋಡುವ ಸಮಯ',
+      one: '1 ಚೀಲವನ್ನು ಮತ್ತೆ ನೋಡುವ ಸಮಯ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nextReviewContainers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ಡಬ್ಬಗಳನ್ನು ಮತ್ತೆ ನೋಡುವ ಸಮಯ',
+      one: '1 ಡಬ್ಬವನ್ನು ಮತ್ತೆ ನೋಡುವ ಸಮಯ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nextReviewBody =>
+      'ಕೊನೆಯ ಪರೀಕ್ಷೆಯಾಗಿ ತುಂಬಾ ದಿನವಾಯಿತು. ಮತ್ತೆ ಕೇಳಿ ಅಥವಾ ಪರಿಶೀಲಿಸಿ.';
+
+  @override
+  String nextReminderOne(String label) {
+    return '$label: ಜ್ಞಾಪನೆಯ ಸಮಯ';
+  }
+
+  @override
+  String nextReminderMany(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ಜ್ಞಾಪನೆಗಳ ಸಮಯ',
+      one: '1 ಜ್ಞಾಪನೆಯ ಸಮಯ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nextReminderBody =>
+      'ನೀವು ಇಟ್ಟ ಮರುಪರಿಶೀಲನೆಯ ಸಮಯ ಬಂದಿದೆ. ಈ ಧಾನ್ಯವನ್ನು ನೋಡಿ.';
+
+  @override
+  String nextPhysicalOne(String label) {
+    return 'ಲಾಟ್ $label: ನೇರ ಪರಿಶೀಲನೆ ಬಾಕಿ';
+  }
+
+  @override
+  String nextPhysicalMany(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ಲಾಟ್‌ಗಳಿಗೆ ನೇರ ಪರಿಶೀಲನೆ ಬೇಕು',
+      one: '1 ಲಾಟ್‌ಗೆ ನೇರ ಪರಿಶೀಲನೆ ಬೇಕು',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nextPhysicalBody =>
+      'ಲಾಟ್ ತೆರೆದು, ವ್ಯಕ್ತಿ ಕಂಡದ್ದನ್ನು ದಾಖಲಿಸಿ. Kernel ಎಂದೂ ಲಾಟ್ ಅನ್ನು ಒಪ್ಪುವುದಿಲ್ಲ ಅಥವಾ ತಿರಸ್ಕರಿಸುವುದಿಲ್ಲ.';
+
+  @override
+  String get nextFinishBatch => 'ಒಂದೊಂದಾಗಿ ಪರೀಕ್ಷೆ ಮುಗಿಸಿ';
+
+  @override
+  String nextFinishBatchOne(String label) {
+    return 'ಒಂದೊಂದಾಗಿ ಪರೀಕ್ಷೆ ಮುಗಿಸಿ: $label';
+  }
+
+  @override
+  String nextFinishBatchBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ಚೀಲಗಳು ಬಾಕಿ, ಒಂದು ಬಾರಿಗೆ ಒಂದು',
+      one: '1 ಚೀಲ ಬಾಕಿ, ಒಂದು ಬಾರಿಗೆ ಒಂದು',
+      zero: 'ಈ ಗುಂಪಿನ ಎಲ್ಲ ಚೀಲಗಳಿಗೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಆಗಿದೆ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nextPreSale => 'ಮಾರಾಟದ ಮುಂಚಿನ ವರದಿ ಕಳುಹಿಸಿ';
+
+  @override
+  String nextPreSaleOne(String label) {
+    return '$label ಮಾರಾಟದ ಮುಂಚಿನ ವರದಿ ಕಳುಹಿಸಿ';
+  }
+
+  @override
+  String get nextLotSummary => 'ಲಾಟ್ ಸಾರಾಂಶ ಕಳುಹಿಸಿ';
+
+  @override
+  String nextLotSummaryOne(String label) {
+    return '$label ಲಾಟ್ ಸಾರಾಂಶ ಕಳುಹಿಸಿ';
+  }
+
+  @override
+  String get nextExportBody =>
+      'ನಿಮ್ಮ ದಾಖಲೆಗಳಿಂದ ಇದೇ ಫೋನ್‌ನಲ್ಲಿ ತಯಾರಾಗಿದೆ. ಯಾರಿಗೆ ಕಳುಹಿಸಬೇಕು ಎಂದು ನೀವೇ ನಿರ್ಧರಿಸಿ.';
+
+  @override
+  String get nextActionRegister => 'ದಾಖಲಿಸಿ';
+
+  @override
+  String get nextActionScan => 'ಶಬ್ದ ಪರೀಕ್ಷೆ ಶುರು';
+
+  @override
+  String get nextActionBatch => 'ಒಂದೊಂದಾಗಿ ಪರೀಕ್ಷೆ ಶುರು';
+
+  @override
+  String get nextActionOpen => 'ತೆರೆಯಿರಿ';
+
+  @override
+  String get nextActionQueue => 'ಪರಿಶೀಲನೆಯ ಸರದಿ ತೆರೆಯಿರಿ';
+
+  @override
+  String get nextActionOpenLot => 'ಲಾಟ್ ತೆರೆಯಿರಿ';
+
+  @override
+  String get nextActionContinueBatch => 'ಒಂದೊಂದಾಗಿ ಪರೀಕ್ಷೆ ಮುಂದುವರಿಸಿ';
+
+  @override
+  String get nextActionReport => 'ವರದಿ ತೆರೆಯಿರಿ';
+
+  @override
+  String get insightsTitle => 'ಮಾಹಿತಿ';
+
+  @override
+  String get insightsSubtitle =>
+      'ನಿಮ್ಮದೇ ದಾಖಲೆಗಳಿಂದ ಇದೇ ಫೋನ್‌ನಲ್ಲಿ ಲೆಕ್ಕ ಮಾಡಿದ್ದು';
+
+  @override
+  String get insightsCardSubtitle =>
+      'ಫಲಿತಾಂಶಗಳು, ರೆಕಾರ್ಡಿಂಗ್ ತೊಂದರೆಗಳು ಮತ್ತು ಯಾವುದಕ್ಕೆ ಪರಿಶೀಲನೆ ಬೇಕು';
+
+  @override
+  String get insightsWindowLabel => 'ಅವಧಿ';
+
+  @override
+  String get insightsWindow7 => '7 ದಿನಗಳು';
+
+  @override
+  String get insightsWindow30 => '30 ದಿನಗಳು';
+
+  @override
+  String get insightsWindowAll => 'ಎಲ್ಲ ಕಾಲ';
+
+  @override
+  String get insightsActivityTitle => 'ಶಬ್ದ ಪರೀಕ್ಷೆಯ ಕೆಲಸ';
+
+  @override
+  String get insightsScansToday => 'ಇಂದಿನ ಶಬ್ದ ಪರೀಕ್ಷೆಗಳು';
+
+  @override
+  String get insightsScans7 => 'ಕಳೆದ 7 ದಿನಗಳ ಶಬ್ದ ಪರೀಕ್ಷೆಗಳು';
+
+  @override
+  String get insightsRatesTitle => 'ಫಲಿತಾಂಶಗಳು';
+
+  @override
+  String get insightsRatesEmpty => 'ಈ ಅವಧಿಯಲ್ಲಿ ಶಬ್ದ ಪರೀಕ್ಷೆ ಇಲ್ಲ';
+
+  @override
+  String get insightsRatesEmptyDetail =>
+      'ಇಲ್ಲಿ ಫಲಿತಾಂಶ ನೋಡಲು ಒಂದು ಚೀಲ ಅಥವಾ ಡಬ್ಬಕ್ಕೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಮಾಡಿ.';
+
+  @override
+  String get insightsExperimentalNote =>
+      'ಪ್ರಾಯೋಗಿಕ ಮಾಡೆಲ್: ಈ ಫಲಿತಾಂಶಗಳು ದೃಢಪಟ್ಟಿಲ್ಲ, ತಪ್ಪಾಗಿರಬಹುದು. ಸಂಗ್ರಹ ಅಥವಾ ಮಾರಾಟದ ಯಾವುದೇ ನಿರ್ಧಾರಕ್ಕೆ ಮೊದಲು ನೀವೇ ಪರಿಶೀಲಿಸಿ.';
+
+  @override
+  String get insightsNoModelResults =>
+      'ಇನ್ನೂ ಮಾಡೆಲ್ ಫಲಿತಾಂಶಗಳಿಲ್ಲ: ಬಳಸಬಹುದಾದ ಯಾವ ರೆಕಾರ್ಡಿಂಗ್ ಅನ್ನೂ ಮಾಡೆಲ್ ಪರಿಶೀಲಿಸಿಲ್ಲ.';
+
+  @override
+  String get insightsRetryLabel => 'ರೆಕಾರ್ಡಿಂಗ್ ಬಳಸಲಾಗದು (ಮತ್ತೆ ಮಾಡಿ)';
+
+  @override
+  String insightsBarValue(int count, int percent) {
+    return '$count · $percent%';
+  }
+
+  @override
+  String insightsTotalScans(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ಈ ಅವಧಿಯಲ್ಲಿ $count ಶಬ್ದ ಪರೀಕ್ಷೆಗಳು',
+      one: 'ಈ ಅವಧಿಯಲ್ಲಿ 1 ಶಬ್ದ ಪರೀಕ್ಷೆ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insightsQualityTitle => 'ರೆಕಾರ್ಡಿಂಗ್ ತೊಂದರೆಗಳು';
+
+  @override
+  String get insightsQualityEmpty => 'ಈ ಅವಧಿಯಲ್ಲಿ ಬಳಸಲಾಗದ ರೆಕಾರ್ಡಿಂಗ್‌ಗಳಿಲ್ಲ';
+
+  @override
+  String get insightsQualityHint =>
+      'ಶಾಂತ ಜಾಗದಲ್ಲಿ ಫೋನನ್ನು ಚೀಲಕ್ಕೆ ಗಟ್ಟಿಯಾಗಿ ಒತ್ತಿದರೆ ಹೆಚ್ಚಿನ ತೊಂದರೆಗಳು ಹೋಗುತ್ತವೆ.';
+
+  @override
+  String get insightsInspectionsTitle => 'ಪರಿಶೀಲನೆಗಳು';
+
+  @override
+  String get insightsInspectionsEmpty => 'ಇನ್ನೂ ಪರಿಶೀಲನೆ ದಾಖಲಾಗಿಲ್ಲ';
+
+  @override
+  String insightsClosureRate(int percent) {
+    return '$percent% ಪರಿಶೀಲನೆಗಳು ಮುಗಿದಿವೆ';
+  }
+
+  @override
+  String get insightsStaleTitle => 'ತುಂಬಾ ದಿನದಿಂದ ಪರೀಕ್ಷಿಸದವು';
+
+  @override
+  String get staleNeverScanned => 'ಎಂದೂ ಶಬ್ದ ಪರೀಕ್ಷೆ ಆಗಿಲ್ಲ';
+
+  @override
+  String get qualityShortSilence => 'ತುಂಬಾ ಮೆಲ್ಲಗೆ';
+
+  @override
+  String get qualityShortClipping => 'ತುಂಬಾ ಜೋರು (ಶಬ್ದ ಒಡೆದಿದೆ)';
+
+  @override
+  String get qualityShortHighNoise => 'ತುಂಬಾ ಗದ್ದಲ';
+
+  @override
+  String get qualityShortTooShort => 'ತುಂಬಾ ಚಿಕ್ಕದು';
+
+  @override
+  String get qualityShortPermissionDenied => 'ಮೈಕ್ ತಡೆಯಲಾಗಿದೆ';
+
+  @override
+  String get qualityShortCaptureError => 'ರೆಕಾರ್ಡಿಂಗ್ ದೋಷ';
+
+  @override
+  String get queueFilterResult => 'ಮಾಡೆಲ್ ಫಲಿತಾಂಶ';
+
+  @override
+  String get queueFilterAllResults => 'ಎಲ್ಲ ಫಲಿತಾಂಶಗಳು';
+
+  @override
+  String get queueFilterPlace => 'ಜಾಗ';
+
+  @override
+  String get queueFilterAllPlaces => 'ಎಲ್ಲ ಜಾಗಗಳು';
+
+  @override
+  String get queueFilterAge => 'ಕೊನೆಯ ಬಳಸಬಹುದಾದ ಶಬ್ದ ಪರೀಕ್ಷೆ';
+
+  @override
+  String get queueFilterAnyAge => 'ಯಾವಾಗ ಬೇಕಾದರೂ';
+
+  @override
+  String queueFilterWithinDays(int days) {
+    return '$days ದಿನಗಳ ಒಳಗೆ';
+  }
+
+  @override
+  String queueFilterAgeNote(int days) {
+    return 'ಕೊನೆಯ ಬಳಸಬಹುದಾದ ಶಬ್ದ ಪರೀಕ್ಷೆ $days ದಿನಗಳಿಗಿಂತ ಹಳೆಯದಾದರೆ, ಅವು \"ಶಬ್ದ ಪರೀಕ್ಷೆ ಬೇಕು\" ಗೆ ಹೋಗುತ್ತವೆ.';
+  }
+
+  @override
+  String get queueNoMatch => 'ಈ ಫಿಲ್ಟರ್‌ಗಳಿಗೆ ಯಾವುದೂ ಹೊಂದುತ್ತಿಲ್ಲ.';
+
+  @override
+  String get rankReasonInfested => 'ಇಲ್ಲೇಕೆ: ಹುಳು ಹಿಡಿದಿರಬಹುದು (ದೃಢಪಟ್ಟಿಲ್ಲ)';
+
+  @override
+  String get rankReasonUncertain => 'ಇಲ್ಲೇಕೆ: ಮಾಡೆಲ್‌ಗೆ ಖಚಿತವಿರಲಿಲ್ಲ';
+
+  @override
+  String get rankReasonClean => 'ಕೆಳಗೇಕೆ: ಯಾವ ಸೂಚನೆಯೂ ಕಾಣಲಿಲ್ಲ (ಖಾತರಿ ಅಲ್ಲ)';
+
+  @override
+  String scannedDaysAgo(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days ದಿನಗಳ ಹಿಂದೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಆಯಿತು',
+      one: '1 ದಿನದ ಹಿಂದೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಆಯಿತು',
+      zero: 'ಇಂದು ಶಬ್ದ ಪರೀಕ್ಷೆ ಆಯಿತು',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reminderSuggestedLabel => 'ಸಲಹೆ — ಆಯ್ಕೆ ನಿಮ್ಮದು';
+
+  @override
+  String reminderSuggestedOther(String date) {
+    return 'ಸಲಹೆ: $date — ಆಯ್ಕೆ ನಿಮ್ಮದು';
+  }
+
+  @override
+  String get reminderWordingTitle => 'ಸಲಹೆ ಮಾಡಿದ ಪದಗಳು';
+
+  @override
+  String get settingsAdviceSection => 'ಫೋನ್‌ನಲ್ಲೇ AI ಸಹಾಯಕ (ಪ್ರಾಯೋಗಿಕ)';
+
+  @override
+  String get adviceToggle => 'ಫೋನ್‌ನ AI ಸಹಾಯಕವನ್ನು ಬಳಸಿ';
+
+  @override
+  String get adviceToggleBody =>
+      'ಮೊದಲು ಆಫ್ ಇರುತ್ತದೆ. ಇದು ಈ ಫೋನ್‌ನಲ್ಲಿ ಮಾತ್ರ ನಡೆಯುತ್ತದೆ ಮತ್ತು ನಿಮ್ಮ ರೆಕಾರ್ಡಿಂಗ್ ಅನ್ನು ಎಂದೂ ಕೇಳುವುದಿಲ್ಲ; ಫಲಿತಾಂಶಗಳು ಮತ್ತು ದಿನಾಂಕಗಳನ್ನು ಮಾತ್ರ ನೋಡುತ್ತದೆ. ಇದು ತಪ್ಪಾಗಬಹುದು. ಯಾವಾಗ ಬೇಕಾದರೂ ಆಫ್ ಮಾಡಬಹುದು.';
+
+  @override
+  String get adviceStatusTitle => 'ಸಹಾಯಕದ ಸ್ಥಿತಿ';
+
+  @override
+  String get adviceStatusOff => 'ಆಫ್';
+
+  @override
+  String get adviceStatusNoModel => 'ಆನ್ — ಇನ್ನೂ ಮಾಡೆಲ್ ತಂದಿಲ್ಲ';
+
+  @override
+  String get adviceStatusLoading => 'ಮಾಡೆಲ್ ತೆರೆಯುತ್ತಿದೆ…';
+
+  @override
+  String get adviceStatusReady => 'ಈ ಫೋನ್‌ನಲ್ಲಿ ಸಿದ್ಧ';
+
+  @override
+  String get adviceStatusBusy => 'ಬರೆಯುತ್ತಿದೆ';
+
+  @override
+  String get adviceStatusFailed =>
+      'ಮಾಡೆಲ್ ತೆರೆಯಲಾಗಲಿಲ್ಲ — Kernel ತನ್ನ ಸಾಮಾನ್ಯ ಪಠ್ಯ ತೋರಿಸುತ್ತದೆ';
+
+  @override
+  String get adviceModelTitle => 'ಸಹಾಯಕದ ಮಾಡೆಲ್';
+
+  @override
+  String get adviceModelNone => 'ಇನ್ನೂ ಮಾಡೆಲ್ ತಂದಿಲ್ಲ';
+
+  @override
+  String get adviceModelId => 'ಮಾಡೆಲ್';
+
+  @override
+  String get adviceModelVersion => 'ಆವೃತ್ತಿ';
+
+  @override
+  String get adviceModelSize => 'ಗಾತ್ರ';
+
+  @override
+  String get adviceModelBackend => 'ಯಾವುದರಲ್ಲಿ ನಡೆಯುತ್ತದೆ';
+
+  @override
+  String get adviceBackendGpu => 'ಫೋನ್‌ನ ಗ್ರಾಫಿಕ್ಸ್ ಚಿಪ್ (GPU)';
+
+  @override
+  String get adviceBackendCpu => 'ಫೋನ್‌ನ ಪ್ರೊಸೆಸರ್ (CPU)';
+
+  @override
+  String get adviceBackendNone => 'ಇನ್ನೂ ತೆರೆದಿಲ್ಲ';
+
+  @override
+  String get adviceImportAction => 'ಮಾಡೆಲ್ ತನ್ನಿ';
+
+  @override
+  String get adviceImporting => 'ಮಾಡೆಲ್ ತರಲಾಗುತ್ತಿದೆ';
+
+  @override
+  String adviceImportCopying(String copied, String total) {
+    return '$total ರಲ್ಲಿ $copied ನಕಲಾಗಿದೆ';
+  }
+
+  @override
+  String adviceImportCopied(String copied) {
+    return '$copied ನಕಲಾಗಿದೆ';
+  }
+
+  @override
+  String get adviceImportVerifying => 'ಮಾಡೆಲ್ ಫೈಲ್ ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…';
+
+  @override
+  String get adviceImportDone => 'ಮಾಡೆಲ್ ಬಂತು. ಇದು ಇದೇ ಫೋನ್‌ನಲ್ಲಿ ಇರುತ್ತದೆ.';
+
+  @override
+  String adviceImportFailed(String detail) {
+    return 'ಮಾಡೆಲ್ ತರಲಾಗಲಿಲ್ಲ: $detail';
+  }
+
+  @override
+  String adviceImportNoSpace(String needed, String free) {
+    return 'ಜಾಗ ಸಾಲದು: ಮಾಡೆಲ್‌ಗೆ $needed ಬೇಕು, ಆದರೆ ಈ ಫೋನ್‌ನಲ್ಲಿ $free ಮಾತ್ರ ಖಾಲಿ ಇದೆ.';
+  }
+
+  @override
+  String get adviceDeleteAction => 'ಮಾಡೆಲ್ ಅಳಿಸಿ';
+
+  @override
+  String get adviceDeleteConfirmTitle => 'ಸಹಾಯಕದ ಮಾಡೆಲ್ ಅಳಿಸಬೇಕೇ?';
+
+  @override
+  String get adviceDeleteConfirmBody =>
+      'ಇದು ಮಾಡೆಲ್ ಫೈಲ್ ಅನ್ನು ಈ ಫೋನ್‌ನಿಂದ ತೆಗೆಯುತ್ತದೆ. ನಿಮ್ಮ ದಾಖಲೆಗಳಿಗೆ ಏನೂ ಆಗುವುದಿಲ್ಲ. ನಂತರ ಮತ್ತೆ ತರಬಹುದು.';
+
+  @override
+  String adviceDeleteFailed(String detail) {
+    return 'ಮಾಡೆಲ್ ಅಳಿಸಲಾಗಲಿಲ್ಲ: $detail';
+  }
+
+  @override
+  String get adviceHelp =>
+      'Google AI Edge Gallery ಮೂಲಕ ಅಥವಾ Hugging Face litert-community/gemma-4-E2B-it-litert-lm ನಿಂದ .litertlm ಮಾಡೆಲ್ ಪಡೆಯಿರಿ (Gemma ನಿಯಮಗಳು ಅನ್ವಯಿಸುತ್ತವೆ), ನಂತರ ಇಲ್ಲಿ ತನ್ನಿ.';
+
+  @override
+  String adviceProvenance(String modelVersion) {
+    return 'ಇದೇ ಫೋನ್‌ನಲ್ಲಿ ತಯಾರಾದದ್ದು — ಪ್ರಾಯೋಗಿಕ · $modelVersion';
+  }
+
+  @override
+  String get adviceNotDecision => 'ಇದು ನಿರ್ಧಾರವಲ್ಲ — ನೀವೇ ಪರಿಶೀಲಿಸಿ';
+
+  @override
+  String get adviceGenerating => 'ಇದೇ ಫೋನ್‌ನಲ್ಲಿ ಬರೆಯುತ್ತಿದೆ…';
+
+  @override
+  String get adviceExplainAction => 'ಈ ಫಲಿತಾಂಶ ವಿವರಿಸಿ';
+
+  @override
+  String get adviceExplainTitle => 'ಈ ಫಲಿತಾಂಶದ ಅರ್ಥ';
+
+  @override
+  String get adviceStaticRetry =>
+      'ರೆಕಾರ್ಡಿಂಗ್ ಬಳಸಲಾಗಲಿಲ್ಲ, ಆದ್ದರಿಂದ ಯಾವ ಫಲಿತಾಂಶವನ್ನೂ ಉಳಿಸಿಲ್ಲ. ಫೋನನ್ನು ಚೀಲ ಅಥವಾ ಡಬ್ಬಕ್ಕೆ ಗಟ್ಟಿಯಾಗಿ ಒತ್ತಿ, ಅಲುಗಾಡದೆ ಶಾಂತವಾಗಿದ್ದು ಮತ್ತೆ ರೆಕಾರ್ಡ್ ಮಾಡಿ.';
+
+  @override
+  String get adviceStaticNotEvaluated =>
+      'ಈ ರೆಕಾರ್ಡಿಂಗ್‌ಗೆ ಫಲಿತಾಂಶ ಬಂದಿಲ್ಲ, ಆದ್ದರಿಂದ ಇದು ಹುಳುಗಳ ಬಗ್ಗೆ ಏನೂ ಹೇಳುವುದಿಲ್ಲ. ಧಾನ್ಯವನ್ನು ನೀವೇ ಪರಿಶೀಲಿಸಿ.';
+
+  @override
+  String get adviceStaticInspection =>
+      'ಪ್ರಾಯೋಗಿಕ ಮಾಡೆಲ್ ಗಮನಿಸಬೇಕಾದ ಏನನ್ನೋ ಕೇಳಿದೆ. ಇದು ದೃಢಪಟ್ಟಿಲ್ಲ. ಯಾವುದೇ ನಿರ್ಧಾರಕ್ಕೆ ಮೊದಲು ಧಾನ್ಯವನ್ನು ನೀವೇ ಪರಿಶೀಲಿಸಿ.';
+
+  @override
+  String get adviceStaticClean =>
+      'ಪ್ರಾಯೋಗಿಕ ಮಾಡೆಲ್‌ಗೆ ಯಾವ ಸೂಚನೆಯೂ ಸಿಗಲಿಲ್ಲ. ಇದು ಖಾತರಿ ಅಲ್ಲ. ಸಂಗ್ರಹ ಅಥವಾ ಮಾರಾಟದ ನಿರ್ಧಾರಕ್ಕೆ ಮೊದಲು ಧಾನ್ಯವನ್ನು ನೀವೇ ಪರಿಶೀಲಿಸಿ.';
+
+  @override
+  String get reportAiSummaryToggle => 'AI ಬರೆದ ಸಾರಾಂಶ ಸೇರಿಸಿ';
+
+  @override
+  String get reportAiSummaryBody =>
+      'ವರದಿಯ ಅಂಕಿಗಳಿಂದ ಇದೇ ಫೋನ್‌ನಲ್ಲಿ ಬರೆದದ್ದು. ಮೊದಲು ನೀವು ನೋಡಿ, ಸೇರಿಸಬೇಕೇ ಬೇಡವೇ ಎಂದು ನಿರ್ಧರಿಸುತ್ತೀರಿ. ಪ್ರಾಯೋಗಿಕ.';
+
+  @override
+  String get reportAiPreviewTitle => 'AI ಬರೆದ ಸಾರಾಂಶ';
+
+  @override
+  String get reportAiPreviewBody =>
+      'ಸೇರಿಸಿದರೆ, ಇದು ವರದಿಯಲ್ಲಿ ಹೆಸರಿರುವ ಪ್ರತ್ಯೇಕ ಭಾಗದಲ್ಲಿ ಇರುತ್ತದೆ — ನಿಮ್ಮ ದಾಖಲೆಗಳು ಮತ್ತು ಪರಿಶೀಲನೆಯ ಫಲಿತಾಂಶಗಳಿಂದ ಬೇರೆ. ಇದನ್ನು ಬದಲಿಸಲಾಗದು.';
+
+  @override
+  String get reportAiSummaryTitle => 'ಸಾರಾಂಶದ ಕರಡು';
+
+  @override
+  String get reportAiInclude => 'ಸೇರಿಸಿ';
+
+  @override
+  String get reportAiSkip => 'ಬಿಟ್ಟುಬಿಡಿ';
+
+  @override
+  String unitGb(String value) {
+    return '$value GB';
+  }
+
+  @override
+  String unitMb(String value) {
+    return '$value MB';
   }
 }

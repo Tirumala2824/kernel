@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
 
 import '../../app/data_providers.dart';
 import '../../app/providers.dart';
-import '../../app/routes.dart';
 import '../../brand/illustrations.dart';
 import '../../brand/kernel_brand.dart';
 import '../../l10n/l10n.dart';
@@ -46,7 +44,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     curve: KernelMotion.emphasized,
   );
 
+  /// Saves the role and marks onboarding done. Navigation is left to the
+  /// router redirect, which moves to Home once both settings streams have
+  /// emitted the new values; navigating here raced those emissions. The
+  /// role cards stay disabled until then so a second tap cannot interleave.
   Future<void> _pick(Role role) async {
+    if (_saving) return;
     final l = context.l10n;
     setState(() {
       _saving = true;
@@ -56,12 +59,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       final settings = ref.read(settingsRepositoryProvider);
       await settings.setActiveRole(role);
       await settings.setOnboardingDone(true);
-      if (!mounted) return;
-      context.go(Routes.home);
     } on Object catch (e) {
-      if (mounted) setState(() => _error = l.roleSaveFailed('$e'));
-    } finally {
-      if (mounted) setState(() => _saving = false);
+      if (mounted) {
+        setState(() {
+          _saving = false;
+          _error = l.roleSaveFailed('$e');
+        });
+      }
     }
   }
 

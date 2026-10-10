@@ -11,6 +11,7 @@ import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_card.dart';
 import '../household/container_card.dart';
+import 'next_step_section.dart';
 
 class HouseholdHome extends ConsumerWidget {
   const HouseholdHome({super.key});
@@ -22,19 +23,12 @@ class HouseholdHome extends ConsumerWidget {
     final l = context.l10n;
     final items = ref.watch(itemsByRoleProvider(role));
     final upcoming = ref.watch(upcomingRemindersProvider);
+    final activity = ref.watch(scanActivityProvider(roleScope(role))).value;
     return PageList(
       children: [
         ScreenHeader(
           title: l.householdHomeTitle,
           subtitle: l.householdHomeSubtitle,
-        ),
-        HeroActionCard(
-          key: const Key('hero-scan'),
-          eyebrow: l.heroEyebrowListen,
-          title: l.householdHeroTitle,
-          subtitle: l.householdHeroSubtitle,
-          actionLabel: l.heroStartScan,
-          onTap: () => context.go(Routes.scan),
         ),
         AsyncView<List<GrainItem>>(
           value: items,
@@ -53,7 +47,28 @@ class HouseholdHome extends ConsumerWidget {
             final ids = {for (final item in items) item.id};
             final mine = reminders.where((r) => ids.contains(r.itemId)).length;
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                NextStepSection(
+                  role: role,
+                  fallback: HeroActionCard(
+                    key: const Key('hero-scan'),
+                    eyebrow: l.heroEyebrowListen,
+                    title: l.householdHeroTitle,
+                    subtitle: l.householdHeroSubtitle,
+                    actionLabel: l.heroStartScan,
+                    onTap: () => context.go(Routes.scan),
+                  ),
+                ),
+                if (activity != null) ...[
+                  const SizedBox(height: 12),
+                  QuietNote(
+                    l.scanActivityLine(activity.today, activity.last7Days),
+                    key: const Key('household-activity'),
+                    icon: Icons.graphic_eq_rounded,
+                  ),
+                ],
+                const SizedBox(height: 12),
                 for (final item in items)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -75,6 +90,7 @@ class HouseholdHome extends ConsumerWidget {
             );
           },
         ),
+        const InsightsCard(),
       ],
     );
   }

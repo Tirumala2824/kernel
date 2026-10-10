@@ -10,6 +10,7 @@ import '../../theme/tokens.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_app_bar.dart';
 import '../../widgets/kernel_card.dart';
+import 'advice_settings.dart';
 import 'language_picker.dart';
 import 'settings_sections.dart';
 
@@ -108,6 +109,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               label: Text(l.deleteHistoryTitle),
             ),
           ),
+          SectionTitle(l.settingsAdviceSection),
+          const AdviceSettingsSection(),
           SectionTitle(l.settingsOnDevice),
           const EngineCard(),
           KernelCard(

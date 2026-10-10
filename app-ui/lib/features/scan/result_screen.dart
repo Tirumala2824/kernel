@@ -13,6 +13,7 @@ import '../../widgets/common.dart';
 import '../../widgets/kernel_app_bar.dart';
 import '../../widgets/record_tiles.dart';
 import '../../widgets/status_chip.dart';
+import '../advice/explain_result.dart';
 import '../inventory/item_detail_screen.dart';
 
 /// F06 screening result for one stored scan. Never a confident verdict:
@@ -252,6 +253,7 @@ class _ResultBody extends ConsumerWidget {
         tone: StatusTone.neutral,
         icon: Icons.person_search_rounded,
       ),
+      ExplainResultSection(scan: scan),
       if (item != null)
         ItemSummaryCard(
           item: item,

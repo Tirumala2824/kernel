@@ -1,3 +1,5 @@
+import 'package:kernel_contracts/kernel_contracts.dart' show ReportKind;
+
 /// Route locations. Tab routes live inside the bottom-nav shell; the rest
 /// are pushed on the root navigator.
 abstract final class Routes {
@@ -22,16 +24,32 @@ abstract final class Routes {
   static const batchSetup = '/batch';
   static const newLot = '/lots/new';
   static const newHarvest = '/harvests/new';
+  static const insights = '/insights';
+
+  /// Reports tab with one report preset at the top (pre-sale for a harvest,
+  /// lot summary for a lot). Used by next-step actions.
+  static String reportPreset(
+    ReportKind kind, {
+    String? harvestId,
+    String? lotId,
+  }) => _withQuery(reports, {
+    'kind': kind.name,
+    'harvestId': ?harvestId,
+    'lotId': ?lotId,
+  });
 
   static String batchRun({String? locationId, String? lotId}) =>
       _withQuery('/batch/run', {'locationId': ?locationId, 'lotId': ?lotId});
 
-  static String newItem({String? locationId, String? lotId, String? harvestId}) =>
-      _withQuery('/items/new', {
-        'locationId': ?locationId,
-        'lotId': ?lotId,
-        'harvestId': ?harvestId,
-      });
+  static String newItem({
+    String? locationId,
+    String? lotId,
+    String? harvestId,
+  }) => _withQuery('/items/new', {
+    'locationId': ?locationId,
+    'lotId': ?lotId,
+    'harvestId': ?harvestId,
+  });
 
   static String item(String itemId) => '/items/$itemId';
   static String scanItem(String itemId) => '/items/$itemId/scan';

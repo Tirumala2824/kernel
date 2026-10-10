@@ -149,6 +149,34 @@ extension SampleLabelCopy on SampleLabel {
   };
 }
 
+extension RankReasonCopy on RankReason {
+  /// Why a queue entry sits where it does. Never reads as a verdict.
+  String label(AppLocalizations l) => switch (this) {
+    RankReason.infested => l.rankReasonInfested,
+    RankReason.uncertain => l.rankReasonUncertain,
+    RankReason.clean => l.rankReasonClean,
+  };
+}
+
+extension AdviceStatusCopy on AdviceStatus {
+  String label(AppLocalizations l) => switch (this) {
+    AdviceStatus.optedOut => l.adviceStatusOff,
+    AdviceStatus.noModel => l.adviceStatusNoModel,
+    AdviceStatus.loading => l.adviceStatusLoading,
+    AdviceStatus.ready => l.adviceStatusReady,
+    AdviceStatus.busy => l.adviceStatusBusy,
+    AdviceStatus.failed => l.adviceStatusFailed,
+  };
+}
+
+/// File size for model info, e.g. "2.6 GB" or "512 MB".
+String formatBytes(AppLocalizations l, int bytes) {
+  const mb = 1000 * 1000;
+  const gb = 1000 * mb;
+  if (bytes >= gb) return l.unitGb((bytes / gb).toStringAsFixed(1));
+  return l.unitMb((bytes / mb).toStringAsFixed(0));
+}
+
 /// Result headline (docs/design-tokens.md, "Result headline states").
 String resultHeadline(
   AppLocalizations l, {
@@ -192,15 +220,11 @@ String formatDate(BuildContext context, DateTime value) =>
     MaterialLocalizations.of(context).formatMediumDate(value.toLocal());
 
 String formatTime(BuildContext context, DateTime value) =>
-    MaterialLocalizations.of(
-      context,
-    ).formatTimeOfDay(TimeOfDay.fromDateTime(value.toLocal()));
+    MaterialLocalizations.of(context)
+        .formatTimeOfDay(TimeOfDay.fromDateTime(value.toLocal()));
 
-String formatDateTime(BuildContext context, DateTime value) =>
-    context.l10n.dateTimeJoin(
-      formatDate(context, value),
-      formatTime(context, value),
-    );
+String formatDateTime(BuildContext context, DateTime value) => context.l10n
+    .dateTimeJoin(formatDate(context, value), formatTime(context, value));
 
 int daysSince(DateTime date, {DateTime? now}) {
   final today = DateUtils.dateOnly(now ?? DateTime.now());

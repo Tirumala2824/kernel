@@ -10,7 +10,7 @@ import '../../brand/illustrations.dart';
 import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_card.dart';
-import 'home_screen.dart';
+import 'next_step_section.dart';
 
 class FarmerHome extends ConsumerWidget {
   const FarmerHome({super.key});
@@ -21,11 +21,11 @@ class FarmerHome extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final items = ref.watch(itemsByRoleProvider(role));
-    final open = ref.watch(openInspectionsProvider);
+    final stats = ref.watch(inspectionStatsProvider(roleScope(role))).value;
     final harvests = ref.watch(harvestsProvider).value ?? const <Harvest>[];
-    final latest = ([...harvests]
-          ..sort((a, b) => b.harvestedAt.compareTo(a.harvestedAt)))
-        .firstOrNull;
+    final latest = ([
+      ...harvests,
+    ]..sort((a, b) => b.harvestedAt.compareTo(a.harvestedAt))).firstOrNull;
     return PageList(
       children: [
         ScreenHeader(
@@ -33,14 +33,6 @@ class FarmerHome extends ConsumerWidget {
           subtitle: latest == null
               ? role.tagline(l)
               : l.farmerHomeHarvestSubtitle(latest.name),
-        ),
-        HeroActionCard(
-          key: const Key('hero-scan'),
-          eyebrow: l.heroEyebrowListen,
-          title: l.farmerHeroTitle,
-          subtitle: l.farmerHeroSubtitle,
-          actionLabel: l.heroStartScan,
-          onTap: () => context.go(Routes.scan),
         ),
         AsyncView<List<GrainItem>>(
           value: items,
@@ -55,18 +47,36 @@ class FarmerHome extends ConsumerWidget {
                 onAction: () => context.push(Routes.newItem()),
               );
             }
-            final followUps = openFor(open.value ?? const [], items).length;
-            return KernelCard(
-              key: const Key('items-summary'),
-              icon: Icons.inventory_2_rounded,
-              title: l.registeredSacks(items.length),
-              subtitle: followUps == 0
-                  ? l.noFollowUps
-                  : l.sacksRequireFollowUp(followUps),
-              onTap: () => context.go(Routes.inventory),
+            final followUps = stats == null ? 0 : stats.open + stats.inProgress;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                NextStepSection(
+                  role: role,
+                  fallback: HeroActionCard(
+                    key: const Key('hero-scan'),
+                    eyebrow: l.heroEyebrowListen,
+                    title: l.farmerHeroTitle,
+                    subtitle: l.farmerHeroSubtitle,
+                    actionLabel: l.heroStartScan,
+                    onTap: () => context.go(Routes.scan),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                KernelCard(
+                  key: const Key('items-summary'),
+                  icon: Icons.inventory_2_rounded,
+                  title: l.registeredSacks(items.length),
+                  subtitle: followUps == 0
+                      ? l.noFollowUps
+                      : l.sacksRequireFollowUp(followUps),
+                  onTap: () => context.go(Routes.inventory),
+                ),
+              ],
             );
           },
         ),
+        const InsightsCard(),
         KernelCard(
           key: const Key('harvests-card'),
           tone: KernelCardTone.ivory,

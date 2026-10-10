@@ -32,9 +32,3 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 }
-
-/// Open inspections that belong to [items].
-List<Inspection> openFor(List<Inspection> open, List<GrainItem> items) {
-  final ids = {for (final item in items) item.id};
-  return open.where((i) => ids.contains(i.itemId)).toList();
-}

@@ -10,6 +10,7 @@ import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/export_panel.dart';
 import '../../widgets/kernel_app_bar.dart';
+import '../../widgets/kernel_card.dart';
 import '../../widgets/record_tiles.dart';
 
 /// How many recent scans the history list shows.
@@ -19,22 +20,50 @@ const reportHistoryLimit = 50;
 /// system share sheet, printable sack labels, and recent scan history for
 /// the active role.
 class ReportsScreen extends ConsumerWidget {
-  const ReportsScreen({super.key});
+  const ReportsScreen({super.key, this.presetKind, this.harvestId, this.lotId});
+
+  /// Report opened from a next step ([ReportKind.preSale] for a harvest or
+  /// [ReportKind.lotSummary] for a lot); shown first.
+  final ReportKind? presetKind;
+  final String? harvestId;
+  final String? lotId;
+
+  /// Parses the `kind` query parameter written by [Routes.reportPreset].
+  static ReportKind? kindFromQuery(String? value) => switch (value) {
+    'preSale' => ReportKind.preSale,
+    'lotSummary' => ReportKind.lotSummary,
+    _ => null,
+  };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final role = ref.watch(activeRoleProvider).value;
     return Scaffold(
       appBar: const KernelAppBar(showMenu: true),
-      body: role == null ? const SizedBox.shrink() : _ReportsBody(role: role),
+      body: role == null
+          ? const SizedBox.shrink()
+          : _ReportsBody(
+              role: role,
+              presetKind: presetKind,
+              harvestId: harvestId,
+              lotId: lotId,
+            ),
     );
   }
 }
 
 class _ReportsBody extends ConsumerWidget {
-  const _ReportsBody({required this.role});
+  const _ReportsBody({
+    required this.role,
+    this.presetKind,
+    this.harvestId,
+    this.lotId,
+  });
 
   final Role role;
+  final ReportKind? presetKind;
+  final String? harvestId;
+  final String? lotId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,7 +73,25 @@ class _ReportsBody extends ConsumerWidget {
     return PageList(
       children: [
         ScreenHeader(title: l.reportsTitle, subtitle: role.reportTitle(l)),
-        ExportPanel(scope: ReportScope(role: role), title: role.reportTitle(l)),
+        if (presetKind != null)
+          _PresetPanel(
+            role: role,
+            kind: presetKind!,
+            harvestId: harvestId,
+            lotId: lotId,
+          ),
+        ExportPanel(
+          scope: ReportScope(role: role),
+          title: role.reportTitle(l),
+        ),
+        KernelCard(
+          key: const Key('reports-insights'),
+          tone: KernelCardTone.ivory,
+          icon: Icons.insights_rounded,
+          title: l.insightsTitle,
+          subtitle: l.insightsCardSubtitle,
+          onTap: () => context.push(Routes.insights),
+        ),
         if (role == Role.farmer) QuietNote(l.reportsFarmerHint),
         if (role == Role.buyer) QuietNote(l.reportsBuyerHint),
         SackLabelsPanel(
@@ -78,6 +125,50 @@ class _ReportsBody extends ConsumerWidget {
           },
         ),
       ],
+    );
+  }
+}
+
+/// The report a next step asked for, with its scope already filled in.
+class _PresetPanel extends ConsumerWidget {
+  const _PresetPanel({
+    required this.role,
+    required this.kind,
+    this.harvestId,
+    this.lotId,
+  });
+
+  final Role role;
+  final ReportKind kind;
+  final String? harvestId;
+  final String? lotId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final preSale = kind == ReportKind.preSale;
+    final String title;
+    if (preSale) {
+      final harvest = harvestId == null
+          ? null
+          : ref.watch(harvestProvider(harvestId!)).value;
+      title = harvest == null
+          ? l.reportTitleFarmer
+          : l.preSaleCardHarvest(harvest.name);
+    } else {
+      final lot = lotId == null ? null : ref.watch(lotProvider(lotId!)).value;
+      title = lot == null ? l.reportTitleBuyer : l.lotSummaryTitle(lot.code);
+    }
+    return ExportPanel(
+      key: const Key('report-preset'),
+      scope: ReportScope(
+        role: role,
+        kind: kind,
+        harvestId: preSale ? harvestId : null,
+        lotId: preSale ? null : lotId,
+      ),
+      title: title,
+      subtitle: preSale ? l.preSaleBody : l.lotSummaryBody,
     );
   }
 }

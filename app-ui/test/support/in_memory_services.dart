@@ -9,9 +9,22 @@ import 'in_memory_records.dart';
 export 'in_memory_records.dart' show InMemoryLabeledSampleRepository;
 
 class InMemorySettingsRepository implements SettingsRepository {
-  InMemorySettingsRepository({Role? activeRole, bool onboardingDone = true})
-    : _role = activeRole,
-      _onboarding = onboardingDone;
+  InMemorySettingsRepository({
+    Role? activeRole,
+    bool onboardingDone = true,
+    bool localAdviceOptIn = false,
+    this.roleEmitDelay,
+    this.onboardingEmitDelay,
+  }) : _role = activeRole,
+       _onboarding = onboardingDone,
+       _localAdvice = localAdviceOptIn;
+
+  /// When set, watchActiveRole delivers every value this much later, like a
+  /// slow database query (used to reproduce the onboarding race).
+  final Duration? roleEmitDelay;
+
+  /// Same for watchOnboardingDone.
+  final Duration? onboardingEmitDelay;
 
   Role? _role;
   bool _retain = false;
@@ -20,8 +33,10 @@ class InMemorySettingsRepository implements SettingsRepository {
   bool _haptics = true;
   bool _voice = false;
   bool _onboarding;
+  bool _localAdvice;
   final roleWrites = <Role>[];
   final languageWrites = <String?>[];
+  final localAdviceWrites = <bool>[];
   final _changes = Changes();
 
   Role? get activeRole => _role;
@@ -31,14 +46,24 @@ class InMemorySettingsRepository implements SettingsRepository {
   bool get haptics => _haptics;
   bool get voicePrompts => _voice;
   bool get onboardingDone => _onboarding;
+  bool get localAdviceOptIn => _localAdvice;
 
   Future<void> _set(void Function() change) async {
     change();
     _changes.notify();
   }
 
+  static Stream<T> _delayed<T>(Stream<T> source, Duration? delay) =>
+      delay == null
+      ? source
+      : source.asyncMap((value) async {
+          await Future<void>.delayed(delay);
+          return value;
+        });
+
   @override
-  Stream<Role?> watchActiveRole() => _changes.watch(() => _role);
+  Stream<Role?> watchActiveRole() =>
+      _delayed(_changes.watch(() => _role), roleEmitDelay);
 
   @override
   Future<void> setActiveRole(Role role) => _set(() {
@@ -81,11 +106,20 @@ class InMemorySettingsRepository implements SettingsRepository {
   Future<void> setVoicePrompts(bool value) => _set(() => _voice = value);
 
   @override
-  Stream<bool> watchOnboardingDone() => _changes.watch(() => _onboarding);
+  Stream<bool> watchOnboardingDone() =>
+      _delayed(_changes.watch(() => _onboarding), onboardingEmitDelay);
 
   @override
-  Future<void> setOnboardingDone(bool value) =>
-      _set(() => _onboarding = value);
+  Future<void> setOnboardingDone(bool value) => _set(() => _onboarding = value);
+
+  @override
+  Stream<bool> watchLocalAdviceOptIn() => _changes.watch(() => _localAdvice);
+
+  @override
+  Future<void> setLocalAdviceOptIn(bool value) => _set(() {
+    localAdviceWrites.add(value);
+    _localAdvice = value;
+  });
 }
 
 /// Follows the contract ranking rule for the test data it is given: rank
@@ -110,7 +144,32 @@ class InMemoryRankingService implements RankingService {
     return false;
   }
 
-  InspectionQueue _build(Role? role, String? locationId, String? lotId) {
+  /// Every watchQueue call, so tests can assert the filters sent.
+  final calls =
+      <
+        ({
+          Role? role,
+          String? locationId,
+          String? lotId,
+          Classification? result,
+          Duration? maxAge,
+        })
+      >[];
+
+  static int _severity(Classification c) => switch (c) {
+    Classification.infested => 0,
+    Classification.uncertain => 1,
+    _ => 2,
+  };
+
+  InspectionQueue _build(
+    Role? role,
+    String? locationId,
+    String? lotId,
+    Classification? result,
+    Duration? maxAge,
+  ) {
+    final now = DateTime.now();
     final scoped = items.items.where(
       (i) =>
           !i.isArchived &&
@@ -121,16 +180,31 @@ class InMemoryRankingService implements RankingService {
     final ranked = <QueueEntry>[];
     final needsScan = <GrainItem>[];
     for (final item in scoped) {
-      final valid = (scans.scans.where((s) => s.itemId == item.id && s.isValid)
-            .toList()
-          ..sort((a, b) => b.capturedAt.compareTo(a.capturedAt)))
-          .firstOrNull;
-      if (valid == null) {
+      final valid =
+          (scans.scans.where((s) => s.itemId == item.id && s.isValid).toList()
+                ..sort((a, b) => b.capturedAt.compareTo(a.capturedAt)))
+              .firstOrNull;
+      if (valid == null ||
+          (maxAge != null && now.difference(valid.capturedAt) > maxAge)) {
         needsScan.add(item);
-      } else {
-        ranked.add(QueueEntry(item: item, latestValidScan: valid));
+      } else if (result == null || valid.result == result) {
+        ranked.add(
+          QueueEntry(
+            item: item,
+            latestValidScan: valid,
+            ageDays: now.difference(valid.capturedAt).inDays,
+          ),
+        );
       }
     }
+    ranked.sort((a, b) {
+      final bySeverity = _severity(a.latestValidScan.result)
+          .compareTo(_severity(b.latestValidScan.result));
+      if (bySeverity != 0) return bySeverity;
+      return a.latestValidScan.capturedAt.compareTo(
+        b.latestValidScan.capturedAt,
+      );
+    });
     return InspectionQueue(
       ranked: ranked,
       needsScan: needsScan,
@@ -145,8 +219,18 @@ class InMemoryRankingService implements RankingService {
     Role? role,
     String? locationId,
     String? lotId,
+    Classification? result,
+    Duration? maxAge,
   }) => Stream<InspectionQueue>.multi((sink) {
-    void emit(void _) => sink.add(_build(role, locationId, lotId));
+    calls.add((
+      role: role,
+      locationId: locationId,
+      lotId: lotId,
+      result: result,
+      maxAge: maxAge,
+    ));
+    void emit(void _) =>
+        sink.add(_build(role, locationId, lotId, result, maxAge));
     emit(null);
     final subs = [items.changes.listen(emit), scans.changes.listen(emit)];
     sink.onCancel = () {

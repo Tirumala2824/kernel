@@ -10,7 +10,7 @@ import '../../brand/illustrations.dart';
 import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_card.dart';
-import 'home_screen.dart';
+import 'next_step_section.dart';
 
 class FpoHome extends ConsumerWidget {
   const FpoHome({super.key});
@@ -27,11 +27,9 @@ class FpoHome extends ConsumerWidget {
     final l = context.l10n;
     final items = ref.watch(itemsByRoleProvider(role));
     final places = ref.watch(childLocationsProvider(null)).value ?? const [];
-    final today = ref
-        .watch(scansSinceProvider((since: startOfToday(), role: role)))
-        .value;
+    final activity = ref.watch(scanActivityProvider(roleScope(role))).value;
+    final stats = ref.watch(inspectionStatsProvider(roleScope(role))).value;
     final queue = ref.watch(inspectionQueueProvider(queueScope)).value;
-    final open = ref.watch(openInspectionsProvider).value ?? const [];
 
     return PageList(
       children: [
@@ -40,15 +38,6 @@ class FpoHome extends ConsumerWidget {
           subtitle: places.isEmpty
               ? l.fpoHomeSubtitle
               : places.map((p) => p.name).join(' • '),
-        ),
-        HeroActionCard(
-          key: const Key('hero-scan'),
-          eyebrow: l.heroEyebrowListen,
-          title: l.batchScanTitle,
-          subtitle: l.batchScanSubtitle,
-          actionLabel: l.heroStartBatch,
-          icon: Icons.playlist_play_rounded,
-          onTap: () => context.push(Routes.batchSetup),
         ),
         AsyncView<List<GrainItem>>(
           value: items,
@@ -63,42 +52,44 @@ class FpoHome extends ConsumerWidget {
                 onAction: () => context.push(Routes.newItem()),
               );
             }
-            final ids = {for (final item in items) item.id};
-            final scannedToday = (today ?? const <ScanRecord>[])
-                .where((s) => ids.contains(s.itemId))
-                .map((s) => s.itemId)
-                .toSet()
+            final open = stats == null ? 0 : stats.open + stats.inProgress;
+            final flagged = queue?.ranked
+                .where((e) => e.reason != RankReason.clean)
                 .length;
-            final assigned = openFor(open, items);
-            final flagged = queue == null
-                ? 0
-                : queue.ranked
-                      .where(
-                        (e) =>
-                            e.latestValidScan.result ==
-                                Classification.infested ||
-                            e.latestValidScan.result ==
-                                Classification.uncertain,
-                      )
-                      .length;
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                NextStepSection(
+                  role: role,
+                  fallback: HeroActionCard(
+                    key: const Key('hero-scan'),
+                    eyebrow: l.heroEyebrowListen,
+                    title: l.batchScanTitle,
+                    subtitle: l.batchScanSubtitle,
+                    actionLabel: l.heroStartBatch,
+                    icon: Icons.playlist_play_rounded,
+                    onTap: () => context.push(Routes.batchSetup),
+                  ),
+                ),
+                const SizedBox(height: 12),
                 KernelCard(
                   key: const Key('items-summary'),
                   icon: Icons.inventory_2_rounded,
                   title: l.registeredSacks(items.length),
-                  subtitle: l.sacksScannedToday(scannedToday),
+                  subtitle: activity == null
+                      ? l.loading
+                      : l.scansTodayCount(activity.today),
                   onTap: () => context.push(Routes.scansToday),
                 ),
                 const SizedBox(height: 12),
                 KernelCard(
                   key: const Key('queue-card'),
-                  tone: flagged > 0
+                  tone: (flagged ?? 0) > 0
                       ? KernelCardTone.attention
                       : KernelCardTone.sage,
                   icon: Icons.format_list_numbered_rounded,
                   title: l.queueTitle,
-                  subtitle: queue == null
+                  subtitle: queue == null || flagged == null
                       ? l.loading
                       : l.queueSummary(flagged, queue.needsScan.length),
                   onTap: () => context.push(Routes.queue),
@@ -109,15 +100,16 @@ class FpoHome extends ConsumerWidget {
                   tone: KernelCardTone.ivory,
                   icon: Icons.assignment_ind_rounded,
                   title: l.assignedTitle,
-                  subtitle: assigned.isEmpty
+                  subtitle: open == 0
                       ? l.assignedNone
-                      : l.inspectionsOpen(assigned.length),
+                      : l.inspectionsOpen(open),
                   onTap: () => context.push(Routes.assignedInspections),
                 ),
               ],
             );
           },
         ),
+        const InsightsCard(),
         KernelCard(
           tone: KernelCardTone.ivory,
           icon: Icons.add_home_work_rounded,

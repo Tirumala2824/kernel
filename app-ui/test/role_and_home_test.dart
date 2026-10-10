@@ -163,7 +163,7 @@ void main() {
       await pumpKernelApp(tester, env);
 
       expect(find.text('2 registered sacks'), findsOneWidget);
-      expect(find.text('0 sacks scanned today'), findsOneWidget);
+      expect(find.text('No scans today'), findsOneWidget);
       expect(find.text('0 flagged · 2 sacks need a scan'), findsOneWidget);
     });
 

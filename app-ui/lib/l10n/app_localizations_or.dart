@@ -16,8 +16,7 @@ class AppLocalizationsOr extends AppLocalizations {
   String get languageFollowDevice => 'ଫୋନର ଭାଷା ବ୍ୟବହାର କରନ୍ତୁ';
 
   @override
-  String get languageSheetBody =>
-      'Kernel ର ଶବ୍ଦ ସଙ୍ଗେ ସଙ୍ଗେ ବଦଳିଯାଏ। ଆହୁରି ଭାରତୀୟ ଭାଷା ଶୀଘ୍ର ଆସୁଛି।';
+  String get languageSheetBody => 'Kernel ର ଶବ୍ଦ ସଙ୍ଗେ ସଙ୍ଗେ ବଦଳିଯାଏ।';
 
   @override
   String get settingsSubtitle =>
@@ -2307,5 +2306,608 @@ class AppLocalizationsOr extends AppLocalizations {
   @override
   String dateTimeJoin(String date, String time) {
     return '$date, $time';
+  }
+
+  @override
+  String get nextStepEyebrow => 'ପରବର୍ତ୍ତୀ ପଦକ୍ଷେପ';
+
+  @override
+  String get nextNothingPending =>
+      'ଏବେ କିଛି ଜରୁରୀ ନାହିଁ। ନଜର ରଖିବାକୁ ନିୟମିତ ଶବ୍ଦ ଯାଞ୍ଚ କରନ୍ତୁ।';
+
+  @override
+  String get quickScanAction => 'ଏବେ ଶବ୍ଦ ଯାଞ୍ଚ';
+
+  @override
+  String scansTodayCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ଆଜି $countଟି ଶବ୍ଦ ଯାଞ୍ଚ',
+      one: 'ଆଜି 1ଟି ଶବ୍ଦ ଯାଞ୍ଚ',
+      zero: 'ଆଜି କୌଣସି ଶବ୍ଦ ଯାଞ୍ଚ ନାହିଁ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String scanActivityLine(int today, int week) {
+    return 'ଶବ୍ଦ ଯାଞ୍ଚ: ଆଜି $today · ଗତ 7 ଦିନରେ $week';
+  }
+
+  @override
+  String nextRegisterFirst(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'ଆପଣଙ୍କ ପ୍ରଥମ ଡବା ଦର୍ଜ କରନ୍ତୁ',
+      'other': 'ଆପଣଙ୍କ ପ୍ରଥମ ବସ୍ତା ଦର୍ଜ କରନ୍ତୁ',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get nextRegisterFirstBody =>
+      'ନାମ, ଶସ୍ୟ ଓ ପରିମାଣ ଲେଖନ୍ତୁ। ଗୋଟିଏ ମିନିଟ୍ ଲାଗେ।';
+
+  @override
+  String get nextRegisterFirstLot => 'ଆପଣଙ୍କ ପ୍ରଥମ ଚାଲାଣ ଦର୍ଜ କରନ୍ତୁ';
+
+  @override
+  String get nextRegisterFirstLotBody => 'ଯୋଗାଣକାରୀ, ଲଟ୍, ଶସ୍ୟ ଓ ପରିମାଣ।';
+
+  @override
+  String nextScanOne(String label) {
+    return '$label ର ଶବ୍ଦ ଯାଞ୍ଚ କରନ୍ତୁ';
+  }
+
+  @override
+  String nextScanSacks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countଟି ବସ୍ତାର ଶବ୍ଦ ଯାଞ୍ଚ ବାକି',
+      one: '1ଟି ବସ୍ତାର ଶବ୍ଦ ଯାଞ୍ଚ ବାକି',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nextScanContainers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countଟି ଡବାର ଶବ୍ଦ ଯାଞ୍ଚ ବାକି',
+      one: '1ଟି ଡବାର ଶବ୍ଦ ଯାଞ୍ଚ ବାକି',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nextScanBody(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'ଫୋନକୁ ଡବାରେ ଚାପି 2 ସେକେଣ୍ଡର ଶୁଣିବା ଯାଞ୍ଚ।',
+      'other': '2 ସେକେଣ୍ଡର ଶୁଣିବା ଯାଞ୍ଚ, ଥରକେ ଗୋଟିଏ ବସ୍ତା।',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String nextInspectOne(String label) {
+    return '$label ଯାଞ୍ଚ କରନ୍ତୁ';
+  }
+
+  @override
+  String nextInspectSacks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ଚିହ୍ନିତ $countଟି ବସ୍ତା ଯାଞ୍ଚ କରନ୍ତୁ',
+      one: 'ଚିହ୍ନିତ 1ଟି ବସ୍ତା ଯାଞ୍ଚ କରନ୍ତୁ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nextInspectContainers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ଚିହ୍ନିତ $countଟି ଡବା ଯାଞ୍ଚ କରନ୍ତୁ',
+      one: 'ଚିହ୍ନିତ 1ଟି ଡବା ଯାଞ୍ଚ କରନ୍ତୁ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nextInspectBody =>
+      'ମଡେଲ ଫଳାଫଳ ନିଶ୍ଚିତ ନୁହେଁ। ଶସ୍ୟକୁ ହାତରେ ଯାଞ୍ଚ କରନ୍ତୁ।';
+
+  @override
+  String nextReviewOne(String label) {
+    return '$label: ପୁଣି ଦେଖିବା ସମୟ';
+  }
+
+  @override
+  String nextReviewSacks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countଟି ବସ୍ତା ପୁଣି ଦେଖିବା ସମୟ',
+      one: '1ଟି ବସ୍ତା ପୁଣି ଦେଖିବା ସମୟ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nextReviewContainers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countଟି ଡବା ପୁଣି ଦେଖିବା ସମୟ',
+      one: '1ଟି ଡବା ପୁଣି ଦେଖିବା ସମୟ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nextReviewBody =>
+      'ଶେଷ ଯାଞ୍ଚ ପରେ ବହୁତ ଦିନ ହେଲାଣି। ପୁଣି ଶୁଣନ୍ତୁ କିମ୍ବା ଯାଞ୍ଚ କରନ୍ତୁ।';
+
+  @override
+  String nextReminderOne(String label) {
+    return '$label: ରିମାଇଣ୍ଡର ସମୟ';
+  }
+
+  @override
+  String nextReminderMany(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countଟି ରିମାଇଣ୍ଡର ସମୟ',
+      one: '1ଟି ରିମାଇଣ୍ଡର ସମୟ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nextReminderBody =>
+      'ଆପଣ ରଖିଥିବା ପୁଣି-ଯାଞ୍ଚର ସମୟ ହୋଇଛି। ଏହି ଶସ୍ୟ ଦେଖନ୍ତୁ।';
+
+  @override
+  String nextPhysicalOne(String label) {
+    return 'ଲଟ୍ $label: ଦେଖି ଯାଞ୍ଚ ବାକି';
+  }
+
+  @override
+  String nextPhysicalMany(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countଟି ଲଟ୍‌ର ଦେଖି ଯାଞ୍ଚ ବାକି',
+      one: '1ଟି ଲଟ୍‌ର ଦେଖି ଯାଞ୍ଚ ବାକି',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nextPhysicalBody =>
+      'ଲଟ୍ ଖୋଲି, ମଣିଷ ଯାହା ଦେଖିଲେ ତାହା ଦର୍ଜ କରନ୍ତୁ। Kernel କେବେ ବି ଲଟ୍ ଗ୍ରହଣ କିମ୍ବା ପ୍ରତ୍ୟାଖ୍ୟାନ କରେ ନାହିଁ।';
+
+  @override
+  String get nextFinishBatch => 'ଗୋଟି ଗୋଟି ଯାଞ୍ଚ ଶେଷ କରନ୍ତୁ';
+
+  @override
+  String nextFinishBatchOne(String label) {
+    return 'ଗୋଟି ଗୋଟି ଯାଞ୍ଚ ଶେଷ କରନ୍ତୁ: $label';
+  }
+
+  @override
+  String nextFinishBatchBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countଟି ବସ୍ତା ବାକି, ଥରକେ ଗୋଟିଏ',
+      one: '1ଟି ବସ୍ତା ବାକି, ଥରକେ ଗୋଟିଏ',
+      zero: 'ଏହି ଦଳର ସବୁ ବସ୍ତାର ଶବ୍ଦ ଯାଞ୍ଚ ହୋଇଗଲା',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nextPreSale => 'ବିକ୍ରି ପୂର୍ବ ରିପୋର୍ଟ ପଠାନ୍ତୁ';
+
+  @override
+  String nextPreSaleOne(String label) {
+    return '$label ର ବିକ୍ରି ପୂର୍ବ ରିପୋର୍ଟ ପଠାନ୍ତୁ';
+  }
+
+  @override
+  String get nextLotSummary => 'ଲଟ୍ ସାରାଂଶ ପଠାନ୍ତୁ';
+
+  @override
+  String nextLotSummaryOne(String label) {
+    return '$label ର ଲଟ୍ ସାରାଂଶ ପଠାନ୍ତୁ';
+  }
+
+  @override
+  String get nextExportBody =>
+      'ଆପଣଙ୍କ ରେକର୍ଡରୁ ଏହି ଫୋନରେ ହିଁ ତିଆରି। କାହାକୁ ପଠାଇବେ, ଆପଣ ସ୍ଥିର କରନ୍ତୁ।';
+
+  @override
+  String get nextActionRegister => 'ଦର୍ଜ କରନ୍ତୁ';
+
+  @override
+  String get nextActionScan => 'ଶବ୍ଦ ଯାଞ୍ଚ ଆରମ୍ଭ';
+
+  @override
+  String get nextActionBatch => 'ଗୋଟି ଗୋଟି ଯାଞ୍ଚ ଆରମ୍ଭ';
+
+  @override
+  String get nextActionOpen => 'ଖୋଲନ୍ତୁ';
+
+  @override
+  String get nextActionQueue => 'ଯାଞ୍ଚ ଧାଡ଼ି ଖୋଲନ୍ତୁ';
+
+  @override
+  String get nextActionOpenLot => 'ଲଟ୍ ଖୋଲନ୍ତୁ';
+
+  @override
+  String get nextActionContinueBatch => 'ଗୋଟି ଗୋଟି ଯାଞ୍ଚ ଜାରି ରଖନ୍ତୁ';
+
+  @override
+  String get nextActionReport => 'ରିପୋର୍ଟ ଖୋଲନ୍ତୁ';
+
+  @override
+  String get insightsTitle => 'ତଥ୍ୟ';
+
+  @override
+  String get insightsSubtitle =>
+      'ଆପଣଙ୍କ ନିଜ ରେକର୍ଡରୁ ଏହି ଫୋନରେ ହିଁ ହିସାବ କରାଯାଇଛି';
+
+  @override
+  String get insightsCardSubtitle =>
+      'ଫଳାଫଳ, ରେକର୍ଡିଂ ସମସ୍ୟା ଓ କାହାର ଯାଞ୍ଚ ଦରକାର';
+
+  @override
+  String get insightsWindowLabel => 'ସମୟ ସୀମା';
+
+  @override
+  String get insightsWindow7 => '7 ଦିନ';
+
+  @override
+  String get insightsWindow30 => '30 ଦିନ';
+
+  @override
+  String get insightsWindowAll => 'ସବୁ ସମୟ';
+
+  @override
+  String get insightsActivityTitle => 'ଶବ୍ଦ ଯାଞ୍ଚ କାମ';
+
+  @override
+  String get insightsScansToday => 'ଆଜିର ଶବ୍ଦ ଯାଞ୍ଚ';
+
+  @override
+  String get insightsScans7 => 'ଗତ 7 ଦିନର ଶବ୍ଦ ଯାଞ୍ଚ';
+
+  @override
+  String get insightsRatesTitle => 'ଫଳାଫଳ';
+
+  @override
+  String get insightsRatesEmpty => 'ଏହି ସମୟରେ କୌଣସି ଶବ୍ଦ ଯାଞ୍ଚ ନାହିଁ';
+
+  @override
+  String get insightsRatesEmptyDetail =>
+      'ଏଠାରେ ଫଳାଫଳ ଦେଖିବାକୁ ଗୋଟିଏ ବସ୍ତା କିମ୍ବା ଡବାର ଶବ୍ଦ ଯାଞ୍ଚ କରନ୍ତୁ।';
+
+  @override
+  String get insightsExperimentalNote =>
+      'ପରୀକ୍ଷାମୂଳକ ମଡେଲ: ଏହି ଫଳାଫଳ ନିଶ୍ଚିତ ନୁହେଁ ଓ ଭୁଲ ହୋଇପାରେ। ମହଜୁଦ କିମ୍ବା ବିକ୍ରିର ଯେକୌଣସି ନିଷ୍ପତ୍ତି ପୂର୍ବରୁ ନିଜେ ଯାଞ୍ଚ କରନ୍ତୁ।';
+
+  @override
+  String get insightsNoModelResults =>
+      'ଏପର୍ଯ୍ୟନ୍ତ ମଡେଲ ଫଳାଫଳ ନାହିଁ: କାମର କୌଣସି ରେକର୍ଡିଂକୁ ମଡେଲ ପରଖି ନାହିଁ।';
+
+  @override
+  String get insightsRetryLabel => 'ରେକର୍ଡିଂ କାମର ନୁହେଁ (ପୁଣି କରନ୍ତୁ)';
+
+  @override
+  String insightsBarValue(int count, int percent) {
+    return '$count · $percent%';
+  }
+
+  @override
+  String insightsTotalScans(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ଏହି ସମୟରେ $countଟି ଶବ୍ଦ ଯାଞ୍ଚ',
+      one: 'ଏହି ସମୟରେ 1ଟି ଶବ୍ଦ ଯାଞ୍ଚ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insightsQualityTitle => 'ରେକର୍ଡିଂ ସମସ୍ୟା';
+
+  @override
+  String get insightsQualityEmpty => 'ଏହି ସମୟରେ କୌଣସି ଅକାମୀ ରେକର୍ଡିଂ ନାହିଁ';
+
+  @override
+  String get insightsQualityHint =>
+      'ଶାନ୍ତ ଜାଗାରେ ଫୋନକୁ ବସ୍ତାରେ ଜୋରରେ ଚାପିଲେ ଅଧିକାଂଶ ସମସ୍ୟା ଦୂର ହୁଏ।';
+
+  @override
+  String get insightsInspectionsTitle => 'ଯାଞ୍ଚ';
+
+  @override
+  String get insightsInspectionsEmpty => 'ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି ଯାଞ୍ଚ ଦର୍ଜ ହୋଇନାହିଁ';
+
+  @override
+  String insightsClosureRate(int percent) {
+    return '$percent% ଯାଞ୍ଚ ଶେଷ ହୋଇଛି';
+  }
+
+  @override
+  String get insightsStaleTitle => 'ସବୁଠୁ ଅଧିକ ଦିନ ଧରି ଯାଞ୍ଚ ହୋଇନଥିବା';
+
+  @override
+  String get staleNeverScanned => 'କେବେ ବି ଶବ୍ଦ ଯାଞ୍ଚ ହୋଇନାହିଁ';
+
+  @override
+  String get qualityShortSilence => 'ବହୁତ ଧୀରେ';
+
+  @override
+  String get qualityShortClipping => 'ବହୁତ ଜୋରରେ (ଶବ୍ଦ ଫାଟିଗଲା)';
+
+  @override
+  String get qualityShortHighNoise => 'ବହୁତ ଗୋଳମାଳ';
+
+  @override
+  String get qualityShortTooShort => 'ବହୁତ ଛୋଟ';
+
+  @override
+  String get qualityShortPermissionDenied => 'ମାଇକ ବନ୍ଦ ଅଛି';
+
+  @override
+  String get qualityShortCaptureError => 'ରେକର୍ଡିଂ ତ୍ରୁଟି';
+
+  @override
+  String get queueFilterResult => 'ମଡେଲ ଫଳାଫଳ';
+
+  @override
+  String get queueFilterAllResults => 'ସବୁ ଫଳାଫଳ';
+
+  @override
+  String get queueFilterPlace => 'ଜାଗା';
+
+  @override
+  String get queueFilterAllPlaces => 'ସବୁ ଜାଗା';
+
+  @override
+  String get queueFilterAge => 'ଶେଷ କାମର ଶବ୍ଦ ଯାଞ୍ଚ';
+
+  @override
+  String get queueFilterAnyAge => 'ଯେକୌଣସି ସମୟ';
+
+  @override
+  String queueFilterWithinDays(int days) {
+    return '$days ଦିନ ଭିତରେ';
+  }
+
+  @override
+  String queueFilterAgeNote(int days) {
+    return 'ଯାହାର ଶେଷ କାମର ଶବ୍ଦ ଯାଞ୍ଚ $days ଦିନରୁ ପୁରୁଣା, ସେଗୁଡ଼ିକ \"ଶବ୍ଦ ଯାଞ୍ଚ ବାକି\" କୁ ଚାଲିଯାଏ।';
+  }
+
+  @override
+  String get queueNoMatch => 'ଏହି ଫିଲ୍ଟରରେ କିଛି ମେଳ ଖାଉନାହିଁ।';
+
+  @override
+  String get rankReasonInfested =>
+      'ଏଠି କାହିଁକି: ପୋକ ଲାଗିଥିବାର ସମ୍ଭାବନା (ନିଶ୍ଚିତ ନୁହେଁ)';
+
+  @override
+  String get rankReasonUncertain => 'ଏଠି କାହିଁକି: ମଡେଲ ନିଶ୍ଚିତ ନଥିଲା';
+
+  @override
+  String get rankReasonClean =>
+      'ତଳେ କାହିଁକି: କୌଣସି ସଙ୍କେତ ମିଳିଲା ନାହିଁ (ଗ୍ୟାରେଣ୍ଟି ନୁହେଁ)';
+
+  @override
+  String scannedDaysAgo(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days ଦିନ ଆଗରୁ ଶବ୍ଦ ଯାଞ୍ଚ ହେଲା',
+      one: '1 ଦିନ ଆଗରୁ ଶବ୍ଦ ଯାଞ୍ଚ ହେଲା',
+      zero: 'ଆଜି ଶବ୍ଦ ଯାଞ୍ଚ ହେଲା',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reminderSuggestedLabel => 'ପରାମର୍ଶ — ବାଛିବେ ଆପଣ';
+
+  @override
+  String reminderSuggestedOther(String date) {
+    return 'ପରାମର୍ଶ: $date — ବାଛିବେ ଆପଣ';
+  }
+
+  @override
+  String get reminderWordingTitle => 'ପରାମର୍ଶିତ ଶବ୍ଦ';
+
+  @override
+  String get settingsAdviceSection => 'ଫୋନରେ ହିଁ AI ସହାୟକ (ପରୀକ୍ଷାମୂଳକ)';
+
+  @override
+  String get adviceToggle => 'ଫୋନର AI ସହାୟକ ବ୍ୟବହାର କରନ୍ତୁ';
+
+  @override
+  String get adviceToggleBody =>
+      'ଆରମ୍ଭରେ ବନ୍ଦ ଥାଏ। ଏହା କେବଳ ଏହି ଫୋନରେ ଚାଲେ ଓ ଆପଣଙ୍କ ରେକର୍ଡିଂ କେବେ ବି ଶୁଣେ ନାହିଁ; କେବଳ ଫଳାଫଳ ଓ ତାରିଖ ଦେଖେ। ଏହା ଭୁଲ ହୋଇପାରେ। ଯେକୌଣସି ସମୟରେ ବନ୍ଦ କରିପାରିବେ।';
+
+  @override
+  String get adviceStatusTitle => 'ସହାୟକର ସ୍ଥିତି';
+
+  @override
+  String get adviceStatusOff => 'ବନ୍ଦ';
+
+  @override
+  String get adviceStatusNoModel => 'ଚାଲୁ — ଏପର୍ଯ୍ୟନ୍ତ ମଡେଲ ଅଣାଯାଇନାହିଁ';
+
+  @override
+  String get adviceStatusLoading => 'ମଡେଲ ଖୋଲୁଛି…';
+
+  @override
+  String get adviceStatusReady => 'ଏହି ଫୋନରେ ପ୍ରସ୍ତୁତ';
+
+  @override
+  String get adviceStatusBusy => 'ଲେଖୁଛି';
+
+  @override
+  String get adviceStatusFailed =>
+      'ମଡେଲ ଖୋଲିଲା ନାହିଁ — Kernel ତା’ର ସାଧାରଣ ଲେଖା ଦେଖାଏ';
+
+  @override
+  String get adviceModelTitle => 'ସହାୟକର ମଡେଲ';
+
+  @override
+  String get adviceModelNone => 'ଏପର୍ଯ୍ୟନ୍ତ ମଡେଲ ଅଣାଯାଇନାହିଁ';
+
+  @override
+  String get adviceModelId => 'ମଡେଲ';
+
+  @override
+  String get adviceModelVersion => 'ସଂସ୍କରଣ';
+
+  @override
+  String get adviceModelSize => 'ଆକାର';
+
+  @override
+  String get adviceModelBackend => 'କେଉଁଥିରେ ଚାଲେ';
+
+  @override
+  String get adviceBackendGpu => 'ଫୋନର ଗ୍ରାଫିକ୍ସ ଚିପ୍ (GPU)';
+
+  @override
+  String get adviceBackendCpu => 'ଫୋନର ପ୍ରୋସେସର (CPU)';
+
+  @override
+  String get adviceBackendNone => 'ଏପର୍ଯ୍ୟନ୍ତ ଖୋଲିନାହିଁ';
+
+  @override
+  String get adviceImportAction => 'ମଡେଲ ଆଣନ୍ତୁ';
+
+  @override
+  String get adviceImporting => 'ମଡେଲ ଅଣାଯାଉଛି';
+
+  @override
+  String adviceImportCopying(String copied, String total) {
+    return '$total ମଧ୍ୟରୁ $copied କପି ହେଲା';
+  }
+
+  @override
+  String adviceImportCopied(String copied) {
+    return '$copied କପି ହେଲା';
+  }
+
+  @override
+  String get adviceImportVerifying => 'ମଡେଲ ଫାଇଲ ଯାଞ୍ଚ ହେଉଛି…';
+
+  @override
+  String get adviceImportDone => 'ମଡେଲ ଆସିଗଲା। ଏହା ଏହି ଫୋନରେ ହିଁ ରହେ।';
+
+  @override
+  String adviceImportFailed(String detail) {
+    return 'ମଡେଲ ଅଣାଯାଇପାରିଲା ନାହିଁ: $detail';
+  }
+
+  @override
+  String adviceImportNoSpace(String needed, String free) {
+    return 'ଜାଗା କମ୍: ମଡେଲକୁ $needed ଦରକାର, କିନ୍ତୁ ଏହି ଫୋନରେ କେବଳ $free ଖାଲି ଅଛି।';
+  }
+
+  @override
+  String get adviceDeleteAction => 'ମଡେଲ ହଟାନ୍ତୁ';
+
+  @override
+  String get adviceDeleteConfirmTitle => 'ସହାୟକର ମଡେଲ ହଟାଇବେ?';
+
+  @override
+  String get adviceDeleteConfirmBody =>
+      'ଏହା ମଡେଲ ଫାଇଲକୁ ଏହି ଫୋନରୁ ହଟାଇଦେବ। ଆପଣଙ୍କ ରେକର୍ଡ ଉପରେ କୌଣସି ପ୍ରଭାବ ପଡ଼ିବ ନାହିଁ। ପରେ ପୁଣି ଆଣିପାରିବେ।';
+
+  @override
+  String adviceDeleteFailed(String detail) {
+    return 'ମଡେଲ ହଟାଯାଇପାରିଲା ନାହିଁ: $detail';
+  }
+
+  @override
+  String get adviceHelp =>
+      'Google AI Edge Gallery ଦ୍ୱାରା କିମ୍ବା Hugging Face litert-community/gemma-4-E2B-it-litert-lm ରୁ ଏକ .litertlm ମଡେଲ ନିଅନ୍ତୁ (Gemma ସର୍ତ୍ତ ଲାଗୁ), ତା’ପରେ ଏଠାକୁ ଆଣନ୍ତୁ।';
+
+  @override
+  String adviceProvenance(String modelVersion) {
+    return 'ଏହି ଫୋନରେ ହିଁ ତିଆରି — ପରୀକ୍ଷାମୂଳକ · $modelVersion';
+  }
+
+  @override
+  String get adviceNotDecision => 'ଏହା ନିଷ୍ପତ୍ତି ନୁହେଁ — ନିଜେ ଯାଞ୍ଚ କରନ୍ତୁ';
+
+  @override
+  String get adviceGenerating => 'ଏହି ଫୋନରେ ହିଁ ଲେଖାଯାଉଛି…';
+
+  @override
+  String get adviceExplainAction => 'ଏହି ଫଳାଫଳ ବୁଝାନ୍ତୁ';
+
+  @override
+  String get adviceExplainTitle => 'ଏହି ଫଳାଫଳର ଅର୍ଥ';
+
+  @override
+  String get adviceStaticRetry =>
+      'ରେକର୍ଡିଂ କାମରେ ଆସିଲା ନାହିଁ, ତେଣୁ କୌଣସି ଫଳାଫଳ ସାଇତାଯାଇନାହିଁ। ଫୋନକୁ ବସ୍ତା କିମ୍ବା ଡବାରେ ଜୋରରେ ଚାପନ୍ତୁ, ହଲନ୍ତୁ ନାହିଁ, ଚୁପ୍ ରହନ୍ତୁ ଓ ପୁଣି ରେକର୍ଡ କରନ୍ତୁ।';
+
+  @override
+  String get adviceStaticNotEvaluated =>
+      'ଏହି ରେକର୍ଡିଂର କୌଣସି ଫଳାଫଳ ମିଳିଲା ନାହିଁ, ତେଣୁ ଏହା ପୋକ ବିଷୟରେ କିଛି କହେ ନାହିଁ। ଶସ୍ୟକୁ ନିଜେ ଯାଞ୍ଚ କରନ୍ତୁ।';
+
+  @override
+  String get adviceStaticInspection =>
+      'ପରୀକ୍ଷାମୂଳକ ମଡେଲ ଧ୍ୟାନ ଦେବା ଦରକାର ଏମିତି କିଛି ଶୁଣିଲା। ଏହା ନିଶ୍ଚିତ ନୁହେଁ। ଯେକୌଣସି ନିଷ୍ପତ୍ତି ପୂର୍ବରୁ ଶସ୍ୟକୁ ନିଜେ ଯାଞ୍ଚ କରନ୍ତୁ।';
+
+  @override
+  String get adviceStaticClean =>
+      'ପରୀକ୍ଷାମୂଳକ ମଡେଲ କୌଣସି ସଙ୍କେତ ପାଇଲା ନାହିଁ। ଏହା ଗ୍ୟାରେଣ୍ଟି ନୁହେଁ। ମହଜୁଦ କିମ୍ବା ବିକ୍ରି ନିଷ୍ପତ୍ତି ପୂର୍ବରୁ ଶସ୍ୟକୁ ନିଜେ ଯାଞ୍ଚ କରନ୍ତୁ।';
+
+  @override
+  String get reportAiSummaryToggle => 'AI ଲେଖିଥିବା ସାରାଂଶ ଯୋଡ଼ନ୍ତୁ';
+
+  @override
+  String get reportAiSummaryBody =>
+      'ରିପୋର୍ଟର ସଂଖ୍ୟାରୁ ଏହି ଫୋନରେ ହିଁ ଲେଖାଯାଇଛି। ପ୍ରଥମେ ଆପଣ ଦେଖିବେ, ତା’ପରେ ଯୋଡ଼ିବେ କି ନାହିଁ ସ୍ଥିର କରିବେ। ପରୀକ୍ଷାମୂଳକ।';
+
+  @override
+  String get reportAiPreviewTitle => 'AI ଲେଖିଥିବା ସାରାଂଶ';
+
+  @override
+  String get reportAiPreviewBody =>
+      'ଯୋଡ଼ିଲେ, ଏହା ରିପୋର୍ଟରେ ନାମ ଥିବା ଅଲଗା ଭାଗରେ ରହିବ — ଆପଣଙ୍କ ରେକର୍ଡ ଓ ଯାଞ୍ଚ ଫଳାଫଳଠାରୁ ଅଲଗା। ଏହାକୁ ବଦଳାଯାଇପାରିବ ନାହିଁ।';
+
+  @override
+  String get reportAiSummaryTitle => 'ସାରାଂଶର ଖସଡ଼ା';
+
+  @override
+  String get reportAiInclude => 'ଯୋଡ଼ନ୍ତୁ';
+
+  @override
+  String get reportAiSkip => 'ଛାଡ଼ନ୍ତୁ';
+
+  @override
+  String unitGb(String value) {
+    return '$value GB';
+  }
+
+  @override
+  String unitMb(String value) {
+    return '$value MB';
   }
 }

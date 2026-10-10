@@ -119,10 +119,11 @@ ScanOutcome modelOutcome(
   Classification classification, {
   String version = 'proxy-1',
   double confidence = 0.61,
+  DateTime? at,
 }) => ScanOutcome(
   scanId: testId('scan'),
   itemId: itemId,
-  capturedAt: DateTime.now().toUtc(),
+  capturedAt: (at ?? DateTime.now()).toUtc(),
   quality: ScanQuality.pass,
   qualityReasons: const [],
   classification: classification,

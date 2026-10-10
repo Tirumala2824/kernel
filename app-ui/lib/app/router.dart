@@ -9,6 +9,7 @@ import '../features/harvest/harvest_detail_screen.dart';
 import '../features/harvest/harvest_form_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/inspection/assigned_inspections_screen.dart';
+import '../features/insights/insights_screen.dart';
 import '../features/inspection/inspection_form_screen.dart';
 import '../features/inventory/inventory_screen.dart';
 import '../features/inventory/item_detail_screen.dart';
@@ -130,7 +131,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: Routes.reports,
-                builder: (_, _) => const ReportsScreen(),
+                builder: (_, s) => ReportsScreen(
+                  presetKind: ReportsScreen.kindFromQuery(q(s, 'kind')),
+                  harvestId: q(s, 'harvestId'),
+                  lotId: q(s, 'lotId'),
+                ),
               ),
             ],
           ),
@@ -148,6 +153,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(path: Routes.queue, builder: (_, _) => const QueueScreen()),
+      GoRoute(path: Routes.insights, builder: (_, _) => const InsightsScreen()),
       GoRoute(path: Routes.qr, builder: (_, _) => const QrScanScreen()),
       GoRoute(
         path: Routes.scansToday,
@@ -193,10 +199,8 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: 'scans/:scanId',
-            builder: (_, s) => ResultScreen(
-              itemId: id(s, 'itemId'),
-              scanId: id(s, 'scanId'),
-            ),
+            builder: (_, s) =>
+                ResultScreen(itemId: id(s, 'itemId'), scanId: id(s, 'scanId')),
           ),
           GoRoute(
             path: 'inspect',
