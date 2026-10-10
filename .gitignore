@@ -46,3 +46,9 @@ model-training/runs/
 # On-device LLM model files (user-imported, never committed)
 *.litertlm
 *.litertlm.part
+
+# Firmware build outputs
+firmware/**/build/
+firmware/**/sdkconfig.old
+firmware/reference/.venv/
+firmware/**/__pycache__/

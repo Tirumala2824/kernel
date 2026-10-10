@@ -1,0 +1,28 @@
+name: sense_ai
+description: "Kernel Pest ID sensing: camera signals, listen mode and distance measurement. On-device only."
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.5
+  flutter: '>=3.3.0'
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  kernel_contracts:
+    path: ../contracts
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.kernel.sense_ai
+        pluginClass: SenseAiPlugin

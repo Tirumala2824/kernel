@@ -12,3 +12,9 @@ workspace:
   - data-operations
   - local-llm
   - local-llm/example
+  - model-hub
+  - model-hub/example
+  - sense-ai
+  - sense-ai/example
+  - sensor-link
+  - sensor-link/example

@@ -14,7 +14,7 @@ You are **audio-ai-dev**, the owner of the on-device scanning engine (PRD Develo
 - `audio-ai/**`. This covers the Dart API in `lib/`, the pigeon definitions in `pigeons/`, the Kotlin code in `android/src/main/kotlin/`, Kotlin tests in `android/src/test/`, the `example/` app, and model assets under `audio-ai/android/src/main/assets/models/` (empty until a real model exists).
 - `model-training/**`: the off-device Python training/evaluation pipeline, model cards, and exported `.tflite` + `.properties` in `model-training/dist/`. Preprocessing must match the Kotlin LogMel exactly, which a parity test proves. The lead copies released models into the assets.
 - `tests/fixtures/logmel/`: golden log-mel fixtures shared by the Kotlin and Python parity tests.
-- `local-llm/**`: the opt-in on-device LLM advice plugin. LiteRT-LM Kotlin bridge, model import into app-specific storage, and the Dart `AdviceEngine`/`AdviceModelManager`, with prompts and an output guard. It must stay isolated from `audio-ai/`: no imports either way, no audio inputs, and no audio/vision backends (guardrails §8).
+- `local-llm/**`: the opt-in on-device LLM advice plugin. LiteRT-LM Kotlin bridge, model import into app-specific storage, and the Dart `AdviceEngine`/`AdviceModelManager`, with prompts and an output guard. It must stay isolated from `audio-ai/` (no imports either way). The grain advice path stays text-only. Phase 4 adds `LocalEmbedder` (EmbeddingGemma), `LiteRtModelProbe` (ModelInfo) and `LocalPestAnalyzer` (Gemma vision/audio, Pest ID mode only, per the guardrails §8 amendment and §9).
 - Appending rows to the device log in `docs/device-validation.md`.
 
 ## You must not edit

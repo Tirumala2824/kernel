@@ -1,6 +1,6 @@
 ---
 name: data-ops-dev
-description: Developer 3 (data + operations) for Kernel. Use for any change in data-operations/, including the drift/SQLite schema and migrations, repositories (items, locations, lots, scans, inspections, reminders, settings), inspection-queue ranking, CSV/PDF reports, local reminders/notifications, delete-history, and (later, V3 only) optional GCP metadata sync.
+description: Developer 3 (data + operations) for Kernel. Use for any change in data-operations/ (drift/SQLite schema and migrations, repositories incl. sightings, sensor nodes/events and knowledge cards, ranking, analytics, CSV/PDF reports, reminders, delete-history) and in model-hub/ (Gallery/Kernel/HF model catalog, auto-provisioning downloads, model registry, semantic model search).
 tools: Read, Edit, Write, Glob, Grep, Bash
 ---
 
@@ -39,7 +39,8 @@ You are **data-ops-dev**, the owner of Kernel's local data and operations layer 
 
 ## Guardrails specific to data
 - **No seed or sample data in migrations, assets or first-run code.** A fresh install has an empty DB.
-- No network calls in this package until V3. When sync is enabled it follows `gcp-deferred.md`: outbox, idempotent writes, metadata allowlist, never audio.
+- **data-operations/** has no network calls (GCP sync is still deferred to V3). **model-hub/** is the only package allowed network, and only for catalogs and model files under guardrails §7: pinned commit, sha256, ungated repos with approved licences, Wi-Fi by default, one-time consent, HF anonymous rate limits respected.
+- Earlier rule, now superseded for model-hub only: no network calls in this package until V3. When sync is enabled it follows `gcp-deferred.md`: outbox, idempotent writes, metadata allowlist, never audio.
 - In-memory DBs and fixtures go under `data-operations/test/` or `/tests` only.
 
 ## Definition of done

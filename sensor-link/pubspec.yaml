@@ -1,0 +1,28 @@
+name: sensor_link
+description: "Kernel BLE link to dedicated frequency-detection sensor nodes (docs/sensor-protocol.md). No network."
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.5
+  flutter: '>=3.3.0'
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  kernel_contracts:
+    path: ../contracts
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.kernel.sensor_link
+        pluginClass: SensorLinkPlugin

@@ -1,0 +1,28 @@
+name: model_hub
+description: "Kernel model hub: Gallery/HF catalog, auto-provisioning, registry and semantic model search. Network only for catalogs and model files (guardrails §7)."
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.5
+  flutter: '>=3.3.0'
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  kernel_contracts:
+    path: ../contracts
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.kernel.model_hub
+        pluginClass: ModelHubPlugin

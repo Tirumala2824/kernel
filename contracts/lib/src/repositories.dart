@@ -138,6 +138,15 @@ abstract interface class SettingsRepository {
   /// On-phone AI assistant (local LLM advice). Default false.
   Stream<bool> watchLocalAdviceOptIn();
   Future<void> setLocalAdviceOptIn(bool value);
+
+  /// Consent to send origin/destination to Google for map tiles and routes
+  /// (guardrails §7). Default false.
+  Stream<bool> watchMapsConsent();
+  Future<void> setMapsConsent(bool value);
+
+  /// Keep validated stills/clips with saved sightings. Default false.
+  Stream<bool> watchKeepSightingMedia();
+  Future<void> setKeepSightingMedia(bool value);
 }
 
 abstract interface class RankingService {

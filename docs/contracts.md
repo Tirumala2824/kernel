@@ -139,6 +139,39 @@ The source of truth is `contracts/lib/src/analytics.dart`, `advice.dart` and `re
 
 **Reports:** `ReportScope.narrative` (`AdviceText?`). data-operations only renders it, in a labelled section, and never calls an LLM.
 
+## Contracts v4 (2026-10-10): model hub, embeddings, Pest ID, sensors
+The source of truth is `contracts/lib/src/model_hub.dart`, `embedding.dart`, `pest_id.dart` and `sensor.dart`.
+
+**Model hub** (`model-hub/`)
+- `ModelCatalog.entries()` merges Gallery's `model_allowlists/<ver>.json`, Kernel's catalog and anonymous HF search. Every `CatalogEntry` is pinned to a 40-char revision with its sha256, licence and `gated`.
+- `ModelRegistry` watches installed files, probes them with `ModelProbe` and answers `bestFor(capability)`.
+- `ModelProvisioner`: consent (Wi-Fi by default), `plan` / `ensure(required capabilities)`, then a sha256-verified install.
+- `ModelSearch`: EmbeddingGemma semantic search over entries and model cards.
+
+**Embeddings** (`local-llm/`)
+- `Embedder.embedText/embedImage/embedAudio` returns an L2-normalised `EmbeddingVector` with a Matryoshka dimension of 128/256/512/768. Null means unavailable.
+- `ModelProbe.probe(path)` reads the LiteRT-LM `ModelInfo` header without loading the model.
+
+**Pest ID**
+- `PestSenseEngine` (`sense-ai/`): camera candidates, `captureStill` with tiles, torch, `listen(mode)` with clips and sound labels, `distanceCapability`, `measure`, `discardMedia`.
+- `PestAnalyzer` (`local-llm/`):
+  - `analyzeImage` returns a `PestAnalysis` (cardId from the constrained set, taxonomy, self-reported `aiConfidence`, self-consistency `agreement`, features, anomalies, insights, safety, model/prompt version, always experimental)
+  - `describeSound`
+  - `proposeRegions` (box_2d)
+  - `guide` (card-grounded `AdviceText` stream)
+
+  It never throws.
+- `KnowledgeService` (data-operations): cards with semantic search, plus a keyword fallback.
+- `SightingRepository` (data-operations): the AI `analysis`, the `userValidated` / `userCardId` validation and the human `verifiedFinding` are separate. `verifiedFinding` is set once.
+- `DistanceEstimate.method` is `arcoreDepth`, `focusDistance` or `unavailable` (with a reason).
+
+**Sensors** (`sensor-link/`, data-operations)
+- `SensorLink`: QR-key association through CDM, status (jammed/clipped mean not evaluated), live `BandFrame`s, signature-matched `SensorEvent`s, survey, sessions, store-and-forward `syncEvents`.
+- `SensorNodeRepository` and `SensorEventRepository`. `record` is idempotent on (nodeId, seq).
+- Protocol: `docs/sensor-protocol.md`.
+
+**Settings:** `watchMapsConsent` / `setMapsConsent` and `watchKeepSightingMedia` / `setKeepSightingMedia`, both default false.
+
 ## Package entry points (what the lead wires in `app-ui/lib/bootstrap.dart`)
 - `package:audio_ai/audio_ai.dart` exports `class NativeScanEngine implements ScanEngine` with a no-arg constructor.
 - `package:data_operations/data_operations.dart` exports `class DataOperations` with:
