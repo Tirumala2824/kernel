@@ -201,6 +201,49 @@ class Harness {
     );
   }
 
+  /// Records a scan outcome captured at [at]. A real [classification] gets
+  /// a confidence and [modelVersion] (default `test-model-1`).
+  Future<ScanRecord> recordScanAt(
+    String itemId,
+    DateTime at, {
+    ScanQuality quality = ScanQuality.pass,
+    List<QualityReason> reasons = const [],
+    Classification classification = Classification.notEvaluated,
+    String? modelVersion,
+  }) {
+    final real = classification != Classification.notEvaluated;
+    return ops.scans.record(
+      outcome(
+        itemId: itemId,
+        capturedAt: at,
+        quality: quality,
+        reasons: reasons,
+        classification: classification,
+        confidence: real ? 0.8 : null,
+        modelVersion: modelVersion ?? (real ? 'test-model-1' : noModelVersion),
+      ),
+    );
+  }
+
+  Future<Lot> addLot({String code = 'LOT-A'}) => ops.lots.create(
+    LotDraft(
+      code: code,
+      grainType: 'Wheat',
+      declaredQuantity: 500,
+      quantityUnit: 'kg',
+      receivedAt: DateTime.utc(2026, 9, 20),
+      supplierName: 'Supplier',
+    ),
+  );
+
+  Future<Location> addLocation(
+    String name, {
+    LocationType type = LocationType.warehouse,
+    String? parentId,
+  }) => ops.locations.create(
+    LocationDraft(type: type, name: name, parentId: parentId),
+  );
+
   /// A valid scan from a (test-only) model version.
   Future<ScanRecord> recordModelScan(
     String itemId,

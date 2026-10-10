@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:kernel_contracts/kernel_contracts.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -117,6 +118,44 @@ class PdfKit {
 
   pw.Widget empty(String value) => text(value);
 
+  /// Boxed "Drafted on this phone" section for an included on-phone
+  /// narrative, or nothing when it is absent or incomplete. It is a table
+  /// with one row per paragraph, so a long draft can continue on the next
+  /// page. Never mixed into record tables or findings.
+  List<pw.Widget> narrative(ReportScope scope) {
+    final draft = includedNarrative(scope);
+    if (draft == null) return const [];
+    const side = pw.BorderSide();
+    pw.TableRow row(pw.Widget child, {double bottom = 2}) => pw.TableRow(
+      children: [
+        pw.Padding(
+          padding: pw.EdgeInsets.fromLTRB(6, 2, 6, bottom),
+          child: child,
+        ),
+      ],
+    );
+    final paragraphs = [
+      for (final line in draft.text.split(RegExp(r'\r?\n')))
+        if (line.trim().isNotEmpty) line.trim(),
+    ];
+    return [
+      pw.SizedBox(height: 8),
+      pw.Table(
+        border: const pw.TableBorder(
+          left: side,
+          top: side,
+          right: side,
+          bottom: side,
+        ),
+        children: [
+          row(text(narrativeTitle, size: 10, bold: true)),
+          row(text(narrativeByLine(draft)), bottom: 4),
+          for (final paragraph in paragraphs) row(text(paragraph), bottom: 4),
+        ],
+      ),
+    ];
+  }
+
   List<pw.Widget> modelNote(String? note) => [
     if (note != null) text('Model note (installed model): $note'),
   ];
@@ -207,6 +246,7 @@ Future<Uint8List> renderPdf(ReportData data, [PdfKit kit = const PdfKit()]) {
         ...kit.modelNote(data.modelNote),
         pw.SizedBox(height: 8),
         kit.notice('Disclaimer', reportDisclaimer),
+        ...kit.narrative(data.scope),
         kit.heading('Items'),
         if (data.items.isEmpty)
           kit.empty('No items in this scope.')
@@ -352,6 +392,7 @@ Future<Uint8List> renderPreSalePdf(
             ),
           ],
         ),
+        ...kit.narrative(data.scope),
         kit.heading('Latest AI screening per sack (experimental)'),
         if (data.sacks.isEmpty)
           kit.empty('No sacks in this scope.')
@@ -480,6 +521,7 @@ Future<Uint8List> renderLotSummaryPdf(
             ),
           ],
         ),
+        ...kit.narrative(data.scope),
         kit.heading('Sacks — latest AI screening (experimental)'),
         if (data.sacks.isEmpty)
           kit.empty('No sacks in this lot.')

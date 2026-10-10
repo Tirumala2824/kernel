@@ -188,6 +188,27 @@ const reportDisclaimer = <String>[
       'marked "Not evaluated" carry no AI prediction.',
 ];
 
+/// The optional on-phone draft the user chose to include, or null when it
+/// is absent, still incomplete or blank. data_operations only renders it,
+/// in its own labelled section; it never generates text.
+AdviceText? includedNarrative(ReportScope scope) {
+  final narrative = scope.narrative;
+  if (narrative == null || !narrative.complete) return null;
+  if (narrative.text.trim().isEmpty) return null;
+  return narrative;
+}
+
+/// Heading of the narrative section (guardrails §8).
+const narrativeTitle = 'Drafted on this phone';
+
+/// Provenance line under [narrativeTitle]. Generated text is always shown
+/// as experimental.
+String narrativeByLine(AdviceText narrative) {
+  final model = narrative.modelVersion.trim();
+  return 'By ${model.isEmpty ? 'an unknown model' : model} — experimental. '
+      'Not a record or a decision; check before sharing.';
+}
+
 /// Pre-sale summary note (shown with [reportDisclaimer]).
 const preSaleNotice =
     'This summary is prepared by the seller from records on this device. It '

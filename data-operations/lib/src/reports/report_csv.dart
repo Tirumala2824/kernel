@@ -65,6 +65,7 @@ List<int> renderCsv(ReportData data) {
     ['Scans', data.scanCount],
     ['Inspections', data.inspectionCount],
     for (final line in reportDisclaimer) ['Disclaimer', line],
+    ...narrativeRows(data.scope),
     [],
     csvColumns,
   ];
@@ -164,6 +165,7 @@ List<int> renderPreSaleCsv(PreSaleData data) {
       ['Latest physical inspection: $label', count],
     ['Notice', preSaleNotice],
     for (final line in reportDisclaimer) ['Disclaimer', line],
+    ...narrativeRows(data.scope),
     [],
     preSaleCsvColumns,
   ];
@@ -256,6 +258,7 @@ List<int> renderLotSummaryCsv(LotSummaryData data) {
       ['Physical checks: $label', count],
     ['Decision', lotDecisionNotice],
     for (final line in reportDisclaimer) ['Disclaimer', line],
+    ...narrativeRows(data.scope),
     [],
     lotSummaryCsvColumns,
   ];
@@ -309,6 +312,20 @@ List<Object?> _latestScanCells(ScanRecord? scan) => scan == null
         predictedClassLabel(scan),
         scan.confidence?.toStringAsFixed(3) ?? '',
       ];
+
+/// Header-block lines for an included on-phone narrative (none when it is
+/// absent or incomplete). Kept out of the record table; its text and model
+/// name are guarded like other user text.
+List<List<Object?>> narrativeRows(ReportScope scope) {
+  final narrative = includedNarrative(scope);
+  if (narrative == null) return const [];
+  return [
+    ['narrative_model', userText(narrative.modelVersion.trim())],
+    // Generated text is always experimental (guardrails §8).
+    ['narrative_experimental', yesNo(true)],
+    ['narrative_text', userText(narrative.text.trim())],
+  ];
+}
 
 List<List<Object?>> _modelNoteRows(String? note) => [
   if (note != null) ['Model note (installed model)', userText(note)],
