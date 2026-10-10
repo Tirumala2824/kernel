@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  English defaults for the native Measure screen and the night-listening
+  notification. The app can translate them by defining the same names in its
+  own res/values-<locale>/strings.xml.
+-->
+<resources>
+    <string name="sense_measure_move_slowly">Move the phone slowly from side to side</string>
+    <string name="sense_measure_tap_to_focus">Tap the target to focus. Works from 10 to 60 cm.</string>
+    <string name="sense_measure_out_of_range">Out of range for this method</string>
+    <string name="sense_measure_unsupported">Distance not available on this phone</string>
+    <string name="sense_measure_focusing">Focusing…</string>
+    <!-- 1: distance, 2: low end, 3: high end, e.g. "About 32 cm (29 cm to 36 cm)" -->
+    <string name="sense_measure_result">About %1$s (%2$s to %3$s)</string>
+    <string name="sense_measure_cancel">Cancel</string>
+    <string name="sense_measure_close_up">Close-up</string>
+
+    <string name="sense_listen_channel">Pest listening</string>
+    <string name="sense_listen_notification_title">Listening for pest sounds</string>
+    <string name="sense_listen_notification_text">The microphone is on. Audio stays on this phone.</string>
+    <string name="sense_listen_stop">Stop</string>
+</resources>
