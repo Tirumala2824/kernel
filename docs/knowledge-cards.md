@@ -33,7 +33,7 @@ Curated, sourced cards that ground every Pest ID answer (guardrails §9). The LL
 ## Rules
 - At least one primary public-health, agricultural-extension or wildlife-authority source per card.
 - `safeSteps` must never name a pesticide, rodenticide, fumigant or dose. "Call a licensed pest-control professional" is allowed.
-- Protected species (e.g. monitor lizards): `safety: protectedWildlife`, a `legal` text, and "do not harm, catch or injure it; contact the State Forest Department or a licensed rescuer".
+- Protected species (e.g. monitor lizards): `safety: protectedWildlife`, a `legal` text, and "do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it".
 - Venomous or medically important species: lead with keeping distance and getting medical care for bites or stings.
 - No absolute claims ("safe", "harmless", "pest-free").
 - **Guard-compatible wording.** The on-device output guard drops answers containing these words in any language, so a card that uses them makes every grounded answer silently fall back. Use the alternatives instead:
