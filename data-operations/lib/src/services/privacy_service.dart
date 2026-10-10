@@ -54,11 +54,12 @@ class DriftPrivacyService implements PrivacyService {
         await deleteFileIfPresent(path);
       }
     }
-    final media = await (_db.selectOnly(_db.sightings)
-          ..addColumns([_db.sightings.mediaPath])
-          ..where(_db.sightings.mediaPath.isNotNull()))
-        .map((row) => row.read(_db.sightings.mediaPath)!)
-        .get();
+    final media =
+        await (_db.selectOnly(_db.sightings)
+              ..addColumns([_db.sightings.mediaPath])
+              ..where(_db.sightings.mediaPath.isNotNull()))
+            .map((row) => row.read(_db.sightings.mediaPath)!)
+            .get();
     for (final path in media) {
       await deleteFileIfPresent(path);
     }
@@ -83,11 +84,12 @@ class DriftPrivacyService implements PrivacyService {
   Future<void> _markClearedSeqs() async {
     final events = _db.sensorEvents;
     final maxSeq = events.seq.max();
-    final highest = await (_db.selectOnly(events)
-          ..addColumns([events.nodeId, maxSeq])
-          ..groupBy([events.nodeId]))
-        .map((row) => (row.read(events.nodeId)!, row.read(maxSeq)!))
-        .get();
+    final highest =
+        await (_db.selectOnly(events)
+              ..addColumns([events.nodeId, maxSeq])
+              ..groupBy([events.nodeId]))
+            .map((row) => (row.read(events.nodeId)!, row.read(maxSeq)!))
+            .get();
     if (highest.isEmpty) return;
     final nodes = {
       for (final row in await _db.select(_db.sensorNodes).get()) row.id: row,

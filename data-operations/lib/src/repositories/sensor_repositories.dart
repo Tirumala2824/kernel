@@ -45,10 +45,11 @@ class DriftSensorNodeRepository implements SensorNodeRepository {
     }
     _checkBattery(node.batteryPercent);
     return _db.transaction(() async {
-      final other = await (_db.select(_db.sensorNodes)..where(
-            (n) => n.deviceAddress.equals(address) & n.id.equals(id).not(),
-          ))
-          .getSingleOrNull();
+      final other =
+          await (_db.select(_db.sensorNodes)..where(
+                (n) => n.deviceAddress.equals(address) & n.id.equals(id).not(),
+              ))
+              .getSingleOrNull();
       if (other != null) {
         throw ArgumentError.value(
           address,
@@ -112,7 +113,10 @@ class DriftSensorNodeRepository implements SensorNodeRepository {
   @override
   Stream<List<SensorNode>> watchAll() {
     final query = _db.select(_db.sensorNodes)
-      ..orderBy([(n) => OrderingTerm.asc(n.name), (n) => OrderingTerm.asc(n.id)]);
+      ..orderBy([
+        (n) => OrderingTerm.asc(n.name),
+        (n) => OrderingTerm.asc(n.id),
+      ]);
     return query.watch().map(
       (rows) => List.unmodifiable([for (final row in rows) row.toModel()]),
     );
@@ -182,7 +186,10 @@ class DriftSensorNodeRepository implements SensorNodeRepository {
 
 /// Throws [ArgumentError] when [placement] names an unknown or archived
 /// location or item.
-Future<void> checkPlacement(KernelDatabase db, SensorPlacement placement) async {
+Future<void> checkPlacement(
+  KernelDatabase db,
+  SensorPlacement placement,
+) async {
   final locationId = placement.locationId;
   if (locationId != null) {
     final location = await (db.select(
@@ -316,27 +323,27 @@ class DriftSensorEventRepository implements SensorEventRepository {
     String locationId, {
     Duration? window,
   }) {
-    return watchTables(_db, {
-      _db.sensorEvents,
-      _db.locations,
-      _db.items,
-    }, () async {
-      final subtree = await locationSubtree(_db, locationId);
-      final items = await (_db.select(
-        _db.items,
-      )..where((i) => i.locationId.isIn(subtree))).map((i) => i.id).get();
-      final since = _since(window);
-      final query = _db.select(_db.sensorEvents)
-        ..where(
-          (e) =>
-              (e.locationId.isIn(subtree) | e.itemId.isIn(items)) &
-              (since == null
-                  ? const Constant(true)
-                  : e.startedAt.isBiggerOrEqualValue(since)),
-        )
-        ..orderBy(_newestFirst);
-      return _toModels(await query.get());
-    });
+    return watchTables(
+      _db,
+      {_db.sensorEvents, _db.locations, _db.items},
+      () async {
+        final subtree = await locationSubtree(_db, locationId);
+        final items = await (_db.select(
+          _db.items,
+        )..where((i) => i.locationId.isIn(subtree))).map((i) => i.id).get();
+        final since = _since(window);
+        final query = _db.select(_db.sensorEvents)
+          ..where(
+            (e) =>
+                (e.locationId.isIn(subtree) | e.itemId.isIn(items)) &
+                (since == null
+                    ? const Constant(true)
+                    : e.startedAt.isBiggerOrEqualValue(since)),
+          )
+          ..orderBy(_newestFirst);
+        return _toModels(await query.get());
+      },
+    );
   }
 
   /// Events recorded while the node was on [itemId], newest first.

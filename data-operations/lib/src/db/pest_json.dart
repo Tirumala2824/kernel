@@ -52,27 +52,27 @@ PestAnalysis pestAnalysisFromJson(Map<String, Object?> json) => PestAnalysis(
 Map<String, Object?> soundAnalysisToJson(SoundAnalysis s) => {
   'v': _formatVersion,
   'preFilter': [
-    for (final label in s.preFilter) {'label': label.label, 'score': label.score},
+    for (final label in s.preFilter)
+      {'label': label.label, 'score': label.score},
   ],
   'groupHint': s.groupHint.name,
   'modelVersion': s.modelVersion,
   'description': s.description,
 };
 
-SoundAnalysis soundAnalysisFromJson(Map<String, Object?> json) =>
-    SoundAnalysis(
-      preFilter: List.unmodifiable([
-        for (final entry in json['preFilter']! as List<Object?>)
-          if (entry case final Map<String, Object?> label)
-            ScoredLabel(
-              label: label['label']! as String,
-              score: _double(label['score']),
-            ),
-      ]),
-      groupHint: PestGroup.values.byName(json['groupHint']! as String),
-      modelVersion: json['modelVersion']! as String,
-      description: json['description'] as String?,
-    );
+SoundAnalysis soundAnalysisFromJson(Map<String, Object?> json) => SoundAnalysis(
+  preFilter: List.unmodifiable([
+    for (final entry in json['preFilter']! as List<Object?>)
+      if (entry case final Map<String, Object?> label)
+        ScoredLabel(
+          label: label['label']! as String,
+          score: _double(label['score']),
+        ),
+  ]),
+  groupHint: PestGroup.values.byName(json['groupHint']! as String),
+  modelVersion: json['modelVersion']! as String,
+  description: json['description'] as String?,
+);
 
 Map<String, Object?> distanceToJson(DistanceEstimate d) => {
   'v': _formatVersion,

@@ -41,7 +41,8 @@ class DriftReportService implements ReportService {
   /// Items must match every filter in [scope]: owned by `scope.role`, placed
   /// in `scope.locationId` or a location nested below it, in `scope.lotId`,
   /// in `scope.harvestId`, listed in `scope.itemIds`, and not archived. Null
-  /// filters are ignored.
+  /// filters are ignored. [ReportKind.sightings] has its own scope rules;
+  /// see [loadSightings].
   ///
   /// Throws [ArgumentError] for [ReportKind.sackLabels] as CSV, a
   /// [ReportKind.lotSummary] without a known `lotId`, or a
@@ -125,7 +126,9 @@ class DriftReportService implements ReportService {
           row.id,
       };
       final narrowsItems =
-          scope.lotId != null || scope.harvestId != null || scope.itemIds != null;
+          scope.lotId != null ||
+          scope.harvestId != null ||
+          scope.itemIds != null;
       final locationId = scope.locationId;
       final subtree = locationId == null
           ? null
@@ -152,8 +155,7 @@ class DriftReportService implements ReportService {
         final onScopedItem = itemId != null && scoped.contains(itemId);
         if (narrowsItems) return onScopedItem;
         if (subtree != null) {
-          return (placeId != null && subtree.contains(placeId)) ||
-              onScopedItem;
+          return (placeId != null && subtree.contains(placeId)) || onScopedItem;
         }
         return itemId == null || onScopedItem;
       }
@@ -195,9 +197,9 @@ class DriftReportService implements ReportService {
           if (nodes[nodeId] case final node?)
             SensorEventCount(
               node: node,
-              placements: {
-                for (final row in rows) placementOf(row),
-              }.where((p) => p.isNotEmpty).join('; '),
+              placements: {for (final row in rows) placementOf(row)}
+                  .where((p) => p.isNotEmpty)
+                  .join('; '),
               signatureId: signatureId,
               packVersion: blankToNull(
                 {for (final row in rows) ?row.packVersion}.join('; '),
@@ -206,7 +208,8 @@ class DriftReportService implements ReportService {
               firstStartedAt: rows.first.startedAt,
               lastEndedAt: rows
                   .map(
-                    (r) => r.startedAt.add(Duration(milliseconds: r.durationMs)),
+                    (r) =>
+                        r.startedAt.add(Duration(milliseconds: r.durationMs)),
                   )
                   .reduce((a, b) => a.isAfter(b) ? a : b),
               experimental: rows.any((r) => r.matchExperimental != false),

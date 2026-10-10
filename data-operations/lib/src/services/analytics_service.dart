@@ -123,31 +123,33 @@ class DriftAnalyticsService implements AnalyticsService {
       _db.sensorNodes,
       _db.sensorEvents,
     };
-    StreamSubscription<void>? tableSub;
-    StreamSubscription<void>? attentionSub;
-    late final StreamController<void> ticks;
-    ticks = StreamController<void>(
-      onListen: () {
-        tableSub = _db
-            .customSelect('SELECT 1', readsFrom: tables)
-            .watch()
-            .listen((_) => ticks.add(null), onError: ticks.addError);
-        attentionSub = _attentionTicks.stream.listen((_) => ticks.add(null));
-      },
-      onPause: () {
-        tableSub?.pause();
-        attentionSub?.pause();
-      },
-      onResume: () {
-        tableSub?.resume();
-        attentionSub?.resume();
-      },
-      onCancel: () async {
-        await attentionSub?.cancel();
-        await tableSub?.cancel();
-      },
-    );
-    return ticks.stream.asyncMap((_) => _nextActions(role));
+    // Each listener gets its own pipeline, like the other watch* streams.
+    return Stream<List<NextAction>>.multi((listener) {
+      final ticks = StreamController<void>();
+      final tableSub = _db
+          .customSelect('SELECT 1', readsFrom: tables)
+          .watch()
+          .listen((_) => ticks.add(null), onError: ticks.addError);
+      final attentionSub = _attentionTicks.stream.listen(
+        (_) => ticks.add(null),
+      );
+      final results = ticks.stream
+          .asyncMap((_) => _nextActions(role))
+          .listen(
+            listener.addSync,
+            onError: listener.addErrorSync,
+            onDone: listener.closeSync,
+          );
+      listener
+        ..onPause = results.pause
+        ..onResume = results.resume
+        ..onCancel = () async {
+          await attentionSub.cancel();
+          await tableSub.cancel();
+          await results.cancel();
+          await ticks.close();
+        };
+    });
   }
 
   /// Aggregates over the same items as `ReportService.export(scope, ...)`
@@ -243,12 +245,13 @@ class DriftAnalyticsService implements AnalyticsService {
       final now = _clock();
       final nodes = await _db.select(_db.sensorNodes).get();
       final eventsSince = now.toUtc().subtract(sensorActivityWindow);
-      final events = await (_db.select(_db.sensorEvents)..where(
-            (e) =>
-                e.signatureId.isNotNull() &
-                e.startedAt.isBiggerOrEqualValue(eventsSince),
-          ))
-          .get();
+      final events =
+          await (_db.select(_db.sensorEvents)..where(
+                (e) =>
+                    e.signatureId.isNotNull() &
+                    e.startedAt.isBiggerOrEqualValue(eventsSince),
+              ))
+              .get();
       // Every unverified sighting can raise a safety alert, so all of the
       // role's active sightings are read, not just the last 7 days.
       final sightings = await activeSightings(_db, role: role);

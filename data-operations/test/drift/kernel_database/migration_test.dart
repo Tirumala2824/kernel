@@ -265,8 +265,10 @@ void main() {
     expect(inspection.photoPaths, ['/data/p.jpg']);
     expect(inspection.assignedTo, 'Asha');
     expect((await db.select(db.scans).getSingle()).audioRetained, isTrue);
-    expect((await db.select(db.labeledSamples).getSingle()).label.name,
-        'infested');
+    expect(
+      (await db.select(db.labeledSamples).getSingle()).label.name,
+      'infested',
+    );
     expect(await _triggers(db), unorderedEquals(_v3Triggers));
 
     // The v2 guards still hold after the upgrade.
@@ -310,9 +312,7 @@ void main() {
       "sync_state = 'pending' WHERE id = 's'",
     );
     await expectLater(
-      db.customStatement(
-        "UPDATE sightings SET analysis = '{}' WHERE id = 's'",
-      ),
+      db.customStatement("UPDATE sightings SET analysis = '{}' WHERE id = 's'"),
       throwsA(isA<SqliteException>()),
     );
     await expectLater(

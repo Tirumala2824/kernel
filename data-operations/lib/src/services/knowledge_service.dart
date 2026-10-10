@@ -563,8 +563,7 @@ String _stem(String token) {
   if (token.length > 4 && token.endsWith('ies')) {
     return '${token.substring(0, token.length - 3)}y';
   }
-  if (token.length > 4 &&
-      RegExp(r'(s|x|z|ch|sh)es$').hasMatch(token)) {
+  if (token.length > 4 && RegExp(r'(s|x|z|ch|sh)es$').hasMatch(token)) {
     return token.substring(0, token.length - 2);
   }
   if (token.length > 3 && token.endsWith('s') && !token.endsWith('ss')) {

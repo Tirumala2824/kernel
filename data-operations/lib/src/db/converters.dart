@@ -67,8 +67,7 @@ class PestAnalysisConverter extends TypeConverter<PestAnalysis, String> {
   const PestAnalysisConverter();
 
   @override
-  PestAnalysis fromSql(String fromDb) =>
-      pestAnalysisFromJson(_object(fromDb));
+  PestAnalysis fromSql(String fromDb) => pestAnalysisFromJson(_object(fromDb));
 
   @override
   String toSql(PestAnalysis value) => jsonEncode(pestAnalysisToJson(value));
