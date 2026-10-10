@@ -1,8 +1,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- Core flows make zero network calls (docs/guardrails.md section 7).
-         Strip INTERNET if any library (for example ML Kit's usage-logging
-         transport) declares it, so release builds cannot reach the network.
-         Debug builds keep it for the Flutter tool only (src/debug). -->
-    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <!-- Guardrails §7 (Phase 4): INTERNET is allowed only for model catalogs
+         and downloads (model_hub) and Google Maps / Routes after consent.
+         Everything else must work offline.
+
+         ML Kit (mobile_scanner) bundles Google's datatransport usage-logging
+         uploader. It is not an approved network use, so its backend discovery
+         and schedulers are removed here; barcode scanning works without it
+         and logging calls are dropped on the device. -->
+    <application>
+        <service
+            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+            tools:node="remove" />
+        <service
+            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+            tools:node="remove" />
+        <receiver
+            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+            tools:node="remove" />
+    </application>
 </manifest>
