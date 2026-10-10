@@ -138,7 +138,7 @@ class LocalAdviceEngine implements AdviceEngine {
       onListen: () {
         final current = _status;
         if (current != null) out.add(current);
-        sub = _changes.stream.listen(out.add);
+        sub = _changes.stream.listen(out.add, onDone: out.close);
       },
       onCancel: () => sub?.cancel(),
     );

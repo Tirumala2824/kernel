@@ -14,7 +14,7 @@ It takes text in and gives text out, and it never handles audio. See
 | `LocalAdviceEngine.warmUp()` | Optional. Loads the model ahead of the first request, for example when a result screen opens. It does nothing unless the user has opted in. |
 | `LocalAdviceEngine.dispose()` | Stops the opt-in and native subscriptions. |
 | `LocalModelManager()` | Implements `AdviceModelManager`, with `importFromUri`, `deleteModel` and `freeSpaceBytes`. |
-| `Future<String?> pickLitertlmUri()` | Opens the system file picker (ACTION_OPEN_DOCUMENT, any type). Returns a `content://` URI if the picked file's name ends in `.litertlm`, otherwise null. It also returns null on cancel or when no activity is attached. |
+| `Future<String?> pickLitertlmUri()` | Opens the system file picker (ACTION_OPEN_DOCUMENT, any type, files on the phone only). Returns a `content://` URI if the picked file's name ends in `.litertlm`, otherwise null. It also returns null on cancel or when no activity is attached. |
 | `checkOutput`, `GuardResult`, `GuardCategory` | The on-device output guard, exported so the app can reuse it. |
 | `promptVersion` | Version of the prompt templates (`kernel-advice-prompts-v1`). |
 | `adviceTimeout` | 25 s, the whole-request budget. |

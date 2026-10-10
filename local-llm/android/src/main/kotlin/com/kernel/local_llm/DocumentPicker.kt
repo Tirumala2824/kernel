@@ -29,6 +29,8 @@ class DocumentPicker(private val resolver: ContentResolver) : PluginRegistry.Act
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
                 .addCategory(Intent.CATEGORY_OPENABLE)
                 .setType("*/*")
+                // Files already on the phone only (no cloud document providers).
+                .putExtra(Intent.EXTRA_LOCAL_ONLY, true)
             pending = cont
             cont.invokeOnCancellation { if (pending === cont) pending = null }
             try {
