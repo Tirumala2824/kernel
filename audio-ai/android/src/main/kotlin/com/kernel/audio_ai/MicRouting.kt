@@ -41,12 +41,16 @@ object MicRouting {
             .firstOrNull()
 
     /**
-     * True only when the active recording's device type is known and is the
-     * built-in mic. An unknown route (null) is treated as not verified.
+     * False only when Android reports that the recording is routed to a
+     * device other than a built-in mic (headset, USB, Bluetooth, ...).
+     * An unknown route (null: some HALs never fill in the active device) is
+     * accepted, because setPreferredDevice already asked for the built-in
+     * mic and rejecting it would make every scan RETRY on such phones.
      * Any built-in mic address is accepted: the HAL may pick another
      * built-in capsule, which keeps the calibration reference.
      */
-    fun isVerifiedBuiltIn(activeDeviceType: Int?): Boolean = activeDeviceType == BUILTIN_MIC_TYPE
+    fun isVerifiedBuiltIn(activeDeviceType: Int?): Boolean =
+        activeDeviceType == null || activeDeviceType == BUILTIN_MIC_TYPE
 
     fun from(info: AudioDeviceInfo): InputDevice =
         InputDevice(id = info.id, type = info.type, address = info.address ?: "")

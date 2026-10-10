@@ -64,7 +64,10 @@ class MicRoutingTest {
     @Test
     fun onlyAnActiveBuiltInRouteIsVerified() {
         assertTrue(MicRouting.isVerifiedBuiltIn(AudioDeviceInfo.TYPE_BUILTIN_MIC))
-        assertFalse(MicRouting.isVerifiedBuiltIn(null), "an unknown route is not verified")
+        assertTrue(
+            MicRouting.isVerifiedBuiltIn(null),
+            "an unknown route is accepted (preferred device already set); only a known other device fails",
+        )
         assertFalse(MicRouting.isVerifiedBuiltIn(AudioDeviceInfo.TYPE_WIRED_HEADSET))
         assertFalse(MicRouting.isVerifiedBuiltIn(AudioDeviceInfo.TYPE_BLUETOOTH_SCO))
         assertFalse(MicRouting.isVerifiedBuiltIn(AudioDeviceInfo.TYPE_USB_HEADSET))
