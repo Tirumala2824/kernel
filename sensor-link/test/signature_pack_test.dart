@@ -41,7 +41,7 @@ void main() {
     test('rejects a pack not marked experimental', () {
       expect(() => SignaturePack.parse(packText().replaceFirst('pack.experimental=true', 'pack.experimental=false')),
           throwsFormatException);
-      expect(() => SignaturePack.parse(packText().replaceFirst('pack.experimental=true\n', '')), throwsFormatException);
+      expect(() => SignaturePack.parse(packText().replaceFirst(RegExp(r'pack\.experimental=true\r?\n'), '')), throwsFormatException);
     });
 
     test('rejects malformed rules', () {

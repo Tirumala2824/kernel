@@ -1,0 +1,2 @@
+# Node-type fragment: idf.py -B build-contact_piezo -D SDKCONFIG=build-contact_piezo/sdkconfig -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.contact_piezo" build
+CONFIG_KERNEL_NODE_CONTACT_PIEZO=y
