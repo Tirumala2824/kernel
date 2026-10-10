@@ -50,8 +50,15 @@ Append new decisions at the bottom. Never rewrite past entries; supersede them w
 | 43 | 2026-10-10 | Next-action and analytics logic lives in data-operations (`AnalyticsService`), which returns typed kinds and counts. The UI localizes them. No English strings come out of the data layer | Keeps l10n correct |
 | 44 | 2026-10-10 | Next-action semantics:<br>• "scanned" = any PASS scan (incl. not-evaluated), so items don't need a scan forever while no model is bundled<br>• export prompts wait until flagged sacks are inspected<br>• "flagged" is cleared only by an inspection at or after the scan (`inspectedAt`)<br>Full rule table: data-operations/README.md | W2, accepted |
 | 45 | 2026-10-10 | Analytics and ranking streams recompute only when the DB changes. The UI re-subscribes on app resume and when the date changes, so "today", ageDays and staleness stay correct | W2 finding |
+| 46 | 2026-10-10 | LiteRT-LM pinned to `litertlm-android:0.18.0`. It ships only `liblitertlm_jni.so` (22 MB), with no clash with LiteRT 1.4.2, no permissions and no services. Release arm64 is 60.0 MB (+20.3 MB) | W1 spike + W4 audit |
+| 47 | 2026-10-10 | Advice streams emit **one** event, the complete guarded text. Partial tokens never cross the bridge (the progress channel carries counts and timings only) | W1. Simplest way to guarantee the guard runs before display |
+| 48 | 2026-10-10 | Reminder wording from the LLM is display-only and is not written into the scheduled notification | Decision 42 |
 
 ## Contract follow-ups (proposed by agents, not yet done)
+- **LLM GPU accelerator libraries:** LiteRT-LM looks up `libLiteRtGpuAccelerator.so` / `libLiteRtOpenClAccelerator.so`, which the AAR does not ship, so the iQOO 15 may run on CPU. Measure latency against the 25 s budget. If it's too slow, bundle the accelerator libs or lower `maxOutputToken`.
+- `AdviceModelManager.importFromUri`: cancelling only stops listening; the native copy keeps going. Add a native abort, and document that the first event is `copying` at 0 bytes.
+- `AdviceText.promptVersion` for stored narratives.
+- The `sacksScannedToday` l10n key is unused since the FPO home switched to `scansTodayCount`. Remove it.
 - `NextActionKind.addSacks`, for a harvest or lot with zero sacks. Until then the detail empty states offer "Add sacks".
 - Captures between 1.5 and 2 s pass the gate, but the model needs 198 frames (2.0 s), so they show NOT_EVALUATED. Raise the gate minimum to 2.0 s, giving RETRY, which is more actionable.
 - `ScanOutcome`/`ScanRecord.modelNote` so older scans keep their provenance text. Shared `kernelItemQrPrefix` constant in contracts.

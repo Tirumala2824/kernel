@@ -63,6 +63,8 @@ New dependencies: the owning agent adds them to its own package pubspec, then ru
 
 ## Status
 - Phase 2 integrated on `main`: brand, real-time scan, all role flows, contracts v2, schema v2, reports, dataset export, the experimental proxy model (`audio-ai/android/src/main/assets/models/kernel-proxy-0.1.*`) and 11 locales.
-- Tests: contracts 8, audio-ai 43 Dart + 72 Kotlin, data-operations 114, app-ui 269, model-training 62 (`cd model-training && uv run python -I -m pytest`).
+- Phase 3 integrated: next-action homes, Insights (local analytics), queue filters, suggested reminders, and the opt-in on-phone AI assistant (`local-llm/`, LiteRT-LM 0.18.0; the model is imported by the user, e.g. Gemma 4 E2B from AI Edge Gallery).
+- Tests: contracts 8, audio-ai 43 Dart + 72 Kotlin, local-llm 105 Dart + 15 Kotlin, data-operations 161, app-ui 347, model-training 62 (`cd model-training && uv run python -I -m pytest`).
+- Device LLM dev path: `adb shell cp /sdcard/Android/data/com.google.ai.edge.gallery/files/Gemma_4_E2B_it/<hash>/gemma-4-E2B-it.litertlm /sdcard/Android/data/com.kernel.kernel_app/files/llm/` (run with `MSYS_NO_PATHCONV=1` in Git Bash).
 - Release: `cd app-ui && flutter build apk --release --split-per-abi`. Install `app-arm64-v8a-release.apk` on the iQOO 15 (I2501, Android 16, adb serial 10BFAT1SQT000XP).
 - Next: an on-device pass (scan flow, quality-gate calibration, onboarding redirect check). Then the follow-ups in [docs/decisions-log.md](docs/decisions-log.md) and native review of translations.
