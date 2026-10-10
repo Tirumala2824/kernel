@@ -3279,6 +3279,13 @@ class AppLocalizationsGu extends AppLocalizations {
   String get sensorHealthAuthFailed => 'સુરક્ષા તપાસ ન થઈ — ફરી જોડો';
 
   @override
+  String get sensorHealthSensorFault => 'સેન્સરમાં ખામી — તપાસ થઈ નથી';
+
+  @override
+  String get sensorHealthEventsOverwritten =>
+      'કેટલીક ઘટનાઓ ખોવાઈ — આ સમયગાળાની તપાસ થઈ નથી';
+
+  @override
   String get sensorNotEvaluatedTitle => 'તપાસાયું નથી';
 
   @override

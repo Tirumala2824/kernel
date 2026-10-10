@@ -3295,6 +3295,13 @@ class AppLocalizationsTe extends AppLocalizations {
       'భద్రతా తనిఖీ విఫలమైంది — మళ్లీ జత చేయండి';
 
   @override
+  String get sensorHealthSensorFault => 'సెన్సార్ లోపం — అంచనా వేయలేదు';
+
+  @override
+  String get sensorHealthEventsOverwritten =>
+      'కొన్ని సంఘటనలు కోల్పోయాయి — ఈ వ్యవధి అంచనా వేయలేదు';
+
+  @override
   String get sensorNotEvaluatedTitle => 'పరిశీలించలేదు';
 
   @override

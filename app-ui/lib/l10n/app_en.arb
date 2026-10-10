@@ -4260,6 +4260,14 @@
   "@sensorHealthAuthFailed": {
     "description": "Health chip."
   },
+  "sensorHealthSensorFault": "Sensor fault — not evaluated",
+  "@sensorHealthSensorFault": {
+    "description": "Health chip: the node reports capture errors."
+  },
+  "sensorHealthEventsOverwritten": "Some events were lost — gap not evaluated",
+  "@sensorHealthEventsOverwritten": {
+    "description": "Health chip: the node ring overwrote events before the phone synced them."
+  },
   "sensorNotEvaluatedTitle": "Not evaluated",
   "@sensorNotEvaluatedTitle": {
     "description": "Banner title when jammed/clipped/survey needed."

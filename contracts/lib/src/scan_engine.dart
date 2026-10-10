@@ -1,5 +1,6 @@
 import 'enums.dart';
 import 'scan_outcome.dart';
+import 'sensor.dart';
 
 /// On-device acoustic scanning engine. Owned by audio-ai.
 abstract interface class ScanEngine {
@@ -14,6 +15,17 @@ abstract interface class ScanEngine {
     String itemId, {
     bool retainAudio = false,
     bool haptics = true,
+  });
+
+  /// Analyzes an existing audio file (.wav) with acoustic sensor provenance.
+  /// [sensorType] specifies the sensor transducer used (piezo, audioAir, etc.).
+  /// [sensorNodeId] optionally associates the audio with a paired BLE node.
+  Future<ScanOutcome> analyzeAudioFile(
+    String itemId,
+    String filePath, {
+    SensorType sensorType = SensorType.audioAir,
+    String? sensorNodeId,
+    bool retainAudio = false,
   });
 
   /// Live input levels while a capture is running (~20 Hz). Levels only,

@@ -135,6 +135,35 @@ class _PestCameraScreenState extends ConsumerState<PestCameraScreen> {
     context.push(Routes.pestAnalysis);
   }
 
+  Future<void> _uploadImageOrVideo() async {
+    final picker = ref.read(mediaPickerServiceProvider);
+    final media = await picker.pickImage();
+    if (media == null || media.bytes.isEmpty) return;
+
+    final candidate = SignalCandidate(
+      id: 'upload_${DateTime.now().millisecondsSinceEpoch}',
+      source: SignalSource.camera,
+      kind: SignalKind.modelBox,
+      score: 0.85,
+      detectedAt: DateTime.now().toUtc(),
+      box: const NormalizedBox(left: 0.1, top: 0.1, width: 0.8, height: 0.8),
+    );
+
+    final still = CapturedStill(
+      stillId: 'upload_still_${DateTime.now().millisecondsSinceEpoch}',
+      contextImage: media.bytes,
+      tiles: [
+        ImageTile(
+          candidateId: candidate.id,
+          box: candidate.box!,
+          image: media.bytes,
+        ),
+      ],
+    );
+
+    _openAnalysis(still, still.tiles.first, candidate);
+  }
+
   Future<void> _nothingHere() async {
     final messenger = ScaffoldMessenger.of(context);
     final message = context.l10n.pestNothingHereDone;
@@ -226,6 +255,13 @@ class _PestCameraScreenState extends ConsumerState<PestCameraScreen> {
               )
             : const Icon(Icons.camera_rounded),
         label: Text(_busy ? l.pestCapturing : l.pestCapture),
+      ),
+      const SizedBox(height: 8),
+      OutlinedButton.icon(
+        key: const Key('pest-upload-photo'),
+        onPressed: _busy ? null : _uploadImageOrVideo,
+        icon: const Icon(Icons.photo_library_outlined),
+        label: const Text('Upload Photo / Video from Gallery'),
       ),
     ];
   }

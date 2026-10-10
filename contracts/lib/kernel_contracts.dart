@@ -13,3 +13,4 @@ export 'src/repositories.dart';
 export 'src/scan_engine.dart';
 export 'src/scan_outcome.dart';
 export 'src/sensor.dart';
+export 'src/agents/agent_models.dart';

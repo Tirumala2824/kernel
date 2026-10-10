@@ -65,6 +65,46 @@ class NativeScanEngine implements ScanEngine {
     }
   }
 
+  /// Analyzes an existing audio file (.wav) with acoustic sensor provenance.
+  @override
+  Future<ScanOutcome> analyzeAudioFile(
+    String itemId,
+    String filePath, {
+    SensorType sensorType = SensorType.audioAir,
+    String? sensorNodeId,
+    bool retainAudio = false,
+  }) async {
+    final scanId = _uuid.v4();
+    final calledAt = DateTime.now().toUtc();
+    final fileName = filePath.split(RegExp(r'[/\\]')).last;
+    try {
+      final result = await _api.analyzeFile(scanId, filePath, retainAudio);
+      _deviceModel = result.deviceModel;
+      _osVersion = result.osVersion;
+      return mapScanResult(
+        result,
+        scanId: scanId,
+        itemId: itemId,
+        inputSource: AudioInputSource.fileUpload,
+        sensorType: sensorType,
+        sensorNodeId: sensorNodeId,
+        sourceFileName: fileName,
+      );
+    } catch (_) {
+      return failureOutcome(
+        scanId: scanId,
+        itemId: itemId,
+        capturedAt: calledAt,
+        deviceModel: _deviceModel,
+        osVersion: _osVersion,
+        inputSource: AudioInputSource.fileUpload,
+        sensorType: sensorType,
+        sensorNodeId: sensorNodeId,
+        sourceFileName: fileName,
+      );
+    }
+  }
+
   /// Broadcast stream of live input levels, about every 50 ms of kept audio
   /// while a [captureAndAnalyze] call is recording. Levels only (RMS and peak
   /// in dBFS), never samples. Nothing is emitted while idle, during the start

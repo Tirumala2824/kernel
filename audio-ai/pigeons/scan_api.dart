@@ -51,6 +51,7 @@ class NativeScanResult {
     required this.deviceModel,
     required this.osVersion,
     required this.audioRetained,
+    this.asqiScore,
   });
 
   bool qualityPass;
@@ -84,6 +85,9 @@ class NativeScanResult {
   /// True only if the WAV for this scan was actually written to
   /// app-private `files/recordings/<scanId>.wav`.
   bool audioRetained;
+
+  /// Audio Signal Quality Index (0..1) if evaluated.
+  double? asqiScore;
 }
 
 class NativeEngineInfo {
@@ -158,6 +162,15 @@ abstract class ScanHostApi {
     String scanId,
     bool retainAudio,
     bool haptics,
+  );
+
+  /// Analyzes an existing audio file (.wav) on-device using the same quality gate
+  /// and model pipeline.
+  @async
+  NativeScanResult analyzeFile(
+    String scanId,
+    String filePath,
+    bool retainAudio,
   );
 
   @async

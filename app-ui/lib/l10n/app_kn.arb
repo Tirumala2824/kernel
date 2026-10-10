@@ -839,6 +839,8 @@
   "sensorHealthLowBattery": "ಬ್ಯಾಟರಿ ಕಡಿಮೆ",
   "sensorHealthSurveyNeeded": "ಸರ್ವೆ ಅಗತ್ಯ",
   "sensorHealthAuthFailed": "ಸುರಕ್ಷತಾ ಪರಿಶೀಲನೆ ವಿಫಲ — ಮತ್ತೆ ಜೋಡಿಸಿ",
+  "sensorHealthSensorFault": "ಸೆನ್ಸರ್ ದೋಷ — ಪರಿಶೀಲಿಸಿಲ್ಲ",
+  "sensorHealthEventsOverwritten": "ಕೆಲವು ಘಟನೆಗಳು ಕಳೆದುಹೋಗಿವೆ — ಈ ಅವಧಿ ಪರಿಶೀಲಿಸಿಲ್ಲ",
   "sensorNotEvaluatedTitle": "ಪರಿಶೀಲಿಸಿಲ್ಲ",
   "sensorNotEvaluatedBody": "ಈ ಸೆನ್ಸರ್ ಈಗ ಪರಿಶೀಲಿಸಲಾರದು. ಅಲ್ಲಿ ಏನೂ ಇಲ್ಲ ಎಂದು ಇದರ ಅರ್ಥವಲ್ಲ. ನೀವೇ ತೆರೆದು ನೋಡಿ.",
   "sensorPairTitle": "ಸೆನ್ಸರ್ ಜೋಡಿಸಿ",

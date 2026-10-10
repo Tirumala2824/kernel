@@ -43,6 +43,8 @@ SafetyLevel? mostSerious(Iterable<SafetyLevel> levels) =>
 
 enum SignalSource { camera, microphone, sensor }
 
+enum VisualMediaSource { phoneCamera, galleryImage, galleryVideo, microscope, trapCamera }
+
 enum SignalKind {
   motion,
   darkSpecks,

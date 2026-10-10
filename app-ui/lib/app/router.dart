@@ -5,6 +5,7 @@ import 'package:kernel_contracts/kernel_contracts.dart';
 
 import '../features/batch/batch_session_screen.dart';
 import '../features/batch/batch_setup_screen.dart';
+import '../features/chat/kernel_chat_screen.dart';
 import '../features/harvest/harvest_detail_screen.dart';
 import '../features/harvest/harvest_form_screen.dart';
 import '../features/home/home_screen.dart';
@@ -168,6 +169,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: Routes.queue, builder: (_, _) => const QueueScreen()),
       GoRoute(path: Routes.insights, builder: (_, _) => const InsightsScreen()),
+      GoRoute(path: Routes.chat, builder: (_, _) => const KernelChatScreen()),
       GoRoute(path: Routes.models, builder: (_, _) => const ModelHubScreen()),
       GoRoute(
         path: Routes.sensors,

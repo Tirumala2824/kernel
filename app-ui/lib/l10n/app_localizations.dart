@@ -5150,6 +5150,18 @@ abstract class AppLocalizations {
   /// **'Security check failed — pair again'**
   String get sensorHealthAuthFailed;
 
+  /// Health chip: the node reports capture errors.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensor fault — not evaluated'**
+  String get sensorHealthSensorFault;
+
+  /// Health chip: the node ring overwrote events before the phone synced them.
+  ///
+  /// In en, this message translates to:
+  /// **'Some events were lost — gap not evaluated'**
+  String get sensorHealthEventsOverwritten;
+
   /// Banner title when jammed/clipped/survey needed.
   ///
   /// In en, this message translates to:

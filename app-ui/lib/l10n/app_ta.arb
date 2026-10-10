@@ -839,6 +839,8 @@
   "sensorHealthLowBattery": "பேட்டரி குறைவு",
   "sensorHealthSurveyNeeded": "சர்வே தேவை",
   "sensorHealthAuthFailed": "பாதுகாப்புச் சரிபார்ப்பு தோல்வி — மீண்டும் இணை",
+  "sensorHealthSensorFault": "சென்சார் கோளாறு — மதிப்பிடப்படவில்லை",
+  "sensorHealthEventsOverwritten": "சில நிகழ்வுகள் இழக்கப்பட்டன — இந்த இடைவெளி மதிப்பிடப்படவில்லை",
   "sensorNotEvaluatedTitle": "மதிப்பிடப்படவில்லை",
   "sensorNotEvaluatedBody": "இந்த சென்சார் இப்போது சோதிக்க முடியாது. அங்கே எதுவும் இல்லை என்று இதற்குப் பொருள் இல்லை. நேரில் திறந்து பாருங்கள்.",
   "sensorPairTitle": "சென்சாரை இணை",

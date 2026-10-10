@@ -24,6 +24,10 @@ ScanOutcome mapScanResult(
   NativeScanResult result, {
   required String scanId,
   required String itemId,
+  AudioInputSource inputSource = AudioInputSource.liveMic,
+  SensorType? sensorType,
+  String? sensorNodeId,
+  String? sourceFileName,
 }) {
   final reasons = <QualityReason>[];
   for (final reason in result.qualityReasons) {
@@ -78,6 +82,11 @@ ScanOutcome mapScanResult(
     osVersion: _orUnknown(result.osVersion),
     // Native sets this only after the WAV was actually written.
     audioRetained: result.audioRetained,
+    inputSource: inputSource,
+    sensorType: sensorType,
+    sensorNodeId: sensorNodeId,
+    sourceFileName: sourceFileName,
+    asqiScore: result.asqiScore,
   );
 
   if (outcome.invariantViolations().isNotEmpty) {
@@ -91,6 +100,11 @@ ScanOutcome mapScanResult(
       deviceModel: outcome.deviceModel,
       osVersion: outcome.osVersion,
       audioRetained: outcome.audioRetained,
+      inputSource: inputSource,
+      sensorType: sensorType,
+      sensorNodeId: sensorNodeId,
+      sourceFileName: sourceFileName,
+      asqiScore: result.asqiScore,
     );
   }
   return outcome;
@@ -105,6 +119,11 @@ ScanOutcome failureOutcome({
   String deviceModel = unknownDeviceField,
   String osVersion = unknownDeviceField,
   bool audioRetained = false,
+  AudioInputSource inputSource = AudioInputSource.liveMic,
+  SensorType? sensorType,
+  String? sensorNodeId,
+  String? sourceFileName,
+  double? asqiScore,
 }) {
   return ScanOutcome(
     scanId: scanId,
@@ -122,6 +141,11 @@ ScanOutcome failureOutcome({
     deviceModel: deviceModel,
     osVersion: osVersion,
     audioRetained: audioRetained,
+    inputSource: inputSource,
+    sensorType: sensorType,
+    sensorNodeId: sensorNodeId,
+    sourceFileName: sourceFileName,
+    asqiScore: asqiScore,
   );
 }
 

@@ -839,6 +839,8 @@
   "sensorHealthLowBattery": "ব্যাটারি কম",
   "sensorHealthSurveyNeeded": "সার্ভে দরকার",
   "sensorHealthAuthFailed": "নিরাপত্তা যাচাই হয়নি — আবার যুক্ত করুন",
+  "sensorHealthSensorFault": "সেন্সরে ত্রুটি — যাচাই হয়নি",
+  "sensorHealthEventsOverwritten": "কিছু ঘটনা হারিয়ে গেছে — এই সময়ের যাচাই হয়নি",
   "sensorNotEvaluatedTitle": "যাচাই হয়নি",
   "sensorNotEvaluatedBody": "এই সেন্সর এখন যাচাই করতে পারছে না। এর মানে এই নয় যে সেখানে কিছু নেই। নিজে দেখে পরীক্ষা করুন।",
   "sensorPairTitle": "সেন্সর যুক্ত করুন",

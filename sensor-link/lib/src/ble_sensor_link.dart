@@ -72,6 +72,7 @@ class BleSensorLink implements SensorLink {
   SignaturePack? _loadedPack;
   final _nodes = <String, _Node>{};
   final _events = StreamController<SensorEvent>.broadcast();
+  final _healthChanges = StreamController<SensorHealthChange>.broadcast();
 
   /// Native callbacks; exposed so tests can drive the link without a device.
   @visibleForTesting
@@ -213,6 +214,9 @@ class BleSensorLink implements SensorLink {
   @override
   Stream<SensorEvent> events() => _events.stream;
 
+  @override
+  Stream<SensorHealthChange> healthChanges() => _healthChanges.stream;
+
   // ---------------------------------------------------------- procedures
 
   @override
@@ -262,6 +266,7 @@ class BleSensorLink implements SensorLink {
   Future<void> dispose() async {
     SensorFlutterApi.setUp(null);
     await _events.close();
+    await _healthChanges.close();
     for (final n in _nodes.values) {
       await n.statusCtl.close();
       await n.bandsCtl.close();

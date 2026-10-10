@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
 
+import '../agents/agents.dart';
+
 // One provider per contracts interface. All of them are unbound here on
 // purpose: the real implementations (audio_ai's NativeScanEngine and
 // data_operations' DataOperations fields) are bound in
@@ -254,4 +256,52 @@ final senseCameraPreviewBuilderProvider = Provider<SenseCameraPreviewBuilder>(
     'sense_ai',
   ),
   name: 'senseCameraPreviewBuilderProvider',
+);
+
+// Autonomous Domain Agent Providers
+
+final mediaPickerServiceProvider = Provider<MediaPickerService>(
+  (ref) => MediaPickerService(),
+  name: 'mediaPickerServiceProvider',
+);
+
+final acousticDiagnosticAgentProvider = Provider<AcousticDiagnosticAgent>(
+  (ref) => AcousticDiagnosticAgent(scanEngine: ref.watch(scanEngineProvider)),
+  name: 'acousticDiagnosticAgentProvider',
+);
+
+final visualDiagnosticAgentProvider = Provider<VisualDiagnosticAgent>(
+  (ref) => VisualDiagnosticAgent(analyzer: ref.watch(pestAnalyzerProvider)),
+  name: 'visualDiagnosticAgentProvider',
+);
+
+final sensorTelemetryAgentProvider = Provider<SensorTelemetryAgent>(
+  (ref) => SensorTelemetryAgent(
+    nodeRepo: ref.watch(sensorNodeRepositoryProvider),
+    eventRepo: ref.watch(sensorEventRepositoryProvider),
+  ),
+  name: 'sensorTelemetryAgentProvider',
+);
+
+final evidenceFusionAgentProvider = Provider<EvidenceFusionAgent>(
+  (ref) => EvidenceFusionAgent(),
+  name: 'evidenceFusionAgentProvider',
+);
+
+final agronomySafetyAgentProvider = Provider<AgronomySafetyAgent>(
+  (ref) => AgronomySafetyAgent(
+    knowledgeService: ref.watch(knowledgeServiceProvider),
+  ),
+  name: 'agronomySafetyAgentProvider',
+);
+
+final orchestratorAgentProvider = Provider<OrchestratorAgent>(
+  (ref) => OrchestratorAgent(
+    acousticAgent: ref.watch(acousticDiagnosticAgentProvider),
+    visualAgent: ref.watch(visualDiagnosticAgentProvider),
+    sensorAgent: ref.watch(sensorTelemetryAgentProvider),
+    fusionAgent: ref.watch(evidenceFusionAgentProvider),
+    safetyAgent: ref.watch(agronomySafetyAgentProvider),
+  ),
+  name: 'orchestratorAgentProvider',
 );

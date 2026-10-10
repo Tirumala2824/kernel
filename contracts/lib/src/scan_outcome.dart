@@ -1,7 +1,10 @@
 import 'enums.dart';
+import 'sensor.dart';
 
 /// Model version reported when no trained model is bundled.
 const String noModelVersion = 'none';
+
+enum AudioInputSource { liveMic, fileUpload, sensorNode }
 
 /// Result of one ~2 s capture plus analysis. Produced only by a [ScanEngine].
 class ScanOutcome {
@@ -21,6 +24,11 @@ class ScanOutcome {
     required this.deviceModel,
     required this.osVersion,
     this.audioRetained = false,
+    this.inputSource = AudioInputSource.liveMic,
+    this.sensorType,
+    this.sensorNodeId,
+    this.sourceFileName,
+    this.asqiScore,
   });
 
   final String scanId;
@@ -48,6 +56,21 @@ class ScanOutcome {
 
   /// True when the WAV for this scan was kept (opt-in or research recording).
   final bool audioRetained;
+
+  /// Source of the audio input.
+  final AudioInputSource inputSource;
+
+  /// Sensor hardware used if uploaded or recorded via dedicated sensor.
+  final SensorType? sensorType;
+
+  /// Optional ID of linked BLE sensor node.
+  final String? sensorNodeId;
+
+  /// File name if audio was uploaded from file.
+  final String? sourceFileName;
+
+  /// Audio Signal Quality Index (0..1).
+  final double? asqiScore;
 
   /// Contract invariants from docs/contracts.md. Empty means valid.
   /// Repositories must refuse to persist an outcome with violations.

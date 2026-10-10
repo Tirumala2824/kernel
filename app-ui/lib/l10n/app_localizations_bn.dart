@@ -3289,6 +3289,13 @@ class AppLocalizationsBn extends AppLocalizations {
       'নিরাপত্তা যাচাই হয়নি — আবার যুক্ত করুন';
 
   @override
+  String get sensorHealthSensorFault => 'সেন্সরে ত্রুটি — যাচাই হয়নি';
+
+  @override
+  String get sensorHealthEventsOverwritten =>
+      'কিছু ঘটনা হারিয়ে গেছে — এই সময়ের যাচাই হয়নি';
+
+  @override
   String get sensorNotEvaluatedTitle => 'যাচাই হয়নি';
 
   @override

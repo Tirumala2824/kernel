@@ -839,6 +839,8 @@
   "sensorHealthLowBattery": "ബാറ്ററി കുറവ്",
   "sensorHealthSurveyNeeded": "സർവേ വേണം",
   "sensorHealthAuthFailed": "സുരക്ഷാ പരിശോധന പരാജയപ്പെട്ടു — വീണ്ടും ജോടിയാക്കുക",
+  "sensorHealthSensorFault": "സെൻസർ തകരാർ — പരിശോധിച്ചിട്ടില്ല",
+  "sensorHealthEventsOverwritten": "ചില സംഭവങ്ങൾ നഷ്ടമായി — ഈ ഇടവേള പരിശോധിച്ചിട്ടില്ല",
   "sensorNotEvaluatedTitle": "വിലയിരുത്തിയിട്ടില്ല",
   "sensorNotEvaluatedBody": "ഈ സെൻസറിന് ഇപ്പോൾ പരിശോധിക്കാനാവില്ല. അവിടെ ഒന്നുമില്ല എന്ന് ഇതിനർത്ഥമില്ല. നേരിട്ട് തുറന്നു നോക്കുക.",
   "sensorPairTitle": "സെൻസർ ജോടിയാക്കുക",

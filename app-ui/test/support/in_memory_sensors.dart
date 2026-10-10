@@ -84,6 +84,7 @@ class ScriptedSensorLink implements SensorLink {
   final _bandChanges = Changes();
   final _bands = <String, BandFrame>{};
   final _events = StreamController<SensorEvent>.broadcast(sync: true);
+  final _health = StreamController<SensorHealthChange>.broadcast(sync: true);
 
   void setStatus(SensorStatus status) {
     _statuses[status.nodeId] = status;
@@ -96,6 +97,8 @@ class ScriptedSensorLink implements SensorLink {
   }
 
   void emitEvent(SensorEvent event) => _events.add(event);
+
+  void emitHealth(SensorHealthChange change) => _health.add(change);
 
   @override
   Future<SensorNode?> associate({required String qrPayload}) async {
@@ -122,6 +125,9 @@ class ScriptedSensorLink implements SensorLink {
 
   @override
   Stream<SensorEvent> events() => _events.stream;
+
+  @override
+  Stream<SensorHealthChange> healthChanges() => _health.stream;
 
   @override
   Future<void> startSurvey(
@@ -209,8 +215,12 @@ class InMemorySensorEventRepository implements SensorEventRepository {
   final InMemorySensorNodeRepository nodes;
   final _changes = Changes();
   final _events = <SensorEvent>[];
+  final _health = <SensorHealthChange>[];
+  final _synced = <String, int>{};
+  final epochsBegun = <String>[];
 
   List<SensorEvent> get all => List.unmodifiable(_events);
+  List<SensorHealthChange> get healthLog => List.unmodifiable(_health);
 
   @override
   Future<int> record(List<SensorEvent> events) async {
@@ -256,11 +266,61 @@ class InMemorySensorEventRepository implements SensorEventRepository {
       );
 
   @override
-  Future<int?> lastSeq(String nodeId) async {
-    final seqs = [
-      for (final e in _events)
-        if (e.nodeId == nodeId) e.seq,
-    ];
-    return seqs.isEmpty ? null : seqs.reduce((a, b) => a > b ? a : b);
+  Future<int?> lastSeq(String nodeId) async => _synced[nodeId];
+
+  @override
+  Future<void> markSynced(String nodeId, int throughSeq) async {
+    final current = _synced[nodeId];
+    if (current == null || throughSeq > current) _synced[nodeId] = throughSeq;
   }
+
+  @override
+  Future<void> beginEpoch(String nodeId) async {
+    epochsBegun.add(nodeId);
+    _synced.remove(nodeId);
+  }
+
+  @override
+  Future<void> recordHealth(List<SensorHealthChange> changes) async {
+    _health.addAll(changes);
+    if (changes.isNotEmpty) _changes.notify();
+  }
+
+  /// Not-evaluated windows from the recorded changes, newest first.
+  @override
+  Stream<List<SensorNotEvaluatedPeriod>> watchNotEvaluated({
+    String? nodeId,
+    String? locationId,
+    String? itemId,
+    Duration? window,
+  }) => _changes.watch(() {
+    bool keep(String id) =>
+        (nodeId == null || id == nodeId) &&
+        (locationId == null || nodes[id]?.locationId == locationId) &&
+        (itemId == null || nodes[id]?.itemId == itemId);
+    final byNode = <String, List<SensorHealthChange>>{};
+    for (final c in _health) {
+      if (keep(c.nodeId)) (byNode[c.nodeId] ??= []).add(c);
+    }
+    final since = window == null ? null : DateTime.now().subtract(window);
+    final periods = <SensorNotEvaluatedPeriod>[];
+    for (final changes in byNode.values) {
+      changes.sort((a, b) => a.at.compareTo(b.at));
+      for (var i = 0; i < changes.length; i++) {
+        final bad = changes[i].health.where(notEvaluatedHealth.contains);
+        if (bad.isEmpty) continue;
+        final until = i + 1 < changes.length ? changes[i + 1].at : null;
+        if (since != null && until != null && until.isBefore(since)) continue;
+        periods.add(
+          SensorNotEvaluatedPeriod(
+            nodeId: changes[i].nodeId,
+            from: changes[i].at,
+            until: until,
+            health: bad.toSet(),
+          ),
+        );
+      }
+    }
+    return periods..sort((a, b) => b.from.compareTo(a.from));
+  });
 }

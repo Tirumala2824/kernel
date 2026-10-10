@@ -184,7 +184,8 @@ The source of truth is `contracts/lib/src/model_hub.dart`, `embedding.dart`, `pe
 - **Health history:**
   - `SensorLink.healthChanges()` carries live status changes plus health records replayed from the node's ring (protocol v1.1). This includes an `eventsOverwritten` gap.
   - `SensorEventRepository.recordHealth` stores them, and `watchNotEvaluated({nodeId, locationId, itemId, window})` returns `SensorNotEvaluatedPeriod`s.
-  - Any summary or rate whose window overlaps such a period says "not evaluated". "N events in M minutes" uses the watched window for M, not the span between the first and last event.
+  - Any summary or rate whose window overlaps such a period says "not evaluated".
+- **Sync watermark:** `SensorEventRepository.lastSeq` is the seq synced through the last completed GET_EVENTS_SINCE, not `MAX(seq)`. Live events never advance it, and `markSynced` does. The link syncs from it when the engine attaches and whenever a live seq skips ahead. `beginEpoch` starts a new seq epoch when a node's counter restarts (status `lastSeq` below the watermark, or a new key fingerprint), so its new events never collide with old rows. "N events in M minutes" uses the watched window for M, not the span between the first and last event.
 
 ## Package entry points (what the lead wires in `app-ui/lib/bootstrap.dart`)
 - `package:audio_ai/audio_ai.dart` exports `class NativeScanEngine implements ScanEngine` with a no-arg constructor.

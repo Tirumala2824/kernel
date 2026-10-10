@@ -152,7 +152,7 @@ void main() {
     );
 
     test('Kernel entries are pinned with sha256, licence and capabilities', () {
-      expect(kernel.entries, hasLength(4));
+      expect(kernel.entries, hasLength(5));
       final g = kernel.entries.firstWhere((e) => e.id == gemmaId);
       expect(g.sha256, gemmaSha);
       expect(g.sizeBytes, gemmaSize);
@@ -174,6 +174,14 @@ void main() {
       expect(isPinnedRevision(y.revision), isTrue);
       expect(y.sha256!.startsWith(y.revision), isTrue);
       expect(downloadBlockReason(y), isNull);
+      final insect = kernel.entries.firstWhere(
+        (e) => e.repoId == 'ganesh333/kernel-insect-classifier',
+      );
+      expect(insect.sha256, '55ad541b87d1ae0bae5a71c7ec9091fc40617051f479ac3f12996bacda6f597e');
+      expect(insect.sizeBytes, 646352);
+      expect(insect.capabilities, {ModelCapability.audioClassify});
+      expect(insect.format, ModelFormat.tflite);
+      expect(downloadBlockReason(insect), isNull);
       final mt = kernel.entries.firstWhere((e) => e.repoId == 'magic_touch');
       expect(downloadBlockReason(mt), 'license_not_approved');
       expect(kernel.preference[gemmaId], 100);
@@ -181,8 +189,8 @@ void main() {
 
     test('merge: Kernel wins over Gallery, duplicates collapse', () {
       final merged = mergeEntries([kernel.entries, gallery]);
-      // 4 Kernel + 11 Gallery - 3 duplicates (Gemma 4 E2B, EmbeddingGemma, Magic touch).
-      expect(merged, hasLength(12));
+      // 5 Kernel + 11 Gallery - 3 duplicates (Gemma 4 E2B, EmbeddingGemma, Magic touch).
+      expect(merged, hasLength(13));
       final g = merged.where((e) => e.repoId.contains('gemma-4-E2B'));
       expect(g.single.source, ModelSource.kernelCatalog);
       expect(g.single.sha256, gemmaSha);

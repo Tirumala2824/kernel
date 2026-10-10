@@ -32,7 +32,8 @@ extension SensorTypeCopy on SensorType {
 
   IconData get icon => switch (this) {
     SensorType.usAir => Icons.sensors_rounded,
-    SensorType.contactPiezo || SensorType.contactAccel => Icons.vibration_rounded,
+    SensorType.contactPiezo ||
+    SensorType.contactAccel => Icons.vibration_rounded,
     SensorType.audioAir => Icons.hearing_rounded,
   };
 }
@@ -49,8 +50,8 @@ extension SensorLinkStateCopy on SensorLinkState {
   };
 
   StatusTone get tone => switch (this) {
-    SensorLinkState.connected || SensorLinkState.authenticated =>
-      StatusTone.info,
+    SensorLinkState.connected ||
+    SensorLinkState.authenticated => StatusTone.info,
     SensorLinkState.error => StatusTone.danger,
     _ => StatusTone.neutral,
   };
@@ -67,15 +68,11 @@ extension SensorLinkStateCopy on SensorLinkState {
 
 /// Health states that mean the node's results are "not evaluated", never
 /// "nothing there" (guardrails §10).
-const notEvaluatedHealth = {
-  SensorHealth.jammed,
-  SensorHealth.clipped,
-  SensorHealth.surveyNeeded,
-  SensorHealth.authFailed,
-};
-
+/// The contract's [notEvaluatedHealth] plus a failed security check, which
+/// also means the node's data can't be trusted.
 bool isNotEvaluated(Set<SensorHealth> health) =>
-    health.any(notEvaluatedHealth.contains);
+    health.any(notEvaluatedHealth.contains) ||
+    health.contains(SensorHealth.authFailed);
 
 extension SensorHealthCopy on SensorHealth {
   String label(AppLocalizations l) => switch (this) {
@@ -85,6 +82,8 @@ extension SensorHealthCopy on SensorHealth {
     SensorHealth.lowBattery => l.sensorHealthLowBattery,
     SensorHealth.surveyNeeded => l.sensorHealthSurveyNeeded,
     SensorHealth.authFailed => l.sensorHealthAuthFailed,
+    SensorHealth.sensorFault => l.sensorHealthSensorFault,
+    SensorHealth.eventsOverwritten => l.sensorHealthEventsOverwritten,
   };
 
   StatusTone get tone => switch (this) {
@@ -100,6 +99,8 @@ extension SensorHealthCopy on SensorHealth {
     SensorHealth.lowBattery => Icons.battery_alert_rounded,
     SensorHealth.surveyNeeded => Icons.tune_rounded,
     SensorHealth.authFailed => Icons.gpp_bad_rounded,
+    SensorHealth.sensorFault => Icons.error_outline_rounded,
+    SensorHealth.eventsOverwritten => Icons.history_toggle_off_rounded,
   };
 }
 

@@ -1,0 +1,10 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - ".claude/**"
+    - "build/**"
+    - "**/build/**"
+    - "firmware/**"
+    - "**/*.g.dart"
+    - "**/*.g.kt"

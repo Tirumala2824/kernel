@@ -3319,6 +3319,13 @@ class AppLocalizationsTa extends AppLocalizations {
       'பாதுகாப்புச் சரிபார்ப்பு தோல்வி — மீண்டும் இணை';
 
   @override
+  String get sensorHealthSensorFault => 'சென்சார் கோளாறு — மதிப்பிடப்படவில்லை';
+
+  @override
+  String get sensorHealthEventsOverwritten =>
+      'சில நிகழ்வுகள் இழக்கப்பட்டன — இந்த இடைவெளி மதிப்பிடப்படவில்லை';
+
+  @override
   String get sensorNotEvaluatedTitle => 'மதிப்பிடப்படவில்லை';
 
   @override

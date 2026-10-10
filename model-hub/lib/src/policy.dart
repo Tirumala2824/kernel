@@ -3,7 +3,7 @@ import 'package:kernel_contracts/kernel_contracts.dart';
 import 'catalog_builder.dart';
 
 /// Licences Kernel may download automatically (guardrails §7).
-const approvedLicenses = {'apache-2.0', 'mit', 'bsd-3-clause'};
+const approvedLicenses = {'apache-2.0', 'mit', 'bsd-3-clause', 'cc-by-4.0'};
 
 /// Hosts model files may come from (https only).
 const modelFileHosts = {'huggingface.co', 'storage.googleapis.com'};

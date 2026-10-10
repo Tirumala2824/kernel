@@ -302,7 +302,8 @@ abstract interface class SensorNodeRepository {
 }
 
 abstract interface class SensorEventRepository {
-  /// Idempotent on (nodeId, seq); returns how many were new.
+  /// Idempotent on (nodeId, seq) within the node's current epoch; returns
+  /// how many were new.
   Future<int> record(List<SensorEvent> events);
 
   /// Newest first.
@@ -313,8 +314,20 @@ abstract interface class SensorEventRepository {
   });
   Stream<List<SensorEvent>> watchForItem(String itemId, {Duration? window});
 
-  /// Latest synced seq per node, for GET_EVENTS_SINCE.
+  /// Seq synced through the last completed GET_EVENTS_SINCE (EVENTS_DONE) in
+  /// the current epoch, for the next GET_EVENTS_SINCE. Live events never
+  /// advance it, so events missed while the app was detached are still
+  /// fetched. Null when never synced.
   Future<int?> lastSeq(String nodeId);
+
+  /// Advances the synced-through watermark after EVENTS_DONE. Never moves it
+  /// backwards.
+  Future<void> markSynced(String nodeId, int throughSeq);
+
+  /// The node's seq counter restarted (reset, NVS erase, or re-pair with a new
+  /// key). Old events are kept; new seqs start a new epoch and never collide.
+  /// Clears the watermark.
+  Future<void> beginEpoch(String nodeId);
 
   /// Idempotent on (nodeId, at, health). Consecutive equal health is merged.
   Future<void> recordHealth(List<SensorHealthChange> changes);

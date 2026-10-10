@@ -714,4 +714,77 @@ void main() {
       );
     });
   });
+
+  group('analyzeAudioFile', () {
+    test('carries file provenance, sensor type, node id, and asqi score', () async {
+      host.onAnalyzeFile = (scanId, path, retain) => nativeResult(
+        qualityPass: true,
+        asqiScore: 0.92,
+        durationMs: 2000,
+        sampleRate: 16000,
+      );
+
+      final outcome = await engine.analyzeAudioFile(
+        'sack-item-99',
+        '/storage/emulated/0/Download/insect_recording_01.wav',
+        sensorType: SensorType.contactPiezo,
+        sensorNodeId: 'NODE-BLE-401',
+        retainAudio: false,
+      );
+
+      expect(outcome.itemId, 'sack-item-99');
+      expect(outcome.scanId, matches(_uuidV4));
+      expect(outcome.inputSource, AudioInputSource.fileUpload);
+      expect(outcome.sensorType, SensorType.contactPiezo);
+      expect(outcome.sensorNodeId, 'NODE-BLE-401');
+      expect(outcome.sourceFileName, 'insect_recording_01.wav');
+      expect(outcome.asqiScore, 0.92);
+      expect(outcome.quality, ScanQuality.pass);
+      expect(outcome.invariantViolations(), isEmpty);
+
+      expect(host.analyzeFileCalls.single, (
+        outcome.scanId,
+        '/storage/emulated/0/Download/insect_recording_01.wav',
+        false,
+      ));
+    });
+
+    test('maps retry quality reasons from file analysis', () async {
+      host.onAnalyzeFile = (scanId, path, retain) => nativeResult(
+        qualityPass: false,
+        qualityReasons: [NativeQualityReason.highNoise],
+        asqiScore: 0.35,
+      );
+
+      final outcome = await engine.analyzeAudioFile(
+        'sack-item-100',
+        'C:/audio/grain_noisy.wav',
+        sensorType: SensorType.audioAir,
+      );
+
+      expect(outcome.quality, ScanQuality.retry);
+      expect(outcome.qualityReasons, [QualityReason.highNoise]);
+      expect(outcome.classification, Classification.notEvaluated);
+      expect(outcome.asqiScore, 0.35);
+      expect(outcome.inputSource, AudioInputSource.fileUpload);
+      expect(outcome.sourceFileName, 'grain_noisy.wav');
+      expect(outcome.invariantViolations(), isEmpty);
+    });
+
+    test('bridge error returns failure outcome without throwing', () async {
+      host.onAnalyzeFile = (_, _, _) => throw PlatformException(code: 'FileReadError');
+
+      final outcome = await engine.analyzeAudioFile(
+        'sack-item-101',
+        'bad_file.wav',
+      );
+
+      expect(outcome.quality, ScanQuality.retry);
+      expect(outcome.qualityReasons, [QualityReason.captureError]);
+      expect(outcome.classification, Classification.notEvaluated);
+      expect(outcome.sourceFileName, 'bad_file.wav');
+      expect(outcome.inputSource, AudioInputSource.fileUpload);
+      expect(outcome.invariantViolations(), isEmpty);
+    });
+  });
 }
