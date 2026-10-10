@@ -75,19 +75,20 @@ class _ExportPanelState extends ConsumerState<ExportPanel> {
 
   Future<void> _export(ReportFormat format) async {
     final l = context.l10n;
+    final reports = ref.read(reportServiceProvider);
+    final sharer = ref.read(reportSharerProvider);
+    var scope = widget.scope;
+    // The preview dialog is modal, so no second export can start meanwhile.
+    if (_summaryAllowed && _addSummary && ref.read(adviceReadyProvider)) {
+      final narrative = await _narrative();
+      if (!mounted) return;
+      scope = scopeWithNarrative(scope, narrative);
+    }
     setState(() {
       _busy = format;
       _error = null;
     });
-    final reports = ref.read(reportServiceProvider);
-    final sharer = ref.read(reportSharerProvider);
     try {
-      var scope = widget.scope;
-      if (_summaryAllowed && _addSummary && ref.read(adviceReadyProvider)) {
-        final narrative = await _narrative();
-        if (!mounted) return;
-        scope = scopeWithNarrative(scope, narrative);
-      }
       final path = await reports.export(scope, format);
       if (!mounted) return;
       setState(() => _lastPath = path);

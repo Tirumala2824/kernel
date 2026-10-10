@@ -253,12 +253,8 @@ class _ModelCardState extends ConsumerState<_ModelCard> {
               FilledButton.icon(
                 key: const Key('advice-import'),
                 onPressed: _busy ? null : _import,
-                icon: _busy
-                    ? const SizedBox.square(
-                        dimension: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.file_open_rounded),
+                // Progress is shown by the bar above, not by a spinner.
+                icon: const Icon(Icons.file_open_rounded),
                 label: Text(l.adviceImportAction),
               ),
               if (info != null)

@@ -57,6 +57,7 @@ enum _AdviceState { waiting, streaming, complete, fallback }
 
 class _AdviceStreamCardState extends State<AdviceStreamCard> {
   StreamSubscription<AdviceText>? _sub;
+  Timer? _silence;
   AdviceText? _latest;
   _AdviceState _state = _AdviceState.waiting;
 
@@ -64,42 +65,58 @@ class _AdviceStreamCardState extends State<AdviceStreamCard> {
   void initState() {
     super.initState();
     try {
-      _sub = widget
-          .request()
-          .timeout(adviceUiTimeout)
-          .listen(
-            _onText,
-            onError: (Object _) => _fallBack(),
-            onDone: () {
-              if (_state != _AdviceState.complete) _fallBack();
-            },
-            cancelOnError: true,
-          );
+      _sub = widget.request().listen(
+        _onText,
+        onError: (Object _) => _fallBack(),
+        onDone: () {
+          if (_state != _AdviceState.complete) _fallBack();
+        },
+        cancelOnError: true,
+      );
+      _armTimeout();
     } on Object {
       // The engine never throws by contract; treat it as "static copy".
       _state = _AdviceState.fallback;
     }
   }
 
+  /// Falls back when nothing arrives for [adviceUiTimeout]. A plain timer
+  /// rather than Stream.timeout, so the engine's done event always reaches
+  /// the listener.
+  void _armTimeout() {
+    _silence?.cancel();
+    _silence = Timer(adviceUiTimeout, () {
+      unawaited(_sub?.cancel());
+      _fallBack();
+    });
+  }
+
   void _onText(AdviceText text) {
-    if (!mounted || _state == _AdviceState.complete) return;
+    final open =
+        _state == _AdviceState.waiting || _state == _AdviceState.streaming;
+    if (!mounted || !open) return;
     setState(() {
       _latest = text;
       _state = text.complete ? _AdviceState.complete : _AdviceState.streaming;
     });
     if (text.complete) {
+      _silence?.cancel();
       unawaited(_sub?.cancel());
       widget.onComplete?.call(text);
+    } else {
+      _armTimeout();
     }
   }
 
   void _fallBack() {
-    if (!mounted) return;
+    _silence?.cancel();
+    if (!mounted || _state == _AdviceState.complete) return;
     setState(() => _state = _AdviceState.fallback);
   }
 
   @override
   void dispose() {
+    _silence?.cancel();
     unawaited(_sub?.cancel());
     super.dispose();
   }

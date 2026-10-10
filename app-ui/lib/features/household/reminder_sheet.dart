@@ -53,6 +53,7 @@ class _ReminderSheetState extends ConsumerState<ReminderSheet> {
 
   /// True once the user changed the date or time themselves.
   bool _touched = false;
+  bool _adviceRequested = false;
 
   /// Input for the optional on-phone wording, once the suggestion is known.
   ReminderAdviceInput? _adviceInput;
@@ -87,7 +88,17 @@ class _ReminderSheetState extends ConsumerState<ReminderSheet> {
         _time = TimeOfDay.fromDateTime(suggested);
       }
     });
-    if (ref.read(adviceReadyProvider)) await _prepareAdvice(suggested);
+  }
+
+  /// Starts the optional wording once, when both the suggestion and a
+  /// ready assistant are known.
+  void _maybeRequestAdvice(bool adviceReady) {
+    final suggested = _suggested;
+    if (!adviceReady || suggested == null || _adviceRequested) return;
+    _adviceRequested = true;
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _prepareAdvice(suggested),
+    );
   }
 
   Future<void> _prepareAdvice(DateTime suggested) async {
@@ -155,6 +166,7 @@ class _ReminderSheetState extends ConsumerState<ReminderSheet> {
     final l = context.l10n;
     final textTheme = Theme.of(context).textTheme;
     final today = DateUtils.dateOnly(DateTime.now());
+    _maybeRequestAdvice(ref.watch(adviceReadyProvider));
     return SafeArea(
       child: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(
