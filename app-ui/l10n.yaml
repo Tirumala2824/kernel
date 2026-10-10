@@ -3,3 +3,6 @@ template-arb-file: app_en.arb
 output-localization-file: app_localizations.dart
 output-class: AppLocalizations
 nullable-getter: false
+# English first: Flutter falls back to supportedLocales.first for a phone
+# language Kernel does not ship.
+preferred-supported-locales: [en]

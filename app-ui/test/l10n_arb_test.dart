@@ -7,7 +7,6 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kernel_app/l10n/app_localizations.dart';
 import 'package:kernel_app/l10n/l10n.dart';
 
 /// en plus the ten Indian languages in docs/decisions-log.md (#25).
@@ -170,6 +169,23 @@ void main() {
     expect(
       AppLocalizations.supportedLocales.map((l) => l.toLanguageTag()).toSet(),
       shippedLocales.toSet(),
+    );
+  });
+
+  test('a phone language Kernel does not ship falls back to English', () {
+    // Flutter resolves unsupported device locales to the first entry.
+    expect(AppLocalizations.supportedLocales.first, const Locale('en'));
+    expect(
+      basicLocaleListResolution(const [
+        Locale('fr', 'FR'),
+      ], AppLocalizations.supportedLocales),
+      const Locale('en'),
+    );
+    expect(
+      basicLocaleListResolution(const [
+        Locale('hi', 'IN'),
+      ], AppLocalizations.supportedLocales),
+      const Locale('hi'),
     );
   });
 
