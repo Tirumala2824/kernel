@@ -1,5 +1,5 @@
 group = "com.kernel.local_llm"
-version = "1.0-SNAPSHOT"
+version = "0.1.0"
 
 buildscript {
     val kotlinVersion = "2.4.0"
@@ -45,20 +45,22 @@ android {
     }
 
     defaultConfig {
+        // LiteRT-LM 0.18.0 declares minSdkVersion 24.
         minSdk = 24
+        // Keeps LiteRT-LM classes that its JNI library looks up by name.
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     testOptions {
         unitTests {
-            isIncludeAndroidResources = true
             all {
                 it.useJUnitPlatform()
 
                 it.outputs.upToDateWhen { false }
 
                 it.testLogging {
-                    events("passed", "skipped", "failed", "standardOut", "standardError")
-                    showStandardStreams = true
+                    events("passed", "skipped", "failed")
+                    showStandardStreams = false
                 }
             }
         }
@@ -72,6 +74,25 @@ kotlin {
 }
 
 dependencies {
+    // Required by the pigeon-generated bridge and the generation/import jobs.
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
+
+    // Google AI Edge LiteRT-LM: on-device LLM runtime, used text-only.
+    // Pinned exactly (never latest.release). 0.18.0 pulls only gson,
+    // kotlin-reflect and kotlinx-coroutines: no Play services, no asset
+    // delivery, no download service, no permissions. Its only native library
+    // is liblitertlm_jni.so (arm64-v8a, x86_64), which does not clash with
+    // audio-ai's LiteRT 1.4.2 (libtensorflowlite_jni.so).
+    implementation("com.google.ai.edge.litertlm:litertlm-android:0.18.0")
+
+    // Sidecar JSON (tree API only, no reflection). Same version LiteRT-LM
+    // already brings in, so it adds nothing to the APK.
+    implementation("com.google.code.gson:gson:2.14.0")
+
+    // Unit tests are pure JVM (engine config builder, sidecar, import
+    // checks). No Android framework and no test doubles of the runtime.
+    testImplementation(platform("org.junit:junit-bom:5.14.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.mockito:mockito-core:5.0.0")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
