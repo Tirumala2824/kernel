@@ -170,7 +170,7 @@ class ScriptedModelSearch implements ModelSearch {
   Future<void> reindex() async {}
 }
 
-KnowledgeCard testCard({
+KnowledgeCard hubTestCard({
   String id = 'rice-weevil',
   String name = 'Rice weevil',
   String summary = 'Small brown beetle with a snout.',
@@ -192,20 +192,46 @@ KnowledgeCard testCard({
   reviewStatus: reviewStatus,
 );
 
+/// Knowledge double for both the hub search tests (scripted [hits]) and the
+/// Pest ID tests (a [cards] list with keyword search, best first).
 class ScriptedKnowledgeService implements KnowledgeService {
   List<KnowledgeHit> hits = [];
+  List<KnowledgeCard> cards = [];
   final queries = <String>[];
 
+  List<KnowledgeCard> get _all => [
+    ...cards,
+    for (final h in hits)
+      if (!cards.any((c) => c.id == h.card.id)) h.card,
+  ];
+
   @override
-  Future<List<KnowledgeCard>> all() async => [for (final h in hits) h.card];
+  Future<List<KnowledgeCard>> all() async => _all;
 
   @override
   Future<KnowledgeCard?> get(String id) async =>
-      hits.where((h) => h.card.id == id).firstOrNull?.card;
+      _all.where((c) => c.id == id).firstOrNull;
 
   @override
   Future<List<KnowledgeHit>> search(String query, {int limit = 3}) async {
     queries.add(query);
-    return hits;
+    if (hits.isNotEmpty) return hits;
+    final words = query
+        .toLowerCase()
+        .split(RegExp(r'\s+'))
+        .where((w) => w.length > 2)
+        .toSet();
+    final found = <KnowledgeHit>[];
+    for (final card in cards) {
+      final text = [
+        ...card.names.values,
+        card.id,
+        ...card.signs,
+      ].join(" ").toLowerCase();
+      final score = words.where(text.contains).length;
+      if (score > 0) found.add(KnowledgeHit(card: card, score: score / 10));
+    }
+    found.sort((a, b) => b.score.compareTo(a.score));
+    return found.take(limit).toList();
   }
 }

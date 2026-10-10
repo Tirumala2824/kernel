@@ -10,6 +10,7 @@ import '../../brand/illustrations.dart';
 import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_card.dart';
+import '../pest_id/pest_hub.dart';
 import 'next_step_section.dart';
 
 class FarmerHome extends ConsumerWidget {
@@ -77,6 +78,7 @@ class FarmerHome extends ConsumerWidget {
           },
         ),
         const InsightsCard(),
+        const PestIdActionCard(),
         KernelCard(
           key: const Key('harvests-card'),
           tone: KernelCardTone.ivory,

@@ -11,6 +11,7 @@ import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_card.dart';
 import '../household/container_card.dart';
+import '../pest_id/pest_hub.dart';
 import 'next_step_section.dart';
 
 class HouseholdHome extends ConsumerWidget {
@@ -90,6 +91,7 @@ class HouseholdHome extends ConsumerWidget {
             );
           },
         ),
+        const PestIdHeroCard(),
         const InsightsCard(),
       ],
     );

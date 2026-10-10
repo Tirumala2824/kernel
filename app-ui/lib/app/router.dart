@@ -19,7 +19,15 @@ import '../features/inventory/location_form_screen.dart';
 import '../features/lots/lot_detail_screen.dart';
 import '../features/lots/lot_form_screen.dart';
 import '../features/models/model_hub_screen.dart';
+import '../features/map/sightings_map_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
+import '../features/pest_id/pest_analysis_screen.dart';
+import '../features/pest_id/pest_camera_screen.dart';
+import '../features/pest_id/pest_hub.dart';
+import '../features/pest_id/pest_listen_screen.dart';
+import '../features/pest_id/pest_save_screen.dart';
+import '../features/pest_id/sighting_detail_screen.dart';
+import '../features/pest_id/sightings_screen.dart';
 import '../features/qr/qr_scan_screen.dart';
 import '../features/queue/queue_screen.dart';
 import '../features/reports/reports_screen.dart';
@@ -120,7 +128,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: Routes.scan,
-                builder: (_, _) => const ScanTabScreen(),
+                builder: (_, s) =>
+                    ScanTabScreen(pestMode: q(s, 'mode') == 'pest'),
               ),
             ],
           ),
@@ -176,6 +185,35 @@ final routerProvider = Provider<GoRouter>((ref) {
                     SensorPlacementScreen(nodeId: id(s, 'nodeId')),
               ),
             ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: Routes.pestHub,
+        builder: (_, _) => const PestHubScreen(),
+        routes: [
+          GoRoute(path: 'camera', builder: (_, _) => const PestCameraScreen()),
+          GoRoute(
+            path: 'analysis',
+            builder: (_, _) => const PestAnalysisScreen(),
+          ),
+          GoRoute(path: 'listen', builder: (_, _) => const PestListenScreen()),
+          GoRoute(path: 'save', builder: (_, _) => const PestSaveScreen()),
+        ],
+      ),
+      GoRoute(
+        path: Routes.sightings,
+        builder: (_, _) => const SightingsScreen(),
+        routes: [
+          GoRoute(
+            path: 'map',
+            builder: (_, s) =>
+                SightingsMapScreen(sightingId: q(s, 'sightingId')),
+          ),
+          GoRoute(
+            path: ':sightingId',
+            builder: (_, s) =>
+                SightingDetailScreen(sightingId: id(s, 'sightingId')),
           ),
         ],
       ),

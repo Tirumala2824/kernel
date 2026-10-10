@@ -3670,4 +3670,742 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get sensorNextOpen => 'ਸੈਂਸਰ ਖੋਲ੍ਹੋ';
+
+  @override
+  String get pestIdTitle => 'ਕੀੜੇ ਅਤੇ ਜੀਵ ਦੀ ਪਛਾਣ';
+
+  @override
+  String get pestIdSubtitle =>
+      'ਕੈਮਰੇ ਨਾਲ ਵੇਖੋ ਜਾਂ ਆਵਾਜ਼ ਸੁਣੋ। ਫ਼ੋਨ ਸੰਭਾਵੀ ਨਿਸ਼ਾਨ ਲੱਭਦਾ ਹੈ; ਅਸਲ ਕੀ ਹੈ, ਇਹ ਤੁਸੀਂ ਪੱਕਾ ਕਰਦੇ ਹੋ।';
+
+  @override
+  String get pestHomeActionBody =>
+      'ਕੈਮਰੇ ਜਾਂ ਆਵਾਜ਼ ਨਾਲ ਕੀੜੇ, ਚੂਹੇ, ਮੱਕੜੀਆਂ, ਛਿਪਕਲੀਆਂ ਅਤੇ ਹੋਰ ਜੀਵ ਜਾਂਚੋ';
+
+  @override
+  String get pestHeroAction => 'ਵੇਖੋ ਜਾਂ ਸੁਣੋ';
+
+  @override
+  String get pestSegmentGrain => 'ਅਨਾਜ ਦੀ ਬੋਰੀ';
+
+  @override
+  String get pestSegmentPest => 'ਕੀੜੇ ਅਤੇ ਜੀਵ';
+
+  @override
+  String get pestCameraCardTitle => 'ਕੈਮਰੇ ਨਾਲ ਵੇਖੋ';
+
+  @override
+  String get pestCameraCardBody =>
+      'ਹਿਲਜੁਲ, ਕਾਲੇ ਧੱਬੇ ਅਤੇ ਅੱਖਾਂ ਦੀ ਚਮਕ ਲੱਭਦਾ ਹੈ। ਅਸਲ ਕੀ ਹੈ, ਤੁਸੀਂ ਪੱਕਾ ਕਰਦੇ ਹੋ।';
+
+  @override
+  String get pestListenCardTitle => 'ਆਵਾਜ਼ਾਂ ਸੁਣੋ';
+
+  @override
+  String get pestListenCardBody =>
+      'ਭਿਣਭਿਣਾਹਟ, ਖੁਰਚਣ ਅਤੇ ਚੀਂ-ਚੀਂ ਦੀ ਆਵਾਜ਼ ਫੜਦਾ ਹੈ। ਤੁਸੀਂ ਜੋ ਸੁਣਿਆ, ਤੁਸੀਂ ਪੱਕਾ ਕਰਦੇ ਹੋ।';
+
+  @override
+  String get pestSightingsCardTitle => 'ਮੇਰੇ ਵੇਖੇ ਜੀਵ';
+
+  @override
+  String pestSightingsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ਰਿਕਾਰਡ ਸੰਭਾਲੇ',
+      one: '1 ਰਿਕਾਰਡ ਸੰਭਾਲਿਆ',
+      zero: 'ਅਜੇ ਕੁਝ ਸੰਭਾਲਿਆ ਨਹੀਂ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pestOnPhoneNote =>
+      'ਸਭ ਕੁਝ ਇਸੇ ਫ਼ੋਨ ਉੱਤੇ ਜਾਂਚਿਆ ਜਾਂਦਾ ਹੈ। ਤਸਵੀਰਾਂ ਅਤੇ ਆਵਾਜ਼ਾਂ ਕਦੇ ਅੱਪਲੋਡ ਨਹੀਂ ਹੁੰਦੀਆਂ।';
+
+  @override
+  String get pestNotCertainNote =>
+      'AI ਦੇ ਨਤੀਜੇ ਅੰਦਾਜ਼ੇ ਹਨ ਅਤੇ ਗਲਤ ਹੋ ਸਕਦੇ ਹਨ। ਨਿਸ਼ਾਨ ਨਾ ਮਿਲਣਾ ਇਸ ਗੱਲ ਦਾ ਸਬੂਤ ਨਹੀਂ ਕਿ ਉੱਥੇ ਕੁਝ ਨਹੀਂ।';
+
+  @override
+  String get pestCameraTitle => 'ਨਿਸ਼ਾਨ ਲੱਭੋ';
+
+  @override
+  String get pestCameraTip =>
+      'ਕੋਨਿਆਂ, ਤਰੇੜਾਂ ਅਤੇ ਅਨਾਜ ਦੇ ਨੇੜੇ ਫ਼ੋਨ ਸਥਿਰ ਰੱਖੋ। ਕਿਸੇ ਡੱਬੇ ਨੂੰ ਪੱਕਾ ਕਰਨ ਲਈ ਛੂਹੋ, ਜਾਂ ਨੇੜਿਓਂ ਵੇਖਣ ਲਈ ਫ਼ੋਟੋ ਲਓ।';
+
+  @override
+  String get pestCameraDenied =>
+      'ਕੈਮਰੇ ਦੀ ਇਜਾਜ਼ਤ ਬੰਦ ਹੈ। ਨਿਸ਼ਾਨ ਲੱਭਣ ਲਈ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਇਜਾਜ਼ਤ ਦਿਓ। ਤੁਹਾਡੇ ਸੰਭਾਲੇ ਰਿਕਾਰਡ ਵੇਖੇ ਜਾ ਸਕਦੇ ਹਨ।';
+
+  @override
+  String get pestKindMotion => 'ਹਿਲਜੁਲ';
+
+  @override
+  String get pestKindSpecks => 'ਕਾਲੇ ਧੱਬੇ';
+
+  @override
+  String get pestKindEyeshine => 'ਅੱਖਾਂ ਦੀ ਚਮਕ';
+
+  @override
+  String get pestKindEmbedding => 'ਮਿਲਦਾ-ਜੁਲਦਾ';
+
+  @override
+  String get pestKindModelBox => 'AI ਡੱਬਾ';
+
+  @override
+  String get pestKindSound => 'ਆਵਾਜ਼';
+
+  @override
+  String pestConfirmBox(String kind) {
+    return '$kind ਪੱਕਾ ਕਰੋ';
+  }
+
+  @override
+  String get pestTorch => 'ਟਾਰਚ';
+
+  @override
+  String pestTorchValue(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get pestCapture => 'ਫ਼ੋਟੋ ਲਓ';
+
+  @override
+  String get pestCapturing => 'ਫ਼ੋਟੋ ਲਈ ਜਾ ਰਹੀ ਹੈ…';
+
+  @override
+  String get pestNothingHere => 'ਕੀੜਾ ਨਹੀਂ / ਇੱਥੇ ਕੁਝ ਨਹੀਂ';
+
+  @override
+  String get pestNothingHereDone => 'ਕੁਝ ਸੰਭਾਲਿਆ ਨਹੀਂ। ਤਸਵੀਰਾਂ ਹਟਾ ਦਿੱਤੀਆਂ।';
+
+  @override
+  String get pestCandidatesNone =>
+      'ਅਜੇ ਕੋਈ ਸੰਭਾਵੀ ਨਿਸ਼ਾਨ ਨਹੀਂ। ਹੌਲੀ ਘੁਮਾਓ ਜਾਂ ਟਾਰਚ ਚਾਲੂ ਕਰੋ।';
+
+  @override
+  String pestCandidatesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ਸੰਭਾਵੀ ਨਿਸ਼ਾਨ',
+      one: '1 ਸੰਭਾਵੀ ਨਿਸ਼ਾਨ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pestCaptureFailed => 'ਫ਼ੋਟੋ ਨਹੀਂ ਲਈ ਜਾ ਸਕੀ। ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।';
+
+  @override
+  String get pestTilesTitle => 'ਨੇੜਿਓਂ: ਜੋ ਅਸਲ ਹੈ ਉਸ ਨੂੰ ਛੂਹੋ';
+
+  @override
+  String get pestTilesEmpty =>
+      'ਇਸ ਫ਼ੋਟੋ ਵਿੱਚ ਨੇੜੇ ਦਾ ਕੋਈ ਹਿੱਸਾ ਨਹੀਂ। ਹੋਰ ਨੇੜਿਓਂ ਜਾਂ ਟਾਰਚ ਨਾਲ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।';
+
+  @override
+  String pestTileHint(String name) {
+    return 'AI ਸੰਕੇਤ: $name (ਤਸਦੀਕ ਨਹੀਂ)';
+  }
+
+  @override
+  String get pestTileConfirm => 'ਪੱਕਾ ਕਰਨ ਲਈ ਛੂਹੋ';
+
+  @override
+  String get pestRetake => 'ਮੁੜ ਫ਼ੋਟੋ ਲਓ';
+
+  @override
+  String get pestAnalysisTitle => 'AI ਵਿਸ਼ਲੇਸ਼ਣ';
+
+  @override
+  String get pestAnalysing => 'ਇਸੇ ਫ਼ੋਨ ਉੱਤੇ ਵਿਸ਼ਲੇਸ਼ਣ ਹੋ ਰਿਹਾ ਹੈ…';
+
+  @override
+  String get pestAiLabel => 'AI ਦਾ ਦੱਸਿਆ ਨਾਂ';
+
+  @override
+  String get pestAiEstimated => 'AI ਦਾ ਅੰਦਾਜ਼ਾ';
+
+  @override
+  String get pestConfidenceLabel => 'AI ਦਾ ਅੰਦਾਜ਼ਨ ਭਰੋਸਾ — ਜਾਂਚ ਕੇ ਮਾਪਿਆ ਨਹੀਂ';
+
+  @override
+  String pestConfidenceValue(int percent) {
+    return '$percent% (AI ਦਾ ਆਪਣਾ ਅੰਦਾਜ਼ਾ)';
+  }
+
+  @override
+  String pestAgreement(int agree, int runs) {
+    return '$runs ਵਿੱਚੋਂ $agree ਵਾਰ ਇੱਕੋ ਜਵਾਬ';
+  }
+
+  @override
+  String get pestKeyFeatures => 'ਮੁੱਖ ਪਛਾਣ';
+
+  @override
+  String get pestAnomalies => 'ਅਸਧਾਰਨ ਗੱਲਾਂ';
+
+  @override
+  String get pestInsights => 'ਜਾਣਕਾਰੀ';
+
+  @override
+  String get pestNoMatch =>
+      'ਕੋਈ ਮਿਲਦਾ ਕਾਰਡ ਨਹੀਂ। ਇਸ ਦਾ ਮਤਲਬ ਇਹ ਨਹੀਂ ਕਿ ਉੱਥੇ ਕੁਝ ਨਹੀਂ। ਖੁਦ ਵੇਖ ਕੇ ਜਾਂਚ ਕਰੋ।';
+
+  @override
+  String get pestNotAPest =>
+      'AI ਮੁਤਾਬਕ ਇਹ ਕੀੜਾ ਨਹੀਂ। ਇਹ ਸਬੂਤ ਨਹੀਂ। ਸ਼ੱਕ ਹੋਵੇ ਤਾਂ ਖੁਦ ਵੇਖ ਕੇ ਜਾਂਚ ਕਰੋ।';
+
+  @override
+  String pestModelLine(String version, String prompt) {
+    return 'ਮਾਡਲ $version · ਪ੍ਰੌਂਪਟ $prompt — ਤਜਰਬਾਤੀ';
+  }
+
+  @override
+  String get pestAnalysisUnavailable => 'AI ਵਿਸ਼ਲੇਸ਼ਣ ਉਪਲਬਧ ਨਹੀਂ';
+
+  @override
+  String get pestAnalysisUnavailableBody =>
+      'ਫ਼ੋਨ ਦਾ AI ਇਸ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਨਹੀਂ ਕਰ ਸਕਿਆ। ਇਸ ਦੀ ਥਾਂ ਸਭ ਤੋਂ ਨੇੜਲਾ ਜਾਣਕਾਰੀ ਕਾਰਡ ਵਿਖਾਇਆ ਜਾ ਰਿਹਾ ਹੈ।';
+
+  @override
+  String get pestNoCardFound =>
+      'ਕੋਈ ਮਿਲਦਾ ਜਾਣਕਾਰੀ ਕਾਰਡ ਨਹੀਂ। ਖੁਦ ਵੇਖ ਕੇ ਜਾਂਚ ਕਰੋ ਅਤੇ ਸ਼ੱਕ ਹੋਵੇ ਤਾਂ ਮਾਹਿਰ ਨੂੰ ਪੁੱਛੋ।';
+
+  @override
+  String get pestSafetyVenomousTitle => 'ਜ਼ਹਿਰੀਲਾ — ਦੂਰੀ ਬਣਾਈ ਰੱਖੋ';
+
+  @override
+  String get pestSafetyMedicalTitle => 'ਸਿਹਤ ਦਾ ਖ਼ਤਰਾ — ਦੂਰੀ ਬਣਾਈ ਰੱਖੋ';
+
+  @override
+  String get pestSafetyDistanceBody =>
+      'ਇਸ ਨੂੰ ਨਾ ਛੂਹੋ, ਨਾ ਫੜੋ। ਕੱਟਣ ਜਾਂ ਡੰਗ ਮਾਰਨ ਉੱਤੇ ਡਾਕਟਰੀ ਇਲਾਜ ਲਓ। ਘਰੇਲੂ ਨੁਸਖੇ ਨਾ ਵਰਤੋ।';
+
+  @override
+  String get pestSafetyProtectedTitle =>
+      'ਸੁਰੱਖਿਅਤ ਜੰਗਲੀ ਜੀਵ — ਨੁਕਸਾਨ ਨਾ ਪਹੁੰਚਾਓ';
+
+  @override
+  String get pestSafetyProtectedBody =>
+      'ਇਸ ਨੂੰ ਨੁਕਸਾਨ ਨਾ ਪਹੁੰਚਾਓ, ਨਾ ਫੜੋ, ਨਾ ਮਾਰੋ। ਰਾਜ ਦੇ ਜੰਗਲਾਤ ਵਿਭਾਗ ਜਾਂ ਲਾਇਸੈਂਸ ਵਾਲੇ ਜੰਗਲੀ ਜੀਵ ਬਚਾਅ ਦਲ ਨੂੰ ਬੁਲਾਓ।';
+
+  @override
+  String get pestSafetyCautionTitle => 'ਸਾਵਧਾਨ ਰਹੋ';
+
+  @override
+  String get pestSafetyCautionBody =>
+      'ਇਸ ਨੂੰ ਨੰਗੇ ਹੱਥਾਂ ਨਾਲ ਨਾ ਛੂਹੋ। ਕਾਰਡ ਵਿੱਚ ਦਿੱਤੇ ਸੁਰੱਖਿਅਤ ਕਦਮ ਅਪਣਾਓ।';
+
+  @override
+  String get pestCardTitle => 'ਜਾਣਕਾਰੀ ਕਾਰਡ';
+
+  @override
+  String get pestCardYourPick => 'ਤੁਹਾਡੀ ਚੋਣ';
+
+  @override
+  String get pestCardNeedsReview => 'ਮਾਹਿਰ ਦੀ ਜਾਂਚ ਬਾਕੀ';
+
+  @override
+  String pestCardOtherNames(String names) {
+    return 'ਹੋਰ ਨਾਂ: $names';
+  }
+
+  @override
+  String get pestCardSigns => 'ਕਿਹੜੇ ਨਿਸ਼ਾਨ ਵੇਖਣੇ ਹਨ';
+
+  @override
+  String get pestCardHealthRisks => 'ਸਿਹਤ ਦੇ ਖ਼ਤਰੇ';
+
+  @override
+  String get pestCardSafeSteps => 'ਸੁਰੱਖਿਅਤ ਕਦਮ';
+
+  @override
+  String get pestCardCallPro => 'ਮਾਹਿਰ ਨੂੰ ਕਦੋਂ ਬੁਲਾਉਣਾ ਹੈ';
+
+  @override
+  String get pestCardFirstAid => 'ਮੁਢਲੀ ਸਹਾਇਤਾ';
+
+  @override
+  String get pestCardLookAlikes => 'ਮਿਲਦੇ-ਜੁਲਦੇ ਜੀਵ';
+
+  @override
+  String get pestCardLegal => 'ਕਾਨੂੰਨੀ ਸਥਿਤੀ';
+
+  @override
+  String get pestCardSources => 'ਸਰੋਤ';
+
+  @override
+  String get pestExplain => 'ਸਮਝਾਓ';
+
+  @override
+  String get pestExplainTitle => 'ਕਾਰਡ ਦੇ ਆਧਾਰ ਉੱਤੇ ਸਮਝ';
+
+  @override
+  String get pestExplainFallback =>
+      'ਅਜੇ ਕੋਈ ਸਮਝ ਉਪਲਬਧ ਨਹੀਂ। ਉੱਪਰਲਾ ਕਾਰਡ ਹੀ ਮਾਰਗਦਰਸ਼ਨ ਹੈ।';
+
+  @override
+  String get pestPickCard => 'ਹੋਰ ਕਾਰਡ ਚੁਣੋ';
+
+  @override
+  String get pestPickCardTitle => 'ਇਹ ਕਿਹੜਾ ਹੈ?';
+
+  @override
+  String get pestPickCardBody =>
+      'ਤੁਹਾਡੀ ਚੋਣ ਤੁਹਾਡੇ ਸੁਧਾਰ ਵਜੋਂ ਸੰਭਾਲੀ ਜਾਂਦੀ ਹੈ। AI ਵਿਸ਼ਲੇਸ਼ਣ ਜਿਵੇਂ ਸੀ ਉਵੇਂ ਹੀ ਰਹਿੰਦਾ ਹੈ।';
+
+  @override
+  String get pestPickCardClear => 'AI ਦਾ ਦੱਸਿਆ ਨਾਂ ਵਰਤੋ';
+
+  @override
+  String get pestMeasure => 'ਦੂਰੀ ਮਾਪੋ';
+
+  @override
+  String get pestMeasuring => 'ਮਾਪਿਆ ਜਾ ਰਿਹਾ ਹੈ…';
+
+  @override
+  String pestDistanceValue(
+    String meters,
+    String low,
+    String high,
+    String method,
+  ) {
+    return 'ਲਗਭਗ $meters ਮੀ. ਦੂਰ ($low–$high ਮੀ.), $method ਨਾਲ';
+  }
+
+  @override
+  String get pestDistanceMethodDepth => 'ਡੂੰਘਾਈ ਸੈਂਸਰ';
+
+  @override
+  String get pestDistanceMethodFocus => 'ਕੈਮਰਾ ਫੋਕਸ';
+
+  @override
+  String get pestDistanceUnavailable => 'ਦੂਰੀ ਉਪਲਬਧ ਨਹੀਂ';
+
+  @override
+  String pestDistanceReason(String reason) {
+    return 'ਕਾਰਨ: $reason';
+  }
+
+  @override
+  String get pestDistanceNoReason => 'ਫ਼ੋਨ ਇਸ ਨੂੰ ਭਰੋਸੇ ਨਾਲ ਮਾਪ ਨਹੀਂ ਸਕਿਆ।';
+
+  @override
+  String get pestSave => 'ਰਿਕਾਰਡ ਸੰਭਾਲੋ';
+
+  @override
+  String get pestDiscard => 'ਹਟਾਓ';
+
+  @override
+  String get pestStartAgain => 'ਮੁੜ ਸ਼ੁਰੂ ਕਰੋ';
+
+  @override
+  String get pestNoSignal =>
+      'ਵਿਸ਼ਲੇਸ਼ਣ ਲਈ ਕੁਝ ਨਹੀਂ। ਕੈਮਰੇ ਜਾਂ ਸੁਣਨ ਨਾਲ ਮੁੜ ਸ਼ੁਰੂ ਕਰੋ।';
+
+  @override
+  String get pestGroupInsect => 'ਕੀੜਾ';
+
+  @override
+  String get pestGroupArachnid => 'ਮੱਕੜੀ ਜਾਂ ਬਿੱਛੂ';
+
+  @override
+  String get pestGroupRodent => 'ਚੂਹਾ';
+
+  @override
+  String get pestGroupReptile => 'ਰੀਂਗਣ ਵਾਲਾ ਜੀਵ (ਛਿਪਕਲੀ, ਸੱਪ ਆਦਿ)';
+
+  @override
+  String get pestGroupOther => 'ਹੋਰ ਜੀਵ';
+
+  @override
+  String get pestGroupNotAPest => 'ਕੀੜਾ ਨਹੀਂ';
+
+  @override
+  String get pestGroupUnknown => 'ਪਤਾ ਨਹੀਂ';
+
+  @override
+  String pestGroupHint(String group) {
+    return 'ਸੰਭਾਵੀ ਸਮੂਹ: $group (AI ਸੰਕੇਤ)';
+  }
+
+  @override
+  String get pestSourceCamera => 'ਕੈਮਰਾ';
+
+  @override
+  String get pestSourceMic => 'ਆਵਾਜ਼';
+
+  @override
+  String get pestSourceSensor => 'ਸੈਂਸਰ';
+
+  @override
+  String get pestListenTitle => 'ਆਵਾਜ਼ਾਂ ਸੁਣੋ';
+
+  @override
+  String get pestListenModeGeneral => 'ਆਮ';
+
+  @override
+  String get pestListenModeMosquito => 'ਮੱਛਰ ਨੇੜਿਓਂ';
+
+  @override
+  String get pestListenModeNight => 'ਰਾਤ';
+
+  @override
+  String get pestListenModeGeneralBody =>
+      'ਜਿੱਥੋਂ ਆਵਾਜ਼ ਆ ਰਹੀ ਹੈ, ਉਸ ਦੇ ਨੇੜੇ ਫ਼ੋਨ ਸਥਿਰ ਰੱਖੋ।';
+
+  @override
+  String get pestListenModeMosquitoBody =>
+      'ਭਿਣਭਿਣਾਹਟ ਤੋਂ ਇੱਕ ਹਥੇਲੀ ਦੀ ਦੂਰੀ ਉੱਤੇ ਫ਼ੋਨ ਫੜੋ।';
+
+  @override
+  String get pestListenModeNightBody =>
+      'ਫ਼ੋਨ ਕਮਰੇ ਵਿੱਚ ਸਥਿਰ ਰੱਖ ਦਿਓ। ਸੁਣਦੇ ਸਮੇਂ ਇੱਕ ਸੂਚਨਾ ਦਿਸਦੀ ਹੈ, ਤਾਂ ਜੋ ਤੁਸੀਂ ਕਦੇ ਵੀ ਰੋਕ ਸਕੋ।';
+
+  @override
+  String get pestListenStart => 'ਸੁਣਨਾ ਸ਼ੁਰੂ ਕਰੋ';
+
+  @override
+  String get pestListenStop => 'ਰੋਕੋ';
+
+  @override
+  String get pestListening => 'ਇਸੇ ਫ਼ੋਨ ਉੱਤੇ ਸੁਣਿਆ ਜਾ ਰਿਹਾ ਹੈ…';
+
+  @override
+  String get pestListenNone => 'ਅਜੇ ਕੋਈ ਆਵਾਜ਼ ਨਹੀਂ ਫੜੀ ਗਈ।';
+
+  @override
+  String get pestListenTapToConfirm =>
+      'ਜੋ ਆਵਾਜ਼ ਤੁਸੀਂ ਵੀ ਸੁਣੀ, ਉਸ ਨੂੰ ਛੂਹ ਕੇ ਪੱਕਾ ਕਰੋ';
+
+  @override
+  String get pestListenMicDenied =>
+      'ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਦੀ ਇਜਾਜ਼ਤ ਬੰਦ ਹੈ। ਸੁਣਨ ਲਈ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਇਜਾਜ਼ਤ ਦਿਓ। ਤੁਹਾਡੇ ਸੰਭਾਲੇ ਰਿਕਾਰਡ ਵੇਖੇ ਜਾ ਸਕਦੇ ਹਨ।';
+
+  @override
+  String get pestListenNightNeedsNotice =>
+      'ਰਾਤ ਮੋਡ ਲਈ ਸੂਚਨਾਵਾਂ ਲਾਜ਼ਮੀ ਹਨ, ਤਾਂ ਜੋ ਤੁਸੀਂ ਸੁਣਨਾ ਵੇਖ ਅਤੇ ਰੋਕ ਸਕੋ। ਸੂਚਨਾਵਾਂ ਚਾਲੂ ਕਰਕੇ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।';
+
+  @override
+  String get pestListenAgain => 'ਮੁੜ ਸੁਣੋ';
+
+  @override
+  String pestSoundAt(String time) {
+    return '$time ਵਜੇ ਆਵਾਜ਼';
+  }
+
+  @override
+  String get pestSoundConfirm => 'ਪੱਕਾ ਕਰਨ ਲਈ ਛੂਹੋ';
+
+  @override
+  String pestSoundScore(String label, int percent) {
+    return '$label · $percent%';
+  }
+
+  @override
+  String get pestSoundNoLabels => 'ਆਵਾਜ਼ ਦਾ ਕੋਈ ਨਾਂ ਨਹੀਂ ਮਿਲਿਆ।';
+
+  @override
+  String get pestSoundRawNote =>
+      'ਆਵਾਜ਼ ਪਛਾਣਨ ਵਾਲੇ ਮਾਡਲ ਦੇ ਕੱਚੇ ਅੰਕ, ਜਾਂਚ ਕੇ ਮਾਪੇ ਨਹੀਂ';
+
+  @override
+  String get pestSoundDescribing => 'ਇਸੇ ਫ਼ੋਨ ਉੱਤੇ ਆਵਾਜ਼ ਦਾ ਵਰਣਨ ਹੋ ਰਿਹਾ ਹੈ…';
+
+  @override
+  String get pestSoundDescription => 'AI ਵਰਣਨ (ਤਜਰਬਾਤੀ)';
+
+  @override
+  String get pestSoundNoDescription => 'ਕੋਈ AI ਵਰਣਨ ਉਪਲਬਧ ਨਹੀਂ।';
+
+  @override
+  String pestSoundModel(String version) {
+    return 'ਆਵਾਜ਼ ਮਾਡਲ $version — ਤਜਰਬਾਤੀ';
+  }
+
+  @override
+  String get pestSoundCards => 'ਮਿਲਦੇ ਕਾਰਡ';
+
+  @override
+  String get pestSoundNoCards => 'ਕੋਈ ਮਿਲਦਾ ਕਾਰਡ ਨਹੀਂ। ਖੁਦ ਵੇਖ ਕੇ ਜਾਂਚ ਕਰੋ।';
+
+  @override
+  String get pestClipGone => 'ਉਹ ਆਵਾਜ਼ ਹੁਣ ਉਪਲਬਧ ਨਹੀਂ। ਮੁੜ ਸੁਣੋ।';
+
+  @override
+  String get pestSaveTitle => 'ਰਿਕਾਰਡ ਸੰਭਾਲੋ';
+
+  @override
+  String get pestSaveSubtitle => 'ਸਿਰਫ਼ ਇਸੇ ਫ਼ੋਨ ਉੱਤੇ ਸੰਭਾਲਿਆ ਜਾਂਦਾ ਹੈ';
+
+  @override
+  String get pestSaveRoom => 'ਕਮਰਾ ਜਾਂ ਥਾਂ';
+
+  @override
+  String get pestSaveNoRoom => 'ਕੋਈ ਕਮਰਾ ਨਹੀਂ';
+
+  @override
+  String get pestSaveNoRooms =>
+      'ਅਜੇ ਕੋਈ ਕਮਰਾ ਜਾਂ ਥਾਂ ਨਹੀਂ। ਤੁਸੀਂ ਇਹ ਭੰਡਾਰ ਵਿੱਚੋਂ ਜੋੜ ਸਕਦੇ ਹੋ।';
+
+  @override
+  String get pestSaveLocation => 'ਟਿਕਾਣਾ ਸੰਭਾਲੋ';
+
+  @override
+  String get pestSaveLocationBody =>
+      'ਲਾਜ਼ਮੀ ਨਹੀਂ। ਟਿਕਾਣਾ ਸਿਰਫ਼ ਹੁਣ ਪੁੱਛਿਆ ਜਾਂਦਾ ਹੈ। ਘਰ ਦੇ ਅੰਦਰ ਕਮਰੇ ਦਾ ਨਾਂ ਵੱਧ ਕੰਮ ਦਾ ਹੈ।';
+
+  @override
+  String get pestLocating => 'ਟਿਕਾਣਾ ਲਿਆ ਜਾ ਰਿਹਾ ਹੈ…';
+
+  @override
+  String get pestLocationDenied =>
+      'ਟਿਕਾਣੇ ਦੀ ਇਜਾਜ਼ਤ ਨਹੀਂ ਮਿਲੀ, ਸਿਰਫ਼ ਕਮਰਾ ਸੰਭਾਲਿਆ';
+
+  @override
+  String get pestLocationImprecise =>
+      'ਟਿਕਾਣਾ ਬਹੁਤ ਅੰਦਾਜ਼ਨ ਹੈ, ਸਿਰਫ਼ ਕਮਰਾ ਸੰਭਾਲਿਆ';
+
+  @override
+  String get pestLocationOff =>
+      'ਇਸ ਫ਼ੋਨ ਉੱਤੇ ਟਿਕਾਣਾ ਬੰਦ ਹੈ, ਸਿਰਫ਼ ਕਮਰਾ ਸੰਭਾਲਿਆ';
+
+  @override
+  String get pestLocationFailed => 'ਟਿਕਾਣਾ ਨਹੀਂ ਮਿਲਿਆ, ਸਿਰਫ਼ ਕਮਰਾ ਸੰਭਾਲਿਆ';
+
+  @override
+  String pestLocationPinned(int meters) {
+    return 'ਪਿੰਨ ਸੰਭਾਲਿਆ ($meters ਮੀ. ਦੇ ਅੰਦਰ)';
+  }
+
+  @override
+  String get pestKeepMedia => 'ਤਸਵੀਰ ਜਾਂ ਆਵਾਜ਼ ਰੱਖੋ';
+
+  @override
+  String get pestKeepMediaBody =>
+      'ਸ਼ੁਰੂ ਵਿੱਚ ਬੰਦ। ਰਿਕਾਰਡ ਨਾਲ ਇਸੇ ਫ਼ੋਨ ਉੱਤੇ ਨਿੱਜੀ ਤੌਰ ਉੱਤੇ ਰੱਖਿਆ ਜਾਂਦਾ ਹੈ, ਕਦੇ ਅੱਪਲੋਡ ਨਹੀਂ ਹੁੰਦਾ।';
+
+  @override
+  String get pestNotes => 'ਨੋਟ';
+
+  @override
+  String get pestSaved => 'ਰਿਕਾਰਡ ਸੰਭਾਲਿਆ';
+
+  @override
+  String get pestSaveFailed => 'ਸੰਭਾਲਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ। ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।';
+
+  @override
+  String get pestSightingsTitle => 'ਵੇਖੇ ਜੀਵ';
+
+  @override
+  String get pestSightingsSubtitle => 'ਇਸੇ ਫ਼ੋਨ ਉੱਤੇ ਸੰਭਾਲੇ, ਨਵੇਂ ਪਹਿਲਾਂ';
+
+  @override
+  String get pestSightingsEmpty => 'ਅਜੇ ਕੋਈ ਰਿਕਾਰਡ ਨਹੀਂ';
+
+  @override
+  String get pestSightingsEmptyDetail =>
+      'ਨਿਸ਼ਾਨ ਵੇਖੋ ਜਾਂ ਸੁਣੋ, ਅਤੇ ਜੋ ਤੁਸੀਂ ਪੱਕਾ ਕਰੋ ਉਸ ਨੂੰ ਸੰਭਾਲੋ।';
+
+  @override
+  String get pestSightingUnnamed => 'ਬਿਨਾਂ ਪਛਾਣ ਦਾ ਰਿਕਾਰਡ';
+
+  @override
+  String get pestNoFindingYet => 'ਅਜੇ ਕਿਸੇ ਨੇ ਜਾਂਚਿਆ ਨਹੀਂ';
+
+  @override
+  String pestFindingChip(String finding) {
+    return 'ਜਾਂਚਿਆ: $finding';
+  }
+
+  @override
+  String get pestNotFound => 'ਇਹ ਰਿਕਾਰਡ ਇਸ ਫ਼ੋਨ ਉੱਤੇ ਨਹੀਂ ਹੈ।';
+
+  @override
+  String get pestDetailTitle => 'ਵੇਖਿਆ ਜੀਵ';
+
+  @override
+  String get pestDetailAiSection => 'AI ਵਿਸ਼ਲੇਸ਼ਣ';
+
+  @override
+  String get pestDetailAiNote =>
+      'AI ਦਾ ਅੰਦਾਜ਼ਾ — ਜਾਂਚ ਕੇ ਮਾਪਿਆ ਨਹੀਂ। ਜਿਵੇਂ ਸੀ ਉਵੇਂ ਸੰਭਾਲਿਆ, ਕਦੇ ਬਦਲਿਆ ਨਹੀਂ ਜਾਂਦਾ।';
+
+  @override
+  String get pestDetailValidation => 'ਤੁਹਾਡੀ ਪੁਸ਼ਟੀ';
+
+  @override
+  String get pestDetailConfirmed => 'ਤੁਸੀਂ ਪੱਕਾ ਕੀਤਾ ਕਿ ਨਿਸ਼ਾਨ ਅਸਲ ਸੀ';
+
+  @override
+  String get pestDetailNotConfirmed => 'ਪੱਕਾ ਨਹੀਂ ਕੀਤਾ';
+
+  @override
+  String pestDetailYourPick(String name) {
+    return 'ਤੁਹਾਡੀ ਚੋਣ: $name';
+  }
+
+  @override
+  String get pestDetailVerified => 'ਤਸਦੀਕ ਨਤੀਜਾ';
+
+  @override
+  String get pestDetailVerifiedBody =>
+      'ਕਿਸੇ ਵਿਅਕਤੀ ਨੇ ਜਾਂਚ ਕੇ ਕੀ ਪਾਇਆ। AI ਵਿਸ਼ਲੇਸ਼ਣ ਤੋਂ ਵੱਖਰਾ। ਇਹ ਸਿਰਫ਼ ਇੱਕ ਵਾਰ ਦਰਜ ਹੋ ਸਕਦਾ ਹੈ।';
+
+  @override
+  String get pestDetailRecordFinding => 'ਨਤੀਜਾ ਦਰਜ ਕਰੋ';
+
+  @override
+  String pestDetailConfirmFinding(String finding) {
+    return '\"$finding\" ਨੂੰ ਤਸਦੀਕ ਨਤੀਜੇ ਵਜੋਂ ਸੰਭਾਲਣਾ ਹੈ? ਬਾਅਦ ਵਿੱਚ ਬਦਲਿਆ ਨਹੀਂ ਜਾ ਸਕੇਗਾ।';
+  }
+
+  @override
+  String get pestDetailPlace => 'ਥਾਂ';
+
+  @override
+  String get pestDetailPinLabel => 'ਪਿੰਨ';
+
+  @override
+  String pestDetailPin(String lat, String lng, int meters) {
+    return '$lat, $lng ($meters ਮੀ. ਦੇ ਅੰਦਰ)';
+  }
+
+  @override
+  String get pestDetailNoPlace => 'ਕੋਈ ਕਮਰਾ ਜਾਂ ਪਿੰਨ ਸੰਭਾਲਿਆ ਨਹੀਂ।';
+
+  @override
+  String get pestDetailShowMap => 'ਨਕਸ਼ੇ ਉੱਤੇ ਵਿਖਾਓ';
+
+  @override
+  String get pestDetailMediaKept => 'ਤਸਵੀਰ ਜਾਂ ਆਵਾਜ਼ ਇਸੇ ਫ਼ੋਨ ਉੱਤੇ ਰੱਖੀ ਗਈ';
+
+  @override
+  String pestNextRepeated(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ਕੀੜੇ $count ਵਾਰ ਦਿਸੇ',
+      one: 'ਇੱਕ ਕੀੜਾ ਮੁੜ ਦਿਸਿਆ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pestNextRepeatedOne(String label, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$label: $count ਵਾਰ ਦਿਸਿਆ',
+      one: '$label: ਮੁੜ ਦਿਸਿਆ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pestNextRepeatedBody =>
+      'ਉਸ ਥਾਂ ਦੀ ਜਾਂਚ ਕਰੋ ਅਤੇ ਕਾਰਡ ਦੇ ਸੁਰੱਖਿਅਤ ਕਦਮ ਅਪਣਾਓ।';
+
+  @override
+  String get pestNextSafety => 'ਇੱਕ ਰਿਕਾਰਡ ਵੱਲ ਧਿਆਨ ਲਾਜ਼ਮੀ';
+
+  @override
+  String get pestNextSafetyBody =>
+      'ਨੇੜੇ ਜਾਣ ਤੋਂ ਪਹਿਲਾਂ ਕਾਰਡ ਦੇ ਸੁਰੱਖਿਆ ਕਦਮ ਪੜ੍ਹੋ।';
+
+  @override
+  String get pestNextAction => 'ਰਿਕਾਰਡ ਵੇਖੋ';
+
+  @override
+  String get mapTitle => 'ਵੇਖੇ ਜੀਵਾਂ ਦਾ ਨਕਸ਼ਾ';
+
+  @override
+  String get mapCardBody => 'ਸਹੀ ਟਿਕਾਣੇ ਨਾਲ ਸੰਭਾਲੇ ਰਿਕਾਰਡਾਂ ਦੇ ਪਿੰਨ';
+
+  @override
+  String get mapConsentTitle => 'Google Maps ਵਰਤਣਾ ਹੈ?';
+
+  @override
+  String get mapConsentBody =>
+      'ਨਕਸ਼ਾ ਅਤੇ ਪੈਦਲ ਰਸਤਾ Google ਤੋਂ ਆਉਂਦੇ ਹਨ। ਤੁਸੀਂ ਨਕਸ਼ੇ ਦਾ ਜੋ ਹਿੱਸਾ ਵੇਖਦੇ ਹੋ ਅਤੇ ਰਸਤੇ ਦੀ ਸ਼ੁਰੂਆਤ ਅਤੇ ਅੰਤ ਦੀ ਥਾਂ Google ਨੂੰ ਮਿਲਦੀ ਹੈ।';
+
+  @override
+  String get mapConsentNever =>
+      'ਜੀਵ, ਤੁਹਾਡੇ ਨੋਟ, ਤਸਵੀਰਾਂ ਜਾਂ ਆਵਾਜ਼ਾਂ Google ਨੂੰ ਕਦੇ ਨਹੀਂ ਮਿਲਦੀਆਂ।';
+
+  @override
+  String get mapConsentAllow => 'ਨਕਸ਼ਿਆਂ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ';
+
+  @override
+  String get mapConsentDecline => 'ਹੁਣ ਨਹੀਂ';
+
+  @override
+  String get mapConsentNeeded =>
+      'ਨਕਸ਼ੇ ਬੰਦ ਹਨ। ਜਦੋਂ ਤੱਕ ਤੁਸੀਂ ਇਜਾਜ਼ਤ ਨਹੀਂ ਦਿੰਦੇ, ਕੁਝ ਨਹੀਂ ਭੇਜਿਆ ਜਾਂਦਾ।';
+
+  @override
+  String get mapNotConfigured => 'ਨਕਸ਼ਾ ਸੈੱਟ ਨਹੀਂ';
+
+  @override
+  String get mapNotConfiguredBody =>
+      'ਇਸ ਐਪ ਵਿੱਚ ਨਕਸ਼ੇ ਦੀ ਚਾਬੀ ਨਹੀਂ ਹੈ। ਫਿਰ ਵੀ ਤੁਸੀਂ ਕੋਈ ਪਿੰਨ Google Maps ਐਪ ਵਿੱਚ ਖੋਲ੍ਹ ਸਕਦੇ ਹੋ।';
+
+  @override
+  String get mapOpenInGoogleMaps => 'Google Maps ਵਿੱਚ ਖੋਲ੍ਹੋ';
+
+  @override
+  String get mapNoPins => 'ਅਜੇ ਸਹੀ ਟਿਕਾਣੇ ਵਾਲਾ ਕੋਈ ਰਿਕਾਰਡ ਨਹੀਂ';
+
+  @override
+  String get mapNoPinsDetail =>
+      '25 ਮੀ. ਦੇ ਅੰਦਰ ਦੇ ਟਿਕਾਣੇ ਨਾਲ ਸੰਭਾਲੇ ਰਿਕਾਰਡਾਂ ਦੇ ਪਿੰਨ ਦਿਸਦੇ ਹਨ।';
+
+  @override
+  String get mapNoPinsAction => 'ਰਿਕਾਰਡ ਵੇਖੋ';
+
+  @override
+  String mapPinLabel(String date) {
+    return 'ਰਿਕਾਰਡ $date';
+  }
+
+  @override
+  String get mapRoute => 'ਇੱਥੋਂ ਰਸਤਾ';
+
+  @override
+  String get mapRouting => 'ਰਸਤਾ ਲੱਭਿਆ ਜਾ ਰਿਹਾ ਹੈ…';
+
+  @override
+  String mapRouteSummary(String distance, int minutes) {
+    return '$distance · ਲਗਭਗ $minutes ਮਿੰਟ';
+  }
+
+  @override
+  String get mapRouteFailed =>
+      'ਰਸਤਾ ਨਹੀਂ ਮਿਲਿਆ। ਇੰਟਰਨੈੱਟ ਕਨੈਕਸ਼ਨ ਜਾਂਚ ਕੇ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।';
+
+  @override
+  String get mapRouteNeedsLocation =>
+      'ਰਸਤੇ ਲਈ ਤੁਹਾਡਾ ਟਿਕਾਣਾ ਚਾਹੀਦਾ ਹੈ। ਟਿਕਾਣੇ ਦੀ ਇਜਾਜ਼ਤ ਦੇ ਕੇ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।';
+
+  @override
+  String get mapStartNavigation => 'ਰਸਤਾ ਵਿਖਾਉਣਾ ਸ਼ੁਰੂ ਕਰੋ';
+
+  @override
+  String get mapNavigationFailed =>
+      'ਇਸ ਫ਼ੋਨ ਉੱਤੇ Google Maps ਨਹੀਂ ਖੁੱਲ੍ਹ ਸਕਿਆ।';
+
+  @override
+  String mapDistanceKm(String km) {
+    return '$km ਕਿ.ਮੀ.';
+  }
+
+  @override
+  String mapDistanceM(int meters) {
+    return '$meters ਮੀ.';
+  }
 }

@@ -129,7 +129,7 @@ void main() {
         env.modelSearch.hits = [
           ModelSearchHit(score: 0.9, title: embedder.name, entry: embedder),
         ];
-        env.knowledge.hits = [KnowledgeHit(card: testCard(), score: 0.7)];
+        env.knowledge.hits = [KnowledgeHit(card: hubTestCard(), score: 0.7)];
         largeText(tester);
         await pumpKernelApp(tester, env, location: Routes.models);
         expect(tester.takeException(), isNull);

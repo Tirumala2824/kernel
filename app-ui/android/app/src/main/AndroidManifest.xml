@@ -11,6 +11,15 @@
          Asked at runtime with an in-app rationale; images stay on the phone. -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <!-- Pest ID "Save location" and "Route from here": one fix, asked only
+         when the user taps it. Both are requested together so the user can
+         pick precise or approximate; a pin is kept only within 25 m. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+    <!-- Guardrails §7 (Phase 4): network only for model downloads and, after
+         maps consent, Google Maps tiles and the Routes API. -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:label="Kernel"
@@ -22,6 +31,10 @@
              (LiteRT-LM). Not required: without them it runs on the CPU. -->
         <uses-native-library android:name="libOpenCL.so" android:required="false"/>
         <uses-native-library android:name="libvndksupport.so" android:required="false"/>
+        <!-- Android-restricted Maps key from local.properties (MAPS_API_KEY),
+             never committed. MainActivity exposes it to Dart for the Routes
+             API headers; empty means "Maps not configured". -->
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="${MAPS_API_KEY}"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -74,6 +87,20 @@
              spoken scan prompts (flutter_tts, Android 11+). -->
         <intent>
             <action android:name="android.intent.action.TTS_SERVICE"/>
+        </intent>
+        <!-- Hand-off to the Google Maps app (walking navigation, "Open in
+             Google Maps") and the browser directions fallback. -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="google.navigation"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="geo"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="https"/>
         </intent>
     </queries>
 </manifest>

@@ -194,25 +194,24 @@ NextStep describeNextAction(AppLocalizations l, Role role, NextAction a) {
         location: Routes.sensors,
         attention: true,
       );
-    // Transitional until the Pest ID screens (ui-dev part A) land their own
-    // copy and routes: open the record and ask for a physical check.
-    case NextActionKind.pestSightingsRepeated ||
-        NextActionKind.pestSafetyAlert:
+    case NextActionKind.pestSightingsRepeated:
       return NextStep(
-        title: name != null
-            ? l.nextInspectOne(name)
-            : (kind == 'container'
-                  ? l.nextInspectContainers(a.count)
-                  : l.nextInspectSacks(a.count)),
-        subtitle: l.nextInspectBody,
-        actionLabel: l.nextActionOpen,
+        title: anyName != null
+            ? l.pestNextRepeatedOne(anyName, a.count)
+            : l.pestNextRepeated(a.count),
+        subtitle: l.pestNextRepeatedBody,
+        actionLabel: l.pestNextAction,
         icon: Icons.pest_control_rounded,
-        location: a.itemId != null
-            ? Routes.item(a.itemId!)
-            : a.locationId != null
-            ? Routes.location(a.locationId!)
-            : Routes.home,
-        tab: a.itemId == null && a.locationId == null,
+        location: Routes.sightings,
+        attention: true,
+      );
+    case NextActionKind.pestSafetyAlert:
+      return NextStep(
+        title: l.pestNextSafety,
+        subtitle: l.pestNextSafetyBody,
+        actionLabel: l.pestNextAction,
+        icon: Icons.health_and_safety_rounded,
+        location: Routes.sightings,
         attention: true,
       );
   }

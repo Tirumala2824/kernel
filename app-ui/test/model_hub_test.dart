@@ -340,7 +340,7 @@ void main() {
           snippet: 'Text embeddings for search',
         ),
       ];
-      env.knowledge.hits = [KnowledgeHit(card: testCard(), score: 0.64)];
+      env.knowledge.hits = [KnowledgeHit(card: hubTestCard(), score: 0.64)];
       await openHub(tester, env);
 
       await tester.enterText(
@@ -378,7 +378,7 @@ void main() {
     testWidgets('one failing source does not hide the other', (tester) async {
       final env = hubEnv();
       env.modelSearch.failWith = StateError('no embedder');
-      env.knowledge.hits = [KnowledgeHit(card: testCard(), score: 0.5)];
+      env.knowledge.hits = [KnowledgeHit(card: hubTestCard(), score: 0.5)];
       await openHub(tester, env);
 
       await tester.enterText(find.byKey(const Key('hub-search-field')), 'rat');

@@ -3671,4 +3671,740 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sensorNextOpen => 'Open sensors';
+
+  @override
+  String get pestIdTitle => 'Pest & animal ID';
+
+  @override
+  String get pestIdSubtitle =>
+      'Look with the camera or listen. The phone finds possible signs; you confirm what is real.';
+
+  @override
+  String get pestHomeActionBody =>
+      'Check for insects, rats, spiders, lizards and other animals with the camera or by sound';
+
+  @override
+  String get pestHeroAction => 'Look or listen';
+
+  @override
+  String get pestSegmentGrain => 'Grain sack';
+
+  @override
+  String get pestSegmentPest => 'Pest & animal';
+
+  @override
+  String get pestCameraCardTitle => 'Look with the camera';
+
+  @override
+  String get pestCameraCardBody =>
+      'Finds movement, dark specks and eye shine. You confirm what is real.';
+
+  @override
+  String get pestListenCardTitle => 'Listen for sounds';
+
+  @override
+  String get pestListenCardBody =>
+      'Picks up buzzing, scratching and squeaks. You confirm what you heard.';
+
+  @override
+  String get pestSightingsCardTitle => 'My sightings';
+
+  @override
+  String pestSightingsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sightings saved',
+      one: '1 sighting saved',
+      zero: 'No sightings saved yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pestOnPhoneNote =>
+      'Everything is checked on this phone. Pictures and sounds are never uploaded.';
+
+  @override
+  String get pestNotCertainNote =>
+      'AI results are estimates and may be wrong. A missed sign is not proof that nothing is there.';
+
+  @override
+  String get pestCameraTitle => 'Look for signs';
+
+  @override
+  String get pestCameraTip =>
+      'Hold the phone still near corners, gaps and grain. Tap a box to confirm it, or capture to see close-ups.';
+
+  @override
+  String get pestCameraDenied =>
+      'Camera access is off. Allow it in settings to look for signs. Your saved sightings stay available.';
+
+  @override
+  String get pestKindMotion => 'Movement';
+
+  @override
+  String get pestKindSpecks => 'Dark specks';
+
+  @override
+  String get pestKindEyeshine => 'Eye shine';
+
+  @override
+  String get pestKindEmbedding => 'Looks similar';
+
+  @override
+  String get pestKindModelBox => 'AI box';
+
+  @override
+  String get pestKindSound => 'Sound';
+
+  @override
+  String pestConfirmBox(String kind) {
+    return 'Confirm $kind';
+  }
+
+  @override
+  String get pestTorch => 'Torch';
+
+  @override
+  String pestTorchValue(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get pestCapture => 'Capture';
+
+  @override
+  String get pestCapturing => 'Capturing…';
+
+  @override
+  String get pestNothingHere => 'Not a pest / nothing here';
+
+  @override
+  String get pestNothingHereDone =>
+      'Nothing saved. The pictures were discarded.';
+
+  @override
+  String get pestCandidatesNone =>
+      'No possible signs yet. Move slowly or turn on the torch.';
+
+  @override
+  String pestCandidatesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count possible signs',
+      one: '1 possible sign',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pestCaptureFailed => 'Could not take a picture. Try again.';
+
+  @override
+  String get pestTilesTitle => 'Close-ups: tap the one that is real';
+
+  @override
+  String get pestTilesEmpty =>
+      'No close-ups in this picture. Try again closer, or with the torch.';
+
+  @override
+  String pestTileHint(String name) {
+    return 'AI hint: $name (not verified)';
+  }
+
+  @override
+  String get pestTileConfirm => 'Tap to confirm';
+
+  @override
+  String get pestRetake => 'Capture again';
+
+  @override
+  String get pestAnalysisTitle => 'AI analysis';
+
+  @override
+  String get pestAnalysing => 'Analysing on this phone…';
+
+  @override
+  String get pestAiLabel => 'AI label';
+
+  @override
+  String get pestAiEstimated => 'AI-estimated';
+
+  @override
+  String get pestConfidenceLabel => 'AI-estimated confidence — not calibrated';
+
+  @override
+  String pestConfidenceValue(int percent) {
+    return '$percent% (the AI\'s own estimate)';
+  }
+
+  @override
+  String pestAgreement(int agree, int runs) {
+    return 'Agreement $agree of $runs runs';
+  }
+
+  @override
+  String get pestKeyFeatures => 'Key features';
+
+  @override
+  String get pestAnomalies => 'Anomalies';
+
+  @override
+  String get pestInsights => 'Insights';
+
+  @override
+  String get pestNoMatch =>
+      'No matching card. This is not proof that nothing is there. Inspect physically.';
+
+  @override
+  String get pestNotAPest =>
+      'The AI thinks this is not a pest. This is not proof. Inspect physically if unsure.';
+
+  @override
+  String pestModelLine(String version, String prompt) {
+    return 'Model $version · prompt $prompt — Experimental';
+  }
+
+  @override
+  String get pestAnalysisUnavailable => 'AI analysis unavailable';
+
+  @override
+  String get pestAnalysisUnavailableBody =>
+      'The on-phone AI could not analyse this. Showing the closest knowledge card instead.';
+
+  @override
+  String get pestNoCardFound =>
+      'No matching knowledge card. Inspect physically and ask a professional if unsure.';
+
+  @override
+  String get pestSafetyVenomousTitle => 'Venomous — keep your distance';
+
+  @override
+  String get pestSafetyMedicalTitle => 'Health risk — keep your distance';
+
+  @override
+  String get pestSafetyDistanceBody =>
+      'Do not touch or handle it. Get medical care for any bite or sting. Do not use home remedies.';
+
+  @override
+  String get pestSafetyProtectedTitle => 'Protected wildlife — do not harm it';
+
+  @override
+  String get pestSafetyProtectedBody =>
+      'Do not harm, capture or kill it. Call the State Forest Department or a licensed wildlife rescuer.';
+
+  @override
+  String get pestSafetyCautionTitle => 'Take care';
+
+  @override
+  String get pestSafetyCautionBody =>
+      'Do not touch it with bare hands. Follow the safe steps on the card.';
+
+  @override
+  String get pestCardTitle => 'Knowledge card';
+
+  @override
+  String get pestCardYourPick => 'Your pick';
+
+  @override
+  String get pestCardNeedsReview => 'Needs expert review';
+
+  @override
+  String pestCardOtherNames(String names) {
+    return 'Also called: $names';
+  }
+
+  @override
+  String get pestCardSigns => 'Signs to look for';
+
+  @override
+  String get pestCardHealthRisks => 'Health risks';
+
+  @override
+  String get pestCardSafeSteps => 'Safe steps';
+
+  @override
+  String get pestCardCallPro => 'Call a professional when';
+
+  @override
+  String get pestCardFirstAid => 'First aid';
+
+  @override
+  String get pestCardLookAlikes => 'Look-alikes';
+
+  @override
+  String get pestCardLegal => 'Legal status';
+
+  @override
+  String get pestCardSources => 'Sources';
+
+  @override
+  String get pestExplain => 'Explain';
+
+  @override
+  String get pestExplainTitle => 'Explanation from the card';
+
+  @override
+  String get pestExplainFallback =>
+      'No explanation right now. The card above is the guidance.';
+
+  @override
+  String get pestPickCard => 'Pick a different card';
+
+  @override
+  String get pestPickCardTitle => 'Which one is it?';
+
+  @override
+  String get pestPickCardBody =>
+      'Your pick is saved as your correction. The AI analysis is kept as it was.';
+
+  @override
+  String get pestPickCardClear => 'Use the AI label';
+
+  @override
+  String get pestMeasure => 'Measure distance';
+
+  @override
+  String get pestMeasuring => 'Measuring…';
+
+  @override
+  String pestDistanceValue(
+    String meters,
+    String low,
+    String high,
+    String method,
+  ) {
+    return 'About $meters m away ($low–$high m), by $method';
+  }
+
+  @override
+  String get pestDistanceMethodDepth => 'depth sensing';
+
+  @override
+  String get pestDistanceMethodFocus => 'camera focus';
+
+  @override
+  String get pestDistanceUnavailable => 'Distance not available';
+
+  @override
+  String pestDistanceReason(String reason) {
+    return 'Reason: $reason';
+  }
+
+  @override
+  String get pestDistanceNoReason => 'The phone could not measure it reliably.';
+
+  @override
+  String get pestSave => 'Save sighting';
+
+  @override
+  String get pestDiscard => 'Discard';
+
+  @override
+  String get pestStartAgain => 'Start again';
+
+  @override
+  String get pestNoSignal =>
+      'Nothing to analyse. Start again with the camera or listen mode.';
+
+  @override
+  String get pestGroupInsect => 'Insect';
+
+  @override
+  String get pestGroupArachnid => 'Spider or scorpion';
+
+  @override
+  String get pestGroupRodent => 'Rat or mouse';
+
+  @override
+  String get pestGroupReptile => 'Reptile';
+
+  @override
+  String get pestGroupOther => 'Other animal';
+
+  @override
+  String get pestGroupNotAPest => 'Not a pest';
+
+  @override
+  String get pestGroupUnknown => 'Unknown';
+
+  @override
+  String pestGroupHint(String group) {
+    return 'Likely group: $group (AI hint)';
+  }
+
+  @override
+  String get pestSourceCamera => 'Camera';
+
+  @override
+  String get pestSourceMic => 'Sound';
+
+  @override
+  String get pestSourceSensor => 'Sensor';
+
+  @override
+  String get pestListenTitle => 'Listen for sounds';
+
+  @override
+  String get pestListenModeGeneral => 'General';
+
+  @override
+  String get pestListenModeMosquito => 'Mosquito close-up';
+
+  @override
+  String get pestListenModeNight => 'Night';
+
+  @override
+  String get pestListenModeGeneralBody =>
+      'Keep the phone still near where you hear the sound.';
+
+  @override
+  String get pestListenModeMosquitoBody =>
+      'Hold the phone within a hand\'s width of the buzzing.';
+
+  @override
+  String get pestListenModeNightBody =>
+      'Leave the phone still in the room. A notification shows while it listens, so you can stop it at any time.';
+
+  @override
+  String get pestListenStart => 'Start listening';
+
+  @override
+  String get pestListenStop => 'Stop';
+
+  @override
+  String get pestListening => 'Listening on this phone…';
+
+  @override
+  String get pestListenNone => 'No sounds picked up yet.';
+
+  @override
+  String get pestListenTapToConfirm =>
+      'Tap a sound you also heard to confirm it';
+
+  @override
+  String get pestListenMicDenied =>
+      'Microphone access is off. Allow it in settings to listen. Your saved sightings stay available.';
+
+  @override
+  String get pestListenNightNeedsNotice =>
+      'Night mode needs notifications so you can see and stop listening. Allow notifications and try again.';
+
+  @override
+  String get pestListenAgain => 'Listen again';
+
+  @override
+  String pestSoundAt(String time) {
+    return 'Sound at $time';
+  }
+
+  @override
+  String get pestSoundConfirm => 'Tap to confirm';
+
+  @override
+  String pestSoundScore(String label, int percent) {
+    return '$label · $percent%';
+  }
+
+  @override
+  String get pestSoundNoLabels => 'No sound labels.';
+
+  @override
+  String get pestSoundRawNote => 'Raw sound-classifier scores, not calibrated';
+
+  @override
+  String get pestSoundDescribing => 'Describing the sound on this phone…';
+
+  @override
+  String get pestSoundDescription => 'AI description (experimental)';
+
+  @override
+  String get pestSoundNoDescription => 'No AI description available.';
+
+  @override
+  String pestSoundModel(String version) {
+    return 'Sound model $version — Experimental';
+  }
+
+  @override
+  String get pestSoundCards => 'Matching cards';
+
+  @override
+  String get pestSoundNoCards => 'No matching card. Inspect physically.';
+
+  @override
+  String get pestClipGone =>
+      'That sound clip is no longer available. Listen again.';
+
+  @override
+  String get pestSaveTitle => 'Save sighting';
+
+  @override
+  String get pestSaveSubtitle => 'Saved only on this phone';
+
+  @override
+  String get pestSaveRoom => 'Room or place';
+
+  @override
+  String get pestSaveNoRoom => 'No room';
+
+  @override
+  String get pestSaveNoRooms =>
+      'No rooms or places yet. You can add them in Inventory.';
+
+  @override
+  String get pestSaveLocation => 'Save location';
+
+  @override
+  String get pestSaveLocationBody =>
+      'Optional. Location is asked only now. Indoors, the room is usually more useful.';
+
+  @override
+  String get pestLocating => 'Getting location…';
+
+  @override
+  String get pestLocationDenied =>
+      'Location permission denied, saved room only';
+
+  @override
+  String get pestLocationImprecise => 'Location too imprecise, saved room only';
+
+  @override
+  String get pestLocationOff =>
+      'Location is turned off on this phone, saved room only';
+
+  @override
+  String get pestLocationFailed => 'Could not get a location, saved room only';
+
+  @override
+  String pestLocationPinned(int meters) {
+    return 'Pin saved (within $meters m)';
+  }
+
+  @override
+  String get pestKeepMedia => 'Keep the picture or clip';
+
+  @override
+  String get pestKeepMediaBody =>
+      'Off by default. Kept privately on this phone with the sighting, never uploaded.';
+
+  @override
+  String get pestNotes => 'Notes';
+
+  @override
+  String get pestSaved => 'Sighting saved';
+
+  @override
+  String get pestSaveFailed => 'Could not save. Try again.';
+
+  @override
+  String get pestSightingsTitle => 'Sightings';
+
+  @override
+  String get pestSightingsSubtitle => 'Saved on this phone, newest first';
+
+  @override
+  String get pestSightingsEmpty => 'No sightings yet';
+
+  @override
+  String get pestSightingsEmptyDetail =>
+      'Look or listen for signs and save what you confirm.';
+
+  @override
+  String get pestSightingUnnamed => 'Unidentified sighting';
+
+  @override
+  String get pestNoFindingYet => 'Not checked by a person yet';
+
+  @override
+  String pestFindingChip(String finding) {
+    return 'Checked: $finding';
+  }
+
+  @override
+  String get pestNotFound => 'This sighting is not on this phone.';
+
+  @override
+  String get pestDetailTitle => 'Sighting';
+
+  @override
+  String get pestDetailAiSection => 'AI analysis';
+
+  @override
+  String get pestDetailAiNote =>
+      'AI-estimated — not calibrated. Saved as it was and never edited.';
+
+  @override
+  String get pestDetailValidation => 'Your confirmation';
+
+  @override
+  String get pestDetailConfirmed => 'You confirmed the signal was real';
+
+  @override
+  String get pestDetailNotConfirmed => 'Not confirmed';
+
+  @override
+  String pestDetailYourPick(String name) {
+    return 'Your pick: $name';
+  }
+
+  @override
+  String get pestDetailVerified => 'Verified finding';
+
+  @override
+  String get pestDetailVerifiedBody =>
+      'What a person found by checking. Separate from the AI analysis. It can be set once.';
+
+  @override
+  String get pestDetailRecordFinding => 'Record finding';
+
+  @override
+  String pestDetailConfirmFinding(String finding) {
+    return 'Save \"$finding\" as the verified finding? It cannot be changed later.';
+  }
+
+  @override
+  String get pestDetailPlace => 'Place';
+
+  @override
+  String get pestDetailPinLabel => 'Pin';
+
+  @override
+  String pestDetailPin(String lat, String lng, int meters) {
+    return '$lat, $lng (within $meters m)';
+  }
+
+  @override
+  String get pestDetailNoPlace => 'No room or pin saved.';
+
+  @override
+  String get pestDetailShowMap => 'Show on map';
+
+  @override
+  String get pestDetailMediaKept => 'Picture or clip kept on this phone';
+
+  @override
+  String pestNextRepeated(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Pests seen $count times',
+      one: 'A pest was seen again',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pestNextRepeatedOne(String label, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$label: seen $count times',
+      one: '$label: seen again',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pestNextRepeatedBody =>
+      'Check the place and follow the safe steps on the card.';
+
+  @override
+  String get pestNextSafety => 'A sighting needs care';
+
+  @override
+  String get pestNextSafetyBody =>
+      'Read the safety steps on the card before going near it.';
+
+  @override
+  String get pestNextAction => 'View sightings';
+
+  @override
+  String get mapTitle => 'Sightings map';
+
+  @override
+  String get mapCardBody => 'Pins for sightings saved with a precise location';
+
+  @override
+  String get mapConsentTitle => 'Use Google Maps?';
+
+  @override
+  String get mapConsentBody =>
+      'The map and the walking route come from Google. Google receives the map area you look at and the start and end points of a route.';
+
+  @override
+  String get mapConsentNever =>
+      'Google never receives the animal, your notes, pictures or sounds.';
+
+  @override
+  String get mapConsentAllow => 'Allow maps';
+
+  @override
+  String get mapConsentDecline => 'Not now';
+
+  @override
+  String get mapConsentNeeded =>
+      'Maps are off. Nothing is sent until you allow them.';
+
+  @override
+  String get mapNotConfigured => 'Maps not configured';
+
+  @override
+  String get mapNotConfiguredBody =>
+      'This build has no map key. You can still open a pin in the Google Maps app.';
+
+  @override
+  String get mapOpenInGoogleMaps => 'Open in Google Maps';
+
+  @override
+  String get mapNoPins => 'No sightings with a precise location yet';
+
+  @override
+  String get mapNoPinsDetail =>
+      'Pins appear for sightings saved with a location within 25 m.';
+
+  @override
+  String get mapNoPinsAction => 'View sightings';
+
+  @override
+  String mapPinLabel(String date) {
+    return 'Sighting $date';
+  }
+
+  @override
+  String get mapRoute => 'Route from here';
+
+  @override
+  String get mapRouting => 'Finding a route…';
+
+  @override
+  String mapRouteSummary(String distance, int minutes) {
+    return '$distance · about $minutes min';
+  }
+
+  @override
+  String get mapRouteFailed =>
+      'Could not get a route. Check the internet connection and try again.';
+
+  @override
+  String get mapRouteNeedsLocation =>
+      'Your location is needed for a route. Allow location and try again.';
+
+  @override
+  String get mapStartNavigation => 'Start navigation';
+
+  @override
+  String get mapNavigationFailed => 'Could not open Google Maps on this phone.';
+
+  @override
+  String mapDistanceKm(String km) {
+    return '$km km';
+  }
+
+  @override
+  String mapDistanceM(int meters) {
+    return '$meters m';
+  }
 }
