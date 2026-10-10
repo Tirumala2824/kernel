@@ -1,12 +1,15 @@
+import 'dart:async';
+
 import 'package:audio_ai/audio_ai.dart';
 import 'package:data_operations/data_operations.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/misc.dart' show Override;
-import 'package:kernel_contracts/kernel_contracts.dart' show ModelCapability;
+import 'package:kernel_contracts/kernel_contracts.dart';
 import 'package:local_llm/local_llm.dart';
 import 'package:model_hub/model_hub.dart';
 import 'package:sense_ai/sense_ai.dart';
+import 'package:sensor_link/sensor_link.dart';
 
 import 'app/providers.dart';
 
@@ -35,6 +38,10 @@ Future<List<Override>> bootstrapOverrides() async {
   );
   hub = ModelHub.create(probe: LiteRtModelProbe(), embedder: embedder);
 
+  // Sensor nodes needing attention (jammed, clipped, low battery, survey
+  // needed, auth failed, link error), fed from the BLE link below.
+  final sensorAttention = StreamController<Set<String>>.broadcast();
+
   final DataOperations ops;
   try {
     ops = await DataOperations.open(
@@ -44,11 +51,22 @@ Future<List<Override>> bootstrapOverrides() async {
       knowledgeCardsJson: () =>
           rootBundle.loadString('assets/knowledge/pest_cards.json'),
       embedder: embedder,
+      sensorAttention: sensorAttention.stream,
     );
   } catch (error, stack) {
     debugPrint('Kernel: local data failed to open: $error\n$stack');
     return const [];
   }
+
+  // BLE frequency-detection nodes (guardrails §10). Events are persisted for
+  // the whole app session (idempotent on node + seq), so a night of
+  // store-and-forward events is never lost because no sensor screen was open.
+  final sensorLink = BleSensorLink(lastSeqOf: ops.sensorEvents.lastSeq);
+  sensorLink.events().listen(
+    (event) => ops.sensorEvents.record([event]),
+    onError: (Object error) => debugPrint('Kernel: sensor event: $error'),
+  );
+  _watchSensorAttention(sensorLink, ops.sensorNodes, sensorAttention);
 
   final advice = LocalAdviceEngine(
     optIn: ops.settings.watchLocalAdviceOptIn(),
@@ -96,5 +114,43 @@ Future<List<Override>> bootstrapOverrides() async {
     sightingRepositoryProvider.overrideWithValue(ops.sightings),
     sensorNodeRepositoryProvider.overrideWithValue(ops.sensorNodes),
     sensorEventRepositoryProvider.overrideWithValue(ops.sensorEvents),
+    sensorLinkProvider.overrideWithValue(sensorLink),
   ];
+}
+
+const _attentionHealth = {
+  SensorHealth.jammed,
+  SensorHealth.clipped,
+  SensorHealth.lowBattery,
+  SensorHealth.surveyNeeded,
+  SensorHealth.authFailed,
+};
+
+/// Keeps [sink] at the set of paired node ids whose latest status needs the
+/// user (jammed/clipped mean "not evaluated", never "nothing there").
+void _watchSensorAttention(
+  SensorLink link,
+  SensorNodeRepository nodes,
+  StreamController<Set<String>> sink,
+) {
+  final needs = <String>{};
+  final subs = <String, StreamSubscription<SensorStatus>>{};
+  void publish() => sink.add(Set.unmodifiable(needs));
+  nodes.watchAll().listen((list) {
+    final ids = {for (final n in list) n.id};
+    for (final gone in subs.keys.where((id) => !ids.contains(id)).toList()) {
+      subs.remove(gone)?.cancel();
+      needs.remove(gone);
+    }
+    for (final id in ids.where((id) => !subs.containsKey(id))) {
+      subs[id] = link.watchStatus(id).listen((s) {
+        final attention =
+            s.linkState == SensorLinkState.error ||
+            s.health.any(_attentionHealth.contains);
+        final changed = attention ? needs.add(id) : needs.remove(id);
+        if (changed) publish();
+      });
+    }
+    publish();
+  });
 }

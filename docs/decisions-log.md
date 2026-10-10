@@ -65,8 +65,26 @@ Append new decisions at the bottom. Never rewrite past entries; supersede them w
 | 58 | 2026-10-10 | Do not use `flutter_blue_plus` (no longer free for commercial use). BLE is native Kotlin + Pigeon | Licence |
 | 59 | 2026-10-10 | model-hub: download consent also gates **catalog** fetches. With no consent, or on a metered network while Wi-Fi only, there is zero network. Gallery entries are fail-closed (treated as gated, licence unknown) until the HF revision API confirms licence, gating and sha256 | Keeps core flows at zero network |
 | 60 | 2026-10-10 | Pins:<br>• EmbeddingGemma 2 740m @ `86b903a293f96d042bb92e1b7af333d94114458f`, sha256 `e7a8a220…df77f4c`, 484,622,336 B<br>• YAMNet: MediaPipe GCS `float32/1/yamnet.tflite`, sha256 `4d8b4a53…4c584faf`, 4,126,810 B, Apache-2.0 (Kaggle google/yamnet), pinned by `sha256-prefix` because GCS has no commit<br>• MagicTouch: listed, but licence unknown, so it is never auto-downloaded | model-hub W1 |
+| 61 | 2026-10-10 | Sensor protocol v1.0. Service UUID `c7780001-4139-44b2-877d-c537908d6290`. Mutual HMAC-SHA256 auth (`KRNL-AUTH-N1`/`A1`) with nonces derived from HMAC(K, counter | time), so there is no RNG call. Lockout after 3 failures. A 64 KiB flash ring holds 1,920 events, with an NVS high-water seq. Company id is 0xFFFF (test) until a Bluetooth SIG id is registered | sensor-dev W1 |
+| 62 | 2026-10-10 | Signature matching runs in Dart (sensor-link), where events are consumed. CONTACT jamming uses the impulse path only, because mains hum would keep a spectral jam permanently on | sensor-dev W1 |
+| 63 | 2026-10-10 | Bootstrap records `SensorLink.events()` into `SensorEventRepository` for the whole app session (idempotent on node + seq). Node attention (jammed / clipped / lowBattery / surveyNeeded / authFailed / link error) feeds `sensorNeedsAttention` | Overnight events are never lost |
+| 64 | 2026-10-10 | The release manifest keeps INTERNET (§7) but removes Google datatransport (the ML Kit usage-logging uploader). Gradle heap is set to -Xmx3G for this 7.6 GB PC | Release audit |
+| 65 | 2026-10-10 | The audio-ai grain capture accepts an unknown recording route and rejects only a confirmed non-built-in device | Prevents an every-scan-RETRY regression on HALs that don't report the active device |
 
 ## Contract follow-ups (proposed by agents, not yet done)
+- **Sensors:**
+  - `SensorHealth.sensorFault` / `eventsOverwritten`
+  - `SensorStatus.sessionActive`, `surveyRemaining` and `lastSeq`
+  - `syncEvents` returning `{count, oldestSeq}` (ring-overwrite gap)
+  - a snippet API, `configure(Config)` and explicit connect/disconnect on `SensorLink`
+  - `SensorEvent` regularTrain / ipiCv / snippetAvailable, and a BandFrame jam mask
+- **Pest ID:**
+  - `PestAnalysis.isPest`
+  - a `ModelRef` (path + version) resolver
+  - a localizable `DistanceUnavailableReason`
+  - localized card bodies
+  - a shared `pestIdCapabilities` constant
+  - a §9 note covering location use for "Route from here"
 - **PestSenseEngine (from sense-ai):**
   - add `cameraStatus()` (thermal, gyro gating, torch, low-light boost)
   - add `rankStill(still)` for Stage-1 embedding candidates, or `hint`/`score` on `ImageTile`
