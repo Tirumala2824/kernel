@@ -31,6 +31,7 @@ import 'src/repositories/lot_repository.dart';
 import 'src/repositories/reminder_repository.dart';
 import 'src/repositories/scan_repository.dart';
 import 'src/repositories/settings_repository.dart';
+import 'src/services/analytics_service.dart';
 import 'src/services/dataset_export_service.dart';
 import 'src/services/privacy_service.dart';
 import 'src/services/ranking_service.dart';
@@ -90,7 +91,8 @@ class DataOperations {
       inspections: DriftInspectionRepository(db, now),
       labeledSamples: DriftLabeledSampleRepository(db, now),
       settings: DriftSettingsRepository(db, now),
-      ranking: DriftRankingService(db),
+      ranking: DriftRankingService(db, now),
+      analytics: DriftAnalyticsService(db, now),
       reports: DriftReportService(
         db,
         reportDirectory,
@@ -126,6 +128,7 @@ class DataOperations {
     required this.labeledSamples,
     required this.settings,
     required this.ranking,
+    required this.analytics,
     required this.reports,
     required this.datasetExport,
     required this.privacy,
@@ -209,6 +212,9 @@ class DataOperations {
   final LabeledSampleRepository labeledSamples;
   final SettingsRepository settings;
   final RankingService ranking;
+
+  /// On-device analytics and next actions, computed from stored records.
+  final AnalyticsService analytics;
   final ReportService reports;
   final DatasetExportService datasetExport;
   final PrivacyService privacy;

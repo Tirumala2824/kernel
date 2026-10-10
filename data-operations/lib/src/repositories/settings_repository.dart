@@ -16,6 +16,7 @@ class DriftSettingsRepository implements SettingsRepository {
   static const hapticsKey = 'haptics';
   static const voicePromptsKey = 'voicePrompts';
   static const onboardingDoneKey = 'onboardingDone';
+  static const localAdviceOptInKey = 'localAdviceOptIn';
 
   final KernelDatabase _db;
   final Clock _clock;
@@ -93,6 +94,16 @@ class DriftSettingsRepository implements SettingsRepository {
   @override
   Future<void> setOnboardingDone(bool value) =>
       _putBool(onboardingDoneKey, value);
+
+  /// False unless the user has explicitly turned on the on-phone assistant
+  /// (local LLM advice, guardrails §8).
+  @override
+  Stream<bool> watchLocalAdviceOptIn() =>
+      _watchBool(localAdviceOptInKey, defaultValue: false);
+
+  @override
+  Future<void> setLocalAdviceOptIn(bool value) =>
+      _putBool(localAdviceOptInKey, value);
 
   /// Current research opt-in, read inside other repositories' transactions.
   static Future<bool> researchModeEnabled(KernelDatabase db) async {

@@ -138,6 +138,53 @@ class DriftReminderRepository implements ReminderRepository {
     return item?.id;
   }
 
+  /// Rule-based suggestion for the next check of [itemId]. It only reads;
+  /// nothing is persisted or scheduled.
+  ///
+  /// The latest PASS scan decides (a RETRY carries no result):
+  /// - infested or uncertain: in 3 days;
+  /// - clean: in 14 days, or in 7 days when the grain has been stored for
+  ///   more than 90 days;
+  /// - notEvaluated, only RETRY scans, or never scanned: in 1 day.
+  ///
+  /// The day is then set to [suggestedReminderHour]:00 local time, and
+  /// moved a day later while that is not after now. Returned in local
+  /// time. Throws [ArgumentError] for an unknown or archived item.
+  @override
+  Future<DateTime> suggestDueAt(String itemId) async {
+    final item = await (_db.select(
+      _db.items,
+    )..where((i) => i.id.equals(itemId))).getSingleOrNull();
+    if (item == null) {
+      throw ArgumentError.value(itemId, 'itemId', 'unknown item');
+    }
+    if (item.archivedAt != null) {
+      throw ArgumentError.value(itemId, 'itemId', 'item is archived');
+    }
+    final latestPass =
+        await (_db.select(_db.scans)
+              ..where(
+                (s) =>
+                    s.itemId.equals(itemId) &
+                    s.quality.equalsValue(ScanQuality.pass),
+              )
+              ..orderBy([
+                (s) => OrderingTerm.desc(s.capturedAt),
+                (s) => OrderingTerm.desc(s.createdAt),
+                (s) => OrderingTerm.desc(s.id),
+              ])
+              ..limit(1))
+            .getSingleOrNull();
+    final now = _clock();
+    final storedDays = now.difference(item.storageDate).inDays;
+    final days = switch (latestPass?.result) {
+      Classification.infested || Classification.uncertain => 3,
+      Classification.clean => storedDays > 90 ? 7 : 14,
+      Classification.notEvaluated || null => 1,
+    };
+    return suggestedLocalTime(now, days);
+  }
+
   /// Re-syncs the OS scheduler with the database after an app start:
   /// future reminders are rescheduled (idempotent, same notification id) and
   /// past-due ones are marked fired. Reminders of archived items stay
@@ -231,4 +278,25 @@ class DriftReminderRepository implements ReminderRepository {
   static List<Reminder> _toModels(List<ReminderRow> rows) => [
     for (final row in rows) row.toModel(),
   ];
+}
+
+/// Local hour of day used by [DriftReminderRepository.suggestDueAt].
+const suggestedReminderHour = 9;
+
+/// The local calendar day [days] after [now], at [suggestedReminderHour]:00
+/// local time, moved forward a day at a time until it is after [now].
+DateTime suggestedLocalTime(DateTime now, int days) {
+  final local = now.toLocal();
+  var offset = days;
+  DateTime at(int offset) => DateTime(
+    local.year,
+    local.month,
+    local.day + offset,
+    suggestedReminderHour,
+  );
+  var due = at(offset);
+  while (!due.isAfter(now)) {
+    due = at(++offset);
+  }
+  return due;
 }
