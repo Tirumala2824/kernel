@@ -110,8 +110,6 @@ class CameraController(
         if (registry.currentState == Lifecycle.State.DESTROYED) return
         view = previewView
         lowLightBoostWanted = lowLightBoost
-        thermal.start()
-        gyro.start()
         ensureProvider { if (view === previewView) bind(previewView) }
     }
 
@@ -119,8 +117,6 @@ class CameraController(
         if (view !== previewView) return
         view = null
         unbindUseCases()
-        thermal.stop()
-        gyro.stop()
         updateLifecycle()
     }
 
@@ -332,6 +328,11 @@ class CameraController(
             if (run) resetRequested = true
             registry.currentState = want
         }
+        // Sensors only while they matter: the gyro while frames are analysed,
+        // the thermal poll while a preview is on screen (also to resume after
+        // a heat pause).
+        if (run) gyro.start() else gyro.stop()
+        if (view != null && activityResumed && !measuring) thermal.start() else thermal.stop()
         if (!run) emitIdle()
     }
 
