@@ -165,6 +165,7 @@ String reportKindWords(ReportKind k) => switch (k) {
   ReportKind.preSale => 'pre-sale harvest summary',
   ReportKind.lotSummary => 'lot screening summary',
   ReportKind.sackLabels => 'sack label sheet',
+  ReportKind.sightings => 'pest sightings report',
 };
 
 /// 0.8312 -> "about 83 percent". Values outside 0..1 are clamped.
