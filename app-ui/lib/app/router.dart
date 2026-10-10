@@ -18,6 +18,7 @@ import '../features/inventory/location_detail_screen.dart';
 import '../features/inventory/location_form_screen.dart';
 import '../features/lots/lot_detail_screen.dart';
 import '../features/lots/lot_form_screen.dart';
+import '../features/models/model_hub_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../features/qr/qr_scan_screen.dart';
 import '../features/queue/queue_screen.dart';
@@ -29,6 +30,10 @@ import '../features/scan/guided_scan_screen.dart';
 import '../features/scan/result_screen.dart';
 import '../features/scan/scan_tab_screen.dart';
 import '../features/scan/scans_today_screen.dart';
+import '../features/sensors/sensor_detail_screen.dart';
+import '../features/sensors/sensor_pair_screen.dart';
+import '../features/sensors/sensor_placement_screen.dart';
+import '../features/sensors/sensors_screen.dart';
 import '../features/settings/diagnostics_screen.dart';
 import '../features/settings/settings_screen.dart';
 import '../features/shell/app_shell.dart';
@@ -154,6 +159,26 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: Routes.queue, builder: (_, _) => const QueueScreen()),
       GoRoute(path: Routes.insights, builder: (_, _) => const InsightsScreen()),
+      GoRoute(path: Routes.models, builder: (_, _) => const ModelHubScreen()),
+      GoRoute(
+        path: Routes.sensors,
+        builder: (_, _) => const SensorsScreen(),
+        routes: [
+          // Before ':nodeId' so "pair" is never read as a node id.
+          GoRoute(path: 'pair', builder: (_, _) => const SensorPairScreen()),
+          GoRoute(
+            path: ':nodeId',
+            builder: (_, s) => SensorDetailScreen(nodeId: id(s, 'nodeId')),
+            routes: [
+              GoRoute(
+                path: 'place',
+                builder: (_, s) =>
+                    SensorPlacementScreen(nodeId: id(s, 'nodeId')),
+              ),
+            ],
+          ),
+        ],
+      ),
       GoRoute(path: Routes.qr, builder: (_, _) => const QrScanScreen()),
       GoRoute(
         path: Routes.scansToday,

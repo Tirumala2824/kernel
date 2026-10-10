@@ -2933,4 +2933,769 @@ class AppLocalizationsTa extends AppLocalizations {
   String unitMb(String value) {
     return '$value MB';
   }
+
+  @override
+  String get hubTitle => 'Model Hub';
+
+  @override
+  String get hubSubtitle =>
+      'On-phone models for Pest ID. They run only on this phone.';
+
+  @override
+  String get hubNeedsTitle => 'Pest ID needs';
+
+  @override
+  String get hubNeedImage => 'Image understanding';
+
+  @override
+  String get hubNeedEmbeddings => 'Embeddings';
+
+  @override
+  String get hubNeedSound => 'Sound classifier';
+
+  @override
+  String get hubInstalledChip => 'Installed';
+
+  @override
+  String get hubMissingChip => 'Missing';
+
+  @override
+  String get hubAllInstalled => 'Everything Pest ID needs is on this phone.';
+
+  @override
+  String get hubNothingToDownload =>
+      'No download is available for the missing parts yet.';
+
+  @override
+  String hubDownloadSummary(int count, String size) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count models to download, about $size',
+      one: '1 model to download, about $size',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get hubDownloadAction => 'Download models';
+
+  @override
+  String hubDownloadFailed(String error) {
+    return 'Download could not start: $error';
+  }
+
+  @override
+  String get hubCatalogUnavailable => 'Could not read the model list';
+
+  @override
+  String get hubInstalledUnavailable => 'Could not read installed models';
+
+  @override
+  String get hubGalleryNote =>
+      'Kernel can\'t use files AI Edge Gallery already downloaded (Android keeps each app\'s files private), so it downloads the same models once.';
+
+  @override
+  String get hubConsentTitle => 'Download Pest ID models?';
+
+  @override
+  String get hubConsentBody =>
+      'These models are downloaded once and then run only on this phone. Nothing you capture is ever uploaded.';
+
+  @override
+  String hubConsentSize(String size) {
+    return 'Size: $size';
+  }
+
+  @override
+  String hubConsentLicense(String license) {
+    return 'Licence: $license';
+  }
+
+  @override
+  String hubConsentModelCard(String url) {
+    return 'Model card: $url';
+  }
+
+  @override
+  String get hubSourceHf => 'Downloaded from Hugging Face';
+
+  @override
+  String get hubSourceGoogle => 'Downloaded from Google AI Edge';
+
+  @override
+  String hubSourceOther(String host) {
+    return 'Downloaded from $host';
+  }
+
+  @override
+  String get hubWifiOnly => 'Wi-Fi only';
+
+  @override
+  String get hubWifiOnlyBody =>
+      'Wait for Wi-Fi before downloading. These files are large.';
+
+  @override
+  String hubConsentTotal(String size) {
+    return 'Total: about $size';
+  }
+
+  @override
+  String get hubConsentAgree => 'Agree and download';
+
+  @override
+  String get hubConsentNotNow => 'Not now';
+
+  @override
+  String get hubConsentGrantedTitle => 'Model downloads allowed';
+
+  @override
+  String get hubDownloadsTitle => 'Downloads';
+
+  @override
+  String get hubPhaseQueued => 'Waiting to start';
+
+  @override
+  String get hubPhaseWifi => 'Waiting for Wi-Fi';
+
+  @override
+  String hubPhaseSpace(String size) {
+    return 'Waiting for free space: needs $size';
+  }
+
+  @override
+  String hubFreeSpace(String free) {
+    return '$free free on this phone';
+  }
+
+  @override
+  String hubPhaseDownloading(String done, String total) {
+    return 'Downloading: $done of $total';
+  }
+
+  @override
+  String get hubPhaseVerifying => 'Checking the file';
+
+  @override
+  String get hubPhasePaused => 'Paused';
+
+  @override
+  String hubPhaseFailed(String reason) {
+    return 'Failed: $reason';
+  }
+
+  @override
+  String get hubCancel => 'Cancel';
+
+  @override
+  String get hubInstalledTitle => 'Installed models';
+
+  @override
+  String get hubInstalledEmpty => 'No models installed yet';
+
+  @override
+  String get hubInstalledEmptyDetail =>
+      'Pest ID works after its models are downloaded once.';
+
+  @override
+  String get hubFieldPath => 'File';
+
+  @override
+  String get hubFieldSize => 'Size';
+
+  @override
+  String get hubFieldVersion => 'Version';
+
+  @override
+  String get hubFieldCapabilities => 'Can do';
+
+  @override
+  String get hubFieldBackends => 'Runs on';
+
+  @override
+  String get hubMatchesGallery => 'Matches AI Edge Gallery';
+
+  @override
+  String get hubRemove => 'Remove';
+
+  @override
+  String get hubRemoveConfirmTitle => 'Remove this model?';
+
+  @override
+  String get hubRemoveConfirmBody =>
+      'The file is deleted from this phone. Pest ID parts that need it stop until it is downloaded again.';
+
+  @override
+  String hubRemoveFailed(String error) {
+    return 'Could not remove: $error';
+  }
+
+  @override
+  String get hubCapTextGen => 'Text writing';
+
+  @override
+  String get hubCapImageIn => 'Image understanding';
+
+  @override
+  String get hubCapAudioIn => 'Audio understanding';
+
+  @override
+  String get hubCapEmbedText => 'Text embeddings';
+
+  @override
+  String get hubCapEmbedImage => 'Image embeddings';
+
+  @override
+  String get hubCapEmbedAudio => 'Audio embeddings';
+
+  @override
+  String get hubCapAudioClassify => 'Sound classifier';
+
+  @override
+  String get hubCapImageClassify => 'Image classifier';
+
+  @override
+  String get hubCapObjectDetect => 'Object finder';
+
+  @override
+  String get hubCapSegment => 'Outline finder';
+
+  @override
+  String get hubCapSensorClassify => 'Sensor classifier';
+
+  @override
+  String get hubSearchHint => 'Search models & pest info';
+
+  @override
+  String get hubSearchAction => 'Search';
+
+  @override
+  String get hubSearchModels => 'Models';
+
+  @override
+  String get hubSearchPestInfo => 'Pest info';
+
+  @override
+  String hubSearchScore(String score) {
+    return 'Similarity $score';
+  }
+
+  @override
+  String get hubSearchNoResults => 'No matches. Try other words.';
+
+  @override
+  String hubSearchFailed(String error) {
+    return 'Search is not available right now: $error';
+  }
+
+  @override
+  String get hubSearchNote =>
+      'Search runs on this phone. Similarity is not confidence.';
+
+  @override
+  String get hubNeedsReview => 'Needs expert review';
+
+  @override
+  String get hubSettingsSection => 'Pest ID, maps and sensors';
+
+  @override
+  String get hubSettingsCard =>
+      'Download and manage the on-phone models Pest ID uses.';
+
+  @override
+  String get hubMapsToggle => 'Use Google Maps';
+
+  @override
+  String get hubMapsToggleBody =>
+      'Only the map area and route start and end are sent to Google. Never species, notes, photos or audio.';
+
+  @override
+  String get hubMapsConfirmTitle => 'Allow Google Maps?';
+
+  @override
+  String get hubMapsConfirmBody =>
+      'Maps need the internet. Google receives only the part of the map you look at and a route\'s start and end. Kernel never sends species, notes, photos, audio or sensor data. You can turn this off at any time.';
+
+  @override
+  String get hubMapsConfirmAgree => 'Allow maps';
+
+  @override
+  String get hubKeepMediaToggle => 'Keep photos and clips with sightings';
+
+  @override
+  String get hubKeepMediaToggleBody =>
+      'When off, the photo or sound clip is deleted after analysis. Kept media stays on this phone.';
+
+  @override
+  String get sensorTitle => 'Sensors';
+
+  @override
+  String get sensorSubtitle =>
+      'Paired listening nodes. They send signals, not diagnoses.';
+
+  @override
+  String get sensorEmpty => 'No sensors paired yet';
+
+  @override
+  String get sensorEmptyDetail =>
+      'Pair a Kernel sensor node by scanning the QR label on it.';
+
+  @override
+  String get sensorPairAction => 'Pair a sensor';
+
+  @override
+  String get sensorPrivacyNote =>
+      'Sensors send sound features only, never audio. Everything stays on this phone.';
+
+  @override
+  String get sensorSettingsCard => 'Pair and check Bluetooth sensor nodes.';
+
+  @override
+  String get sensorTypeUsAir => 'Ultrasonic (air)';
+
+  @override
+  String get sensorTypeContactPiezo => 'Contact (piezo)';
+
+  @override
+  String get sensorTypeContactAccel => 'Contact (vibration)';
+
+  @override
+  String get sensorTypeAudioAir => 'Sound (air)';
+
+  @override
+  String get sensorLinkUnpaired => 'Not paired';
+
+  @override
+  String get sensorLinkPairing => 'Pairing';
+
+  @override
+  String get sensorLinkConnecting => 'Connecting';
+
+  @override
+  String get sensorLinkConnected => 'Connected';
+
+  @override
+  String get sensorLinkAuthenticated => 'Connected securely';
+
+  @override
+  String get sensorLinkDisconnected => 'Not connected';
+
+  @override
+  String get sensorLinkError => 'Link problem';
+
+  @override
+  String get sensorStatusUnknown => 'Status unknown';
+
+  @override
+  String sensorBattery(int percent) {
+    return 'Battery $percent%';
+  }
+
+  @override
+  String get sensorBatteryUnknown => 'Battery unknown';
+
+  @override
+  String get sensorHealthOk => 'Sensor working';
+
+  @override
+  String get sensorHealthJammed =>
+      'Jammed — ultrasonic source nearby (e.g. a repeller); results not evaluated';
+
+  @override
+  String get sensorHealthClipped => 'Clipped';
+
+  @override
+  String get sensorHealthLowBattery => 'Low battery';
+
+  @override
+  String get sensorHealthSurveyNeeded => 'Survey needed';
+
+  @override
+  String get sensorHealthAuthFailed => 'Security check failed — pair again';
+
+  @override
+  String get sensorNotEvaluatedTitle => 'Not evaluated';
+
+  @override
+  String get sensorNotEvaluatedBody =>
+      'This sensor can\'t check right now. This does not mean nothing is there. Inspect physically.';
+
+  @override
+  String get sensorPairTitle => 'Pair a sensor';
+
+  @override
+  String get sensorPairInstructions =>
+      'Point the camera at the QR label on the sensor node.';
+
+  @override
+  String get sensorPairPrivacy =>
+      'The label holds the sensor\'s security key. It is kept in protected storage on this phone and is never shown or sent.';
+
+  @override
+  String get sensorPairNotSensor => 'This isn\'t a Kernel sensor label.';
+
+  @override
+  String get sensorPairing => 'Pairing. Accept the Android pairing request.';
+
+  @override
+  String get sensorPairCancelled => 'Pairing was cancelled.';
+
+  @override
+  String sensorPairFailed(String error) {
+    return 'Could not pair: $error';
+  }
+
+  @override
+  String get sensorPairTryAgain => 'Scan again';
+
+  @override
+  String sensorPairedSnack(String name) {
+    return '$name paired';
+  }
+
+  @override
+  String get sensorCameraTitle => 'Allow the camera to read the label';
+
+  @override
+  String get sensorCameraBody =>
+      'Kernel uses the camera only to read the sensor\'s QR label. Nothing is recorded or sent.';
+
+  @override
+  String get sensorPlaceTitle => 'Where is this sensor?';
+
+  @override
+  String get sensorPlaceSubtitle =>
+      'Choose the place, and the sack or container if it sits on one.';
+
+  @override
+  String get sensorPlaceLocation => 'Place';
+
+  @override
+  String get sensorPlaceItem => 'Sack or container';
+
+  @override
+  String get sensorPlaceNone => 'Not set';
+
+  @override
+  String get sensorPlaceNote =>
+      'Sensor evidence then shows on that sack or container, separate from scans and inspections.';
+
+  @override
+  String get sensorPlaceSave => 'Save placement';
+
+  @override
+  String get sensorPlaceSkip => 'Later';
+
+  @override
+  String get sensorPlaceSaved => 'Placement saved';
+
+  @override
+  String sensorPlaceFailed(String error) {
+    return 'Could not save the placement: $error';
+  }
+
+  @override
+  String get sensorPlaceNoLocations =>
+      'No places yet — add a room or store first';
+
+  @override
+  String get sensorPlaceChange => 'Change placement';
+
+  @override
+  String get sensorNotFound => 'This sensor is not on this phone.';
+
+  @override
+  String get sensorDetailsTitle => 'Sensor details';
+
+  @override
+  String get sensorFieldType => 'Type';
+
+  @override
+  String get sensorFieldPlace => 'Place';
+
+  @override
+  String get sensorFieldItem => 'Placed on';
+
+  @override
+  String get sensorFieldFirmware => 'Firmware';
+
+  @override
+  String get sensorFieldKey => 'Key fingerprint';
+
+  @override
+  String get sensorFieldLastSeen => 'Last seen';
+
+  @override
+  String get sensorLiveTitle => 'Live bands';
+
+  @override
+  String get sensorLiveNote =>
+      'Energy per frequency band only. The sensor sends no audio.';
+
+  @override
+  String get sensorLiveWaiting => 'Waiting for the sensor';
+
+  @override
+  String sensorBandRange(String low, String high) {
+    return '$low–$high kHz';
+  }
+
+  @override
+  String sensorBandLevel(String db) {
+    return '$db dB above background';
+  }
+
+  @override
+  String sensorLivePeak(String khz) {
+    return 'Strongest at $khz kHz';
+  }
+
+  @override
+  String get sensorSurveyTitle => 'Survey';
+
+  @override
+  String sensorSurveyBody(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other:
+          'Keep the place quiet for $minutes minutes so the sensor learns its normal background.',
+      one: 'Keep the place quiet for 1 minute so the sensor learns its normal background.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String sensorSurveyStart(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'Start survey ($minutes min)',
+      one: 'Start survey (1 min)',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String sensorSurveyRunning(int done, int total) {
+    return 'Surveying: $done of $total min';
+  }
+
+  @override
+  String get sensorSurveyDone => 'Survey finished';
+
+  @override
+  String sensorSurveyFailed(String error) {
+    return 'Survey failed: $error';
+  }
+
+  @override
+  String get sensorSessionTitle => 'Overnight monitoring';
+
+  @override
+  String get sensorSessionBody =>
+      'Kernel keeps listening to this sensor in the background. Android shows a notification while it runs. To keep it running all night, open app settings and set battery use to Unrestricted (no battery optimisation).';
+
+  @override
+  String get sensorSessionStart => 'Start overnight session';
+
+  @override
+  String get sensorSessionStop => 'Stop session';
+
+  @override
+  String get sensorSessionRunning => 'Session running';
+
+  @override
+  String sensorSessionFailed(String error) {
+    return 'Could not change the session: $error';
+  }
+
+  @override
+  String get sensorBatterySettings => 'Open app settings';
+
+  @override
+  String get sensorSyncAction => 'Sync events';
+
+  @override
+  String sensorSynced(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new events',
+      one: '1 new event',
+      zero: 'No new events',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String sensorSyncFailed(String error) {
+    return 'Could not sync: $error';
+  }
+
+  @override
+  String get sensorTimelineTitle => 'Event timeline';
+
+  @override
+  String get sensorTimelineEmpty => 'No events recorded yet';
+
+  @override
+  String get sensorTimelineEmptyDetail =>
+      'This is not proof that nothing is there. Sync to fetch events stored on the sensor.';
+
+  @override
+  String get sensorSummaryTitle => 'Signals';
+
+  @override
+  String sensorEventsSummary(int count, int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: '1 event',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes minutes',
+      one: '1 minute',
+    );
+    return '$_temp0 in $_temp1';
+  }
+
+  @override
+  String get sensorSignalNotDiagnosis =>
+      'Signals, not a diagnosis. Inspect physically.';
+
+  @override
+  String get sensorUnmatched => 'Unmatched signal';
+
+  @override
+  String get sensorSigMouseUsv => 'Mouse-like ultrasonic calls';
+
+  @override
+  String get sensorSigRat22k => 'Rat-like 22 kHz calls';
+
+  @override
+  String get sensorSigGrainLarva => 'Grain-larva-like feeding clicks';
+
+  @override
+  String get sensorSigTermiteDrum => 'Termite-like drumming';
+
+  @override
+  String sensorSigOther(String id) {
+    return 'Signature: $id';
+  }
+
+  @override
+  String sensorPack(String version) {
+    return 'Signature pack $version';
+  }
+
+  @override
+  String sensorScore(String score) {
+    return 'Rule score $score (not a probability)';
+  }
+
+  @override
+  String sensorEventLine(String time, String kind, String khz, int ms) {
+    return '$time · $kind · $khz kHz · $ms ms';
+  }
+
+  @override
+  String get sensorClassTonal => 'Tone';
+
+  @override
+  String get sensorClassFmSweep => 'Sweep';
+
+  @override
+  String get sensorClassFlatTone => 'Flat tone';
+
+  @override
+  String get sensorClassImpulse => 'Clicks';
+
+  @override
+  String get sensorClassHarmonic => 'Harmonic tone';
+
+  @override
+  String get sensorClassChirp => 'Pulsed chirps';
+
+  @override
+  String get sensorClassEmitter => 'Continuous emitter';
+
+  @override
+  String get sensorEvidenceTitle => 'Sensor evidence';
+
+  @override
+  String get sensorEvidenceBody =>
+      'Signals from sensors placed here. Experimental, and kept separate from scans and inspections.';
+
+  @override
+  String get sensorEvidenceOpen => 'Open sensor';
+
+  @override
+  String sensorEvidenceEmpty(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other:
+          'No sensor events in the last $days days. This is not proof that nothing is there.',
+      one: 'No sensor events in the last day. This is not proof that nothing is there.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String sensorEvidenceWindow(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Last $days days',
+      one: 'Last day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String sensorNextActivityOne(String name) {
+    return 'Sensor signals at $name';
+  }
+
+  @override
+  String sensorNextActivityMany(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Sensor signals in $count places',
+      one: 'Sensor signals in 1 place',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sensorNextActivityBody =>
+      'Signals, not a diagnosis. Inspect physically.';
+
+  @override
+  String sensorNextAttentionOne(String name) {
+    return 'Check sensor $name';
+  }
+
+  @override
+  String sensorNextAttentionMany(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sensors need attention',
+      one: '1 sensor needs attention',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sensorNextAttentionBody =>
+      'Jammed, clipped, low battery or survey needed. Its results are not evaluated.';
+
+  @override
+  String get sensorNextOpen => 'Open sensors';
 }

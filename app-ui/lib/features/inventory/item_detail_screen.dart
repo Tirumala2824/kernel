@@ -14,6 +14,7 @@ import '../../widgets/kernel_app_bar.dart';
 import '../../widgets/kernel_card.dart';
 import '../../widgets/status_chip.dart';
 import '../household/reminder_sheet.dart';
+import '../sensors/sensor_evidence_section.dart';
 import 'item_sections.dart';
 
 /// Item fields, its immutable scan history (newest first), inspections,
@@ -147,6 +148,8 @@ class _ItemDetailBody extends ConsumerWidget {
         ScanHistorySection(item: item),
         InspectionsSection(item: item),
         RemindersSection(item: item),
+        // Additive and separate from scans and inspections (guardrails §10).
+        SensorEvidenceSection(item: item),
       ],
     );
   }
