@@ -17,7 +17,8 @@ final data = await DataOperations.open(
 );
 // data.items, data.locations, data.lots, data.harvests, data.scans,
 // data.inspections, data.reminders, data.labeledSamples, data.settings,
-// data.ranking, data.reports, data.datasetExport, data.privacy
+// data.ranking, data.analytics, data.reports, data.datasetExport,
+// data.privacy
 final openedFrom = await data.reminders.takeLaunchItemId(); // once per launch
 await data.close();
 ```
@@ -52,6 +53,133 @@ test scheduler, a temporary report directory and font bytes read from
 - The dataset ZIP and reports are written to app-private storage and never
   uploaded. `deleteAllHistory` also removes inspection photos, labeled samples
   and exported dataset ZIPs (they contain audio copies).
+
+## Ranking filters (contracts v3)
+
+`ranking.watchQueue(..., result:, maxAge:)` keeps the ranking rule:
+
+- `maxAge`: a latest valid scan captured more than `maxAge` before now is
+  too old to compare. Its item goes to `needsScan`, and the common model
+  version is chosen among the fresh scans only.
+- `result`: applied after ranking. It keeps only the ranked entries of that
+  class and never changes the model version or `needsScan`.
+  `modelVersion` is null when nothing is left.
+- `QueueEntry.ageDays`: whole days since the latest valid scan.
+
+Time is read from the injected clock whenever the stream recomputes (on a
+table change). The streams do not tick on their own.
+
+## Analytics (`data.analytics`)
+
+Everything is computed on the device from the stored tables. Nothing is
+cached or sent anywhere, and there is no schema change.
+
+**Scope.** Only non-archived items count, together with their scans and
+inspections. `AnalyticsFilter` fields combine as AND:
+
+- `role` is the owner role.
+- `locationId` covers that location and every location nested below it.
+- `lotId` is the item's lot.
+- `window` keeps scans captured, and inspections inspected, at or after
+  `now - window`. Item freshness ignores the window, because it describes
+  items rather than scans.
+
+**Metrics**
+
+- **ResultRates** counts each scan once:
+  - RETRY counts as retry.
+  - PASS + notEvaluated counts as notEvaluated.
+  - Other PASS scans count by their class.
+- **QualityFailures** has every `QualityReason`, in enum order and zero when
+  unseen, with the number of RETRY scans that carried it.
+- **ItemFreshness** uses the latest scan of any quality. Never-scanned items
+  come first, in label order, then the oldest last scan.
+- **InspectionStats** counts by follow-up status.
+- **ScanActivity**: `today` starts at local midnight, and `last7Days` covers
+  the rolling 7 × 24 h.
+
+**`summarize(scope)`** uses the report scope rules: role, nested location,
+lot, harvest, item ids, non-archived. It covers all of those items' scans and
+inspections, so `items`, the scan totals and the inspection totals match the
+report. `itemsNeedingScan` is the number of items with no valid scan.
+
+### Next actions (`watchNextActions(role)`)
+
+These are deterministic rules over the role's non-archived items. Lower
+priority is more urgent.
+
+Terms:
+
+- **Latest PASS scan**: the newest PASS scan, with any result.
+- **Latest valid scan**: the newest PASS scan that has a model result.
+- **Flagged**: the item's latest valid scan is infested or uncertain, and no
+  inspection addresses it. An inspection addresses it if it links that scan
+  (`scanId`), or if it was inspected at or after the scan's capture.
+- **Open inspection**: follow-up `open` or `inProgress`.
+- **Today**: since local midnight.
+
+| Kind | Priority | Roles | Fires when | Target / count |
+|---|---|---|---|---|
+| registerFirst | 0 | all | The role has no items. For the buyer: there are no lots | — |
+| reminderDue | 5 | household | A reminder has fired, or is scheduled and past due, and is not done or cancelled | items |
+| inspectFlagged | 10 | farmer, household, FPO; buyer only for sacks outside a listed lot | The item is flagged | items |
+| physicalCheckPending | 10 | buyer | A lot has flagged sacks | `lotId`, label = lot code, count = flagged sacks |
+| reviewDue | 15 | household | No PASS scan, or the latest PASS scan is ≥ 30 whole days old | items |
+| finishBatch | 15 | FPO | In a location, ≥ 1 sack has a PASS scan today and ≥ 1 does not | `locationId`, label = location name, count = sacks still to do |
+| scanNeeded | 20 | farmer, FPO | No PASS scan, or the latest PASS scan is > 14 days old | items |
+| scanNeeded | 20 | buyer | A lot has sacks with no PASS scan and no inspection | `lotId`, label, count = those sacks |
+| exportPreSale | 40 | farmer | Per non-archived harvest with ≥ 1 sack: every sack has a PASS scan within 14 days, none is flagged, and none has an open inspection | `harvestId`, label = harvest name, count = sacks |
+| exportLotSummary | 40 | buyer | Per lot with ≥ 1 sack: every sack has a valid scan or an inspection, none is flagged, and the screening status is not reviewed | `lotId`, label = lot code, count = sacks |
+
+The "items" actions are aggregated into one action whose `count` is the
+number of items. `itemId` and `label` are set only when `count == 1`.
+
+Ordering is by priority, then by kind (enum order), then by label, then by
+target id.
+
+Deliberate choices:
+
+- PASS scans without a model result count as checked for staleness, review
+  and pre-sale readiness. Otherwise every item would need a scan forever
+  while no model is bundled.
+- A buyer lot whose sacks have only such scans gets neither a scan prompt
+  nor a summary prompt.
+- Export prompts wait until flagged sacks are inspected.
+
+None of these actions accepts, rejects or treats anything.
+
+## Reminder suggestion
+
+`reminders.suggestDueAt(itemId)` only reads. It never persists or schedules
+anything. The item's latest PASS scan decides, because a RETRY carries no
+result:
+
+| Latest PASS scan | Suggested day |
+|---|---|
+| infested or uncertain | now + 3 days |
+| clean | now + 14 days, or + 7 days when stored for more than 90 days |
+| notEvaluated, or no PASS scan (RETRY-only or never scanned) | now + 1 day |
+
+The time is set to 09:00 local on that day and moved a day later until it is
+after now. It is returned in local time. An unknown or archived item throws
+`ArgumentError`.
+
+## Report narrative
+
+`ReportScope.narrative` is rendered only when it is non-null, `complete` and
+its text is not blank. This package only renders it; it never calls a
+language model and never imports `local_llm`.
+
+- **PDF** (history, pre-sale, lot summary): a boxed section, placed after
+  the summary and before the records, titled "Drafted on this phone", with
+  the line "By {modelVersion} — experimental. Not a record or a decision;
+  check before sharing." Paragraphs are drawn in the report fonts and can
+  continue onto the next page.
+- **CSV**: header-block lines `narrative_model`, `narrative_experimental`
+  (always `yes`) and `narrative_text`, placed after the disclaimers. Both
+  values are guarded against formula injection.
+- It is never part of record rows or findings. Sack labels ignore it.
+- Without a narrative, or with an incomplete one, the output is unchanged.
 
 ## PDF fonts and script support
 
