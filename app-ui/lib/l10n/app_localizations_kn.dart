@@ -16,8 +16,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get languageFollowDevice => 'ಫೋನ್‌ನ ಭಾಷೆಯನ್ನೇ ಬಳಸಿ';
 
   @override
-  String get languageSheetBody =>
-      'Kernel ಪದಗಳು ತಕ್ಷಣ ಬದಲಾಗುತ್ತವೆ. ಇನ್ನಷ್ಟು ಭಾರತೀಯ ಭಾಷೆಗಳು ಶೀಘ್ರದಲ್ಲೇ ಬರಲಿವೆ.';
+  String get languageSheetBody => 'Kernel ಪದಗಳು ತಕ್ಷಣ ಬದಲಾಗುತ್ತವೆ.';
 
   @override
   String get settingsSubtitle =>
@@ -2306,54 +2305,54 @@ class AppLocalizationsKn extends AppLocalizations {
   }
 
   @override
-  String get nextStepEyebrow => 'Next step';
+  String get nextStepEyebrow => 'ಮುಂದಿನ ಹೆಜ್ಜೆ';
 
   @override
   String get nextNothingPending =>
-      'Nothing urgent right now. Scan regularly to keep track.';
+      'ಈಗ ತುರ್ತು ಏನೂ ಇಲ್ಲ. ಗಮನದಲ್ಲಿಡಲು ಆಗಾಗ ಶಬ್ದ ಪರೀಕ್ಷೆ ಮಾಡಿ.';
 
   @override
-  String get quickScanAction => 'Scan now';
+  String get quickScanAction => 'ಈಗಲೇ ಶಬ್ದ ಪರೀಕ್ಷೆ';
 
   @override
   String scansTodayCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count scans today',
-      one: '1 scan today',
-      zero: 'No scans today',
+      other: 'ಇಂದು $count ಶಬ್ದ ಪರೀಕ್ಷೆಗಳು',
+      one: 'ಇಂದು 1 ಶಬ್ದ ಪರೀಕ್ಷೆ',
+      zero: 'ಇಂದು ಶಬ್ದ ಪರೀಕ್ಷೆ ಇಲ್ಲ',
     );
     return '$_temp0';
   }
 
   @override
   String scanActivityLine(int today, int week) {
-    return 'Scans: $today today · $week in the last 7 days';
+    return 'ಶಬ್ದ ಪರೀಕ್ಷೆಗಳು: ಇಂದು $today · ಕಳೆದ 7 ದಿನಗಳಲ್ಲಿ $week';
   }
 
   @override
   String nextRegisterFirst(String kind) {
     String _temp0 = intl.Intl.selectLogic(kind, {
-      'container': 'Register your first container',
-      'other': 'Register your first sack',
+      'container': 'ನಿಮ್ಮ ಮೊದಲ ಡಬ್ಬವನ್ನು ದಾಖಲಿಸಿ',
+      'other': 'ನಿಮ್ಮ ಮೊದಲ ಚೀಲವನ್ನು ದಾಖಲಿಸಿ',
     });
     return '$_temp0';
   }
 
   @override
   String get nextRegisterFirstBody =>
-      'Add a name, grain and quantity. It takes a minute.';
+      'ಹೆಸರು, ಧಾನ್ಯ ಮತ್ತು ಪ್ರಮಾಣ ಬರೆಯಿರಿ. ಒಂದು ನಿಮಿಷ ಸಾಕು.';
 
   @override
-  String get nextRegisterFirstLot => 'Register your first delivery';
+  String get nextRegisterFirstLot => 'ನಿಮ್ಮ ಮೊದಲ ಸರಕನ್ನು ದಾಖಲಿಸಿ';
 
   @override
-  String get nextRegisterFirstLotBody => 'Supplier, lot, grain and quantity.';
+  String get nextRegisterFirstLotBody => 'ಪೂರೈಕೆದಾರ, ಲಾಟ್, ಧಾನ್ಯ ಮತ್ತು ಪ್ರಮಾಣ.';
 
   @override
   String nextScanOne(String label) {
-    return 'Scan $label';
+    return '$label ಶಬ್ದ ಪರೀಕ್ಷೆ ಮಾಡಿ';
   }
 
   @override
@@ -2361,8 +2360,8 @@ class AppLocalizationsKn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sacks need a scan',
-      one: '1 sack needs a scan',
+      other: '$count ಚೀಲಗಳಿಗೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಬೇಕು',
+      one: '1 ಚೀಲಕ್ಕೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಬೇಕು',
     );
     return '$_temp0';
   }
@@ -2372,8 +2371,8 @@ class AppLocalizationsKn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count containers need a scan',
-      one: '1 container needs a scan',
+      other: '$count ಡಬ್ಬಗಳಿಗೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಬೇಕು',
+      one: '1 ಡಬ್ಬಕ್ಕೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಬೇಕು',
     );
     return '$_temp0';
   }
@@ -2381,16 +2380,15 @@ class AppLocalizationsKn extends AppLocalizations {
   @override
   String nextScanBody(String kind) {
     String _temp0 = intl.Intl.selectLogic(kind, {
-      'container':
-          'A 2-second listening check with the phone pressed on the container.',
-      'other': 'A 2-second listening check, one sack at a time.',
+      'container': 'ಫೋನನ್ನು ಡಬ್ಬಕ್ಕೆ ಒತ್ತಿ 2 ಸೆಕೆಂಡ್‌ಗಳ ಕೇಳುವ ಪರೀಕ್ಷೆ.',
+      'other': '2 ಸೆಕೆಂಡ್‌ಗಳ ಕೇಳುವ ಪರೀಕ್ಷೆ, ಒಂದು ಬಾರಿಗೆ ಒಂದು ಚೀಲ.',
     });
     return '$_temp0';
   }
 
   @override
   String nextInspectOne(String label) {
-    return 'Inspect $label';
+    return '$label ಪರಿಶೀಲಿಸಿ';
   }
 
   @override
@@ -2398,8 +2396,8 @@ class AppLocalizationsKn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count flagged sacks to inspect',
-      one: '1 flagged sack to inspect',
+      other: 'ಗುರುತಿಸಿದ $count ಚೀಲಗಳನ್ನು ಪರಿಶೀಲಿಸಿ',
+      one: 'ಗುರುತಿಸಿದ 1 ಚೀಲವನ್ನು ಪರಿಶೀಲಿಸಿ',
     );
     return '$_temp0';
   }
@@ -2409,19 +2407,19 @@ class AppLocalizationsKn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count flagged containers to inspect',
-      one: '1 flagged container to inspect',
+      other: 'ಗುರುತಿಸಿದ $count ಡಬ್ಬಗಳನ್ನು ಪರಿಶೀಲಿಸಿ',
+      one: 'ಗುರುತಿಸಿದ 1 ಡಬ್ಬವನ್ನು ಪರಿಶೀಲಿಸಿ',
     );
     return '$_temp0';
   }
 
   @override
   String get nextInspectBody =>
-      'The model result is not verified. Check the grain by hand.';
+      'ಮಾಡೆಲ್ ಫಲಿತಾಂಶ ದೃಢಪಟ್ಟಿಲ್ಲ. ಧಾನ್ಯವನ್ನು ಕೈಯಿಂದ ಪರಿಶೀಲಿಸಿ.';
 
   @override
   String nextReviewOne(String label) {
-    return '$label: review due';
+    return '$label: ಮತ್ತೆ ನೋಡುವ ಸಮಯ';
   }
 
   @override
@@ -2429,8 +2427,8 @@ class AppLocalizationsKn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sacks due for review',
-      one: '1 sack due for review',
+      other: '$count ಚೀಲಗಳನ್ನು ಮತ್ತೆ ನೋಡುವ ಸಮಯ',
+      one: '1 ಚೀಲವನ್ನು ಮತ್ತೆ ನೋಡುವ ಸಮಯ',
     );
     return '$_temp0';
   }
@@ -2440,19 +2438,19 @@ class AppLocalizationsKn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count containers due for review',
-      one: '1 container due for review',
+      other: '$count ಡಬ್ಬಗಳನ್ನು ಮತ್ತೆ ನೋಡುವ ಸಮಯ',
+      one: '1 ಡಬ್ಬವನ್ನು ಮತ್ತೆ ನೋಡುವ ಸಮಯ',
     );
     return '$_temp0';
   }
 
   @override
   String get nextReviewBody =>
-      'It has been a while since the last check. Listen again or inspect.';
+      'ಕೊನೆಯ ಪರೀಕ್ಷೆಯಾಗಿ ತುಂಬಾ ದಿನವಾಯಿತು. ಮತ್ತೆ ಕೇಳಿ ಅಥವಾ ಪರಿಶೀಲಿಸಿ.';
 
   @override
   String nextReminderOne(String label) {
-    return '$label: reminder due';
+    return '$label: ಜ್ಞಾಪನೆಯ ಸಮಯ';
   }
 
   @override
@@ -2460,19 +2458,19 @@ class AppLocalizationsKn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count reminders due',
-      one: '1 reminder due',
+      other: '$count ಜ್ಞಾಪನೆಗಳ ಸಮಯ',
+      one: '1 ಜ್ಞಾಪನೆಯ ಸಮಯ',
     );
     return '$_temp0';
   }
 
   @override
   String get nextReminderBody =>
-      'A re-check you scheduled is due. Check this grain.';
+      'ನೀವು ಇಟ್ಟ ಮರುಪರಿಶೀಲನೆಯ ಸಮಯ ಬಂದಿದೆ. ಈ ಧಾನ್ಯವನ್ನು ನೋಡಿ.';
 
   @override
   String nextPhysicalOne(String label) {
-    return 'Lot $label: physical check pending';
+    return 'ಲಾಟ್ $label: ನೇರ ಪರಿಶೀಲನೆ ಬಾಕಿ';
   }
 
   @override
@@ -2480,22 +2478,22 @@ class AppLocalizationsKn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count lots need a physical check',
-      one: '1 lot needs a physical check',
+      other: '$count ಲಾಟ್‌ಗಳಿಗೆ ನೇರ ಪರಿಶೀಲನೆ ಬೇಕು',
+      one: '1 ಲಾಟ್‌ಗೆ ನೇರ ಪರಿಶೀಲನೆ ಬೇಕು',
     );
     return '$_temp0';
   }
 
   @override
   String get nextPhysicalBody =>
-      'Open the lot and record what a person found. Kernel never accepts or rejects a lot.';
+      'ಲಾಟ್ ತೆರೆದು, ವ್ಯಕ್ತಿ ಕಂಡದ್ದನ್ನು ದಾಖಲಿಸಿ. Kernel ಎಂದೂ ಲಾಟ್ ಅನ್ನು ಒಪ್ಪುವುದಿಲ್ಲ ಅಥವಾ ತಿರಸ್ಕರಿಸುವುದಿಲ್ಲ.';
 
   @override
-  String get nextFinishBatch => 'Finish the batch scan';
+  String get nextFinishBatch => 'ಒಂದೊಂದಾಗಿ ಪರೀಕ್ಷೆ ಮುಗಿಸಿ';
 
   @override
   String nextFinishBatchOne(String label) {
-    return 'Finish the batch: $label';
+    return 'ಒಂದೊಂದಾಗಿ ಪರೀಕ್ಷೆ ಮುಗಿಸಿ: $label';
   }
 
   @override
@@ -2503,109 +2501,109 @@ class AppLocalizationsKn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sacks left to scan, one at a time',
-      one: '1 sack left to scan, one at a time',
-      zero: 'Every sack in this batch has a scan',
+      other: '$count ಚೀಲಗಳು ಬಾಕಿ, ಒಂದು ಬಾರಿಗೆ ಒಂದು',
+      one: '1 ಚೀಲ ಬಾಕಿ, ಒಂದು ಬಾರಿಗೆ ಒಂದು',
+      zero: 'ಈ ಗುಂಪಿನ ಎಲ್ಲ ಚೀಲಗಳಿಗೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಆಗಿದೆ',
     );
     return '$_temp0';
   }
 
   @override
-  String get nextPreSale => 'Share a pre-sale report';
+  String get nextPreSale => 'ಮಾರಾಟದ ಮುಂಚಿನ ವರದಿ ಕಳುಹಿಸಿ';
 
   @override
   String nextPreSaleOne(String label) {
-    return 'Share the pre-sale report for $label';
+    return '$label ಮಾರಾಟದ ಮುಂಚಿನ ವರದಿ ಕಳುಹಿಸಿ';
   }
 
   @override
-  String get nextLotSummary => 'Share a lot summary';
+  String get nextLotSummary => 'ಲಾಟ್ ಸಾರಾಂಶ ಕಳುಹಿಸಿ';
 
   @override
   String nextLotSummaryOne(String label) {
-    return 'Share the lot summary for $label';
+    return '$label ಲಾಟ್ ಸಾರಾಂಶ ಕಳುಹಿಸಿ';
   }
 
   @override
   String get nextExportBody =>
-      'Made on this phone from your records. You choose who to share it with.';
+      'ನಿಮ್ಮ ದಾಖಲೆಗಳಿಂದ ಇದೇ ಫೋನ್‌ನಲ್ಲಿ ತಯಾರಾಗಿದೆ. ಯಾರಿಗೆ ಕಳುಹಿಸಬೇಕು ಎಂದು ನೀವೇ ನಿರ್ಧರಿಸಿ.';
 
   @override
-  String get nextActionRegister => 'Register';
+  String get nextActionRegister => 'ದಾಖಲಿಸಿ';
 
   @override
-  String get nextActionScan => 'Start scan';
+  String get nextActionScan => 'ಶಬ್ದ ಪರೀಕ್ಷೆ ಶುರು';
 
   @override
-  String get nextActionBatch => 'Start batch scan';
+  String get nextActionBatch => 'ಒಂದೊಂದಾಗಿ ಪರೀಕ್ಷೆ ಶುರು';
 
   @override
-  String get nextActionOpen => 'Open';
+  String get nextActionOpen => 'ತೆರೆಯಿರಿ';
 
   @override
-  String get nextActionQueue => 'Open the queue';
+  String get nextActionQueue => 'ಪರಿಶೀಲನೆಯ ಸರದಿ ತೆರೆಯಿರಿ';
 
   @override
-  String get nextActionOpenLot => 'Open lot';
+  String get nextActionOpenLot => 'ಲಾಟ್ ತೆರೆಯಿರಿ';
 
   @override
-  String get nextActionContinueBatch => 'Continue batch';
+  String get nextActionContinueBatch => 'ಒಂದೊಂದಾಗಿ ಪರೀಕ್ಷೆ ಮುಂದುವರಿಸಿ';
 
   @override
-  String get nextActionReport => 'Open report';
+  String get nextActionReport => 'ವರದಿ ತೆರೆಯಿರಿ';
 
   @override
-  String get insightsTitle => 'Insights';
+  String get insightsTitle => 'ಮಾಹಿತಿ';
 
   @override
   String get insightsSubtitle =>
-      'Worked out on this phone from your own records';
+      'ನಿಮ್ಮದೇ ದಾಖಲೆಗಳಿಂದ ಇದೇ ಫೋನ್‌ನಲ್ಲಿ ಲೆಕ್ಕ ಮಾಡಿದ್ದು';
 
   @override
   String get insightsCardSubtitle =>
-      'Results, recording problems and what needs a check';
+      'ಫಲಿತಾಂಶಗಳು, ರೆಕಾರ್ಡಿಂಗ್ ತೊಂದರೆಗಳು ಮತ್ತು ಯಾವುದಕ್ಕೆ ಪರಿಶೀಲನೆ ಬೇಕು';
 
   @override
-  String get insightsWindowLabel => 'Period';
+  String get insightsWindowLabel => 'ಅವಧಿ';
 
   @override
-  String get insightsWindow7 => '7 days';
+  String get insightsWindow7 => '7 ದಿನಗಳು';
 
   @override
-  String get insightsWindow30 => '30 days';
+  String get insightsWindow30 => '30 ದಿನಗಳು';
 
   @override
-  String get insightsWindowAll => 'All time';
+  String get insightsWindowAll => 'ಎಲ್ಲ ಕಾಲ';
 
   @override
-  String get insightsActivityTitle => 'Scanning activity';
+  String get insightsActivityTitle => 'ಶಬ್ದ ಪರೀಕ್ಷೆಯ ಕೆಲಸ';
 
   @override
-  String get insightsScansToday => 'Scans today';
+  String get insightsScansToday => 'ಇಂದಿನ ಶಬ್ದ ಪರೀಕ್ಷೆಗಳು';
 
   @override
-  String get insightsScans7 => 'Scans in the last 7 days';
+  String get insightsScans7 => 'ಕಳೆದ 7 ದಿನಗಳ ಶಬ್ದ ಪರೀಕ್ಷೆಗಳು';
 
   @override
-  String get insightsRatesTitle => 'Results';
+  String get insightsRatesTitle => 'ಫಲಿತಾಂಶಗಳು';
 
   @override
-  String get insightsRatesEmpty => 'No scans in this period';
+  String get insightsRatesEmpty => 'ಈ ಅವಧಿಯಲ್ಲಿ ಶಬ್ದ ಪರೀಕ್ಷೆ ಇಲ್ಲ';
 
   @override
   String get insightsRatesEmptyDetail =>
-      'Scan a sack or container to see results here.';
+      'ಇಲ್ಲಿ ಫಲಿತಾಂಶ ನೋಡಲು ಒಂದು ಚೀಲ ಅಥವಾ ಡಬ್ಬಕ್ಕೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಮಾಡಿ.';
 
   @override
   String get insightsExperimentalNote =>
-      'Experimental model: these results are not verified and may be wrong. Inspect physically before any storage or sale decision.';
+      'ಪ್ರಾಯೋಗಿಕ ಮಾಡೆಲ್: ಈ ಫಲಿತಾಂಶಗಳು ದೃಢಪಟ್ಟಿಲ್ಲ, ತಪ್ಪಾಗಿರಬಹುದು. ಸಂಗ್ರಹ ಅಥವಾ ಮಾರಾಟದ ಯಾವುದೇ ನಿರ್ಧಾರಕ್ಕೆ ಮೊದಲು ನೀವೇ ಪರಿಶೀಲಿಸಿ.';
 
   @override
   String get insightsNoModelResults =>
-      'No model results yet: no usable recording was evaluated by a model.';
+      'ಇನ್ನೂ ಮಾಡೆಲ್ ಫಲಿತಾಂಶಗಳಿಲ್ಲ: ಬಳಸಬಹುದಾದ ಯಾವ ರೆಕಾರ್ಡಿಂಗ್ ಅನ್ನೂ ಮಾಡೆಲ್ ಪರಿಶೀಲಿಸಿಲ್ಲ.';
 
   @override
-  String get insightsRetryLabel => 'Recording not usable (retry)';
+  String get insightsRetryLabel => 'ರೆಕಾರ್ಡಿಂಗ್ ಬಳಸಲಾಗದು (ಮತ್ತೆ ಮಾಡಿ)';
 
   @override
   String insightsBarValue(int count, int percent) {
@@ -2617,287 +2615,285 @@ class AppLocalizationsKn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count scans in this period',
-      one: '1 scan in this period',
+      other: 'ಈ ಅವಧಿಯಲ್ಲಿ $count ಶಬ್ದ ಪರೀಕ್ಷೆಗಳು',
+      one: 'ಈ ಅವಧಿಯಲ್ಲಿ 1 ಶಬ್ದ ಪರೀಕ್ಷೆ',
     );
     return '$_temp0';
   }
 
   @override
-  String get insightsQualityTitle => 'Recording problems';
+  String get insightsQualityTitle => 'ರೆಕಾರ್ಡಿಂಗ್ ತೊಂದರೆಗಳು';
 
   @override
-  String get insightsQualityEmpty => 'No unusable recordings in this period';
+  String get insightsQualityEmpty => 'ಈ ಅವಧಿಯಲ್ಲಿ ಬಳಸಲಾಗದ ರೆಕಾರ್ಡಿಂಗ್‌ಗಳಿಲ್ಲ';
 
   @override
   String get insightsQualityHint =>
-      'Most problems go away when the phone is pressed firmly on the sack in a quiet place.';
+      'ಶಾಂತ ಜಾಗದಲ್ಲಿ ಫೋನನ್ನು ಚೀಲಕ್ಕೆ ಗಟ್ಟಿಯಾಗಿ ಒತ್ತಿದರೆ ಹೆಚ್ಚಿನ ತೊಂದರೆಗಳು ಹೋಗುತ್ತವೆ.';
 
   @override
-  String get insightsInspectionsTitle => 'Inspections';
+  String get insightsInspectionsTitle => 'ಪರಿಶೀಲನೆಗಳು';
 
   @override
-  String get insightsInspectionsEmpty => 'No inspections recorded yet';
+  String get insightsInspectionsEmpty => 'ಇನ್ನೂ ಪರಿಶೀಲನೆ ದಾಖಲಾಗಿಲ್ಲ';
 
   @override
   String insightsClosureRate(int percent) {
-    return '$percent% of inspections are done';
+    return '$percent% ಪರಿಶೀಲನೆಗಳು ಮುಗಿದಿವೆ';
   }
 
   @override
-  String get insightsStaleTitle => 'Longest since last check';
+  String get insightsStaleTitle => 'ತುಂಬಾ ದಿನದಿಂದ ಪರೀಕ್ಷಿಸದವು';
 
   @override
-  String get staleNeverScanned => 'Never scanned';
+  String get staleNeverScanned => 'ಎಂದೂ ಶಬ್ದ ಪರೀಕ್ಷೆ ಆಗಿಲ್ಲ';
 
   @override
-  String get qualityShortSilence => 'Too quiet';
+  String get qualityShortSilence => 'ತುಂಬಾ ಮೆಲ್ಲಗೆ';
 
   @override
-  String get qualityShortClipping => 'Too loud (clipping)';
+  String get qualityShortClipping => 'ತುಂಬಾ ಜೋರು (ಶಬ್ದ ಒಡೆದಿದೆ)';
 
   @override
-  String get qualityShortHighNoise => 'Too noisy';
+  String get qualityShortHighNoise => 'ತುಂಬಾ ಗದ್ದಲ';
 
   @override
-  String get qualityShortTooShort => 'Too short';
+  String get qualityShortTooShort => 'ತುಂಬಾ ಚಿಕ್ಕದು';
 
   @override
-  String get qualityShortPermissionDenied => 'Microphone blocked';
+  String get qualityShortPermissionDenied => 'ಮೈಕ್ ತಡೆಯಲಾಗಿದೆ';
 
   @override
-  String get qualityShortCaptureError => 'Recording error';
+  String get qualityShortCaptureError => 'ರೆಕಾರ್ಡಿಂಗ್ ದೋಷ';
 
   @override
-  String get queueFilterResult => 'Model result';
+  String get queueFilterResult => 'ಮಾಡೆಲ್ ಫಲಿತಾಂಶ';
 
   @override
-  String get queueFilterAllResults => 'All results';
+  String get queueFilterAllResults => 'ಎಲ್ಲ ಫಲಿತಾಂಶಗಳು';
 
   @override
-  String get queueFilterPlace => 'Place';
+  String get queueFilterPlace => 'ಜಾಗ';
 
   @override
-  String get queueFilterAllPlaces => 'All places';
+  String get queueFilterAllPlaces => 'ಎಲ್ಲ ಜಾಗಗಳು';
 
   @override
-  String get queueFilterAge => 'Last usable scan';
+  String get queueFilterAge => 'ಕೊನೆಯ ಬಳಸಬಹುದಾದ ಶಬ್ದ ಪರೀಕ್ಷೆ';
 
   @override
-  String get queueFilterAnyAge => 'Any time';
+  String get queueFilterAnyAge => 'ಯಾವಾಗ ಬೇಕಾದರೂ';
 
   @override
   String queueFilterWithinDays(int days) {
-    return 'Within $days days';
+    return '$days ದಿನಗಳ ಒಳಗೆ';
   }
 
   @override
   String queueFilterAgeNote(int days) {
-    return 'Items whose last usable scan is older than $days days move to Needs scan.';
+    return 'ಕೊನೆಯ ಬಳಸಬಹುದಾದ ಶಬ್ದ ಪರೀಕ್ಷೆ $days ದಿನಗಳಿಗಿಂತ ಹಳೆಯದಾದರೆ, ಅವು \"ಶಬ್ದ ಪರೀಕ್ಷೆ ಬೇಕು\" ಗೆ ಹೋಗುತ್ತವೆ.';
   }
 
   @override
-  String get queueNoMatch => 'No ranked items match these filters.';
+  String get queueNoMatch => 'ಈ ಫಿಲ್ಟರ್‌ಗಳಿಗೆ ಯಾವುದೂ ಹೊಂದುತ್ತಿಲ್ಲ.';
 
   @override
-  String get rankReasonInfested =>
-      'Why here: possible infestation (not verified)';
+  String get rankReasonInfested => 'ಇಲ್ಲೇಕೆ: ಹುಳು ಹಿಡಿದಿರಬಹುದು (ದೃಢಪಟ್ಟಿಲ್ಲ)';
 
   @override
-  String get rankReasonUncertain => 'Why here: the model was unsure';
+  String get rankReasonUncertain => 'ಇಲ್ಲೇಕೆ: ಮಾಡೆಲ್‌ಗೆ ಖಚಿತವಿರಲಿಲ್ಲ';
 
   @override
-  String get rankReasonClean =>
-      'Why lower: no signal detected (not a guarantee)';
+  String get rankReasonClean => 'ಕೆಳಗೇಕೆ: ಯಾವ ಸೂಚನೆಯೂ ಕಾಣಲಿಲ್ಲ (ಖಾತರಿ ಅಲ್ಲ)';
 
   @override
   String scannedDaysAgo(int days) {
     String _temp0 = intl.Intl.pluralLogic(
       days,
       locale: localeName,
-      other: 'Scanned $days days ago',
-      one: 'Scanned 1 day ago',
-      zero: 'Scanned today',
+      other: '$days ದಿನಗಳ ಹಿಂದೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಆಯಿತು',
+      one: '1 ದಿನದ ಹಿಂದೆ ಶಬ್ದ ಪರೀಕ್ಷೆ ಆಯಿತು',
+      zero: 'ಇಂದು ಶಬ್ದ ಪರೀಕ್ಷೆ ಆಯಿತು',
     );
     return '$_temp0';
   }
 
   @override
-  String get reminderSuggestedLabel => 'Suggested — you choose';
+  String get reminderSuggestedLabel => 'ಸಲಹೆ — ಆಯ್ಕೆ ನಿಮ್ಮದು';
 
   @override
   String reminderSuggestedOther(String date) {
-    return 'Suggested: $date — you choose';
+    return 'ಸಲಹೆ: $date — ಆಯ್ಕೆ ನಿಮ್ಮದು';
   }
 
   @override
-  String get reminderWordingTitle => 'Suggested wording';
+  String get reminderWordingTitle => 'ಸಲಹೆ ಮಾಡಿದ ಪದಗಳು';
 
   @override
-  String get settingsAdviceSection => 'On-phone AI assistant (experimental)';
+  String get settingsAdviceSection => 'ಫೋನ್‌ನಲ್ಲೇ AI ಸಹಾಯಕ (ಪ್ರಾಯೋಗಿಕ)';
 
   @override
-  String get adviceToggle => 'Use the on-phone AI assistant';
+  String get adviceToggle => 'ಫೋನ್‌ನ AI ಸಹಾಯಕವನ್ನು ಬಳಸಿ';
 
   @override
   String get adviceToggleBody =>
-      'Off by default. It runs only on this phone and never hears your recordings; it only sees results and dates. It may be wrong. You can turn it off at any time.';
+      'ಮೊದಲು ಆಫ್ ಇರುತ್ತದೆ. ಇದು ಈ ಫೋನ್‌ನಲ್ಲಿ ಮಾತ್ರ ನಡೆಯುತ್ತದೆ ಮತ್ತು ನಿಮ್ಮ ರೆಕಾರ್ಡಿಂಗ್ ಅನ್ನು ಎಂದೂ ಕೇಳುವುದಿಲ್ಲ; ಫಲಿತಾಂಶಗಳು ಮತ್ತು ದಿನಾಂಕಗಳನ್ನು ಮಾತ್ರ ನೋಡುತ್ತದೆ. ಇದು ತಪ್ಪಾಗಬಹುದು. ಯಾವಾಗ ಬೇಕಾದರೂ ಆಫ್ ಮಾಡಬಹುದು.';
 
   @override
-  String get adviceStatusTitle => 'Assistant status';
+  String get adviceStatusTitle => 'ಸಹಾಯಕದ ಸ್ಥಿತಿ';
 
   @override
-  String get adviceStatusOff => 'Off';
+  String get adviceStatusOff => 'ಆಫ್';
 
   @override
-  String get adviceStatusNoModel => 'On — no model imported yet';
+  String get adviceStatusNoModel => 'ಆನ್ — ಇನ್ನೂ ಮಾಡೆಲ್ ತಂದಿಲ್ಲ';
 
   @override
-  String get adviceStatusLoading => 'Loading the model…';
+  String get adviceStatusLoading => 'ಮಾಡೆಲ್ ತೆರೆಯುತ್ತಿದೆ…';
 
   @override
-  String get adviceStatusReady => 'Ready on this phone';
+  String get adviceStatusReady => 'ಈ ಫೋನ್‌ನಲ್ಲಿ ಸಿದ್ಧ';
 
   @override
-  String get adviceStatusBusy => 'Busy writing';
+  String get adviceStatusBusy => 'ಬರೆಯುತ್ತಿದೆ';
 
   @override
   String get adviceStatusFailed =>
-      'Could not load the model — Kernel uses its standard text';
+      'ಮಾಡೆಲ್ ತೆರೆಯಲಾಗಲಿಲ್ಲ — Kernel ತನ್ನ ಸಾಮಾನ್ಯ ಪಠ್ಯ ತೋರಿಸುತ್ತದೆ';
 
   @override
-  String get adviceModelTitle => 'Assistant model';
+  String get adviceModelTitle => 'ಸಹಾಯಕದ ಮಾಡೆಲ್';
 
   @override
-  String get adviceModelNone => 'No model imported yet';
+  String get adviceModelNone => 'ಇನ್ನೂ ಮಾಡೆಲ್ ತಂದಿಲ್ಲ';
 
   @override
-  String get adviceModelId => 'Model';
+  String get adviceModelId => 'ಮಾಡೆಲ್';
 
   @override
-  String get adviceModelVersion => 'Version';
+  String get adviceModelVersion => 'ಆವೃತ್ತಿ';
 
   @override
-  String get adviceModelSize => 'Size';
+  String get adviceModelSize => 'ಗಾತ್ರ';
 
   @override
-  String get adviceModelBackend => 'Runs on';
+  String get adviceModelBackend => 'ಯಾವುದರಲ್ಲಿ ನಡೆಯುತ್ತದೆ';
 
   @override
-  String get adviceBackendGpu => 'Phone graphics chip (GPU)';
+  String get adviceBackendGpu => 'ಫೋನ್‌ನ ಗ್ರಾಫಿಕ್ಸ್ ಚಿಪ್ (GPU)';
 
   @override
-  String get adviceBackendCpu => 'Phone processor (CPU)';
+  String get adviceBackendCpu => 'ಫೋನ್‌ನ ಪ್ರೊಸೆಸರ್ (CPU)';
 
   @override
-  String get adviceBackendNone => 'Not loaded yet';
+  String get adviceBackendNone => 'ಇನ್ನೂ ತೆರೆದಿಲ್ಲ';
 
   @override
-  String get adviceImportAction => 'Import model';
+  String get adviceImportAction => 'ಮಾಡೆಲ್ ತನ್ನಿ';
 
   @override
-  String get adviceImporting => 'Importing the model';
+  String get adviceImporting => 'ಮಾಡೆಲ್ ತರಲಾಗುತ್ತಿದೆ';
 
   @override
   String adviceImportCopying(String copied, String total) {
-    return 'Copying $copied of $total';
+    return '$total ರಲ್ಲಿ $copied ನಕಲಾಗಿದೆ';
   }
 
   @override
   String adviceImportCopied(String copied) {
-    return 'Copied $copied';
+    return '$copied ನಕಲಾಗಿದೆ';
   }
 
   @override
-  String get adviceImportVerifying => 'Checking the model file…';
+  String get adviceImportVerifying => 'ಮಾಡೆಲ್ ಫೈಲ್ ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…';
 
   @override
-  String get adviceImportDone => 'Model imported. It stays on this phone.';
+  String get adviceImportDone => 'ಮಾಡೆಲ್ ಬಂತು. ಇದು ಇದೇ ಫೋನ್‌ನಲ್ಲಿ ಇರುತ್ತದೆ.';
 
   @override
   String adviceImportFailed(String detail) {
-    return 'The model could not be imported: $detail';
+    return 'ಮಾಡೆಲ್ ತರಲಾಗಲಿಲ್ಲ: $detail';
   }
 
   @override
   String adviceImportNoSpace(String needed, String free) {
-    return 'Not enough space: the model needs $needed but only $free is free on this phone.';
+    return 'ಜಾಗ ಸಾಲದು: ಮಾಡೆಲ್‌ಗೆ $needed ಬೇಕು, ಆದರೆ ಈ ಫೋನ್‌ನಲ್ಲಿ $free ಮಾತ್ರ ಖಾಲಿ ಇದೆ.';
   }
 
   @override
-  String get adviceDeleteAction => 'Delete model';
+  String get adviceDeleteAction => 'ಮಾಡೆಲ್ ಅಳಿಸಿ';
 
   @override
-  String get adviceDeleteConfirmTitle => 'Delete the assistant model?';
+  String get adviceDeleteConfirmTitle => 'ಸಹಾಯಕದ ಮಾಡೆಲ್ ಅಳಿಸಬೇಕೇ?';
 
   @override
   String get adviceDeleteConfirmBody =>
-      'This removes the model file from this phone. Your records are not affected. You can import it again later.';
+      'ಇದು ಮಾಡೆಲ್ ಫೈಲ್ ಅನ್ನು ಈ ಫೋನ್‌ನಿಂದ ತೆಗೆಯುತ್ತದೆ. ನಿಮ್ಮ ದಾಖಲೆಗಳಿಗೆ ಏನೂ ಆಗುವುದಿಲ್ಲ. ನಂತರ ಮತ್ತೆ ತರಬಹುದು.';
 
   @override
   String adviceDeleteFailed(String detail) {
-    return 'The model could not be deleted: $detail';
+    return 'ಮಾಡೆಲ್ ಅಳಿಸಲಾಗಲಿಲ್ಲ: $detail';
   }
 
   @override
   String get adviceHelp =>
-      'Get a .litertlm model with Google AI Edge Gallery or from Hugging Face litert-community/gemma-4-E2B-it-litert-lm (Gemma terms apply), then import it here.';
+      'Google AI Edge Gallery ಮೂಲಕ ಅಥವಾ Hugging Face litert-community/gemma-4-E2B-it-litert-lm ನಿಂದ .litertlm ಮಾಡೆಲ್ ಪಡೆಯಿರಿ (Gemma ನಿಯಮಗಳು ಅನ್ವಯಿಸುತ್ತವೆ), ನಂತರ ಇಲ್ಲಿ ತನ್ನಿ.';
 
   @override
   String adviceProvenance(String modelVersion) {
-    return 'Generated on this phone — experimental · $modelVersion';
+    return 'ಇದೇ ಫೋನ್‌ನಲ್ಲಿ ತಯಾರಾದದ್ದು — ಪ್ರಾಯೋಗಿಕ · $modelVersion';
   }
 
   @override
-  String get adviceNotDecision => 'Not a decision — inspect physically';
+  String get adviceNotDecision => 'ಇದು ನಿರ್ಧಾರವಲ್ಲ — ನೀವೇ ಪರಿಶೀಲಿಸಿ';
 
   @override
-  String get adviceGenerating => 'Writing on this phone…';
+  String get adviceGenerating => 'ಇದೇ ಫೋನ್‌ನಲ್ಲಿ ಬರೆಯುತ್ತಿದೆ…';
 
   @override
-  String get adviceExplainAction => 'Explain this result';
+  String get adviceExplainAction => 'ಈ ಫಲಿತಾಂಶ ವಿವರಿಸಿ';
 
   @override
-  String get adviceExplainTitle => 'What this result means';
+  String get adviceExplainTitle => 'ಈ ಫಲಿತಾಂಶದ ಅರ್ಥ';
 
   @override
   String get adviceStaticRetry =>
-      'The recording could not be used, so no result was saved. Press the phone firmly against the sack or container, keep still and quiet, and record again.';
+      'ರೆಕಾರ್ಡಿಂಗ್ ಬಳಸಲಾಗಲಿಲ್ಲ, ಆದ್ದರಿಂದ ಯಾವ ಫಲಿತಾಂಶವನ್ನೂ ಉಳಿಸಿಲ್ಲ. ಫೋನನ್ನು ಚೀಲ ಅಥವಾ ಡಬ್ಬಕ್ಕೆ ಗಟ್ಟಿಯಾಗಿ ಒತ್ತಿ, ಅಲುಗಾಡದೆ ಶಾಂತವಾಗಿದ್ದು ಮತ್ತೆ ರೆಕಾರ್ಡ್ ಮಾಡಿ.';
 
   @override
   String get adviceStaticNotEvaluated =>
-      'No result was produced for this recording, so it says nothing about pests. Inspect the grain physically.';
+      'ಈ ರೆಕಾರ್ಡಿಂಗ್‌ಗೆ ಫಲಿತಾಂಶ ಬಂದಿಲ್ಲ, ಆದ್ದರಿಂದ ಇದು ಹುಳುಗಳ ಬಗ್ಗೆ ಏನೂ ಹೇಳುವುದಿಲ್ಲ. ಧಾನ್ಯವನ್ನು ನೀವೇ ಪರಿಶೀಲಿಸಿ.';
 
   @override
   String get adviceStaticInspection =>
-      'The experimental model picked up something that may need attention. This is not verified. Inspect the grain physically before any decision.';
+      'ಪ್ರಾಯೋಗಿಕ ಮಾಡೆಲ್ ಗಮನಿಸಬೇಕಾದ ಏನನ್ನೋ ಕೇಳಿದೆ. ಇದು ದೃಢಪಟ್ಟಿಲ್ಲ. ಯಾವುದೇ ನಿರ್ಧಾರಕ್ಕೆ ಮೊದಲು ಧಾನ್ಯವನ್ನು ನೀವೇ ಪರಿಶೀಲಿಸಿ.';
 
   @override
   String get adviceStaticClean =>
-      'The experimental model did not pick up a signal. This is not a guarantee. Inspect the grain physically before storage or sale decisions.';
+      'ಪ್ರಾಯೋಗಿಕ ಮಾಡೆಲ್‌ಗೆ ಯಾವ ಸೂಚನೆಯೂ ಸಿಗಲಿಲ್ಲ. ಇದು ಖಾತರಿ ಅಲ್ಲ. ಸಂಗ್ರಹ ಅಥವಾ ಮಾರಾಟದ ನಿರ್ಧಾರಕ್ಕೆ ಮೊದಲು ಧಾನ್ಯವನ್ನು ನೀವೇ ಪರಿಶೀಲಿಸಿ.';
 
   @override
-  String get reportAiSummaryToggle => 'Add AI-drafted summary';
+  String get reportAiSummaryToggle => 'AI ಬರೆದ ಸಾರಾಂಶ ಸೇರಿಸಿ';
 
   @override
   String get reportAiSummaryBody =>
-      'Drafted on this phone from the report\'s figures. You see it first and choose whether to include it. Experimental.';
+      'ವರದಿಯ ಅಂಕಿಗಳಿಂದ ಇದೇ ಫೋನ್‌ನಲ್ಲಿ ಬರೆದದ್ದು. ಮೊದಲು ನೀವು ನೋಡಿ, ಸೇರಿಸಬೇಕೇ ಬೇಡವೇ ಎಂದು ನಿರ್ಧರಿಸುತ್ತೀರಿ. ಪ್ರಾಯೋಗಿಕ.';
 
   @override
-  String get reportAiPreviewTitle => 'AI-drafted summary';
+  String get reportAiPreviewTitle => 'AI ಬರೆದ ಸಾರಾಂಶ';
 
   @override
   String get reportAiPreviewBody =>
-      'If you include it, it appears in its own labelled section, separate from your records and inspection findings. It cannot be edited.';
+      'ಸೇರಿಸಿದರೆ, ಇದು ವರದಿಯಲ್ಲಿ ಹೆಸರಿರುವ ಪ್ರತ್ಯೇಕ ಭಾಗದಲ್ಲಿ ಇರುತ್ತದೆ — ನಿಮ್ಮ ದಾಖಲೆಗಳು ಮತ್ತು ಪರಿಶೀಲನೆಯ ಫಲಿತಾಂಶಗಳಿಂದ ಬೇರೆ. ಇದನ್ನು ಬದಲಿಸಲಾಗದು.';
 
   @override
-  String get reportAiSummaryTitle => 'Draft summary';
+  String get reportAiSummaryTitle => 'ಸಾರಾಂಶದ ಕರಡು';
 
   @override
-  String get reportAiInclude => 'Include';
+  String get reportAiInclude => 'ಸೇರಿಸಿ';
 
   @override
-  String get reportAiSkip => 'Skip';
+  String get reportAiSkip => 'ಬಿಟ್ಟುಬಿಡಿ';
 
   @override
   String unitGb(String value) {
