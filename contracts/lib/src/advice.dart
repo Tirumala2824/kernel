@@ -59,6 +59,9 @@ class AdviceText {
   final String modelVersion;
   final String? languageTag;
   final DateTime generatedAt;
+
+  /// Always true for on-phone LLM text (guardrails §8). Producers must not
+  /// pass false; reports always print it as experimental.
   final bool experimental;
 }
 

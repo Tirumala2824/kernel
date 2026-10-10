@@ -48,8 +48,11 @@ Append new decisions at the bottom. Never rewrite past entries; supersede them w
 | 41 | 2026-10-10 | Default LLM: **Gemma 4 E2B-it** (`gemma-4-E2B-it.litertlm`, 2.59 GB), the file AI Edge Gallery downloaded on the iQOO 15. Text-only, GPU→CPU. Kernel uses temperature 0.3 and ≤220 output tokens for advice. Gallery's defaults are topK 64, topP 0.95, temperature 1.0 | User: "follow AI Edge Gallery" |
 | 42 | 2026-10-10 | Generated advice is shown, not persisted. The only persisted LLM text is an opt-in report narrative, which carries its modelVersion inside the exported file | Keeps records human/sensor-sourced |
 | 43 | 2026-10-10 | Next-action and analytics logic lives in data-operations (`AnalyticsService`), which returns typed kinds and counts. The UI localizes them. No English strings come out of the data layer | Keeps l10n correct |
+| 44 | 2026-10-10 | Next-action semantics:<br>• "scanned" = any PASS scan (incl. not-evaluated), so items don't need a scan forever while no model is bundled<br>• export prompts wait until flagged sacks are inspected<br>• "flagged" is cleared only by an inspection at or after the scan (`inspectedAt`)<br>Full rule table: data-operations/README.md | W2, accepted |
+| 45 | 2026-10-10 | Analytics and ranking streams recompute only when the DB changes. The UI re-subscribes on app resume and when the date changes, so "today", ageDays and staleness stay correct | W2 finding |
 
 ## Contract follow-ups (proposed by agents, not yet done)
+- `NextActionKind.addSacks`, for a harvest or lot with zero sacks. Until then the detail empty states offer "Add sacks".
 - Captures between 1.5 and 2 s pass the gate, but the model needs 198 frames (2.0 s), so they show NOT_EVALUATED. Raise the gate minimum to 2.0 s, giving RETRY, which is more actionable.
 - `ScanOutcome`/`ScanRecord.modelNote` so older scans keep their provenance text. Shared `kernelItemQrPrefix` constant in contracts.
 - The English `languageSheetBody` still says "More Indian languages are on the way", and the translations carry the same sentence. Update all 11.

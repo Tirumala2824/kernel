@@ -14,7 +14,8 @@ class AnalyticsFilter {
   final String? locationId;
   final String? lotId;
 
-  /// Only scans captured within this duration before now. Null = all time.
+  /// Only scans captured, and inspections inspected, within this duration
+  /// before now. Item freshness ignores it. Null = all time.
   final Duration? window;
 }
 

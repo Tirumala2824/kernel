@@ -94,8 +94,9 @@ abstract interface class ReminderRepository {
   /// Consumed once.
   Future<String?> takeLaunchItemId();
 
-  /// Rule-based suggestion for the next check, always in the future. The
-  /// user confirms or changes it; nothing is scheduled by this call.
+  /// Rule-based suggestion for the next check, always in the future, in
+  /// local time (09:00 on the target day). The user confirms or changes it;
+  /// nothing is scheduled by this call.
   Future<DateTime> suggestDueAt(String itemId);
 }
 
