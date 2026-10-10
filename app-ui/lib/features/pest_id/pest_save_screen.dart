@@ -163,7 +163,10 @@ class _PestSaveScreenState extends ConsumerState<PestSaveScreen> {
                       for (final place in places)
                         DropdownMenuItem<String?>(
                           value: place.id,
-                          child: Text(place.name, overflow: TextOverflow.ellipsis),
+                          child: Text(
+                            place.name,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                     ],
                     onChanged: (id) => setState(() => _locationId = id),
@@ -176,8 +179,9 @@ class _PestSaveScreenState extends ConsumerState<PestSaveScreen> {
             value: keep,
             title: Text(l.pestKeepMedia),
             subtitle: Text(l.pestKeepMediaBody),
-            onChanged: (value) =>
-                ref.read(settingsRepositoryProvider).setKeepSightingMedia(value),
+            onChanged: (value) => ref
+                .read(settingsRepositoryProvider)
+                .setKeepSightingMedia(value),
           ),
           TextField(
             key: const Key('pest-notes'),

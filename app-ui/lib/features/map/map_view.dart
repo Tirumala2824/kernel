@@ -39,8 +39,10 @@ class MapViewData {
   final ValueChanged<String> onSelect;
 }
 
-typedef MapViewBuilder =
-    Widget Function(BuildContext context, MapViewData data);
+typedef MapViewBuilder = Widget Function(
+  BuildContext context,
+  MapViewData data,
+);
 
 /// The Google map. Tests replace it so no platform view is created.
 final mapViewBuilderProvider = Provider<MapViewBuilder>(
@@ -68,7 +70,9 @@ class _GoogleSightingsMapState extends State<GoogleSightingsMap> {
     super.didUpdateWidget(old);
     final selected = _selected;
     if (selected != null && old.data.selectedId != widget.data.selectedId) {
-      _controller?.animateCamera(CameraUpdate.newLatLng(_ll(selected.position)));
+      _controller?.animateCamera(
+        CameraUpdate.newLatLng(_ll(selected.position)),
+      );
     }
   }
 

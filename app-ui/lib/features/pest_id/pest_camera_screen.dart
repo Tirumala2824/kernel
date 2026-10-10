@@ -85,7 +85,7 @@ class _PestCameraScreenState extends ConsumerState<PestCameraScreen> {
     final still = await _capture(candidates);
     if (still == null || !mounted) return;
     setState(() => _busy = true);
-    final cards = await ref.read(knowledgeCardsProvider.future);
+    final cards = await loadKnowledgeCards(ref.read(knowledgeServiceProvider));
     Embedder? embedder;
     try {
       embedder = ref.read(embedderProvider);
@@ -215,8 +215,7 @@ class _PestCameraScreenState extends ConsumerState<PestCameraScreen> {
         key: const Key('pest-candidate-count'),
       ),
       PestTorchSlider(value: _torch, onChanged: _setTorch),
-      if (_captureFailed)
-        ErrorNote(l.pestCaptureFailed),
+      if (_captureFailed) ErrorNote(l.pestCaptureFailed),
       FilledButton.icon(
         key: const Key('pest-capture'),
         onPressed: _busy ? null : _captureAll,

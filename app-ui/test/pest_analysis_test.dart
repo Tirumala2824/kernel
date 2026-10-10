@@ -13,7 +13,10 @@ import 'support/harness.dart';
 import 'support/in_memory.dart';
 import 'support/test_pest.dart';
 
-PestEnv _env({PestAnalysis? analysis, SafetyLevel cardSafety = SafetyLevel.caution}) {
+PestEnv _env({
+  PestAnalysis? analysis,
+  SafetyLevel cardSafety = SafetyLevel.caution,
+}) {
   final env = PestEnv(role: Role.household);
   env.knowledge.cards = [
     testCard('test_cockroach', name: 'Test cockroach', safety: cardSafety),
@@ -60,18 +63,34 @@ void main() {
     );
     expect(find.text(en.experimentalBadge), findsWidgets);
     // The knowledge card for the AI label.
-    expect(find.byKey(const Key('knowledge-card-test_cockroach')), findsOneWidget);
+    expect(
+      find.byKey(const Key('knowledge-card-test_cockroach')),
+      findsOneWidget,
+    );
     expect(find.text(en.pestCardSafeSteps), findsOneWidget);
     expect(find.text(en.pestCardCallPro), findsOneWidget);
     expect(find.text(en.pestCardSources), findsOneWidget);
     expect(find.text(en.pestCardNeedsReview), findsOneWidget);
     // No buyer decision or treatment action exists.
-    expect(find.textContaining(RegExp('fumigat|pesticide|accept|reject', caseSensitive: false)), findsNothing);
+    expect(
+      find.textContaining(
+        RegExp('fumigat|pesticide|accept|reject', caseSensitive: false),
+      ),
+      findsNothing,
+    );
   });
 
   for (final (level, title, body) in [
-    (SafetyLevel.venomous, en.pestSafetyVenomousTitle, en.pestSafetyDistanceBody),
-    (SafetyLevel.medicalRisk, en.pestSafetyMedicalTitle, en.pestSafetyDistanceBody),
+    (
+      SafetyLevel.venomous,
+      en.pestSafetyVenomousTitle,
+      en.pestSafetyDistanceBody,
+    ),
+    (
+      SafetyLevel.medicalRisk,
+      en.pestSafetyMedicalTitle,
+      en.pestSafetyDistanceBody,
+    ),
     (
       SafetyLevel.protectedWildlife,
       en.pestSafetyProtectedTitle,
@@ -96,7 +115,10 @@ void main() {
     expect(en.pestSafetyDistanceBody, contains('medical care'));
     expect(en.pestSafetyDistanceBody, contains('home remedies'));
     expect(en.pestSafetyProtectedBody, contains('Forest Department'));
-    expect(en.pestSafetyProtectedBody, contains('Do not harm, capture or kill'));
+    expect(
+      en.pestSafetyProtectedBody,
+      contains('Do not harm, capture or kill'),
+    );
   });
 
   testWidgets('low safety shows no banner; the card level wins when higher', (
@@ -112,8 +134,12 @@ void main() {
     expect(find.byKey(const Key('pest-safety-venomous')), findsOneWidget);
   });
 
-  testWidgets('no match is never presented as proof of absence', (tester) async {
-    final env = _env(analysis: testAnalysis(cardId: null, commonName: 'Unclear'));
+  testWidgets('no match is never presented as proof of absence', (
+    tester,
+  ) async {
+    final env = _env(
+      analysis: testAnalysis(cardId: null, commonName: 'Unclear'),
+    );
     await _openAnalysis(tester, env);
 
     expect(find.byKey(const Key('pest-not-proof')), findsOneWidget);
@@ -127,7 +153,11 @@ void main() {
     await _openAnalysis(
       tester,
       env,
-      candidate: testCandidate('c9', kind: SignalKind.embeddingMatch, hint: 'test_rat'),
+      candidate: testCandidate(
+        'c9',
+        kind: SignalKind.embeddingMatch,
+        hint: 'test_rat',
+      ),
     );
 
     expect(find.text(en.pestAnalysisUnavailable), findsOneWidget);
@@ -228,7 +258,10 @@ void main() {
   ) async {
     final env = _env(analysis: testAnalysis());
     env.sense
-      ..capability = const DistanceCapability(arcoreDepth: true, focusDistance: false)
+      ..capability = const DistanceCapability(
+        arcoreDepth: true,
+        focusDistance: false,
+      )
       ..measurement = const DistanceEstimate(
         method: DistanceMethod.arcoreDepth,
         meters: 0.42,
@@ -241,7 +274,14 @@ void main() {
     await tapVisible(tester, find.byKey(const Key('pest-measure')));
 
     expect(
-      find.text(en.pestDistanceValue('0.42', '0.38', '0.47', en.pestDistanceMethodDepth)),
+      find.text(
+        en.pestDistanceValue(
+          '0.42',
+          '0.38',
+          '0.47',
+          en.pestDistanceMethodDepth,
+        ),
+      ),
       findsOneWidget,
     );
   });

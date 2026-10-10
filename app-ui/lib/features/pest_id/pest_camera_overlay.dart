@@ -44,8 +44,10 @@ class PestLivePreview extends ConsumerWidget {
                       48.0,
                       size.maxWidth,
                     ),
-                    height: (box.height.clamp(0.0, 1.0) * size.maxHeight)
-                        .clamp(48.0, size.maxHeight),
+                    height: (box.height.clamp(0.0, 1.0) * size.maxHeight).clamp(
+                      48.0,
+                      size.maxHeight,
+                    ),
                     child: _CandidateBox(
                       candidate: c,
                       label: c.kind.label(l),
@@ -95,7 +97,11 @@ class _CandidateBox extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(candidate.kind.icon, size: 14, color: KernelColors.ink),
+                    Icon(
+                      candidate.kind.icon,
+                      size: 14,
+                      color: KernelColors.ink,
+                    ),
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(
@@ -134,12 +140,17 @@ class PestTorchSlider extends StatelessWidget {
     return Row(
       children: [
         Icon(
-          value > 0 ? Icons.flashlight_on_rounded : Icons.flashlight_off_rounded,
+          value > 0
+              ? Icons.flashlight_on_rounded
+              : Icons.flashlight_off_rounded,
           color: KernelColors.forest,
         ),
         const SizedBox(width: KernelSpace.sm),
         Flexible(
-          child: Text(l.pestTorch, style: Theme.of(context).textTheme.bodyLarge),
+          child: Text(
+            l.pestTorch,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
         ),
         Expanded(
           flex: 2,

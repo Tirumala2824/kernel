@@ -54,9 +54,7 @@ class PestLocationPanel extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   StatusChip(
-                    label: l.pestLocationPinned(
-                      fix.accuracyMeters!.round(),
-                    ),
+                    label: l.pestLocationPinned(fix.accuracyMeters!.round()),
                     tone: StatusTone.positive,
                     icon: Icons.location_on_rounded,
                   ),

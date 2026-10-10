@@ -143,7 +143,8 @@ class ScriptedPestSenseEngine implements PestSenseEngine {
             for (final c in candidates)
               ImageTile(
                 candidateId: c.id,
-                box: c.box ??
+                box:
+                    c.box ??
                     const NormalizedBox(left: 0, top: 0, width: 1, height: 1),
                 image: testPng,
               ),
@@ -221,8 +222,7 @@ class ScriptedPestAnalyzer implements PestAnalyzer {
 }
 
 class InMemoryKnowledgeService implements KnowledgeService {
-  InMemoryKnowledgeService([List<KnowledgeCard>? cards])
-    : cards = cards ?? [];
+  InMemoryKnowledgeService([List<KnowledgeCard>? cards]) : cards = cards ?? [];
 
   List<KnowledgeCard> cards;
   final queries = <String>[];
@@ -319,7 +319,10 @@ class InMemorySightingRepository implements SightingRepository {
       _changes.watch(() => _rows.where((s) => s.itemId == itemId).toList());
 
   @override
-  Future<Sighting> setVerifiedFinding(String id, VerifiedFinding finding) async {
+  Future<Sighting> setVerifiedFinding(
+    String id,
+    VerifiedFinding finding,
+  ) async {
     final i = _rows.indexWhere((s) => s.id == id);
     final s = _rows[i];
     if (s.verifiedFinding != null) {
@@ -401,8 +404,10 @@ class ScriptedEmbedder implements Embedder {
   }) async => null;
 
   @override
-  Future<EmbeddingVector?> embedImage(Uint8List encodedImage, {int dim = 256}) async =>
-      null;
+  Future<EmbeddingVector?> embedImage(
+    Uint8List encodedImage, {
+    int dim = 256,
+  }) async => null;
 
   @override
   Future<EmbeddingVector?> embedAudio(Uint8List wav, {int dim = 256}) async =>
@@ -513,8 +518,8 @@ class PestEnv extends TestEnv {
 
   // Same field as TestEnv, with notification control; TestEnv.overrides
   // binds whichever instance this is.
-  // ignore: overridden_fields
   @override
+  // ignore: overridden_fields
   final PestPermissions permissions = PestPermissions();
 
   final sense = ScriptedPestSenseEngine();

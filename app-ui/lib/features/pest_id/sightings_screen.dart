@@ -45,7 +45,8 @@ class SightingsScreen extends ConsumerWidget {
     final sightings = ref.watch(recentSightingsProvider(role));
     final cards = ref.watch(knowledgeCardsProvider).value ?? const [];
     final places = {
-      for (final p in ref.watch(allLocationsProvider).value ?? const <Location>[])
+      for (final p
+          in ref.watch(allLocationsProvider).value ?? const <Location>[])
         p.id: p.name,
     };
     return Scaffold(

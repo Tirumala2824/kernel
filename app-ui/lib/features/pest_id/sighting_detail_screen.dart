@@ -106,7 +106,9 @@ class _SightingBody extends ConsumerWidget {
                 label: s.userValidated
                     ? l.pestDetailConfirmed
                     : l.pestDetailNotConfirmed,
-                tone: s.userValidated ? StatusTone.positive : StatusTone.neutral,
+                tone: s.userValidated
+                    ? StatusTone.positive
+                    : StatusTone.neutral,
                 icon: Icons.person_rounded,
               ),
               if (pickName != null) ...[
@@ -143,11 +145,13 @@ class _SightingBody extends ConsumerWidget {
           ),
         ] else if (place == null)
           QuietNote(l.pestDetailNoPlace),
-        if (s.distance case final distance?) PestDistanceNote(estimate: distance),
+        if (s.distance case final distance?)
+          PestDistanceNote(estimate: distance),
         if (s.notes case final notes? when notes.trim().isNotEmpty)
           FieldRow(label: l.pestNotes, value: notes),
         if (s.mediaPath != null) QuietNote(l.pestDetailMediaKept),
-        if (card != null) KnowledgeCardView(card: card, userPicked: s.userCardId != null),
+        if (card != null)
+          KnowledgeCardView(card: card, userPicked: s.userCardId != null),
       ],
     );
   }

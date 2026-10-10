@@ -125,7 +125,9 @@ class AppPrivateSightingMediaStore implements SightingMediaStore {
       final dir = Directory('${docs.path}/sighting_media');
       await dir.create(recursive: true);
       final stamp = DateTime.now().toUtc().microsecondsSinceEpoch;
-      final file = File('${dir.path}/sighting_${stamp}_${_sequence++}.$extension');
+      final file = File(
+        '${dir.path}/sighting_${stamp}_${_sequence++}.$extension',
+      );
       await file.writeAsBytes(bytes, flush: true);
       return file.path;
     } on Object catch (error) {

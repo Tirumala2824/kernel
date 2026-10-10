@@ -60,7 +60,10 @@ void main() {
 
     final save = find.byKey(const Key('sighting-finding-save'));
     expect(tester.widget<FilledButton>(save).onPressed, isNull);
-    await tapVisible(tester, find.byKey(const Key('sighting-finding-pestsFound')));
+    await tapVisible(
+      tester,
+      find.byKey(const Key('sighting-finding-pestsFound')),
+    );
     await tapVisible(tester, save);
     await tapVisible(tester, find.byKey(const Key('confirm-ok')));
 
@@ -84,7 +87,10 @@ void main() {
     );
     await pumpKernelApp(tester, env, location: Routes.sighting(s.id));
 
-    expect(find.text(en.pestDetailPin('12.97161', '77.59456', 9)), findsOneWidget);
+    expect(
+      find.text(en.pestDetailPin('12.97161', '77.59456', 9)),
+      findsOneWidget,
+    );
     await tapVisible(tester, find.byKey(const Key('sighting-show-map')));
     expect(find.text(en.mapTitle), findsWidgets);
   });

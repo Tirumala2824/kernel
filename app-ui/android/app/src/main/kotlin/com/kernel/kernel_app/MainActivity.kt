@@ -56,6 +56,7 @@ class MainActivity : FlutterActivity() {
                         ),
                     )
                 } else {
+                    @Suppress("DEPRECATION")
                     packageManager.getPackageInfo(
                         packageName,
                         PackageManager.GET_SIGNING_CERTIFICATES,

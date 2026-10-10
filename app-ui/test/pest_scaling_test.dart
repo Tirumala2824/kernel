@@ -48,7 +48,11 @@ Future<PestEnv> _env(String code) async {
       safety: SafetyLevel.protectedWildlife,
       legal: 'Test: protected species, Schedule I.',
     ),
-    testCard('test_scorpion', name: 'Test scorpion', safety: SafetyLevel.venomous),
+    testCard(
+      'test_scorpion',
+      name: 'Test scorpion',
+      safety: SafetyLevel.venomous,
+    ),
   ];
   return env;
 }
@@ -80,7 +84,12 @@ void main() {
             'b',
             kind: SignalKind.embeddingMatch,
             hint: 'test_monitor_lizard',
-            box: const NormalizedBox(left: 0.8, top: 0.8, width: 0.1, height: 0.1),
+            box: const NormalizedBox(
+              left: 0.8,
+              top: 0.8,
+              width: 0.1,
+              height: 0.1,
+            ),
           ),
         ]);
         await tester.pumpAndSettle();
@@ -125,9 +134,7 @@ void main() {
         env.analyzer.analysis = null;
         _largeText(tester);
         await pumpKernelApp(tester, env, location: Routes.pestCamera);
-        env.sense.candidates.add([
-          testCandidate('a', hint: 'test_scorpion'),
-        ]);
+        env.sense.candidates.add([testCandidate('a', hint: 'test_scorpion')]);
         await tester.pumpAndSettle();
         await _scrollTap(tester, find.byKey(const Key('pest-box-a')));
         expect(tester.takeException(), isNull);
@@ -138,7 +145,10 @@ void main() {
         final env = await _env(code);
         env.sense
           ..labels['s'] = const [
-            ScoredLabel(label: 'Scratching (performance technique)', score: 0.4),
+            ScoredLabel(
+              label: 'Scratching (performance technique)',
+              score: 0.4,
+            ),
           ]
           ..clips['s'] = testPng;
         env.analyzer.sound = const SoundAnalysis(
@@ -169,7 +179,10 @@ void main() {
       testWidgets('save sighting with a pin', (tester) async {
         final env = await _env(code);
         await env.locations.create(
-          const LocationDraft(type: LocationType.room, name: 'A long room name'),
+          const LocationDraft(
+            type: LocationType.room,
+            name: 'A long room name',
+          ),
         );
         env.locator.fix = classifyFix(12.97, 77.59, 12);
         _largeText(tester);
@@ -209,7 +222,11 @@ void main() {
         tester,
       ) async {
         final env = await _env(code);
-        await env.sightings.add(latitude: 12.97, longitude: 77.59, accuracyMeters: 8);
+        await env.sightings.add(
+          latitude: 12.97,
+          longitude: 77.59,
+          accuracyMeters: 8,
+        );
         env.locator.fix = classifyFix(12.96, 77.58, 10);
         _largeText(tester);
         await pumpKernelApp(tester, env, location: Routes.sightingsMap());
@@ -226,9 +243,8 @@ void main() {
           packageName: 'com.kernel.kernel_app',
           certSha1: 'AB',
         );
-        ProviderScope.containerOf(
-          tester.element(find.byType(KernelApp)),
-        ).invalidate(mapsConfigProvider);
+        ProviderScope.containerOf(tester.element(find.byType(KernelApp)))
+            .invalidate(mapsConfigProvider);
         await tester.pumpAndSettle();
         await _scrollTap(tester, find.byKey(const Key('map-route')));
         expect(tester.takeException(), isNull);

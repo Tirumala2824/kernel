@@ -70,7 +70,10 @@ class PestAiAnalysisCard extends StatelessWidget {
               text: noMatch ? l.pestNoMatch : l.pestNotAPest,
             ),
           ],
-          PestBulletSection(title: l.pestKeyFeatures, items: analysis.keyFeatures),
+          PestBulletSection(
+            title: l.pestKeyFeatures,
+            items: analysis.keyFeatures,
+          ),
           PestBulletSection(title: l.pestAnomalies, items: analysis.anomalies),
           PestBulletSection(title: l.pestInsights, items: analysis.insights),
           const SizedBox(height: KernelSpace.md),

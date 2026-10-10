@@ -37,9 +37,8 @@ class PestSoundLabels extends StatelessWidget {
         const SizedBox(height: KernelSpace.xs),
         Text(
           l.pestSoundRawNote,
-          style: Theme.of(
-            context,
-          ).textTheme.bodySmall?.copyWith(color: KernelColors.inkMuted),
+          style: Theme.of(context).textTheme.bodySmall
+              ?.copyWith(color: KernelColors.inkMuted),
         ),
       ],
     );
@@ -121,8 +120,7 @@ class PestSoundResult extends StatelessWidget {
     final sound = session.sound;
     final lang = Localizations.localeOf(context).languageCode;
     final matches = session.soundCards;
-    final shown =
-        session.cardById(session.userCardId) ?? matches.firstOrNull;
+    final shown = session.cardById(session.userCardId) ?? matches.firstOrNull;
     return Column(
       key: const Key('pest-sound-result'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -160,7 +158,10 @@ class PestSoundResult extends StatelessWidget {
               PestSoundLabels(labels: sound?.preFilter ?? session.soundLabels),
               const SizedBox(height: KernelSpace.sm),
               if (sound == null)
-                Text(l.pestAnalysisUnavailable, key: const Key('pest-sound-unavailable'))
+                Text(
+                  l.pestAnalysisUnavailable,
+                  key: const Key('pest-sound-unavailable'),
+                )
               else ...[
                 if (sound.groupHint != PestGroup.unknown)
                   Text(l.pestGroupHint(sound.groupHint.label(l))),

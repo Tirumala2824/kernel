@@ -36,9 +36,12 @@ Future<bool> showMapsConsentSheet(BuildContext context, WidgetRef ref) async {
               const SizedBox(height: KernelSpace.sm),
               Text(l.mapConsentBody, style: textTheme.bodyLarge),
               const SizedBox(height: KernelSpace.sm),
-              Text(l.mapConsentNever, style: textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-              )),
+              Text(
+                l.mapConsentNever,
+                style: textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
               const SizedBox(height: KernelSpace.lg),
               FilledButton(
                 key: const Key('maps-consent-allow'),

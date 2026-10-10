@@ -99,7 +99,9 @@ void main() {
   testWidgets('tapping a live box confirms it', (tester) async {
     final env = await _env();
     await pumpKernelApp(tester, env, location: Routes.pestCamera);
-    env.sense.candidates.add([testCandidate('box1', kind: SignalKind.eyeshine)]);
+    env.sense.candidates.add([
+      testCandidate('box1', kind: SignalKind.eyeshine),
+    ]);
     await tester.pumpAndSettle();
 
     await tapVisible(tester, find.byKey(const Key('pest-box-box1')));

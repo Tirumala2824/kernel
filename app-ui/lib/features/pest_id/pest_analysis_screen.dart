@@ -37,8 +37,7 @@ class PestAnalysisScreen extends ConsumerStatefulWidget {
   const PestAnalysisScreen({super.key});
 
   @override
-  ConsumerState<PestAnalysisScreen> createState() =>
-      _PestAnalysisScreenState();
+  ConsumerState<PestAnalysisScreen> createState() => _PestAnalysisScreenState();
 }
 
 class _PestAnalysisScreenState extends ConsumerState<PestAnalysisScreen> {
@@ -61,7 +60,7 @@ class _PestAnalysisScreenState extends ConsumerState<PestAnalysisScreen> {
   Future<void> _analyse(PestSessionState session) async {
     final tile = session.tile!;
     final lang = adviceLanguageTag(context);
-    final cards = await ref.read(knowledgeCardsProvider.future);
+    final cards = await loadKnowledgeCards(ref.read(knowledgeServiceProvider));
     PestAnalysis? analysis;
     try {
       analysis = await ref
@@ -91,7 +90,9 @@ class _PestAnalysisScreenState extends ConsumerState<PestAnalysisScreen> {
     } else if (analysis.cardId != null &&
         !cards.any((c) => c.id == analysis!.cardId)) {
       try {
-        fallback = await ref.read(knowledgeServiceProvider).get(analysis.cardId!);
+        fallback = await ref
+            .read(knowledgeServiceProvider)
+            .get(analysis.cardId!);
       } on Object {
         fallback = null;
       }
@@ -158,7 +159,8 @@ class _PestAnalysisScreenState extends ConsumerState<PestAnalysisScreen> {
     );
     final capability = ref.watch(distanceCapabilityProvider).value;
     final canMeasure =
-        capability != null && (capability.arcoreDepth || capability.focusDistance);
+        capability != null &&
+        (capability.arcoreDepth || capability.focusDistance);
     return [
       if (s.tile case final tile?)
         ClipRRect(

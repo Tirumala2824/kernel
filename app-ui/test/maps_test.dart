@@ -46,13 +46,19 @@ void main() {
         webDirectionsUri(p).toString(),
         'https://www.google.com/maps/dir/?api=1&destination=12.971610,77.594560',
       );
-      expect(geoUri(p).toString(), 'geo:12.971610,77.594560?q=12.971610,77.594560');
+      expect(
+        geoUri(p).toString(),
+        'geo:12.971610,77.594560?q=12.971610,77.594560',
+      );
     });
 
     test('startNavigation falls back to the web URL when unresolved', () async {
       final launcher = RecordingMapLauncher()..resolvable = {'https'};
       expect(await startNavigation(launcher, p), isTrue);
-      expect(launcher.launched.map((u) => u.scheme), ['google.navigation', 'https']);
+      expect(launcher.launched.map((u) => u.scheme), [
+        'google.navigation',
+        'https',
+      ]);
 
       final app = RecordingMapLauncher();
       expect(await startNavigation(app, p), isTrue);
@@ -83,7 +89,11 @@ void main() {
   ) async {
     final (env, s) = await _pinnedEnv();
     env.mapsConfig.config = _config;
-    await pumpKernelApp(tester, env, location: Routes.sightingsMap(sightingId: s.id));
+    await pumpKernelApp(
+      tester,
+      env,
+      location: Routes.sightingsMap(sightingId: s.id),
+    );
 
     expect(find.byKey(const Key('map-consent-needed')), findsOneWidget);
     expect(find.byKey(const Key('test-map')), findsNothing);
@@ -180,7 +190,10 @@ void main() {
     // Species, notes and media never appear in the request.
     expect(request.body, isNot(contains('cockroach')));
 
-    expect(find.text(en.mapRouteSummary(en.mapDistanceKm('1.3'), 15)), findsOneWidget);
+    expect(
+      find.text(en.mapRouteSummary(en.mapDistanceKm('1.3'), 15)),
+      findsOneWidget,
+    );
     expect(find.text('route points 2'), findsOneWidget);
   });
 
@@ -233,7 +246,10 @@ void main() {
 
     await tapVisible(tester, find.byKey(const Key('map-navigate')));
 
-    expect(env.launcher.launched.last.toString(), startsWith('https://www.google.com/maps/dir/?api=1&destination='));
+    expect(
+      env.launcher.launched.last.toString(),
+      startsWith('https://www.google.com/maps/dir/?api=1&destination='),
+    );
     expect(find.text(en.mapNavigationFailed), findsNothing);
   });
 

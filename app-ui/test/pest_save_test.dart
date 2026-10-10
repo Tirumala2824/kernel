@@ -53,7 +53,10 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Kitchen').last);
     await tester.pumpAndSettle();
-    await tester.enterText(find.byKey(const Key('pest-notes')), 'Behind the stove');
+    await tester.enterText(
+      find.byKey(const Key('pest-notes')),
+      'Behind the stove',
+    );
     await tapVisible(tester, find.byKey(const Key('pest-save-confirm')));
 
     final draft = env.sightings.drafts.single;

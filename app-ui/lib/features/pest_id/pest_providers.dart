@@ -14,16 +14,22 @@ final cameraCandidatesProvider =
       name: 'cameraCandidatesProvider',
     );
 
-/// Every curated knowledge card. An unavailable service reads as "no
-/// cards" so the flow still works with the static copy.
-final knowledgeCardsProvider = FutureProvider<List<KnowledgeCard>>((ref) async {
+/// Every curated knowledge card, read fresh (never a stale cache). An
+/// unavailable service reads as "no cards" so the flow still works.
+Future<List<KnowledgeCard>> loadKnowledgeCards(KnowledgeService service) async {
   try {
-    return await ref.watch(knowledgeServiceProvider).all();
+    return await service.all();
   } on Object catch (error) {
     debugPrint('Kernel: knowledge cards unavailable: $error');
     return const [];
   }
-}, name: 'knowledgeCardsProvider');
+}
+
+/// Every curated knowledge card, for display (names, pickers).
+final knowledgeCardsProvider = FutureProvider.autoDispose<List<KnowledgeCard>>(
+  (ref) => loadKnowledgeCards(ref.watch(knowledgeServiceProvider)),
+  name: 'knowledgeCardsProvider',
+);
 
 final knowledgeCardProvider = FutureProvider.autoDispose
     .family<KnowledgeCard?, String>((ref, id) async {

@@ -272,14 +272,20 @@ class KnowledgeCardView extends StatelessWidget {
             Text(card.summary, style: textTheme.bodyLarge),
           ],
           PestBulletSection(title: l.pestCardSigns, items: card.signs),
-          PestBulletSection(title: l.pestCardHealthRisks, items: card.healthRisks),
+          PestBulletSection(
+            title: l.pestCardHealthRisks,
+            items: card.healthRisks,
+          ),
           PestBulletSection(title: l.pestCardSafeSteps, items: card.safeSteps),
           PestBulletSection(
             title: l.pestCardCallPro,
             items: card.callProfessionalWhen,
           ),
           PestBulletSection(title: l.pestCardFirstAid, items: card.firstAid),
-          PestBulletSection(title: l.pestCardLookAlikes, items: card.lookAlikes),
+          PestBulletSection(
+            title: l.pestCardLookAlikes,
+            items: card.lookAlikes,
+          ),
           if (card.legal != null && card.legal!.trim().isNotEmpty)
             PestBulletSection(title: l.pestCardLegal, items: [card.legal!]),
           PestBulletSection(title: l.pestCardSources, items: card.sources),

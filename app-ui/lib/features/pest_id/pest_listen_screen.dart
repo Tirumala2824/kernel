@@ -21,7 +21,8 @@ import 'pest_session.dart';
 /// Search words for knowledge cards from a confirmed sound.
 String soundQuery(List<ScoredLabel> labels, SoundAnalysis? sound) => [
   for (final label in labels.take(3)) label.label,
-  if (sound != null && sound.groupHint != PestGroup.unknown) sound.groupHint.name,
+  if (sound != null && sound.groupHint != PestGroup.unknown)
+    sound.groupHint.name,
 ].join(' ');
 
 /// Listen mode: live sound-event candidates with sound-classifier labels.
@@ -147,7 +148,7 @@ class _PestListenScreenState extends ConsumerState<PestListenScreen> {
       }
       return;
     }
-    final cards = await ref.read(knowledgeCardsProvider.future);
+    final cards = await loadKnowledgeCards(ref.read(knowledgeServiceProvider));
     SoundAnalysis? sound;
     try {
       sound = await ref
@@ -277,8 +278,7 @@ class _PestListenScreenState extends ConsumerState<PestListenScreen> {
         icon: const Icon(Icons.hearing_rounded),
         label: Text(l.pestListenStart),
       ),
-    if (_listening)
-      Text(l.pestListening, key: const Key('pest-listening')),
+    if (_listening) Text(l.pestListening, key: const Key('pest-listening')),
     if (_events.isEmpty && _listening)
       QuietNote(l.pestListenNone, key: const Key('pest-listen-none')),
     if (_events.isNotEmpty) ...[

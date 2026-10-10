@@ -54,11 +54,10 @@ class RoutesClient {
   final MapsPlatformConfig config;
 
   /// The exact JSON body sent: origin and destination, nothing else.
-  static Map<String, Object?> requestBody(GeoPoint origin, GeoPoint destination) =>
-      {
-        'origin': _waypoint(origin),
-        'destination': _waypoint(destination),
-      };
+  static Map<String, Object?> requestBody(
+    GeoPoint origin,
+    GeoPoint destination,
+  ) => {'origin': _waypoint(origin), 'destination': _waypoint(destination)};
 
   static Map<String, Object?> _waypoint(GeoPoint p) => {
     'location': {
@@ -67,7 +66,10 @@ class RoutesClient {
   };
 
   /// Null when no route is returned or the call fails.
-  Future<RouteSummary?> computeRoute(GeoPoint origin, GeoPoint destination) async {
+  Future<RouteSummary?> computeRoute(
+    GeoPoint origin,
+    GeoPoint destination,
+  ) async {
     if (!config.isConfigured) return null;
     try {
       final response = await client
@@ -104,7 +106,9 @@ class RoutesClient {
     final meters = route['distanceMeters'];
     final duration = '${route['duration'] ?? ''}';
     final polyline = route['polyline'];
-    final encoded = polyline is Map ? '${polyline['encodedPolyline'] ?? ''}' : '';
+    final encoded = polyline is Map
+        ? '${polyline['encodedPolyline'] ?? ''}'
+        : '';
     final seconds = double.tryParse(duration.replaceAll('s', ''));
     return RouteSummary(
       distanceMeters: meters is num ? meters.round() : 0,

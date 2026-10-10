@@ -64,8 +64,7 @@ class PestSessionState {
   bool get hasSignal => tile != null || candidate != null;
 
   /// Card id the UI shows: the user's pick wins over the AI label.
-  String? get shownCardId =>
-      userCardId ?? analysis?.cardId ?? fallbackCard?.id;
+  String? get shownCardId => userCardId ?? analysis?.cardId ?? fallbackCard?.id;
 
   KnowledgeCard? cardById(String? id) {
     if (id == null) return null;

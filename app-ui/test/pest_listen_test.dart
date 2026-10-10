@@ -68,7 +68,10 @@ void main() {
     expect(find.text('A high, thin whine.'), findsOneWidget);
     expect(find.text(en.pestSoundModel('yamnet-test-1')), findsOneWidget);
     expect(find.text(en.experimentalBadge), findsWidgets);
-    expect(find.byKey(const Key('pest-sound-card-test_mosquito')), findsOneWidget);
+    expect(
+      find.byKey(const Key('pest-sound-card-test_mosquito')),
+      findsOneWidget,
+    );
     expect(find.byKey(const Key('pest-safety-medicalRisk')), findsOneWidget);
 
     await tapVisible(tester, find.byKey(const Key('pest-save')));
@@ -85,7 +88,10 @@ void main() {
     final env = _env();
     await pumpKernelApp(tester, env, location: Routes.pestListen);
 
-    await tapVisible(tester, find.byKey(const Key('pest-mode-mosquitoCloseUp')));
+    await tapVisible(
+      tester,
+      find.byKey(const Key('pest-mode-mosquitoCloseUp')),
+    );
     expect(find.text(en.pestListenModeMosquitoBody), findsOneWidget);
     await tapVisible(tester, find.byKey(const Key('pest-listen-start')));
 
