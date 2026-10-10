@@ -1,0 +1,2225 @@
+{
+  "version": "kernel-cards-0.1",
+  "cards": [
+    {
+      "id": "american_cockroach",
+      "names": { "en": "American cockroach", "hi": "अमेरिकी तिलचट्टा" },
+      "group": "insect",
+      "safety": "caution",
+      "summary": "A large reddish-brown cockroach, about 3.5 to 4 cm long, that often lives in drains, sewers and damp areas and comes indoors at night. It can carry germs onto food and kitchen surfaces.",
+      "signs": [
+        "Large reddish-brown cockroach with a pale yellowish band around the edge of the shield behind the head",
+        "Seen at night near drains, bathrooms, kitchens and basements; runs for cover when a light is switched on",
+        "Dark, cylindrical droppings larger than pepper grains, and dark smear marks along walls and skirting",
+        "Dark brown, purse-shaped egg cases (oothecae) about 8 mm long, dropped or glued in sheltered spots",
+        "Shed skins and a musty smell where many are present"
+      ],
+      "lookAlikes": [
+        "other_cockroach",
+        "german_cockroach",
+        "ground beetles",
+        "crickets"
+      ],
+      "healthRisks": [
+        "Can carry bacteria and other germs from drains and waste onto food, dishes and kitchen surfaces",
+        "Droppings and shed skins contain allergens that can trigger sneezing, skin rashes and asthma"
+      ],
+      "safeSteps": [
+        "Keep food in sealed containers and clear crumbs, spills and dirty dishes before night",
+        "Fix leaking taps and pipes and wipe sinks and floors dry; cockroaches need water",
+        "Fit fine mesh or tight covers on floor drains, and keep drain traps filled with water",
+        "Seal cracks and gaps around pipes, drains, doors and walls",
+        "Empty garbage daily into a bin with a tight lid, and remove clutter such as cardboard and paper piles",
+        "Place small covered insect monitoring traps inside cupboards, under sinks and behind appliances, out of reach of lizards, pets and children, and check them daily"
+      ],
+      "callProfessionalWhen": [
+        "Cockroaches are seen in daylight or in large numbers",
+        "Numbers do not drop after two to three weeks of cleaning and sealing",
+        "They come from building drains or sewers you cannot reach, or the problem is in a food business, hostel or hospital"
+      ],
+      "firstAid": [],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7467.html",
+        "https://extension.psu.edu/american-cockroaches"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "german_cockroach",
+      "names": { "en": "German cockroach", "hi": "जर्मन तिलचट्टा" },
+      "group": "insect",
+      "safety": "caution",
+      "summary": "A small light-brown cockroach, about 1.3 to 1.6 cm long, with two dark stripes behind the head. It lives indoors, mainly in kitchens and bathrooms, and can build up large numbers quickly.",
+      "signs": [
+        "Small tan to light-brown cockroach with two dark parallel stripes on the shield behind the head",
+        "Females carrying a light-brown egg case sticking out from the tip of the body",
+        "Pepper-like specks of droppings and small dark smears in cabinets, hinges and around stoves, fridges and sinks",
+        "Many small wingless young (nymphs) of different sizes hiding in cracks",
+        "Sightings in daylight, which often mean a large population"
+      ],
+      "lookAlikes": [
+        "other_cockroach",
+        "american_cockroach",
+        "bed_bug"
+      ],
+      "healthRisks": [
+        "Can spread germs linked to stomach upsets, diarrhoea and dysentery by walking over food and utensils",
+        "Droppings and shed skins contain allergens that can trigger skin rashes, sneezing and asthma"
+      ],
+      "safeSteps": [
+        "Wipe up spills and crumbs, wash dishes before night, and do not leave pet food out overnight",
+        "Store flour, sugar, cereals and other foods in airtight containers",
+        "Empty garbage every night into a sturdy bin with a lid",
+        "Fix leaks and seal holes where pipes pass through walls, and cracks in kitchens and bathrooms",
+        "Check grocery bags, cartons and second-hand appliances before bringing them inside",
+        "Place ten or more small covered insect monitoring traps inside cupboards, under sinks and behind appliances for a week, out of reach of lizards, pets and children, and check them daily"
+      ],
+      "callProfessionalWhen": [
+        "Cockroaches are seen in daylight",
+        "They are spread across several rooms or flats in a building",
+        "The problem is in a kitchen that serves the public, a hostel or a hospital"
+      ],
+      "firstAid": [],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7467.html",
+        "https://extension.psu.edu/german-cockroaches"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "other_cockroach",
+      "names": { "en": "Other cockroach (oriental, brown-banded, Australian and others)", "hi": "तिलचट्टा" },
+      "group": "insect",
+      "safety": "caution",
+      "summary": "Several other cockroach species live in and around homes, including the dark oriental cockroach of damp drains and basements, the small brown-banded cockroach of warm dry rooms, and the Australian cockroach. They are managed in much the same way.",
+      "signs": [
+        "Very dark brown to nearly black, about 2.5 cm, slow-moving cockroach near drains, damp floors and basements (oriental cockroach)",
+        "Small cockroach with two light bands across the wings or body, found high up in furniture, cupboards and electronics (brown-banded cockroach)",
+        "Reddish-brown cockroach like the American cockroach but with pale yellow streaks at the base of the wings (Australian cockroach)",
+        "Droppings, egg cases and shed skins in sheltered, undisturbed places"
+      ],
+      "lookAlikes": [
+        "american_cockroach",
+        "german_cockroach",
+        "ground beetles"
+      ],
+      "healthRisks": [
+        "Can carry germs from drains and waste onto food and surfaces",
+        "Droppings and shed skins contain allergens that can trigger asthma and other allergies"
+      ],
+      "safeSteps": [
+        "Keep food sealed and clear crumbs, spills and dirty dishes before night",
+        "Fix leaks, dry damp areas and improve ventilation in basements and bathrooms",
+        "Cover floor drains with fine mesh and seal cracks around pipes and walls",
+        "Reduce clutter such as stacked paper, cardboard and unused furniture",
+        "Place small covered insect monitoring traps inside cupboards, under sinks and behind appliances, out of reach of lizards, pets and children, and check them daily"
+      ],
+      "callProfessionalWhen": [
+        "Cockroaches are seen in daylight or in large numbers",
+        "Numbers do not drop after two to three weeks of cleaning and sealing"
+      ],
+      "firstAid": [],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7467.html",
+        "https://extension.psu.edu/oriental-cockroaches"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "house_fly",
+      "names": { "en": "House fly", "hi": "घरेलू मक्खी" },
+      "group": "insect",
+      "safety": "caution",
+      "summary": "A common grey fly, about 6 to 7 mm long, that breeds in garbage, manure and rotting organic matter. It can carry germs from waste onto food.",
+      "signs": [
+        "Grey fly with four dark lengthwise stripes on the back behind the head",
+        "Flies landing on food, garbage and waste, often in large numbers in warm weather",
+        "Small dark specks (fly spots) on walls, windows and light fittings",
+        "Small white maggots in garbage, compost, manure or animal bedding",
+        "Steady buzzing near windows and lights"
+      ],
+      "lookAlikes": [
+        "blow fly (bluebottle)",
+        "flesh fly",
+        "stable fly",
+        "fruit fly"
+      ],
+      "healthRisks": [
+        "Can carry germs from waste and faeces onto food, linked to diarrhoea, dysentery, cholera, other food-borne illness and eye infections",
+        "Large numbers near animal sheds or garbage dumps are a hygiene concern"
+      ],
+      "safeSteps": [
+        "Keep food and drinking water covered, and wash fruit and vegetables before eating",
+        "Put garbage in bags inside bins with tight lids, and empty and wash bins at least weekly",
+        "Remove animal manure, pet waste and rotting food often; this is where maggots develop",
+        "Fit window and door screens and keep them in good repair",
+        "Use fly swatters, or light traps placed away from where food is prepared",
+        "Turn compost so it heats up, or keep it covered and away from the house"
+      ],
+      "callProfessionalWhen": [
+        "Flies keep appearing indoors after garbage and waste have been removed",
+        "Large numbers come from nearby animal sheds, drains or a dump; report this to your local municipal health office"
+      ],
+      "firstAid": [],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7457.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "aedes_mosquito",
+      "names": { "en": "Aedes mosquito (dengue mosquito)", "hi": "एडीज़ मच्छर" },
+      "group": "insect",
+      "safety": "medicalRisk",
+      "summary": "A small black mosquito with white stripes on its legs and body that bites mainly in the daytime. It breeds in clean water held in containers around homes and can spread dengue, chikungunya and Zika.",
+      "signs": [
+        "Small (about 3 to 5 mm) black mosquito with white bands on the legs and white markings on the body",
+        "Bites during the day, especially in the early morning and late afternoon, often on ankles and legs",
+        "Rests indoors in dark corners, under furniture and on hanging clothes, curtains or umbrellas",
+        "Wriggling larvae in water in coolers, drums, buckets, tanks, flower vases, plant saucers, old tyres, coconut shells or fridge drip trays",
+        "High-pitched whine close to the ear"
+      ],
+      "lookAlikes": [
+        "culex_mosquito",
+        "anopheles_mosquito",
+        "non-biting midges"
+      ],
+      "healthRisks": [
+        "Can spread dengue, chikungunya and Zika viruses",
+        "Dengue can become severe, usually after the fever goes down; warning signs include severe stomach pain, repeated vomiting, fast breathing, bleeding gums or nose, blood in vomit or stool, and extreme tiredness or restlessness",
+        "A second dengue infection carries a higher risk of severe dengue",
+        "Chikungunya causes fever with severe joint pain that can last for months",
+        "Zika infection in pregnancy can cause birth defects such as an abnormally small head; pregnant women with fever, rash or red eyes should see a doctor"
+      ],
+      "safeSteps": [
+        "Get medical care and a test at a health centre promptly if anyone has a fever, and go to hospital at once for any dengue warning sign",
+        "Once a week, empty, scrub and dry coolers, buckets, drums, flower vases and plant saucers before refilling them",
+        "Cover water tanks and storage containers tightly, and throw away tyres, tins, bottles and coconut shells that can hold rainwater",
+        "Clear roof gutters and fridge drip trays so water does not stand",
+        "Wear clothes that cover arms and legs, use window screens, and use a mosquito net for daytime sleep, especially for babies, the sick and the elderly"
+      ],
+      "callProfessionalWhen": [
+        "Larvae are breeding where you cannot empty the water, such as overhead tanks, construction sites or blocked drains; inform your local health department, municipal vector-control team or ASHA worker",
+        "Several people nearby have fever at the same time"
+      ],
+      "firstAid": [
+        "Get medical care for any fever after mosquito bites; do not wait for it to get worse",
+        "Go to a hospital immediately for any dengue warning sign",
+        "Do not take aspirin or ibuprofen for a fever that could be dengue, as they can increase bleeding; ask a doctor or health worker what to take for the fever",
+        "Do not use papaya-leaf juice or other herbal drinks in place of medical care",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": null,
+      "sources": [
+        "https://www.who.int/news-room/fact-sheets/detail/dengue-and-severe-dengue",
+        "https://ncvbdc.mohfw.gov.in/index4.php?lang=1&level=0&linkid=449&lid=3719",
+        "https://ncvbdc.mohfw.gov.in/index4.php?lang=1&level=0&linkid=442&lid=3724",
+        "https://www.who.int/news-room/fact-sheets/detail/vector-borne-diseases",
+        "https://www.who.int/news-room/fact-sheets/detail/zika-virus"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "anopheles_mosquito",
+      "names": { "en": "Anopheles mosquito (malaria mosquito)", "hi": "एनोफ़िलीज़ मच्छर" },
+      "group": "insect",
+      "safety": "medicalRisk",
+      "summary": "The mosquito that spreads malaria. It bites mainly from dusk through the night and breeds in clean or slow-moving water such as rain pools, rice fields, wells, tanks and irrigation channels.",
+      "signs": [
+        "Mosquito that often rests with its body at an angle to the wall, head down and tail up (some Indian species sit flatter)",
+        "Pale and dark spots or patches on the wings in many species",
+        "Bites starting soon after dusk and continuing through the night",
+        "Larvae lying flat just under the water surface instead of hanging down",
+        "Breeding in rain pools, puddles, rice fields, wells, irrigation channels, water tanks and construction sites"
+      ],
+      "lookAlikes": [
+        "culex_mosquito",
+        "aedes_mosquito",
+        "crane flies"
+      ],
+      "healthRisks": [
+        "Spreads malaria, which usually starts with fever, chills and headache 10 to 15 days after an infective bite",
+        "Malaria can become severe quickly, especially in young children, pregnant women and travellers",
+        "In parts of Africa and some other regions Anopheles also spread lymphatic filariasis; in mainland India it is spread mainly by Culex"
+      ],
+      "safeSteps": [
+        "Get medical care and a malaria test at a health centre promptly for any fever, chills or headache; early testing matters",
+        "Sleep under a mosquito net, and fit window and door screens",
+        "Wear clothes that cover arms and legs in the evening and at night",
+        "Drain or fill puddles and pits around the home, and cover wells, tanks and water containers",
+        "Keep water from collecting at construction sites, in tyres and in discarded containers"
+      ],
+      "callProfessionalWhen": [
+        "Larvae are found in wells, tanks, ponds or fields you cannot drain; tell your local health department or ASHA worker",
+        "Several people in the area have fever"
+      ],
+      "firstAid": [
+        "Get medical care and a malaria test for any fever after mosquito bites",
+        "Go to a hospital immediately for confusion, fits, breathing difficulty, dark urine, yellow eyes, unusual bleeding, extreme weakness, or being unable to sit, eat or drink",
+        "Follow the health worker's advice to the end, even after feeling better; some malaria can come back weeks or months later, so get tested again if fever returns",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": null,
+      "sources": [
+        "https://www.who.int/news-room/fact-sheets/detail/malaria",
+        "https://ncvbdc.mohfw.gov.in/index1.php?lang=1&level=1&sublinkid=5784&lid=3689",
+        "https://ncvbdc.mohfw.gov.in/index4.php?lang=1&level=0&linkid=429&lid=3706",
+        "https://ncvbdc.mohfw.gov.in/index4.php?lang=1&level=0&linkid=452&lid=3729",
+        "https://ipm.ucanr.edu/home-and-landscape/mosquitoes/"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "culex_mosquito",
+      "names": { "en": "Culex mosquito", "hi": "क्यूलेक्स मच्छर" },
+      "group": "insect",
+      "safety": "medicalRisk",
+      "summary": "A plain brownish mosquito that bites mainly at night and breeds in dirty or polluted standing water such as drains, septic tanks and ditches. In India it can spread lymphatic filariasis and Japanese encephalitis.",
+      "signs": [
+        "Plain brown mosquito that rests with its body parallel to the wall",
+        "Bites at night, often with a loud whine around sleeping areas",
+        "Larvae hanging head-down from the water surface in drains, cesspits, septic tanks, ditches and stagnant water",
+        "Small raft-like clusters of eggs floating on dirty water",
+        "Large numbers near rice fields and pig sheds in rural areas"
+      ],
+      "lookAlikes": [
+        "anopheles_mosquito",
+        "aedes_mosquito",
+        "non-biting midges"
+      ],
+      "healthRisks": [
+        "The common house Culex (Culex quinquefasciatus), which breeds in drains, cesspits and septic tanks in towns and villages, spreads lymphatic filariasis, which can cause long-term swelling of the legs, arms or scrotum",
+        "Rural Culex, especially around rice fields, pigs and water birds, spreads Japanese encephalitis, a serious brain infection",
+        "Can also spread West Nile virus"
+      ],
+      "safeSteps": [
+        "Get medical care quickly for fever with headache, vomiting, confusion, fits or a stiff neck, especially in children",
+        "Sleep under a mosquito net and fit screens on windows and doors",
+        "Keep drains flowing and covered, and fit mesh on septic tank vent pipes and soak-pit openings",
+        "Do not let wastewater stand near the house; drain or fill ditches and pits",
+        "Follow your local health worker's advice during filaria prevention campaigns, and ask about Japanese encephalitis vaccination where it is offered"
+      ],
+      "callProfessionalWhen": [
+        "Blocked or overflowing drains, septic tanks or sewage you cannot fix; report them to your municipal office or health department"
+      ],
+      "firstAid": [
+        "Get urgent medical care for fever with headache, vomiting, confusion, fits or a stiff neck",
+        "See a doctor for new swelling of a limb, repeated fever with painful swollen glands, or swelling of the scrotum",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": null,
+      "sources": [
+        "https://www.who.int/news-room/fact-sheets/detail/japanese-encephalitis",
+        "https://www.who.int/news-room/fact-sheets/detail/lymphatic-filariasis",
+        "https://ncvbdc.mohfw.gov.in/index1.php?lang=1&level=1&sublinkid=5777&lid=3691",
+        "https://ncvbdc.mohfw.gov.in/index4.php?lang=1&level=0&linkid=452&lid=3729",
+        "https://ncvbdc.mohfw.gov.in/index1.php?lang=1&level=1&sublinkid=5773&lid=3693",
+        "https://ipm.ucanr.edu/home-and-landscape/mosquitoes/"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "bed_bug",
+      "names": { "en": "Bed bug", "hi": "खटमल" },
+      "group": "insect",
+      "safety": "caution",
+      "summary": "A small, flat, reddish-brown insect, about 5 mm long as an adult, that hides in beds and furniture and feeds on blood at night. It is not known to spread disease, but bites can itch and infestations are hard to clear.",
+      "signs": [
+        "Flat, oval, wingless reddish-brown insects in mattress seams, bed frames, headboards and furniture joints",
+        "Small rusty or dark spots (droppings or blood) on sheets and mattress seams",
+        "Pale shed skins and tiny white eggs in crevices",
+        "Itchy bite marks, sometimes in a line, that may appear a day or more after sleeping",
+        "A sweet, musty smell in heavy infestations"
+      ],
+      "lookAlikes": [
+        "german_cockroach",
+        "flea",
+        "tick",
+        "carpet beetles"
+      ],
+      "healthRisks": [
+        "Not known to spread disease, but bites can itch and scratching can lead to skin infection",
+        "Rarely, bites cause a strong allergic reaction",
+        "Infestations can cause poor sleep and anxiety"
+      ],
+      "safeSteps": [
+        "Check mattress seams, bed frames, headboards and nearby furniture with a torch",
+        "Wash bedding and clothes in hot water and dry them on the hottest setting the fabric allows",
+        "Vacuum mattress seams, bed frames, carpet edges and cracks, then seal the vacuum contents in a bag and put it outside",
+        "Fit a zippered mattress encasement made for bed bugs, and reduce clutter around the bed",
+        "Move the bed slightly away from the wall and place interceptor cups under the legs to monitor",
+        "Check luggage after travel, and inspect second-hand furniture before bringing it home"
+      ],
+      "callProfessionalWhen": [
+        "Bed bugs are found in more than one room or keep coming back",
+        "You live in a hostel, hotel or apartment block where they can spread between units",
+        "The infestation is large or has spread; call a licensed pest-control professional"
+      ],
+      "firstAid": [
+        "Wash bites with soap and water and avoid scratching",
+        "See a doctor if bites become infected or for any strong allergic reaction"
+      ],
+      "legal": null,
+      "sources": [
+        "https://www.cdc.gov/bed-bugs/about/index.html",
+        "https://www.epa.gov/bedbugs",
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7454.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "subterranean_termite",
+      "names": { "en": "Subterranean termite (white ant)", "hi": "दीमक" },
+      "group": "insect",
+      "safety": "low",
+      "summary": "Small, pale, soft-bodied insects that live in colonies in the soil and eat wood, paper and cardboard, often unseen inside walls and frames. They travel in mud tubes and can damage buildings, furniture and stored items.",
+      "signs": [
+        "Pencil-width mud tubes running up walls, foundations, door frames or pipes",
+        "Swarms of winged termites near lights after rain, and piles of shed wings on window sills",
+        "Wood that sounds hollow when tapped or crumbles, with soil packed into the tunnels",
+        "Blistered or darkened paint and wood surfaces, and damaged books, cardboard or papers",
+        "Pale, ant-like workers when a mud tube is broken open",
+        "Faint clicking or rustling inside wood or walls when the colony is disturbed"
+      ],
+      "lookAlikes": [
+        "drywood_termite",
+        "winged ants (flying ants)",
+        "black_house_ant"
+      ],
+      "healthRisks": [
+        "Not known to spread disease; the main risk is damage to wood, buildings and stored goods"
+      ],
+      "safeSteps": [
+        "Keep wood, cardboard and firewood off the ground and away from walls",
+        "Fix plumbing leaks, roof leaks and drainage problems so walls and foundations stay dry",
+        "Remove dead tree stumps, buried wood and building debris near the house",
+        "Keep a gap between soil or mulch and the wooden parts of the building",
+        "Repair foundation cracks, and check walls, door frames and storage areas regularly for mud tubes",
+        "Have the building inspected every few years"
+      ],
+      "callProfessionalWhen": [
+        "You find mud tubes, hollow wood or swarmers indoors",
+        "Before building or renovating, ask your builder how to keep wood away from soil and damp, and have the site inspected by a licensed pest-control professional",
+        "Dealing with termites in a building is specialist work; call a licensed pest-control professional rather than trying it yourself"
+      ],
+      "firstAid": [],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7415.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "drywood_termite",
+      "names": { "en": "Drywood termite" },
+      "group": "insect",
+      "safety": "low",
+      "summary": "Termites that live entirely inside dry wood such as furniture, door frames and roof timbers, without contact with soil. They push out tiny, hard, six-sided pellets.",
+      "signs": [
+        "Small piles of hard, sand-like pellets with six ridged sides under wooden furniture, frames or beams",
+        "Tiny holes (under 2 mm) in wood surfaces through which pellets are pushed out",
+        "Winged termites flying during the day, and shed wings near windows",
+        "Wood that sounds hollow, or blistered paint on wooden surfaces"
+      ],
+      "lookAlikes": [
+        "subterranean_termite",
+        "powderpost beetles",
+        "winged ants (flying ants)"
+      ],
+      "healthRisks": [
+        "Not known to spread disease; the main risk is damage to wooden furniture and structures"
+      ],
+      "safeSteps": [
+        "Sweep up pellets and check the same spot after a few days; new pellets suggest the termites are still active",
+        "Inspect second-hand wooden furniture before bringing it home",
+        "Seal and paint exposed wood surfaces, cracks and joints",
+        "Replace small wooden items that are badly damaged",
+        "Note where pellets keep appearing to help an inspector"
+      ],
+      "callProfessionalWhen": [
+        "Pellets keep appearing from door frames, roof timbers or other structural wood",
+        "Damage is found in several places; call a licensed pest-control professional",
+        "Get more than one inspection report before deciding what to do"
+      ],
+      "firstAid": [],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7440.html",
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7415.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "black_house_ant",
+      "names": { "en": "Black house ant (small black ants)", "hi": "काली चींटी" },
+      "group": "insect",
+      "safety": "low",
+      "summary": "Several kinds of small black or dark-brown ants forage in kitchens and homes for sweets, grease and water. They are mainly a nuisance, but they can contaminate food.",
+      "signs": [
+        "Lines of small black or dark-brown ants (about 2 to 3 mm) following the same trail to food or water",
+        "Ants gathered on sugar, sweets, fruit, pet food or around sinks",
+        "Tiny piles of soil or debris at cracks in floors, walls or along skirting",
+        "Winged ants appearing indoors in warm, humid weather"
+      ],
+      "lookAlikes": [
+        "fire_ant",
+        "pharaoh_ant",
+        "carpenter ants",
+        "subterranean_termite"
+      ],
+      "healthRisks": [
+        "Can carry dirt and germs onto food",
+        "Most small black ants rarely bite or sting; some larger black ants can bite"
+      ],
+      "safeSteps": [
+        "Wipe up crumbs, grease and spills, and rinse food and drink containers before storing or throwing them out",
+        "Store sugar, sweets and other foods in sealed containers; thin plastic bags may not keep ants out",
+        "Wipe ant trails with soapy water to remove the scent trail they follow",
+        "Follow the trail to where ants enter, and seal cracks around pipes, wires, doors and windows",
+        "Fix dripping taps and remove standing water",
+        "Keep plants, mulch and branches from touching outside walls"
+      ],
+      "callProfessionalWhen": [
+        "Ants keep coming back after cleaning and sealing, or are nesting inside walls",
+        "You see large black ants with sawdust-like debris near wood, which may mean carpenter ants"
+      ],
+      "firstAid": [],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/home-and-landscape/ants/",
+        "https://extension.psu.edu/odorous-house-ant"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "fire_ant",
+      "names": { "en": "Fire ant (red ant)", "hi": "लाल चींटी" },
+      "group": "insect",
+      "safety": "venomous",
+      "summary": "Reddish-brown ants of mixed sizes, such as the tropical fire ant, that nest in soil and sting painfully, often many times, when their nest or food is disturbed. Stings can cause severe allergic reactions in some people.",
+      "signs": [
+        "Reddish-brown ants of mixed sizes, about 2 to 5 mm, that swarm and climb quickly onto anything touching their nest",
+        "Loose soil mounds or patches in lawns, fields and along paths, sometimes with no clear mound",
+        "Burning stings followed a day or so later by itchy white pus-filled bumps",
+        "Nests in walls, under pavements or inside electrical and utility boxes"
+      ],
+      "lookAlikes": [
+        "black_house_ant",
+        "pharaoh_ant",
+        "weaver ants (red tree ants)"
+      ],
+      "healthRisks": [
+        "Stings burn and itch and can leave pus-filled bumps that may become infected or scar",
+        "Some people have a severe allergic reaction (anaphylaxis), which is an emergency",
+        "Young children, older adults and people who cannot move away quickly are at higher risk of many stings"
+      ],
+      "safeSteps": [
+        "Stay well back from ant mounds and keep children and pets away; if stung, move away quickly, brush the ants off and get medical care for any severe reaction",
+        "Get emergency care for chest pain, swelling of the face or throat, dizziness, nausea or trouble breathing after stings",
+        "Wear shoes and gloves when working in gardens or fields",
+        "Do not disturb or dig into mounds",
+        "Keep food and drinks covered outdoors"
+      ],
+      "callProfessionalWhen": [
+        "Mounds are near homes, play areas or places where people sit or work",
+        "Ants are nesting inside walls or electrical boxes"
+      ],
+      "firstAid": [
+        "Move away from the ants and brush them off",
+        "Wash the area with soap and water, and avoid scratching or breaking the pus-filled bumps",
+        "Get emergency medical care for any sign of a severe allergic reaction",
+        "If the person has a known sting allergy and a prescribed adrenaline (epinephrine) auto-injector, use it and go to hospital at once",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7487.html",
+        "https://ipm.ucanr.edu/home-and-landscape/ants/",
+        "https://www.cdc.gov/niosh/outdoor-workers/about/insects-and-scorpions.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "pharaoh_ant",
+      "names": { "en": "Pharaoh ant" },
+      "group": "insect",
+      "safety": "caution",
+      "summary": "A tiny yellow to light-brown ant, about 2 mm long, that nests in warm, hidden spots indoors such as wall voids and near hot water pipes. It is hard to control and is a hygiene concern in hospitals and food businesses.",
+      "signs": [
+        "Very small yellow, honey-coloured or light orange ants moving in trails",
+        "Ants in kitchens, bathrooms and near hot water pipes, heaters or appliances",
+        "Ants coming out of electrical outlets, cabinet gaps or from behind skirting",
+        "Ants feeding on greasy food, meat and sweets"
+      ],
+      "lookAlikes": [
+        "black_house_ant",
+        "fire_ant",
+        "thief ants"
+      ],
+      "healthRisks": [
+        "Can carry germs onto food and surfaces, which is a particular concern in hospitals and clinics"
+      ],
+      "safeSteps": [
+        "Keep food sealed, clean up grease and spills, and take out garbage daily",
+        "Fix leaks and reduce moisture",
+        "Seal cracks and gaps around pipes, wiring and cabinets",
+        "Wipe trails with soapy water and note where the ants come from"
+      ],
+      "callProfessionalWhen": [
+        "Ants keep appearing in many rooms; colonies have many queens, and disturbing them can make them split and spread",
+        "The problem is in a hospital, clinic, food business or apartment block"
+      ],
+      "firstAid": [],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/home-and-landscape/ants/"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "silverfish",
+      "names": { "en": "Silverfish" },
+      "group": "insect",
+      "safety": "low",
+      "summary": "A wingless, silvery, carrot-shaped insect, about 1 to 2 cm long, that hides in damp, dark places and feeds on paper, glue, starch and fabric. It is a nuisance that damages books and clothes rather than a health risk.",
+      "signs": [
+        "Silvery-grey, tapered insects with three long tail threads, moving in quick, fish-like darts",
+        "Insects trapped in sinks or bathtubs, unable to climb the smooth sides",
+        "Irregular holes, scraped surfaces and yellow stains on books, papers, wallpaper and clothes",
+        "Tiny silvery scales and dust-like droppings near the damage"
+      ],
+      "lookAlikes": [
+        "firebrats",
+        "house_centipede",
+        "earwig",
+        "clothes_moth"
+      ],
+      "healthRisks": [
+        "Not known to spread disease; it damages paper, books and fabrics"
+      ],
+      "safeSteps": [
+        "Keep bathrooms, kitchens and storage areas dry; use fans or a dehumidifier in damp rooms",
+        "Fix leaking pipes and drips",
+        "Clean dust and debris regularly, and empty and clean cupboards and storage boxes from time to time",
+        "Store books, papers and dry foods in tightly closed containers, and move stacks of paper now and then",
+        "Seal gaps around pipes and skirting",
+        "To find where they are active, leave small glass jars wrapped on the outside with tape overnight; silverfish climb in and cannot climb out"
+      ],
+      "callProfessionalWhen": [
+        "Damage to valuable books, documents or fabrics continues after drying and cleaning"
+      ],
+      "firstAid": [],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7475.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "house_centipede",
+      "names": { "en": "House centipede" },
+      "group": "other",
+      "safety": "low",
+      "summary": "A fast-moving, yellowish-grey centipede with 15 pairs of very long legs that hunts insects indoors at night. It rarely bites and is not considered medically important; seeing many may point to other insects or damp conditions.",
+      "signs": [
+        "Yellowish-grey body about 2.5 to 3.5 cm long with three dark stripes and very long banded legs",
+        "Very fast movement across floors and walls, usually at night",
+        "Found in bathrooms, basements, drains and other damp, dark places"
+      ],
+      "lookAlikes": [
+        "giant_centipede",
+        "millipede",
+        "silverfish",
+        "earwig"
+      ],
+      "healthRisks": [
+        "May give a mildly painful bite if handled",
+        "Not known to spread disease"
+      ],
+      "safeSteps": [
+        "Avoid handling it; guide it into a jar or onto paper and release it outdoors",
+        "Reduce damp with fans or a dehumidifier, and fix leaks",
+        "Reduce the insects it feeds on, such as cockroaches and silverfish",
+        "Seal cracks in walls and floors, and screen floor drains",
+        "Clear stored cardboard boxes and clutter from damp areas"
+      ],
+      "callProfessionalWhen": [
+        "Many are seen regularly, which may mean another insect problem that needs an inspection"
+      ],
+      "firstAid": [
+        "Wash a bite with soap and water",
+        "Get medical care for severe pain, spreading swelling or signs of an allergic reaction"
+      ],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/home-and-landscape/centipedes-and-millipedes/",
+        "https://extension.psu.edu/house-centipedes"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "millipede",
+      "names": { "en": "Millipede", "hi": "सहस्रपाद" },
+      "group": "other",
+      "safety": "caution",
+      "summary": "A slow-moving, rounded, many-legged animal that lives in damp soil and leaf litter and sometimes wanders indoors in large numbers after rain. It does not bite, but some kinds release a fluid that can irritate skin and eyes.",
+      "signs": [
+        "Dark brown to black, rounded, segmented body with two pairs of legs on most segments",
+        "Slow, wave-like leg movement; curls into a coil when disturbed or dead",
+        "Many appearing at doorways, porches, basements or bathrooms after heavy rain"
+      ],
+      "lookAlikes": [
+        "house_centipede",
+        "giant_centipede",
+        "wireworms"
+      ],
+      "healthRisks": [
+        "Some species release a defensive fluid that can irritate or stain the skin and burn the eyes",
+        "Not known to spread disease"
+      ],
+      "safeSteps": [
+        "Do not handle them with bare hands; sweep them into a dustpan and move them outdoors",
+        "Clear leaf litter, compost, mulch and rotting wood from around the foundation",
+        "Seal cracks and gaps under doors",
+        "Keep basements and crawl spaces dry, and avoid overwatering near the house"
+      ],
+      "callProfessionalWhen": [
+        "Large numbers keep entering the house for more than a few days"
+      ],
+      "firstAid": [
+        "Wash skin with soap and water after contact",
+        "If fluid gets into the eyes, rinse with plenty of clean water for at least 15 minutes, removing contact lenses, and get medical care"
+      ],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/home-and-landscape/centipedes-and-millipedes/",
+        "https://extension.psu.edu/millipedes"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "earwig",
+      "names": { "en": "Earwig" },
+      "group": "insect",
+      "safety": "low",
+      "summary": "A reddish-brown insect, about 1.5 to 2 cm long, with pincer-like forceps at the tail end. It hides in damp, dark places outdoors and sometimes enters homes, where it is mainly a nuisance.",
+      "signs": [
+        "Long, flat, reddish-brown insect with curved (male) or straighter (female) pincers at the rear",
+        "Found under pots, stones, mulch, damp cloths and in drains, mainly at night",
+        "Ragged holes in seedlings, flowers and soft fruit in gardens"
+      ],
+      "lookAlikes": [
+        "rove beetles (Paederus)",
+        "silverfish",
+        "house_centipede",
+        "giant_centipede"
+      ],
+      "healthRisks": [
+        "Can pinch if trapped in clothing or sat on",
+        "Not known to spread disease",
+        "Look-alike small orange-and-black rove beetles (Paederus) release a fluid that blisters skin if crushed; brush them off without crushing, wash the skin with soap and water, and see a doctor for blisters or eye irritation"
+      ],
+      "safeSteps": [
+        "Sweep or vacuum up earwigs found indoors and put them outside",
+        "Seal cracks and gaps around doors and windows",
+        "Remove leaf litter, boards and debris from near the walls, and keep gutters clear",
+        "Direct rainwater away from the house and ventilate damp spaces",
+        "Use yellow outdoor bulbs, which attract fewer insects",
+        "In gardens, set rolled newspaper or cardboard traps at dusk and empty them well away from the garden each morning"
+      ],
+      "callProfessionalWhen": [
+        "Large numbers keep entering the house despite these steps"
+      ],
+      "firstAid": [],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn74102.html",
+        "https://pubmed.ncbi.nlm.nih.gov/38496106/",
+        "https://pubmed.ncbi.nlm.nih.gov/38784336/"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "clothes_moth",
+      "names": { "en": "Clothes moth" },
+      "group": "insect",
+      "safety": "low",
+      "summary": "Small, pale buff moths whose larvae feed on wool, silk, fur, feathers and other animal fibres in stored clothes and carpets. The damage is done by the larvae, not the adults.",
+      "signs": [
+        "Small (about 6 mm) golden-buff moths fluttering weakly in dark wardrobes rather than flying to lights",
+        "Irregular holes in woollen, silk or fur items, often in hidden areas such as under collars",
+        "Silk tubes, webbing or small cigar-shaped cases on fabric, with droppings",
+        "Loose fur and bare patches on fur items"
+      ],
+      "lookAlikes": [
+        "pantry_moth",
+        "carpet beetles",
+        "silverfish"
+      ],
+      "healthRisks": [
+        "Not known to spread disease; it damages clothing, carpets and stored textiles"
+      ],
+      "safeSteps": [
+        "Wash woollens and other washable items in hot water, or have delicate items dry-cleaned",
+        "Freeze small items in sealed bags for several days if the fabric allows",
+        "Vacuum wardrobes, corners, under furniture and along skirting, and empty the vacuum outside promptly",
+        "Store only clean clothes, in airtight containers or sealed bags",
+        "Air and brush stored woollens in sunlight from time to time, paying attention to seams and folds",
+        "Use covered pheromone monitoring traps, hung out of reach of children, pets and lizards, to check for moths"
+      ],
+      "callProfessionalWhen": [
+        "Damage continues in carpets, upholstery or large collections after cleaning",
+        "Valuable textiles, heirlooms or museum items are affected"
+      ],
+      "firstAid": [],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7435.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "pantry_moth",
+      "names": { "en": "Pantry moth (Indian meal moth)" },
+      "group": "insect",
+      "safety": "low",
+      "summary": "A small moth whose larvae feed on stored foods such as flour, rice, cereals, dried fruit, nuts and spices. The larvae leave silk webbing in food packets.",
+      "signs": [
+        "Small moths, about 8 to 10 mm, with forewings pale near the body and reddish-brown with a coppery shine on the outer part",
+        "Silk webbing, clumped food and droppings inside food packets or containers",
+        "Small whitish caterpillars crawling on shelves, walls or ceilings",
+        "Small holes in food packets"
+      ],
+      "lookAlikes": [
+        "clothes_moth",
+        "Angoumois grain moth",
+        "rice_weevil"
+      ],
+      "healthRisks": [
+        "Not known to spread disease; it spoils stored food"
+      ],
+      "safeSteps": [
+        "Inspect stored foods, especially opened or older packets, and throw out anything with webbing or larvae in a sealed bag outside the house",
+        "Empty and clean shelves, vacuum cracks and corners, then wash them with soap and water",
+        "Store dry foods in containers with tight-fitting lids; thin plastic bags are not enough",
+        "Freeze small amounts of flour, grains or spices for a few days before storing them",
+        "Keep only as much food as you will use soon, do not mix old and new food, and wash containers before refilling",
+        "Use covered pheromone monitoring traps placed out of reach of children, pets and lizards, and check them weekly"
+      ],
+      "callProfessionalWhen": [
+        "Moths keep appearing after cleaning, or the problem is in a shop, warehouse or food business"
+      ],
+      "firstAid": [],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7452.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "rice_weevil",
+      "names": { "en": "Rice weevil (grain weevil)", "hi": "घुन" },
+      "group": "insect",
+      "safety": "low",
+      "summary": "Small dark beetles with a long snout whose larvae develop inside whole grains such as rice, wheat and maize. Related grain weevils, including the maize and granary weevils, look and behave much the same.",
+      "signs": [
+        "Small (about 2 to 4 mm) reddish-brown to black beetles with a long snout, crawling on grain, sacks or container walls",
+        "Four faint reddish or yellowish spots on the wing covers (rice and maize weevils)",
+        "Grains with round exit holes, hollow kernels and fine powdery dust in the store",
+        "Grain that feels warm or damp, or smells musty, in heavily infested stores",
+        "Very faint ticking or chewing sounds from larvae feeding inside grains, which the ear usually cannot hear"
+      ],
+      "lookAlikes": [
+        "lesser grain borer",
+        "red flour beetle",
+        "pantry_moth",
+        "Angoumois grain moth"
+      ],
+      "healthRisks": [
+        "Not known to spread disease; it spoils stored grain and reduces its weight and quality"
+      ],
+      "safeSteps": [
+        "Inspect stored grain regularly and keep any infested batch apart from other grain",
+        "Clean bins, sacks and storerooms thoroughly before filling them with new grain, removing old grain and dust",
+        "Do not mix old and new grain",
+        "Store grain dry, in clean, tightly sealed containers in a cool place",
+        "Freeze small household quantities for a few days before storing them",
+        "Throw out heavily infested small packets in a sealed bag outside the house"
+      ],
+      "callProfessionalWhen": [
+        "The infestation is in large stores, godowns or farm bins; consult your local agricultural extension office or a licensed pest-control professional",
+        "Weevils keep reappearing after cleaning"
+      ],
+      "firstAid": [],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7452.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "flea",
+      "names": { "en": "Flea", "hi": "पिस्सू" },
+      "group": "insect",
+      "safety": "medicalRisk",
+      "summary": "Tiny, dark reddish-brown, wingless insects, up to about 3 mm, that jump and feed on the blood of pets, rats and people. Rat fleas can spread plague and murine typhus in some regions.",
+      "signs": [
+        "Tiny dark insects, flattened from side to side, that jump; seen on pets, bedding or carpets",
+        "Itchy bites, often on the ankles and lower legs, each with a small red centre",
+        "Black specks of flea dirt in pet fur or bedding",
+        "Pets scratching, licking or losing hair",
+        "Fleas jumping onto white socks when walking through pet resting areas"
+      ],
+      "lookAlikes": [
+        "bed_bug",
+        "tick",
+        "springtails"
+      ],
+      "healthRisks": [
+        "Bites cause itching and can trigger allergic skin reactions in people and pets",
+        "Rat fleas can spread plague and murine typhus; plague needs urgent medical care",
+        "Fleas can pass tapeworms to pets and occasionally to children"
+      ],
+      "safeSteps": [
+        "Stay well back from dead rats and other dead animals and do not handle them; get medical care for fever after flea bites, and tell your local health office if you see several dead rats",
+        "Vacuum floors, carpets, furniture and pet resting areas every day or two, and empty the vacuum outside",
+        "Wash pet bedding and rugs weekly in hot soapy water",
+        "Comb pets with a fine metal flea comb, and take a pet with fleas to a veterinarian",
+        "Keep rats and stray animals out by sealing gaps and storing food in closed containers"
+      ],
+      "callProfessionalWhen": [
+        "Fleas remain after two to three weeks of vacuuming and washing",
+        "Fleas have come with rats in the house"
+      ],
+      "firstAid": [
+        "Wash bites with soap and water and avoid scratching",
+        "Get medical care quickly for fever, swollen painful glands or feeling very unwell after flea bites or contact with rats",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7419.html",
+        "https://www.cdc.gov/fleas/about/index.html",
+        "https://www.who.int/news-room/fact-sheets/detail/plague"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "tick",
+      "names": { "en": "Tick", "hi": "किलनी" },
+      "group": "arachnid",
+      "safety": "medicalRisk",
+      "summary": "Small, flat, eight-legged parasites that attach to dogs, livestock and people to feed on blood and swell after feeding. Some ticks spread serious illnesses.",
+      "signs": [
+        "Flat, oval, brown or reddish animal with eight legs; swollen, grey-blue and bean-shaped after feeding",
+        "Ticks on dogs, especially on the ears, neck and between the toes, or on cattle and goats",
+        "Ticks crawling on walls, curtains and furniture near where dogs sleep (brown dog tick)",
+        "A tick attached to the skin, often in hidden places such as the scalp, behind the ears, armpits or groin"
+      ],
+      "lookAlikes": [
+        "bed_bug",
+        "flea",
+        "spider beetles",
+        "chigger_mite"
+      ],
+      "healthRisks": [
+        "Some ticks spread illnesses such as Indian tick typhus (spotted fever), Kyasanur Forest Disease and Crimean-Congo haemorrhagic fever in parts of India and Asia, and other infections worldwide",
+        "Fever, chills, aches or a rash within a few weeks of a tick bite need medical attention",
+        "Rarely, an attached tick can cause weakness or paralysis that improves after the tick is removed"
+      ],
+      "safeSteps": [
+        "Get medical care for fever, rash, aches or weakness after a tick bite, and mention the bite to the doctor",
+        "Wear long sleeves and trousers tucked into socks, and light-coloured clothes, in grass, bush or livestock areas",
+        "Check your body, children and pets after time outdoors or with animals",
+        "Wear gloves when removing ticks from animals or handling animal blood at slaughter",
+        "Take dogs and livestock with ticks to a veterinarian, keep grass short near the house, and vacuum cracks where dog ticks hide"
+      ],
+      "callProfessionalWhen": [
+        "Ticks are breeding inside the house, for example many on walls near where dogs sleep",
+        "Livestock sheds are heavily infested; contact your veterinarian or animal husbandry office",
+        "Dead monkeys are found in a Kyasanur Forest Disease area of the Western Ghats; report them to the health department"
+      ],
+      "firstAid": [
+        "Remove an attached tick promptly with fine-tipped tweezers: grip it close to the skin and pull out with steady, even pressure without twisting",
+        "Do not crush the tick with your fingers, and do not use heat, oil, nail polish or other substances to make it let go",
+        "After removing a tick, wash the bite and your hands with soap and water",
+        "See a doctor if fever, rash, aches or weakness develop within a few weeks, and mention the tick bite; a black scab (eschar) at a bite with fever also needs a doctor",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": null,
+      "sources": [
+        "https://www.cdc.gov/ticks/about/index.html",
+        "https://www.cdc.gov/ticks/after-a-tick-bite/index.html",
+        "https://www.who.int/news-room/fact-sheets/detail/crimean-congo-haemorrhagic-fever"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "wasp_hornet",
+      "names": { "en": "Wasp / hornet", "hi": "ततैया" },
+      "group": "insect",
+      "safety": "venomous",
+      "summary": "Stinging insects with a narrow waist, such as paper wasps and hornets, that build paper or mud nests on buildings and trees. They can sting repeatedly when their nest is disturbed, and stings can cause dangerous allergic reactions.",
+      "signs": [
+        "Slender black-and-yellow, reddish-brown or brown insects with a narrow waist and a smooth body",
+        "Umbrella-shaped, open-celled paper nests under eaves, balconies and window frames, or large enclosed paper nests in trees and roofs",
+        "Many wasps flying in and out of one hole in a wall, roof or the ground",
+        "Loud buzzing near a nest",
+        "Hard mud nests on walls and ceilings (mud daubers and potter wasps)"
+      ],
+      "lookAlikes": [
+        "honey bees",
+        "hover flies",
+        "mud daubers"
+      ],
+      "healthRisks": [
+        "Stings are painful and cause swelling, and wasps can sting many times",
+        "Some people have severe allergic reactions (anaphylaxis) that can be life-threatening",
+        "Many stings at once can cause serious illness, including kidney damage, even without an allergy",
+        "Stings in the mouth or throat can cause dangerous swelling"
+      ],
+      "safeSteps": [
+        "Stay well back from nests and keep children and pets away; do not swat at wasps or throw things at a nest, and get medical care for any strong reaction to a sting",
+        "Get emergency medical care for trouble breathing, swelling of the face, lips or throat, dizziness, fainting, a sting in the mouth or throat, or many stings",
+        "If many wasps or bees attack, run to a building or vehicle while covering your face; do not jump into water",
+        "Cover food and drinks outdoors, and check open drink cans before sipping",
+        "Keep garbage bins closed and pick up fallen fruit",
+        "Note where wasps fly to and from, and avoid that area"
+      ],
+      "callProfessionalWhen": [
+        "A nest is near doors, windows, play areas or walkways",
+        "A nest is inside a wall, roof or underground",
+        "Anyone in the home is allergic to stings"
+      ],
+      "firstAid": [
+        "Move away from the area",
+        "If a stinger is left in the skin (honey bee), scrape it out with a fingernail or card; do not squeeze it or use tweezers",
+        "Wash the sting with soap and water; a cold pack can ease swelling",
+        "Get emergency medical care for any sign of a severe allergic reaction or for many stings",
+        "If the person has a known sting allergy and a prescribed adrenaline (epinephrine) auto-injector, use it and go to hospital at once",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7450.html",
+        "https://ipm.ucanr.edu/home-and-landscape/bee-and-wasp-stings/",
+        "https://www.cdc.gov/niosh/outdoor-workers/about/insects-and-scorpions.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "house_spider",
+      "names": { "en": "House / cellar spider", "hi": "घरेलू मकड़ी" },
+      "group": "arachnid",
+      "safety": "low",
+      "summary": "Common indoor spiders, including cellar spiders with very long thin legs and small cobweb-building house spiders. They catch insects in their webs and are not considered medically important.",
+      "signs": [
+        "Small-bodied spider with very long, thin legs hanging upside down in a loose web, shaking rapidly when disturbed (cellar spider)",
+        "Small yellowish-brown spider with a rounded, mottled abdomen in a tangled cobweb (common house spider)",
+        "Cobwebs in ceiling corners, windows, basements and behind furniture",
+        "Small, round, papery brown egg sacs in webs"
+      ],
+      "lookAlikes": [
+        "widow_spider",
+        "recluse_spider",
+        "harvestmen (daddy-long-legs)",
+        "wolf_spider"
+      ],
+      "healthRisks": [
+        "Bites are rare and usually cause only short-lived local pain and redness",
+        "Not known to spread disease"
+      ],
+      "safeSteps": [
+        "Vacuum or sweep webs, spiders and egg sacs regularly",
+        "Move single spiders outdoors using a jar and a sheet of paper",
+        "Seal cracks and gaps around windows, doors and pipes, and keep screens in good repair",
+        "Reduce clutter, and store boxes off the floor and away from walls",
+        "Turn off outdoor lights near doors and windows or move them away, since lights attract the insects spiders eat"
+      ],
+      "callProfessionalWhen": [
+        "Spiders remain very numerous after cleaning, which may point to a large insect problem"
+      ],
+      "firstAid": [
+        "Wash a bite with soap and water",
+        "Get medical care for any unusual, spreading or severe reaction"
+      ],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7442.html",
+        "https://extension.psu.edu/common-house-spider"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "huntsman_spider",
+      "names": { "en": "Huntsman spider (giant crab spider)" },
+      "group": "arachnid",
+      "safety": "caution",
+      "summary": "Large, flat, fast-running brown spiders with long legs that spread sideways like a crab's. They hunt insects such as cockroaches on walls at night instead of catching them in webs; bites are uncommon but can be painful.",
+      "signs": [
+        "Large brown spider with a leg span that can reach about 10 to 12 cm, legs spread sideways like a crab's",
+        "Flattened body; often seen high on walls or behind curtains, pictures and furniture at night",
+        "Very fast, sideways movement when disturbed",
+        "Females carrying a large, flat, white egg sac under the body"
+      ],
+      "lookAlikes": [
+        "wolf_spider",
+        "recluse_spider",
+        "ornamental tarantulas (Poecilotheria, protected)"
+      ],
+      "healthRisks": [
+        "May bite if handled or trapped against the skin; bites can be painful with local swelling",
+        "Not known to spread disease"
+      ],
+      "safeSteps": [
+        "Stay well back and do not handle it. If it is a thick, hairy spider with bold black, white, grey or yellow patterns, it may be a protected ornamental tarantula: do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it. Otherwise, gently guide it into a large container and release it outdoors",
+        "Shake out clothes, towels and shoes that have been left on the floor",
+        "Seal gaps around doors, windows and vents",
+        "Reduce the cockroaches and other insects it feeds on"
+      ],
+      "callProfessionalWhen": [
+        "Many large spiders keep appearing indoors",
+        "The spider could be an ornamental tarantula; contact the State Forest Department or a rescuer authorised by it"
+      ],
+      "firstAid": [
+        "Wash a bite with soap and water; a cold pack may ease local pain",
+        "Get medical care for severe pain, spreading swelling or any allergic reaction"
+      ],
+      "legal": "Indian ornamental tarantulas (Poecilotheria) are listed in Schedule II of the schedules substituted by the Wild Life (Protection) Amendment Act, 2022 (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022); common huntsman spiders are not listed. If a large, hairy, boldly patterned spider could be an ornamental tarantula, do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+      "sources": [
+        "https://australian.museum/learn/animals/spiders/huntsman-spiders/",
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7442.html",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/The%20Wild%20Life%20(Protection)%20Amendment%20Act,%202022.pdf"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "jumping_spider",
+      "names": { "en": "Jumping spider" },
+      "group": "arachnid",
+      "safety": "low",
+      "summary": "Small, compact, often hairy spiders with large front eyes that stalk and jump on insects. They are common on walls, windows and plants and rarely bite.",
+      "signs": [
+        "Small (usually under about 1.5 cm), stocky spider with two very large forward-facing eyes",
+        "Jerky walking and sudden jumps; turns to watch movement",
+        "Often seen in daylight on sunny walls, window sills and plants",
+        "Small silk retreats in the corners of window frames"
+      ],
+      "lookAlikes": [
+        "widow_spider",
+        "wolf_spider",
+        "ants"
+      ],
+      "healthRisks": [
+        "Bites are uncommon and usually cause mild, short-lived pain",
+        "Not known to spread disease"
+      ],
+      "safeSteps": [
+        "Leave it alone outdoors, where it eats pest insects",
+        "If found indoors, move it outside with a jar and a sheet of paper",
+        "Seal gaps around windows and doors"
+      ],
+      "callProfessionalWhen": [
+        "Rarely needed; only if many spiders appear together with a large insect problem"
+      ],
+      "firstAid": [
+        "Wash a bite with soap and water, and get medical care for any unusual reaction"
+      ],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7442.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "widow_spider",
+      "names": { "en": "Widow spider (black widow / brown widow)" },
+      "group": "arachnid",
+      "safety": "venomous",
+      "summary": "Spiders of the genus Latrodectus, including black and brown widows, with a shiny round abdomen often marked underneath with a red or orange hourglass. A bite from an adult female can cause serious illness and needs medical care.",
+      "signs": [
+        "Shiny black or mottled brown spider with a round abdomen and a red, orange or yellow hourglass mark underneath (the mark may be faint or missing)",
+        "Messy, irregular, strong cobwebs in sheltered spots such as woodpiles, under furniture, in garages, sheds and outdoor toilets",
+        "Round egg sacs in the web: smooth and pale (black widow) or covered in small spikes like a pollen grain (brown widow)",
+        "Spider hanging upside down in the web, often at night"
+      ],
+      "lookAlikes": [
+        "house_spider",
+        "false widow spiders",
+        "jumping_spider"
+      ],
+      "healthRisks": [
+        "Bites from adult females can cause severe pain, muscle cramps, rigid stomach muscles, sweating, nausea, a fast heartbeat, high blood pressure and restlessness",
+        "Children, older adults and people in poor health are at higher risk",
+        "Bites are rare and usually happen when the spider is pressed against the skin"
+      ],
+      "safeSteps": [
+        "Stay well back and do not touch the spider or its web; if bitten, stay calm and get medical care promptly",
+        "Wear gloves when moving wood, stones, boxes or garden debris",
+        "Shake out shoes, gloves and clothes that have been stored or left outside",
+        "Reduce clutter and woodpiles near the house, and seal gaps around doors and windows",
+        "Store items in sealed bags or taped boxes kept off the floor"
+      ],
+      "callProfessionalWhen": [
+        "Widow spiders are found indoors or where children play",
+        "Several webs are found around the home"
+      ],
+      "firstAid": [
+        "Get medical care promptly for any suspected widow spider bite",
+        "Wash the bite with soap and water; a cold pack may ease the pain, and raise the bitten limb if possible",
+        "Do not cut, suck or squeeze the bite",
+        "If it can be done without going near the spider, photograph it to show the doctor",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/home-and-landscape/widow-spiders-and-their-relatives/",
+        "https://www.cdc.gov/niosh/outdoor-workers/about/venomous-spiders.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "recluse_spider",
+      "names": { "en": "Recluse spider (violin spider)" },
+      "group": "arachnid",
+      "safety": "venomous",
+      "summary": "Brown spiders of the genus Loxosceles that hide in dry, undisturbed places. A bite can sometimes cause a slow-healing skin wound; most brown spiders people find turn out to be other species.",
+      "signs": [
+        "Light to medium brown spider of one even colour, body up to about 1 cm, with long thin legs",
+        "Six eyes in three pairs (most spiders have eight); a dark violin-shaped mark behind the eyes may be present but is not a reliable sign",
+        "Legs without spines and of one colour; abdomen of one colour with fine hairs",
+        "Found in dark, undisturbed places such as boxes, cupboards, behind furniture, in shoes and in storerooms"
+      ],
+      "lookAlikes": [
+        "house_spider",
+        "wolf_spider",
+        "huntsman_spider"
+      ],
+      "healthRisks": [
+        "Most bites cause only redness and swelling, but some cause a spreading sore or skin damage that needs medical care",
+        "Rarely, especially in children, a bite can cause fever, chills, vomiting, dark urine or body-wide illness, which needs urgent hospital care",
+        "Many skin wounds blamed on spider bites have other causes, such as bacterial infections, so a doctor's assessment matters"
+      ],
+      "safeSteps": [
+        "Stay well back and do not handle the spider; if bitten, get medical care",
+        "Shake out clothes, shoes and bedding that have been stored or left on the floor",
+        "Move beds away from walls and clear items stored under beds",
+        "Store seldom-used items in sealed boxes and reduce clutter",
+        "Seal cracks and utility openings; to see where spiders are active, place small covered monitoring traps inside cupboards and storerooms, out of reach of children, pets and lizards, and check them daily"
+      ],
+      "callProfessionalWhen": [
+        "Several spiders that look like recluse spiders are found in the home",
+        "You are not sure of the identification; an expert can check a clear photo taken from well back"
+      ],
+      "firstAid": [
+        "Get medical care for any suspected recluse bite, especially if a blister, spreading redness or a dark sore develops",
+        "Wash the bite with soap and water and apply a cold pack",
+        "Do not cut, suck or squeeze the bite",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7468.html",
+        "https://www.cdc.gov/niosh/outdoor-workers/about/venomous-spiders.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "wolf_spider",
+      "names": { "en": "Wolf spider" },
+      "group": "arachnid",
+      "safety": "caution",
+      "summary": "Robust, hairy, brown or grey ground-hunting spiders that chase their prey instead of using webs. Females carry their egg sac and spiderlings on their bodies; bites are uncommon and usually mild but can be painful.",
+      "signs": [
+        "Robust brown or grey spider, often with darker stripes on the back, running across floors and the ground",
+        "Female carrying a round egg sac attached to the rear of the body, or many spiderlings on her back",
+        "Eyes that shine back when lit by a torch at night",
+        "Found under stones, boards, firewood and along walls, mainly at night"
+      ],
+      "lookAlikes": [
+        "huntsman_spider",
+        "recluse_spider",
+        "house_spider",
+        "jumping_spider"
+      ],
+      "healthRisks": [
+        "May bite if handled or trapped against the skin, causing pain, redness and swelling that usually fade within a day",
+        "Not known to spread disease"
+      ],
+      "safeSteps": [
+        "Stay well back and avoid handling it; move it outdoors with a jar and a sheet of paper",
+        "Seal gaps under doors and around windows and pipes",
+        "Clear firewood, stones, boards and debris from near the walls",
+        "Reduce outdoor lighting near doors, which attracts the insects it hunts"
+      ],
+      "callProfessionalWhen": [
+        "Many spiders keep entering the house"
+      ],
+      "firstAid": [
+        "Wash a bite with soap and water",
+        "Get medical care for severe pain, spreading redness or any allergic reaction"
+      ],
+      "legal": null,
+      "sources": [
+        "https://extension.psu.edu/wolf-spiders",
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7442.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "scorpion",
+      "names": { "en": "Scorpion (including Indian red scorpion)", "hi": "बिच्छू" },
+      "group": "arachnid",
+      "safety": "venomous",
+      "summary": "Eight-legged animals with pincers and a curved tail that ends in a stinger, active at night. In India, the Indian red scorpion (Hottentotta tamulus) is medically important: its sting can cause life-threatening illness, especially in children.",
+      "signs": [
+        "Animal with a pair of pincers and a segmented tail curved over the back, ending in a stinger",
+        "Reddish-brown to orange, about 5 to 9 cm (Indian red scorpion), or larger and black (forest scorpions)",
+        "Hiding by day under stones, bricks, firewood, debris, shoes or cloth and in wall cracks; active at night",
+        "Glows blue-green under ultraviolet (UV) light"
+      ],
+      "lookAlikes": [
+        "black forest scorpions (Heterometrus)",
+        "whip scorpions",
+        "pseudoscorpions",
+        "giant_centipede"
+      ],
+      "healthRisks": [
+        "Stings cause intense burning pain, and a sting from the Indian red scorpion can lead to severe illness affecting the heart and lungs",
+        "Warning signs that need urgent hospital care: vomiting, heavy sweating, drooling, cold hands and feet, a very fast or very slow heartbeat, restlessness, chest discomfort, breathing difficulty, or a persistent painful erection in boys and men",
+        "Children and older adults are at the highest risk",
+        "Do not judge the danger by the scorpion's size or colour; every sting in a child is an emergency"
+      ],
+      "safeSteps": [
+        "Stay well back and do not try to pick up or corner a scorpion; any sting in a child, or any sting followed by sweating, vomiting or breathing trouble, needs urgent hospital care",
+        "Shake out shoes, clothes, towels and bedding before use, and use a torch when walking at night",
+        "Wear shoes outdoors, and gloves when moving bricks, stones, firewood or debris",
+        "Clear debris, stones and firewood away from the house, and check firewood before bringing it inside",
+        "Seal cracks in walls and floors, fit door sweeps, and keep window screens in repair",
+        "Keep beds and cots away from walls, and keep bedding from touching the floor"
+      ],
+      "callProfessionalWhen": [
+        "Scorpions are found indoors more than once",
+        "You live near fields, rocks or construction debris where many scorpions are seen"
+      ],
+      "firstAid": [
+        "Go to the nearest hospital or health centre quickly, especially for children; do not wait for symptoms to get worse",
+        "Keep the person calm and still",
+        "Do not cut or suck the sting site, and do not tie a tight band",
+        "Do not put herbs, pastes or anything else on the sting, and do not go to traditional healers instead of hospital, which can delay care",
+        "Note the time of the sting and, if it can be done without going near it, photograph the scorpion for the doctor",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": null,
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/36505581/",
+        "https://pubmed.ncbi.nlm.nih.gov/25075837/",
+        "https://pubmed.ncbi.nlm.nih.gov/37018229/",
+        "https://pubmed.ncbi.nlm.nih.gov/39391710/",
+        "https://pubmed.ncbi.nlm.nih.gov/39043168/",
+        "https://ipm.ucanr.edu/home-and-landscape/scorpions/"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "giant_centipede",
+      "names": { "en": "Giant centipede (Scolopendra)", "hi": "कनखजूरा" },
+      "group": "other",
+      "safety": "venomous",
+      "summary": "Large, flat, segmented centipedes, often 10 cm or longer, with one pair of legs per segment and a pair of strong biting claws behind the head. They hunt at night and can give a very painful bite.",
+      "signs": [
+        "Long, flattened body with many segments and one pair of legs on each segment; often reddish, orange, brown or blue-black",
+        "Fast, snake-like running; does not curl into a coil like a millipede",
+        "Hiding under stones, bricks, logs, leaf litter and damp cloth, and in bathrooms or drains",
+        "Active at night, especially in the rainy season"
+      ],
+      "lookAlikes": [
+        "millipede",
+        "house_centipede",
+        "earwig",
+        "scorpion",
+        "snake"
+      ],
+      "healthRisks": [
+        "Bites cause intense pain, swelling, redness and sometimes numbness",
+        "Rarely, bites cause a severe allergic reaction, heart strain with chest pain, or a serious wound infection; children are at higher risk"
+      ],
+      "safeSteps": [
+        "Stay well back and do not try to pick it up, even with gloves; if bitten, get medical care",
+        "Shake out shoes, clothes and bedding, especially in the rainy season",
+        "Wear gloves and shoes when moving stones, bricks, wood or garden debris",
+        "Clear leaf litter, rotting wood and debris away from the house, and keep bathrooms and storage areas dry",
+        "Seal cracks and gaps under doors, and screen drains"
+      ],
+      "callProfessionalWhen": [
+        "Large centipedes are found indoors repeatedly"
+      ],
+      "firstAid": [
+        "Wash the bite with soap and water",
+        "Get medical care for severe pain or spreading swelling, especially in children",
+        "Get emergency care for chest pain, trouble breathing, swelling of the face or fainting",
+        "See a doctor if redness spreads, pus forms or fever starts in the days after the bite",
+        "Do not cut the bite, and do not put herbs, pastes or anything else on it",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": null,
+      "sources": [
+        "https://ipm.ucanr.edu/home-and-landscape/centipedes-and-millipedes/",
+        "https://pubmed.ncbi.nlm.nih.gov/22135485/",
+        "https://pubmed.ncbi.nlm.nih.gov/39723015/",
+        "https://pubmed.ncbi.nlm.nih.gov/36350797/"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "house_mouse",
+      "names": { "en": "House mouse", "hi": "चुहिया" },
+      "group": "rodent",
+      "safety": "medicalRisk",
+      "summary": "A small grey-brown rodent with large ears and a long tail that lives in and around buildings, eating and fouling stored food. Its droppings, urine and nests can spread illness.",
+      "signs": [
+        "Small rodent, body about 7 to 9 cm, with large ears, a pointed snout and a thin tail about as long as the body",
+        "Small rod-shaped droppings about 3 to 6 mm long, often pointed at the ends, near food, in drawers and in cupboards",
+        "Gnawed packets, holes in food bags and small gnaw marks on wood or wires",
+        "Nests of finely shredded paper, cloth or other soft material behind boxes or appliances",
+        "Scratching, scurrying and squeaking at night, and a musky smell where many live"
+      ],
+      "lookAlikes": [
+        "house_shrew",
+        "black_rat",
+        "brown_rat"
+      ],
+      "healthRisks": [
+        "Urine, droppings and saliva can carry germs that cause illnesses such as salmonella infection, leptospirosis and lymphocytic choriomeningitis (LCM)",
+        "LCM infection in pregnancy can cause miscarriage or serious birth defects; pregnant women should avoid mice and their droppings",
+        "Bites, scratches or contact with mouse saliva or urine can pass on rat-bite fever",
+        "Mouse allergens can trigger asthma, especially in children",
+        "Gnawed electrical wires can cause fires"
+      ],
+      "safeSteps": [
+        "Stay well back from mice, droppings and nests, do not touch them with bare hands, keep children and pets away, and get medical care for any bite",
+        "Before cleaning up droppings, urine or nests, open doors and windows for 30 minutes; then, wearing gloves, soak them with a household disinfectant for 5 minutes, wipe them up with paper towels and throw them away in a closed bag; do not sweep or vacuum them dry, and wash hands with soap and water afterwards",
+        "Seal gaps larger than about 6 mm with metal mesh, sheet metal or cement; plastic, rubber, foam and wood are easily gnawed",
+        "Store food and grain in metal, glass or thick plastic containers with tight lids, and clean up spills",
+        "Reduce clutter and nesting places, and keep garbage in closed bins",
+        "Avoid wading, bathing or swimming in floodwater or muddy water that may hold rat urine; wear boots and cover cuts with waterproof dressings",
+        "Do not use glue boards (sticky rat traps); rodents, shrews, lizards and birds caught on them suffer for a long time, and the Animal Welfare Board of India has directed states to ban them",
+        "Where lawful, set snap traps along walls and in dark corners, out of reach of children and pets, check them daily, and handle traps and dead mice with gloves"
+      ],
+      "callProfessionalWhen": [
+        "Droppings keep appearing after a few weeks of sealing and trapping",
+        "Mice are in food stores, shops, kitchens or many rooms"
+      ],
+      "firstAid": [
+        "Wash any bite or scratch with soap and running water and get medical care",
+        "See a doctor for fever, body aches or yellow eyes after contact with rodents or their urine, and mention the contact; rat-bite fever can start up to three weeks after contact",
+        "Watch for fever for up to 30 days after contact with floodwater; passing little urine, breathlessness or coughing blood is an emergency, so go to hospital at once",
+        "Ask the doctor whether you need a tetanus injection",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": "Common house rats, house mice and bandicoot rats are not listed in Schedule I or II of the Wild Life (Protection) Act, 1972, as amended in 2022; the old vermin schedule that named rats and mice was removed, and only a few rare forest rats and mice are listed (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022). The Prevention of Cruelty to Animals Act, 1960, still applies to how any animal is trapped, and the Animal Welfare Board of India has directed states to ban glue traps.",
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn7483.html",
+        "https://www.cdc.gov/healthy-pets/rodent-control/clean-up.html",
+        "https://www.cdc.gov/healthy-pets/rodent-control/index.html",
+        "https://www.cdc.gov/leptospirosis/about/index.html",
+        "https://www.cdc.gov/leptospirosis/prevention/index.html",
+        "https://www.cdc.gov/lymphocytic-choriomeningitis/about/index.html",
+        "https://www.cdc.gov/rat-bite-fever/about/index.html",
+        "https://awbi.gov.in/uploads/circular/163281872681Directions%20to%20ban%20the%20glue%20traps.pdf",
+        "https://awbi.gov.in/uploads/circular/171818292366GlueTrap%20Circular_4-8-2001.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "black_rat",
+      "names": { "en": "Black rat (roof rat / house rat)", "hi": "घरेलू चूहा" },
+      "group": "rodent",
+      "safety": "medicalRisk",
+      "summary": "A slender, agile rat with a pointed snout, large ears and a tail longer than its body that climbs well and often lives in roofs, ceilings, stores and trees. It is a common house rat in much of India.",
+      "signs": [
+        "Slender dark grey-brown to black rat; tail longer than the head and body, and ears large enough to reach the eyes when folded forward",
+        "Spindle-shaped droppings about 1 to 1.5 cm long, pointed at the ends",
+        "Running, scratching or gnawing noises in ceilings, roofs and walls at night",
+        "Dark greasy rub marks along beams, pipes and walls",
+        "Gnawed fruit, grain sacks, wires and packaging, especially in high places"
+      ],
+      "lookAlikes": [
+        "brown_rat",
+        "bandicoot_rat",
+        "house_mouse",
+        "palm_squirrel",
+        "house_shrew",
+        "palm_civet"
+      ],
+      "healthRisks": [
+        "Urine and droppings can spread leptospirosis, especially during floods and heavy rain",
+        "Rats can spread rat-bite fever, salmonella and murine typhus, and their fleas have spread plague",
+        "Gnawed wiring can cause fires"
+      ],
+      "safeSteps": [
+        "Stay well back from rats, droppings and nests, do not touch them with bare hands, keep children and pets away, and get medical care for any rat bite or scratch",
+        "Before cleaning up droppings, urine or nests, open doors and windows for 30 minutes; then, wearing gloves, soak them with a household disinfectant for 5 minutes, wipe them up with paper towels and throw them away in a closed bag; do not sweep or vacuum them dry, and wash hands with soap and water afterwards",
+        "Trim tree branches and creepers away from the roof, and seal roof and wall gaps larger than about 6 mm with metal mesh or sheet metal",
+        "Cover vents and drains with strong metal mesh",
+        "Store food, grain and animal feed in metal or other containers rats cannot easily gnaw through, and keep garbage in closed bins",
+        "Avoid wading, bathing or swimming in floodwater or muddy water that may hold rat urine; wear boots and cover cuts with waterproof dressings",
+        "Do not use glue boards (sticky rat traps); rodents, shrews, lizards and birds caught on them suffer for a long time, and the Animal Welfare Board of India has directed states to ban them",
+        "Where lawful, set snap traps only inside closed rooms or covered boxes that squirrels, birds and civets cannot enter; set them after dark, close them at dawn, and check them daily. If any animal other than a rat is caught or hurt, contact the State Forest Department"
+      ],
+      "callProfessionalWhen": [
+        "Rats are seen in daylight, or there are many droppings in several places",
+        "Rats are in grain stores, shops or food businesses",
+        "Several dead rats are found; also inform your local health department",
+        "Heavy thumping in the roof at night, a strong musky smell, or a pile of seed-filled droppings in one spot may mean an Asian palm civet, which is protected; do not trap it, and contact the State Forest Department or a rescuer authorised by it"
+      ],
+      "firstAid": [
+        "Wash bites and scratches with soap and running water and get medical care",
+        "See a doctor promptly for fever, muscle pain, red eyes or yellow eyes after contact with rats or floodwater; rat-bite fever can start up to three weeks after a bite or scratch",
+        "Watch for fever for up to 30 days after contact with floodwater; passing little urine, breathlessness or coughing blood is an emergency, so go to hospital at once",
+        "Ask the doctor whether you need a tetanus injection",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": "Common house rats, house mice and bandicoot rats are not listed in Schedule I or II of the Wild Life (Protection) Act, 1972, as amended in 2022; the old vermin schedule that named rats and mice was removed, and only a few rare forest rats and mice are listed (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022). The Prevention of Cruelty to Animals Act, 1960, still applies to how any animal is trapped, and the Animal Welfare Board of India has directed states to ban glue traps.",
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn74106.html",
+        "https://www.cdc.gov/healthy-pets/rodent-control/clean-up.html",
+        "https://www.cdc.gov/leptospirosis/about/index.html",
+        "https://www.cdc.gov/leptospirosis/prevention/index.html",
+        "https://www.cdc.gov/rat-bite-fever/about/index.html",
+        "https://www.who.int/news-room/fact-sheets/detail/plague",
+        "https://awbi.gov.in/uploads/circular/163281872681Directions%20to%20ban%20the%20glue%20traps.pdf",
+        "https://awbi.gov.in/uploads/circular/171818292366GlueTrap%20Circular_4-8-2001.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "brown_rat",
+      "names": { "en": "Brown rat (Norway rat / sewer rat)" },
+      "group": "rodent",
+      "safety": "medicalRisk",
+      "summary": "A large, heavy-bodied rat with a blunt snout, small ears and a tail shorter than its body that burrows in soil and lives in sewers, drains and ground floors. It is common in cities and ports.",
+      "signs": [
+        "Large grey-brown rat with a blunt muzzle, small ears and a thick tail shorter than the head and body, dark above and pale below",
+        "Capsule-shaped droppings with blunt ends, about 1.5 to 2 cm long",
+        "Burrows along foundations and under garbage bins, woodpiles and drains",
+        "Greasy rub marks low along walls, and gnawing or scratching sounds at floor level at night"
+      ],
+      "lookAlikes": [
+        "black_rat",
+        "bandicoot_rat",
+        "house_mouse",
+        "house_shrew"
+      ],
+      "healthRisks": [
+        "Urine and droppings can spread leptospirosis, especially during floods and heavy rain",
+        "Rats can spread rat-bite fever, salmonella and murine typhus",
+        "Their fleas can carry plague; do not handle dead rats, and report several dead rats to the health department",
+        "Gnawed wiring and pipes can cause fires and leaks"
+      ],
+      "safeSteps": [
+        "Stay well back from rats, droppings and nests, do not touch them with bare hands, keep children and pets away, and get medical care for any rat bite or scratch",
+        "Before cleaning up droppings, urine or nests, open doors and windows for 30 minutes; then, wearing gloves, soak them with a household disinfectant for 5 minutes, wipe them up with paper towels and throw them away in a closed bag; do not sweep or vacuum them dry, and wash hands with soap and water afterwards",
+        "Seal gaps at ground level and around pipes larger than about 6 mm with metal mesh, sheet metal or cement",
+        "Cover drains and floor traps with strong grates, and repair broken drain and sewer pipes",
+        "Remove garbage, debris and woodpiles near the building, and keep bins closed",
+        "Avoid wading, bathing or swimming in floodwater or muddy water that may hold rat urine; wear boots and cover cuts with waterproof dressings",
+        "Do not use glue boards (sticky rat traps); rodents, shrews, lizards and birds caught on them suffer for a long time, and the Animal Welfare Board of India has directed states to ban them",
+        "Where lawful, set snap traps flush against walls in dark corners, inside covered boxes that children, pets and birds cannot reach, and check them daily"
+      ],
+      "callProfessionalWhen": [
+        "Rats are seen in daylight, or burrows are found around the building",
+        "Rats are coming from sewers or drains; also inform your municipal office",
+        "Rats are in food stores, shops or food businesses"
+      ],
+      "firstAid": [
+        "Wash bites and scratches with soap and running water and get medical care",
+        "See a doctor promptly for fever, muscle pain, red eyes or yellow eyes after contact with rats or floodwater; rat-bite fever can start up to three weeks after a bite or scratch",
+        "Watch for fever for up to 30 days after contact with floodwater; passing little urine, breathlessness or coughing blood is an emergency, so go to hospital at once",
+        "Ask the doctor whether you need a tetanus injection",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": "Common house rats, house mice and bandicoot rats are not listed in Schedule I or II of the Wild Life (Protection) Act, 1972, as amended in 2022; the old vermin schedule that named rats and mice was removed, and only a few rare forest rats and mice are listed (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022). The Prevention of Cruelty to Animals Act, 1960, still applies to how any animal is trapped, and the Animal Welfare Board of India has directed states to ban glue traps.",
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn74106.html",
+        "https://www.cdc.gov/healthy-pets/rodent-control/clean-up.html",
+        "https://www.cdc.gov/healthy-pets/rodent-control/index.html",
+        "https://www.cdc.gov/leptospirosis/about/index.html",
+        "https://www.cdc.gov/leptospirosis/prevention/index.html",
+        "https://www.cdc.gov/rat-bite-fever/about/index.html",
+        "https://www.who.int/news-room/fact-sheets/detail/plague",
+        "https://awbi.gov.in/uploads/circular/163281872681Directions%20to%20ban%20the%20glue%20traps.pdf",
+        "https://awbi.gov.in/uploads/circular/171818292366GlueTrap%20Circular_4-8-2001.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "bandicoot_rat",
+      "names": { "en": "Bandicoot rat", "hi": "घूस" },
+      "group": "rodent",
+      "safety": "medicalRisk",
+      "summary": "Large, heavy rats of South Asia (Bandicota) that dig extensive burrows in fields, gardens, godowns and under buildings. They damage and hoard stored grain and are an important rodent pest in India.",
+      "signs": [
+        "Large, dark grey-brown rat with a rounded head, long coarse hair and a tail shorter than the body; may raise its hair and grunt when cornered",
+        "Burrow openings with fresh mounds of loose soil in fields and gardens, along walls and under floors",
+        "Large droppings, and grain or soil spilling from holes in the floors and walls of stores",
+        "Grain hoarded inside burrows, and damage to sacks, floors and drains"
+      ],
+      "lookAlikes": [
+        "brown_rat",
+        "black_rat",
+        "Indian gerbil"
+      ],
+      "healthRisks": [
+        "Can spread leptospirosis and other rat-borne infections through urine and droppings",
+        "Their fleas can carry plague; several dead rats in one place should be reported to health authorities",
+        "May bite when cornered"
+      ],
+      "safeSteps": [
+        "Stay well back and do not corner or handle bandicoot rats; get medical care for any bite",
+        "Store grain in metal bins or on raised platforms, and keep storerooms clear of spilled grain",
+        "Build or repair floors and walls with concrete, and fit metal sheets or mesh at the base of doors",
+        "Close or firm down burrow openings and check the next day; reopened burrows show where rats are active. Never put hands into burrows; snakes often shelter in rat burrows",
+        "Clear weeds, debris and garbage near stores and houses",
+        "Avoid wading, bathing or swimming in floodwater or muddy water that may hold rat urine; wear boots and cover cuts with waterproof dressings",
+        "Do not use glue boards (sticky rat traps); rodents, shrews, lizards and birds caught on them suffer for a long time, and the Animal Welfare Board of India has directed states to ban them",
+        "Where lawful, set strong snap traps inside covered runways or boxes that mongooses, squirrels, birds and snakes cannot enter, and check them daily. If a mongoose, snake or other wild animal is caught or hurt, contact the State Forest Department"
+      ],
+      "callProfessionalWhen": [
+        "There are many active burrows in godowns, warehouses or around buildings; call a licensed pest-control professional",
+        "For rats in fields, contact your local agricultural extension office or Krishi Vigyan Kendra"
+      ],
+      "firstAid": [
+        "Wash bites and scratches with soap and running water and get medical care",
+        "See a doctor promptly for fever, muscle pain, red eyes or yellow eyes after contact with rats, their burrows or floodwater",
+        "Watch for fever for up to 30 days after contact with floodwater; passing little urine, breathlessness or coughing blood is an emergency, so go to hospital at once",
+        "Ask the doctor whether you need a tetanus injection",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": "Common house rats, house mice and bandicoot rats are not listed in Schedule I or II of the Wild Life (Protection) Act, 1972, as amended in 2022; the old vermin schedule that named rats and mice was removed, and only a few rare forest rats and mice are listed (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022). The Prevention of Cruelty to Animals Act, 1960, still applies to how any animal is trapped, and the Animal Welfare Board of India has directed states to ban glue traps.",
+      "sources": [
+        "https://ipm.ucanr.edu/PMG/PESTNOTES/pn74106.html",
+        "https://www.cdc.gov/healthy-pets/rodent-control/index.html",
+        "https://www.cdc.gov/leptospirosis/about/index.html",
+        "https://www.cdc.gov/leptospirosis/prevention/index.html",
+        "https://www.who.int/news-room/fact-sheets/detail/plague",
+        "https://awbi.gov.in/uploads/circular/163281872681Directions%20to%20ban%20the%20glue%20traps.pdf",
+        "https://awbi.gov.in/uploads/circular/171818292366GlueTrap%20Circular_4-8-2001.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "house_shrew",
+      "names": { "en": "Asian house shrew (not a rodent)", "hi": "छछूंदर" },
+      "group": "other",
+      "safety": "medicalRisk",
+      "summary": "A grey, mouse-sized, insect-eating mammal (Suncus murinus) with a long pointed snout and a strong musky smell, often mistaken for a mouse or rat. It is not a rodent, but it can carry leptospirosis, and its droppings and smell can foul stored food.",
+      "signs": [
+        "Grey to brownish-grey velvety fur, a long, pointed, twitching snout, tiny eyes and small ears",
+        "Runs along walls at night, often making high-pitched chattering, clicking or chirping sounds",
+        "A strong musky smell in rooms or on food it has touched",
+        "Five clawed toes on each foot"
+      ],
+      "lookAlikes": [
+        "house_mouse",
+        "black_rat",
+        "brown_rat"
+      ],
+      "healthRisks": [
+        "Can bite if handled",
+        "Can carry leptospirosis germs in its urine, like rats",
+        "Droppings and its musky smell can contaminate stored food, and it may carry fleas"
+      ],
+      "safeSteps": [
+        "Stay well back and do not handle it with bare hands, as it may bite; open a door and gently guide it outside with a broom, and get medical care for any bite",
+        "Seal gaps under doors and around pipes and drains",
+        "Store food in closed containers and keep floors free of food scraps",
+        "Reduce the cockroaches and other insects it feeds on",
+        "Before cleaning up droppings, urine or nests, open doors and windows for 30 minutes; then, wearing gloves, soak them with a household disinfectant for 5 minutes, wipe them up with paper towels and throw them away in a closed bag; do not sweep or vacuum them dry, and wash hands with soap and water afterwards",
+        "Do not use glue boards (sticky rat traps); rodents, shrews, lizards and birds caught on them suffer for a long time, and the Animal Welfare Board of India has directed states to ban them"
+      ],
+      "callProfessionalWhen": [
+        "Shrews or their droppings keep appearing in food stores or kitchens"
+      ],
+      "firstAid": [
+        "Wash any bite with soap and running water and get medical care",
+        "See a doctor for fever, muscle pain, or red or yellow eyes after contact with shrews or their droppings",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": "The Asian house shrew (Suncus murinus) is not listed in Schedule I or II of the Wild Life (Protection) Act, 1972, as amended in 2022; a rare relative, Day's shrew (Suncus dayi), is listed in Schedule I (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022). The Prevention of Cruelty to Animals Act, 1960, still applies to how any animal is trapped.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/42241184/",
+        "https://animaldiversity.org/accounts/Suncus_murinus/",
+        "https://www.cdc.gov/healthy-pets/rodent-control/clean-up.html",
+        "https://awbi.gov.in/uploads/circular/163281872681Directions%20to%20ban%20the%20glue%20traps.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "palm_squirrel",
+      "names": { "en": "Palm squirrel (three-striped / five-striped)", "hi": "गिलहरी" },
+      "group": "rodent",
+      "safety": "protectedWildlife",
+      "summary": "Small grey-brown squirrels with three or five pale stripes along the back and a bushy tail, common around homes and gardens in India; they are active by day and sometimes nest in roofs, ducts and cupboards. The five-striped palm squirrel is protected under the Wild Life (Protection) Act.",
+      "signs": [
+        "Small squirrel with three (mainly southern India) or five (mainly northern India) pale stripes on a grey-brown back, and a bushy tail",
+        "Active in daylight, running along walls, trees, wires and roofs",
+        "Loud, repeated, high-pitched chirping calls, often with tail flicks",
+        "Nests of grass, cloth and fibre in roof spaces, air-conditioner ducts, false ceilings or cupboards",
+        "Gnawed fruit, seeds and grain left out to dry, and sometimes gnawed wires"
+      ],
+      "lookAlikes": [
+        "black_rat",
+        "jungle palm squirrel"
+      ],
+      "healthRisks": [
+        "May bite or scratch if handled or cornered",
+        "Bites or scratches can rarely pass on rat-bite fever",
+        "Can carry fleas and mites"
+      ],
+      "safeSteps": [
+        "Do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+        "Stay well back and do not try to handle squirrels; let them leave on their own, and get medical care for any bite or scratch",
+        "Do not feed squirrels near the house, and cover grain and food set out to dry",
+        "Before sealing a hole, check that no squirrels or babies are inside: plug it loosely with paper and see whether it is pushed out",
+        "Seal gaps under eaves, at roof joints and around ducts with metal mesh only after the squirrels have left; never seal in young or remove a nest yourself",
+        "Trim branches that touch the roof or the wires leading to the house",
+        "Do not use glue boards (sticky traps) or rat traps where squirrels go; squirrels, rats, lizards and birds caught on glue boards suffer for a long time, and the Animal Welfare Board of India has directed states to ban them"
+      ],
+      "callProfessionalWhen": [
+        "A squirrel is trapped indoors or injured, or babies are in a nest that has to be moved; contact the State Forest Department or a rescuer authorised by it"
+      ],
+      "firstAid": [
+        "Wash any bite or scratch with soap and running water and get medical care",
+        "See a doctor for fever in the three weeks after a bite or scratch",
+        "Ask the doctor whether you need a tetanus injection"
+      ],
+      "legal": "The five-striped palm squirrel (Funambulus pennantii) is a protected wild animal: it is listed in Schedule II of the schedules substituted by the Wild Life (Protection) Amendment Act, 2022 (Schedule IV under the 1972 Act) (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022). Under the Act, hunting includes capturing, trapping or injuring an animal, and hunting a Schedule II animal is an offence. The three-striped palm squirrel (Funambulus palmarum) is hard to tell apart from it, so regard every palm squirrel as protected and do not disturb its nests. Do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+      "sources": [
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/Wild%20Life%20(Protection)%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/The%20Wild%20Life%20(Protection)%20Amendment%20Act,%202022.pdf",
+        "https://animaldiversity.org/accounts/Funambulus_pennantii/",
+        "https://www.cdc.gov/rat-bite-fever/about/index.html",
+        "https://awbi.gov.in/uploads/circular/163281872681Directions%20to%20ban%20the%20glue%20traps.pdf"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "house_gecko",
+      "names": { "en": "House gecko (wall lizard)", "hi": "छिपकली" },
+      "group": "reptile",
+      "safety": "low",
+      "summary": "Small, pale grey to brown lizards (Hemidactylus) with sticky toe pads that climb walls and ceilings and hunt insects near lights at night. They are common in Indian homes; they rarely bite, and the bite is weak.",
+      "signs": [
+        "Small lizard, about 7 to 15 cm long, pale grey, pinkish or brown and sometimes see-through, clinging to walls and ceilings",
+        "Gathers near lights at night to catch insects",
+        "Repeated chirping or clicking 'tchuk-tchuk' calls, by day or night",
+        "Small dark droppings with a white tip on floors, window sills and shelves",
+        "A dropped tail that keeps wriggling for a while"
+      ],
+      "lookAlikes": [
+        "tokay_gecko",
+        "skink",
+        "oriental_garden_lizard"
+      ],
+      "healthRisks": [
+        "Reptiles, including geckos, can carry Salmonella germs, and droppings can contaminate food and surfaces",
+        "May give a weak bite if handled"
+      ],
+      "safeSteps": [
+        "Leave it alone where possible; it eats insects such as mosquitoes and cockroaches",
+        "Keep food and water covered, wipe up droppings with a paper towel or gloves, and then wash hands with soap and water",
+        "If you are sure it is a common house gecko, place a box over it, slide a card underneath and release it outdoors",
+        "Seal gaps of about 6 mm or more around doors, windows, pipes and vents, and use door sweeps and window screens",
+        "Use yellow or fewer outdoor lights to attract fewer of the insects that geckos follow"
+      ],
+      "callProfessionalWhen": [
+        "Rarely needed; if a large, blue-grey gecko with orange or red spots is found (possibly a protected Tokay gecko), do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it"
+      ],
+      "firstAid": [
+        "Wash hands, and any bite, with soap and water",
+        "Throw away food a lizard has fallen into or fouled; germs can cause vomiting or diarrhoea, so see a doctor if these start"
+      ],
+      "legal": "Common house geckos (Hemidactylus) are not named in Schedule I or II of the Wild Life (Protection) Act, 1972, as amended in 2022. Some geckos are: the Tokay gecko (Gekko gecko) is listed in Schedule I, and several other geckos, including leopard geckos (Eublepharis), in Schedule II (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022). If you are not sure of the species, do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+      "sources": [
+        "https://animaldiversity.org/accounts/Hemidactylus_frenatus/",
+        "https://www.cdc.gov/healthy-pets/about/reptiles-and-amphibians.html",
+        "https://ipm.ucanr.edu/home-and-landscape/lizards/",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/The%20Wild%20Life%20(Protection)%20Amendment%20Act,%202022.pdf"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "oriental_garden_lizard",
+      "names": { "en": "Oriental garden lizard (garden lizard)", "hi": "बगीचे की छिपकली" },
+      "group": "reptile",
+      "safety": "low",
+      "summary": "A slender, long-tailed lizard (Calotes versicolor) with a crest of spines along the back, common on walls, fences and garden plants in India. Breeding males can turn bright orange to red on the head and throat.",
+      "signs": [
+        "Light brown to olive lizard with a long thin tail and a row of spines along the neck and back",
+        "Males with a bright orange or red head and throat in the breeding season",
+        "Active by day, basking on walls, fences, hedges and tree trunks, and bobbing its head",
+        "Changes colour from brown to darker or brighter shades",
+        "Often called गिरगिट in Hindi, a name also used for the protected Indian chameleon; check for turret-like eyes and gripping feet"
+      ],
+      "lookAlikes": [
+        "indian_chameleon",
+        "house_gecko",
+        "skink",
+        "monitor_lizard"
+      ],
+      "healthRisks": [
+        "Reptiles can carry Salmonella germs",
+        "May bite if caught or handled"
+      ],
+      "safeSteps": [
+        "Leave it alone outdoors, where it eats insects",
+        "Do not handle it; if one comes indoors, open a door or window and give it a clear way out",
+        "Wash hands with soap and water after touching anything it has been on",
+        "Seal gaps around doors and windows to keep lizards out"
+      ],
+      "callProfessionalWhen": [
+        "Rarely needed; if the animal could be a chameleon (slow-moving, with turret-like eyes and gripping feet), do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it"
+      ],
+      "firstAid": [
+        "Wash any bite with soap and water"
+      ],
+      "legal": "The oriental garden lizard (Calotes versicolor) is not named in Schedule I or II of the Wild Life (Protection) Act, 1972, as amended in 2022. The look-alike Indian chameleon (Chamaeleo zeylanicus) is listed in Schedule I (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022). If it could be a chameleon, do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+      "sources": [
+        "https://reptile-database.reptarium.cz/species?genus=Calotes&species=versicolor",
+        "https://www.cdc.gov/healthy-pets/about/reptiles-and-amphibians.html",
+        "https://ipm.ucanr.edu/home-and-landscape/lizards/",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/The%20Wild%20Life%20(Protection)%20Amendment%20Act,%202022.pdf"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "skink",
+      "names": { "en": "Skink" },
+      "group": "reptile",
+      "safety": "caution",
+      "summary": "Smooth, shiny lizards with short legs and a long body that move quickly through leaf litter and gardens and sometimes into ground-floor rooms. Common Indian skinks (Eutropis) are brown or bronze, often with stripes, and can be mistaken for small snakes.",
+      "signs": [
+        "Shiny, smooth, tightly overlapping scales that look polished or wet",
+        "Short legs and a long body; moves with a snake-like wriggle",
+        "Brown or bronze with darker or pale stripes along the sides",
+        "Active by day on the ground, in leaf litter, gardens, stone walls and ground-floor rooms"
+      ],
+      "lookAlikes": [
+        "house_gecko",
+        "oriental_garden_lizard",
+        "snake",
+        "Asian glass lizard",
+        "monitor_lizard"
+      ],
+      "healthRisks": [
+        "Reptiles can carry Salmonella germs",
+        "May bite if caught or handled; the bite is minor"
+      ],
+      "safeSteps": [
+        "If you are not sure whether it is a skink or a small snake, stay well back and keep children and pets away",
+        "Leave it alone outdoors, where it eats insects",
+        "If one comes indoors, open a door and give it a clear way out, or guide it into a box and release it outside",
+        "Wash hands with soap and water after touching anything it has been on",
+        "Seal gaps under doors and around pipes"
+      ],
+      "callProfessionalWhen": [
+        "Rarely needed; if you are not sure whether it is a skink or a snake, stay well back and contact the State Forest Department or a rescuer authorised by it"
+      ],
+      "firstAid": [
+        "Wash any bite with soap and water",
+        "If you think it may have been a snake bite, keep the person still and go to hospital at once"
+      ],
+      "legal": "Common skinks (Eutropis) are not named in Schedule I or II of the Wild Life (Protection) Act, 1972, as amended in 2022 (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022). Skinks can be mistaken for small snakes, and many Indian snakes are listed. If you are not sure, do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+      "sources": [
+        "https://reptile-database.reptarium.cz/species?genus=Eutropis&species=carinata",
+        "https://www.cdc.gov/healthy-pets/about/reptiles-and-amphibians.html",
+        "https://ipm.ucanr.edu/home-and-landscape/lizards/",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/The%20Wild%20Life%20(Protection)%20Amendment%20Act,%202022.pdf"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "monitor_lizard",
+      "names": { "en": "Monitor lizard (Bengal monitor)", "hi": "गोह" },
+      "group": "reptile",
+      "safety": "protectedWildlife",
+      "summary": "Large lizards (Varanus) with a long neck, a forked tongue, strong claws and a long, powerful tail; the Bengal monitor can reach about 1.75 m including the tail. Indian monitor lizards are protected under Schedule I of the Wild Life (Protection) Act.",
+      "signs": [
+        "Large grey, brown or olive lizard, often 60 cm to over 1.5 m long including the tail, with a long neck and loose skin",
+        "Long forked tongue flicking in and out like a snake's",
+        "Strong legs with curved claws; walks with the body raised and the tail swinging",
+        "Deep claw marks and a tail-drag line in soft soil",
+        "Loud hissing and body puffing when cornered"
+      ],
+      "lookAlikes": [
+        "oriental_garden_lizard",
+        "skink",
+        "Indian spiny-tailed lizard (protected)"
+      ],
+      "healthRisks": [
+        "Can bite, scratch with strong claws and lash with its tail if cornered or handled, causing deep wounds",
+        "Reptiles can carry Salmonella germs, and wounds can become infected"
+      ],
+      "safeSteps": [
+        "Stay well back and keep children and pets away; do not corner it, and leave it a clear way out",
+        "Do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+        "If it is inside a room, close inner doors, open a door to the outside and leave the room quietly",
+        "Note where it went and wait for help to arrive instead of trying to catch it yourself"
+      ],
+      "callProfessionalWhen": [
+        "It is inside a home, shop or store, or it is injured or trapped; contact the State Forest Department or a rescuer authorised by it"
+      ],
+      "firstAid": [
+        "Wash any bite or scratch with soap and running water and get medical care, as wounds can become infected",
+        "Ask the doctor whether you need a tetanus injection"
+      ],
+      "legal": "Bengal, desert, water and yellow monitor lizards (Varanus bengalensis, Varanus griseus, Varanus salvator and Varanus flavescens) are listed in Schedule I of the Wild Life (Protection) Act, 1972, as substituted by the Wild Life (Protection) Amendment Act, 2022 (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022). Hunting them, which under the Act includes capturing, trapping, injuring or disturbing their eggs or nests, is an offence, as is trading in them or their parts. Do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+      "sources": [
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/Wild%20Life%20(Protection)%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/The%20Wild%20Life%20(Protection)%20Amendment%20Act,%202022.pdf",
+        "https://animaldiversity.org/accounts/Varanus_bengalensis/"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "snake",
+      "names": { "en": "Snake", "hi": "साँप" },
+      "group": "reptile",
+      "safety": "venomous",
+      "summary": "Many kinds of snakes live around Indian homes, fields and stores, often hunting rats; a few, especially cobras, kraits, Russell's vipers and saw-scaled vipers, have bites that can cause death or lasting disability. Many Indian snakes are also protected by law.",
+      "signs": [
+        "Long, legless body covered in scales, with no eyelids and no ear openings",
+        "Tongue flicking in and out; moves in S-shaped curves",
+        "Shed skins in roofs, stores, wood piles or around rat burrows",
+        "Seen at dusk or at night near rat burrows, grain stores, cattle sheds, wood piles and drains, especially in the rainy season",
+        "A raised hood (cobras) or a loud hiss or rasping sound (vipers) when disturbed",
+        "Glossy black or blue-black body with thin white cross-bands (common krait), often found indoors at night"
+      ],
+      "lookAlikes": [
+        "skink",
+        "Asian glass lizard (legless lizard)",
+        "monitor_lizard",
+        "giant_centipede"
+      ],
+      "healthRisks": [
+        "Bites from cobras, kraits, Russell's vipers and saw-scaled vipers can cause death or lasting disability",
+        "Krait bites often happen at night to people sleeping on the floor and may be almost painless; stomach pain, weakness or drooping eyelids can be the first signs",
+        "Even a dead snake, or its cut-off head, can still bite"
+      ],
+      "safeSteps": [
+        "Stay well back from any snake, even one that looks dead, and keep children and pets away; if anyone is bitten, go to hospital at once",
+        "Do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+        "If a snake is inside, leave the room, keep others out, and watch where it goes from well back until help arrives",
+        "Sleep on a raised bed under a tucked-in mosquito net, especially in the rainy season",
+        "Use a torch and wear shoes when walking outside at night",
+        "Keep rats away, since snakes follow them: store grain in closed bins, and clear rubbish, wood piles and tall grass from around the house",
+        "Do not put hands into holes, burrows, wood piles or dark corners you cannot see into, and check shoes and bedding before use"
+      ],
+      "callProfessionalWhen": [
+        "Any snake is inside a home, store or cattle shed, or keeps coming back; contact the State Forest Department or a rescuer authorised by it",
+        "A snake is injured or trapped, for example in netting; contact the State Forest Department or a rescuer authorised by it"
+      ],
+      "firstAid": [
+        "Move away from the snake; do not try to catch it or touch it, even if it looks dead",
+        "Keep the person calm and still, keep the bitten limb still, and remove rings, watches and tight clothing",
+        "Go at once to the nearest hospital that can give anti-snake serum (ASV); do not wait for symptoms, and do not let the person drive",
+        "Do not cut or suck the bite, tie a tight band, apply ice or electric shock, or use herbs or traditional healers",
+        "Do not give alcohol, aspirin or ibuprofen",
+        "Stomach pain, weakness or drooping eyelids after a night sleeping on the floor may be a krait bite even without a visible mark; go to hospital at once",
+        "If it can be done from well back, photograph the snake for the doctor, but do not delay going to hospital",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": "Many Indian snakes are listed in the Wild Life (Protection) Act, 1972, as amended in 2022, including the Indian rock python and king cobra (Schedule I) and the spectacled cobra and rat snake (Schedule II) (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022). Hunting a listed snake, which under the Act includes capturing, trapping or injuring it, is an offence. Do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+      "sources": [
+        "https://www.who.int/publications/i/item/9789290225300",
+        "https://www.cdc.gov/niosh/outdoor-workers/about/venomous-snakes.html",
+        "https://www.who.int/news-room/fact-sheets/detail/snakebite-envenoming",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/Wild%20Life%20(Protection)%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/The%20Wild%20Life%20(Protection)%20Amendment%20Act,%202022.pdf"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "indian_chameleon",
+      "names": { "en": "Indian chameleon", "hi": "गिरगिट" },
+      "group": "reptile",
+      "safety": "protectedWildlife",
+      "summary": "A slow-moving lizard (Chamaeleo zeylanicus) with a tall, flattened body, eyes that turn separately, gripping feet and a curling tail, found in trees and hedges in much of India. It is protected under the Wild Life (Protection) Act.",
+      "signs": [
+        "Green, yellow or brown lizard with a tall, flattened body and a raised, helmet-like head",
+        "Large cone-shaped (turret) eyes that move separately in different directions",
+        "Toes joined into two gripping bundles on each foot, like tongs, and a tail that curls around twigs",
+        "Very slow, swaying walk along branches; changes colour, often darkening when disturbed",
+        "Catches insects with a very long tongue"
+      ],
+      "lookAlikes": [
+        "oriental_garden_lizard",
+        "green forest lizard (Calotes)"
+      ],
+      "healthRisks": [
+        "May hiss or bite if handled",
+        "Reptiles can carry Salmonella germs"
+      ],
+      "safeSteps": [
+        "Do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+        "Stay well back, keep children and pets away, and let it move on by itself",
+        "If it is indoors or on a road, keep people and pets away and wait for help instead of picking it up",
+        "Wash hands with soap and water after touching anything it has been on"
+      ],
+      "callProfessionalWhen": [
+        "It is injured, trapped or inside a building, or someone is catching or keeping one; contact the State Forest Department or a rescuer authorised by it"
+      ],
+      "firstAid": [
+        "Wash hands, and any bite or scratch, with soap and water"
+      ],
+      "legal": "The Indian chameleon (Chamaeleo zeylanicus) is listed in Schedule I of the schedules substituted by the Wild Life (Protection) Amendment Act, 2022 (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022). Hunting it, which under the Act includes capturing, trapping or injuring it, and trading in it or its parts are offences. Do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+      "sources": [
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/Wild%20Life%20(Protection)%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/The%20Wild%20Life%20(Protection)%20Amendment%20Act,%202022.pdf",
+        "https://reptile-database.reptarium.cz/species?genus=Chamaeleo&species=zeylanicus",
+        "https://www.cdc.gov/healthy-pets/about/reptiles-and-amphibians.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "tokay_gecko",
+      "names": { "en": "Tokay gecko" },
+      "group": "reptile",
+      "safety": "protectedWildlife",
+      "summary": "A large, heavy-bodied gecko (Gekko gecko), up to about 35 cm long, grey or blue-grey with orange to red spots, found in north-east India and nearby regions. It is protected under the Wild Life (Protection) Act.",
+      "signs": [
+        "Large gecko, much bigger than a house gecko, with a big head, velvety skin and grey or blue-grey colour with orange, red or rust spots",
+        "Loud, repeated 'to-kay' call, mainly at night",
+        "Wide toe pads; clings to walls, tree trunks and roofs, mostly at night",
+        "Opens its mouth wide, hisses or croaks when approached"
+      ],
+      "lookAlikes": [
+        "house_gecko",
+        "leopard geckos (Eublepharis, protected)"
+      ],
+      "healthRisks": [
+        "Can give a strong, painful bite and may hold on if handled",
+        "Reptiles can carry Salmonella germs"
+      ],
+      "safeSteps": [
+        "Do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+        "Stay well back and do not try to pick it up; it bites hard",
+        "If it is indoors, keep children and pets out of the room and leave a door or window open so it can leave",
+        "Wash hands with soap and water after touching anything it has been on"
+      ],
+      "callProfessionalWhen": [
+        "It is inside a home, injured or trapped, or someone is catching or keeping one; contact the State Forest Department or a rescuer authorised by it"
+      ],
+      "firstAid": [
+        "Wash any bite with soap and running water; see a doctor if it is deep or becomes red, swollen or painful"
+      ],
+      "legal": "The Tokay gecko (Gekko gecko) is listed in Schedule I of the schedules substituted by the Wild Life (Protection) Amendment Act, 2022 (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022). Hunting it, which under the Act includes capturing, trapping or injuring it, and trading in it or its parts are offences. Do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+      "sources": [
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/Wild%20Life%20(Protection)%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/The%20Wild%20Life%20(Protection)%20Amendment%20Act,%202022.pdf",
+        "https://animaldiversity.org/accounts/Gekko_gecko/",
+        "https://www.cdc.gov/healthy-pets/about/reptiles-and-amphibians.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "palm_civet",
+      "names": { "en": "Asian palm civet (toddy cat)" },
+      "group": "other",
+      "safety": "protectedWildlife",
+      "summary": "A cat-sized, long-tailed mammal (Paradoxurus hermaphroditus) with a pale face mask and a grey to black coat that is active at night, eats mostly fruit and often rests in roofs, attics and trees near homes. It is protected under the Wild Life (Protection) Act.",
+      "signs": [
+        "Cat-sized animal, body about 50 cm with a tail nearly as long, grey to black fur with dark stripes or rows of spots, and pale patches around the eyes and nose",
+        "Heavy thumping, walking and scratching in the roof or attic at night",
+        "Droppings full of fruit seeds, often piled in one spot on roofs, walls or ledges",
+        "A strong musky smell",
+        "Eaten fruit such as papaya, mango, banana and chiku, and visits to palm-sap pots"
+      ],
+      "lookAlikes": [
+        "black_rat",
+        "small Indian civet",
+        "mongoose",
+        "domestic cat"
+      ],
+      "healthRisks": [
+        "May bite and scratch hard if cornered, trapped or handled",
+        "Like other mammals, it can carry rabies; any bite or scratch needs a doctor's advice the same day"
+      ],
+      "safeSteps": [
+        "Do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+        "Stay well back, keep children and pets away, and do not corner it",
+        "Do not set rat traps where a civet can reach them, and do not use glue boards",
+        "Pick up fallen fruit, and cover food and grain at night",
+        "Close roof gaps only after the civet has gone out at night, and never seal in young; ask the Forest Department for help if young may be inside"
+      ],
+      "callProfessionalWhen": [
+        "A civet is living in the roof or attic, is injured or trapped, or has young indoors; contact the State Forest Department or a rescuer authorised by it"
+      ],
+      "firstAid": [
+        "If bitten or scratched, wash the wound with soap and running water for at least 15 minutes and see a doctor the same day about rabies",
+        "Ask the doctor whether you need a tetanus injection"
+      ],
+      "legal": "The Asian palm civet (Paradoxurus hermaphroditus) is listed in Schedule I of the schedules substituted by the Wild Life (Protection) Amendment Act, 2022 (Schedule II under the 1972 Act) (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022). Hunting it, which under the Act includes capturing, trapping or injuring it, and trading in it or its parts are offences. Do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+      "sources": [
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/Wild%20Life%20(Protection)%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/The%20Wild%20Life%20(Protection)%20Amendment%20Act,%202022.pdf",
+        "https://animaldiversity.org/accounts/Paradoxurus_hermaphroditus/",
+        "https://www.who.int/news-room/fact-sheets/detail/rabies"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "bat",
+      "names": { "en": "Bat (Indian flying fox and other bats)", "hi": "चमगादड़" },
+      "group": "other",
+      "safety": "protectedWildlife",
+      "summary": "Flying mammals that are active at night; the Indian flying fox (Pteropus giganteus) is a large fruit bat with a wingspan of about 1.2 to 1.5 m that roosts in big colonies in tall trees, while smaller insect-eating bats roost in roofs, walls and caves. The Indian flying fox and several other bats are protected under the Wild Life (Protection) Act.",
+      "signs": [
+        "Large bats with a fox-like face and dark wings hanging upside down in noisy colonies in tall trees such as banyan, fig or tamarind, often near water (flying fox)",
+        "Bats flying out at dusk and returning before dawn",
+        "Small dark droppings piling up under a roost in a roof, wall or ceiling gap",
+        "High-pitched squeaks and rustling from roof or wall gaps around dusk",
+        "Half-eaten fruit, chewed pulp and spat-out fibre under fruit trees (fruit bats)"
+      ],
+      "lookAlikes": [
+        "black_rat",
+        "house_gecko",
+        "swifts and swallows (birds)"
+      ],
+      "healthRisks": [
+        "Bats can carry rabies; any bite or scratch, even a small one, needs a doctor the same day",
+        "Fruit bats carry Nipah virus, which has caused outbreaks in India; people can be infected by eating fruit or drinking raw palm sap that bats have reached"
+      ],
+      "safeSteps": [
+        "Stay well back and do not touch any bat with bare hands, even one that is injured or looks dead; keep children and pets away",
+        "Do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+        "Throw away fruit with bite marks or that bats may have reached, and wash and peel fruit before eating",
+        "Do not drink raw, freshly collected palm sap; boil it first, and keep bats away from sap pots with covers",
+        "If bats roost in a roof or wall, do not block the gaps yourself while they are inside; ask the Forest Department for advice"
+      ],
+      "callProfessionalWhen": [
+        "A bat is inside a room, injured or on the ground, or a colony is roosting in a building; contact the State Forest Department or a rescuer authorised by it"
+      ],
+      "firstAid": [
+        "If bitten or scratched by any bat, wash the wound with soap and running water for at least 15 minutes and go to a doctor or government hospital at once about rabies vaccination",
+        "Get medical care quickly for fever, headache, cough, breathing difficulty or confusion after contact with bats or with fruit or sap they may have reached, and mention it",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": "The Indian flying fox (Pteropus giganteus) is listed in Schedule II, and several rare bats in Schedule I, of the schedules substituted by the Wild Life (Protection) Amendment Act, 2022; under the 1972 Act fruit bats were classed as vermin (schedule to be confirmed by an expert against the Gazette of Act 18 of 2022). Bats are hard to tell apart, so regard every bat as protected. Do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it.",
+      "sources": [
+        "https://www.who.int/news-room/fact-sheets/detail/rabies",
+        "https://www.who.int/news-room/fact-sheets/detail/nipah-virus",
+        "https://animaldiversity.org/accounts/Pteropus_giganteus/",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/SCR%20Volume-1%20The%20Wild%20Life%20(Protection)%20Amendment%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/Wild%20Life%20(Protection)%20Bill,%202021.pdf",
+        "https://prsindia.org/files/bills_acts/bills_parliament/2021/The%20Wild%20Life%20(Protection)%20Amendment%20Act,%202022.pdf"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "sand_fly",
+      "names": { "en": "Sand fly (kala-azar fly)", "hi": "बालू मक्खी" },
+      "group": "insect",
+      "safety": "medicalRisk",
+      "summary": "A tiny, hairy fly, about 1.5 to 3.5 mm long or about a quarter the size of a mosquito, that breeds in warm, damp places rich in organic matter. In parts of Bihar, Jharkhand, Uttar Pradesh and West Bengal, the sand fly Phlebotomus argentipes spreads kala-azar (visceral leishmaniasis).",
+      "signs": [
+        "Very small fly, much smaller than a mosquito, with the body and wings covered in long hairs and large wings held upright",
+        "Found in warm, humid places with damp soil and organic matter, in and around poorly built houses and animal sheds",
+        "Bites at night, often while people sleep on the floor or outdoors"
+      ],
+      "lookAlikes": [
+        "aedes_mosquito",
+        "culex_mosquito",
+        "non-biting midges",
+        "moth flies (drain flies)"
+      ],
+      "healthRisks": [
+        "Spreads kala-azar, which causes repeated fever, loss of appetite, weight loss, a swollen belly from an enlarged spleen and anaemia, and is usually fatal without medical care",
+        "Kala-azar can darken the skin, which gives it its name, 'black fever'",
+        "Months or years after kala-azar, some people get a rash on the face, arms or body (PKDL), which also needs a doctor"
+      ],
+      "safeSteps": [
+        "Get medical care and a kala-azar test at a government health centre for repeated fever, weight loss or a swollen belly, especially in Bihar, Jharkhand, Uttar Pradesh or West Bengal",
+        "Sleep on a raised bed under a bed net, not on the floor or outdoors",
+        "Repair cracks in walls and floors, and keep the house and animal sheds clean and dry, since poor housing gives sand flies places to rest and breed",
+        "Clear damp rubbish and organic waste from around the house",
+        "Follow your local health worker's advice during kala-azar campaigns"
+      ],
+      "callProfessionalWhen": [
+        "Several people in the village have long-lasting or repeated fever; inform your ASHA worker or the local health centre"
+      ],
+      "firstAid": [
+        "Get medical care for fever that keeps coming back, weight loss or a swollen belly, and mention that you live in or visited a kala-azar area",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": null,
+      "sources": [
+        "https://ncvbdc.mohfw.gov.in/index4.php?lang=1&level=0&linkid=468&lid=3747",
+        "https://ncvbdc.mohfw.gov.in/index4.php?lang=1&level=0&linkid=470&lid=3743",
+        "https://ncvbdc.mohfw.gov.in/index4.php?lang=1&level=0&linkid=474&lid=3749",
+        "https://www.who.int/news-room/fact-sheets/detail/leishmaniasis"
+      ],
+      "reviewStatus": "needs-expert-review"
+    },
+    {
+      "id": "chigger_mite",
+      "names": { "en": "Chigger mite (scrub typhus mite)" },
+      "group": "arachnid",
+      "safety": "medicalRisk",
+      "summary": "The tiny larvae of trombiculid mites, barely visible to the eye, that live in grass, bushes and scrub and bite people who walk or work there. Infected chiggers spread scrub typhus, which occurs in rural parts of the Indian subcontinent.",
+      "signs": [
+        "Tiny red or orange specks, smaller than a pinhead, on skin or clothes after time in grass or bushes",
+        "A dark, scab-like spot (eschar) at the bite site, often with fever",
+        "Bites after working or walking in fields, scrub, grass or bushes"
+      ],
+      "lookAlikes": [
+        "tick",
+        "flea",
+        "bed_bug"
+      ],
+      "healthRisks": [
+        "Infected chiggers spread scrub typhus, which causes fever and chills, headache, body aches, swollen glands, a rash and sometimes confusion, usually within 10 days of the bite",
+        "Without early medical care, scrub typhus can damage organs, cause severe bleeding and can be fatal",
+        "There is no vaccine for scrub typhus"
+      ],
+      "safeSteps": [
+        "Get medical care quickly for fever after time in fields, scrub or bushes, and mention it; early care matters",
+        "Wear clothes that cover arms and legs, and shoes, when working in fields, grass or scrub, and dress children the same way",
+        "Where you can, avoid areas thick with vegetation and brush, and do not sit or lie directly on the grass"
+      ],
+      "callProfessionalWhen": [
+        "Several people in the area have fever after field work; inform your ASHA worker or the local health centre"
+      ],
+      "firstAid": [
+        "See a doctor at once for fever with a dark scab (eschar) on the skin",
+        "Go to hospital at once for confusion or extreme drowsiness",
+        "Call 112 or 108 for an ambulance in an emergency"
+      ],
+      "legal": null,
+      "sources": [
+        "https://www.cdc.gov/typhus/about/scrub.html"
+      ],
+      "reviewStatus": "needs-expert-review"
+    }
+  ]
+}
