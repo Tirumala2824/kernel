@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:data_operations/src/reports/report_data.dart';
 import 'package:data_operations/src/reports/report_fonts.dart';
 import 'package:data_operations/src/reports/report_pdf.dart';
+import 'package:data_operations/src/reports/sightings_report.dart';
 import 'package:data_operations/src/services/report_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
@@ -118,6 +119,10 @@ void main() {
       ),
       ReportKind.sackLabels => await renderSackLabelsPdf(
         await s.loadSackLabels(scope),
+        kit,
+      ),
+      ReportKind.sightings => await renderSightingsPdf(
+        await s.loadSightings(scope),
         kit,
       ),
     };

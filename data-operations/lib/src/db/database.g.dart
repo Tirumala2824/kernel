@@ -5310,6 +5310,3427 @@ class LabeledSamplesCompanion extends UpdateCompanion<LabeledSampleRow> {
   }
 }
 
+class $SightingsTable extends Sightings
+    with TableInfo<$SightingsTable, SightingRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SightingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<SyncState, String> syncState =
+      GeneratedColumn<String>(
+        'sync_state',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(SyncState.localOnly.name),
+      ).withConverter<SyncState>($SightingsTable.$convertersyncState);
+  @override
+  late final GeneratedColumnWithTypeConverter<Role, String> role =
+      GeneratedColumn<String>(
+        'role',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<Role>($SightingsTable.$converterrole);
+  @override
+  late final GeneratedColumnWithTypeConverter<SignalSource, String> source =
+      GeneratedColumn<String>(
+        'source',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<SignalSource>($SightingsTable.$convertersource);
+  static const VerificationMeta _observedAtMeta = const VerificationMeta(
+    'observedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> observedAt = GeneratedColumn<DateTime>(
+    'observed_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _locationIdMeta = const VerificationMeta(
+    'locationId',
+  );
+  @override
+  late final GeneratedColumn<String> locationId = GeneratedColumn<String>(
+    'location_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES locations (id)',
+    ),
+  );
+  static const VerificationMeta _itemIdMeta = const VerificationMeta('itemId');
+  @override
+  late final GeneratedColumn<String> itemId = GeneratedColumn<String>(
+    'item_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES items (id)',
+    ),
+  );
+  static const VerificationMeta _latitudeMeta = const VerificationMeta(
+    'latitude',
+  );
+  @override
+  late final GeneratedColumn<double> latitude = GeneratedColumn<double>(
+    'latitude',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _longitudeMeta = const VerificationMeta(
+    'longitude',
+  );
+  @override
+  late final GeneratedColumn<double> longitude = GeneratedColumn<double>(
+    'longitude',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _accuracyMetersMeta = const VerificationMeta(
+    'accuracyMeters',
+  );
+  @override
+  late final GeneratedColumn<double> accuracyMeters = GeneratedColumn<double>(
+    'accuracy_meters',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<DistanceEstimate?, String>
+  distance = GeneratedColumn<String>(
+    'distance',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  ).withConverter<DistanceEstimate?>($SightingsTable.$converterdistancen);
+  @override
+  late final GeneratedColumnWithTypeConverter<PestAnalysis?, String> analysis =
+      GeneratedColumn<String>(
+        'analysis',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      ).withConverter<PestAnalysis?>($SightingsTable.$converteranalysisn);
+  @override
+  late final GeneratedColumnWithTypeConverter<SoundAnalysis?, String> sound =
+      GeneratedColumn<String>(
+        'sound',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      ).withConverter<SoundAnalysis?>($SightingsTable.$convertersoundn);
+  static const VerificationMeta _userValidatedMeta = const VerificationMeta(
+    'userValidated',
+  );
+  @override
+  late final GeneratedColumn<bool> userValidated = GeneratedColumn<bool>(
+    'user_validated',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("user_validated" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _userCardIdMeta = const VerificationMeta(
+    'userCardId',
+  );
+  @override
+  late final GeneratedColumn<String> userCardId = GeneratedColumn<String>(
+    'user_card_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<VerifiedFinding?, String>
+  verifiedFinding = GeneratedColumn<String>(
+    'verified_finding',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  ).withConverter<VerifiedFinding?>($SightingsTable.$converterverifiedFindingn);
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _mediaPathMeta = const VerificationMeta(
+    'mediaPath',
+  );
+  @override
+  late final GeneratedColumn<String> mediaPath = GeneratedColumn<String>(
+    'media_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    role,
+    source,
+    observedAt,
+    locationId,
+    itemId,
+    latitude,
+    longitude,
+    accuracyMeters,
+    distance,
+    analysis,
+    sound,
+    userValidated,
+    userCardId,
+    verifiedFinding,
+    notes,
+    mediaPath,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sightings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SightingRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('observed_at')) {
+      context.handle(
+        _observedAtMeta,
+        observedAt.isAcceptableOrUnknown(data['observed_at']!, _observedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_observedAtMeta);
+    }
+    if (data.containsKey('location_id')) {
+      context.handle(
+        _locationIdMeta,
+        locationId.isAcceptableOrUnknown(data['location_id']!, _locationIdMeta),
+      );
+    }
+    if (data.containsKey('item_id')) {
+      context.handle(
+        _itemIdMeta,
+        itemId.isAcceptableOrUnknown(data['item_id']!, _itemIdMeta),
+      );
+    }
+    if (data.containsKey('latitude')) {
+      context.handle(
+        _latitudeMeta,
+        latitude.isAcceptableOrUnknown(data['latitude']!, _latitudeMeta),
+      );
+    }
+    if (data.containsKey('longitude')) {
+      context.handle(
+        _longitudeMeta,
+        longitude.isAcceptableOrUnknown(data['longitude']!, _longitudeMeta),
+      );
+    }
+    if (data.containsKey('accuracy_meters')) {
+      context.handle(
+        _accuracyMetersMeta,
+        accuracyMeters.isAcceptableOrUnknown(
+          data['accuracy_meters']!,
+          _accuracyMetersMeta,
+        ),
+      );
+    }
+    if (data.containsKey('user_validated')) {
+      context.handle(
+        _userValidatedMeta,
+        userValidated.isAcceptableOrUnknown(
+          data['user_validated']!,
+          _userValidatedMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_userValidatedMeta);
+    }
+    if (data.containsKey('user_card_id')) {
+      context.handle(
+        _userCardIdMeta,
+        userCardId.isAcceptableOrUnknown(
+          data['user_card_id']!,
+          _userCardIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('media_path')) {
+      context.handle(
+        _mediaPathMeta,
+        mediaPath.isAcceptableOrUnknown(data['media_path']!, _mediaPathMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SightingRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SightingRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      syncState: $SightingsTable.$convertersyncState.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}sync_state'],
+        )!,
+      ),
+      role: $SightingsTable.$converterrole.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}role'],
+        )!,
+      ),
+      source: $SightingsTable.$convertersource.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}source'],
+        )!,
+      ),
+      observedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}observed_at'],
+      )!,
+      locationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}location_id'],
+      ),
+      itemId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}item_id'],
+      ),
+      latitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}latitude'],
+      ),
+      longitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}longitude'],
+      ),
+      accuracyMeters: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}accuracy_meters'],
+      ),
+      distance: $SightingsTable.$converterdistancen.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}distance'],
+        ),
+      ),
+      analysis: $SightingsTable.$converteranalysisn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}analysis'],
+        ),
+      ),
+      sound: $SightingsTable.$convertersoundn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}sound'],
+        ),
+      ),
+      userValidated: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}user_validated'],
+      )!,
+      userCardId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_card_id'],
+      ),
+      verifiedFinding: $SightingsTable.$converterverifiedFindingn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}verified_finding'],
+        ),
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      mediaPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}media_path'],
+      ),
+    );
+  }
+
+  @override
+  $SightingsTable createAlias(String alias) {
+    return $SightingsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<SyncState, String, String> $convertersyncState =
+      const EnumNameConverter<SyncState>(SyncState.values);
+  static JsonTypeConverter2<Role, String, String> $converterrole =
+      const EnumNameConverter<Role>(Role.values);
+  static JsonTypeConverter2<SignalSource, String, String> $convertersource =
+      const EnumNameConverter<SignalSource>(SignalSource.values);
+  static TypeConverter<DistanceEstimate, String> $converterdistance =
+      const DistanceEstimateConverter();
+  static TypeConverter<DistanceEstimate?, String?> $converterdistancen =
+      NullAwareTypeConverter.wrap($converterdistance);
+  static TypeConverter<PestAnalysis, String> $converteranalysis =
+      const PestAnalysisConverter();
+  static TypeConverter<PestAnalysis?, String?> $converteranalysisn =
+      NullAwareTypeConverter.wrap($converteranalysis);
+  static TypeConverter<SoundAnalysis, String> $convertersound =
+      const SoundAnalysisConverter();
+  static TypeConverter<SoundAnalysis?, String?> $convertersoundn =
+      NullAwareTypeConverter.wrap($convertersound);
+  static JsonTypeConverter2<VerifiedFinding, String, String>
+  $converterverifiedFinding = const EnumNameConverter<VerifiedFinding>(
+    VerifiedFinding.values,
+  );
+  static JsonTypeConverter2<VerifiedFinding?, String?, String?>
+  $converterverifiedFindingn = JsonTypeConverter2.asNullable(
+    $converterverifiedFinding,
+  );
+}
+
+class SightingRow extends DataClass implements Insertable<SightingRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final SyncState syncState;
+  final Role role;
+  final SignalSource source;
+  final DateTime observedAt;
+  final String? locationId;
+  final String? itemId;
+  final double? latitude;
+  final double? longitude;
+  final double? accuracyMeters;
+
+  /// DistanceEstimate as JSON.
+  final DistanceEstimate? distance;
+
+  /// PestAnalysis as JSON. Immutable.
+  final PestAnalysis? analysis;
+
+  /// SoundAnalysis as JSON. Immutable.
+  final SoundAnalysis? sound;
+  final bool userValidated;
+  final String? userCardId;
+
+  /// Human physical verification. Null until set once; never overwritten.
+  final VerifiedFinding? verifiedFinding;
+  final String? notes;
+
+  /// App-private still or clip, only when the user chose to keep media.
+  final String? mediaPath;
+  const SightingRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.syncState,
+    required this.role,
+    required this.source,
+    required this.observedAt,
+    this.locationId,
+    this.itemId,
+    this.latitude,
+    this.longitude,
+    this.accuracyMeters,
+    this.distance,
+    this.analysis,
+    this.sound,
+    required this.userValidated,
+    this.userCardId,
+    this.verifiedFinding,
+    this.notes,
+    this.mediaPath,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    {
+      map['sync_state'] = Variable<String>(
+        $SightingsTable.$convertersyncState.toSql(syncState),
+      );
+    }
+    {
+      map['role'] = Variable<String>(
+        $SightingsTable.$converterrole.toSql(role),
+      );
+    }
+    {
+      map['source'] = Variable<String>(
+        $SightingsTable.$convertersource.toSql(source),
+      );
+    }
+    map['observed_at'] = Variable<DateTime>(observedAt);
+    if (!nullToAbsent || locationId != null) {
+      map['location_id'] = Variable<String>(locationId);
+    }
+    if (!nullToAbsent || itemId != null) {
+      map['item_id'] = Variable<String>(itemId);
+    }
+    if (!nullToAbsent || latitude != null) {
+      map['latitude'] = Variable<double>(latitude);
+    }
+    if (!nullToAbsent || longitude != null) {
+      map['longitude'] = Variable<double>(longitude);
+    }
+    if (!nullToAbsent || accuracyMeters != null) {
+      map['accuracy_meters'] = Variable<double>(accuracyMeters);
+    }
+    if (!nullToAbsent || distance != null) {
+      map['distance'] = Variable<String>(
+        $SightingsTable.$converterdistancen.toSql(distance),
+      );
+    }
+    if (!nullToAbsent || analysis != null) {
+      map['analysis'] = Variable<String>(
+        $SightingsTable.$converteranalysisn.toSql(analysis),
+      );
+    }
+    if (!nullToAbsent || sound != null) {
+      map['sound'] = Variable<String>(
+        $SightingsTable.$convertersoundn.toSql(sound),
+      );
+    }
+    map['user_validated'] = Variable<bool>(userValidated);
+    if (!nullToAbsent || userCardId != null) {
+      map['user_card_id'] = Variable<String>(userCardId);
+    }
+    if (!nullToAbsent || verifiedFinding != null) {
+      map['verified_finding'] = Variable<String>(
+        $SightingsTable.$converterverifiedFindingn.toSql(verifiedFinding),
+      );
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    if (!nullToAbsent || mediaPath != null) {
+      map['media_path'] = Variable<String>(mediaPath);
+    }
+    return map;
+  }
+
+  SightingsCompanion toCompanion(bool nullToAbsent) {
+    return SightingsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      syncState: Value(syncState),
+      role: Value(role),
+      source: Value(source),
+      observedAt: Value(observedAt),
+      locationId: locationId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(locationId),
+      itemId: itemId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(itemId),
+      latitude: latitude == null && nullToAbsent
+          ? const Value.absent()
+          : Value(latitude),
+      longitude: longitude == null && nullToAbsent
+          ? const Value.absent()
+          : Value(longitude),
+      accuracyMeters: accuracyMeters == null && nullToAbsent
+          ? const Value.absent()
+          : Value(accuracyMeters),
+      distance: distance == null && nullToAbsent
+          ? const Value.absent()
+          : Value(distance),
+      analysis: analysis == null && nullToAbsent
+          ? const Value.absent()
+          : Value(analysis),
+      sound: sound == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sound),
+      userValidated: Value(userValidated),
+      userCardId: userCardId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(userCardId),
+      verifiedFinding: verifiedFinding == null && nullToAbsent
+          ? const Value.absent()
+          : Value(verifiedFinding),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      mediaPath: mediaPath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(mediaPath),
+    );
+  }
+
+  factory SightingRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SightingRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      syncState: $SightingsTable.$convertersyncState.fromJson(
+        serializer.fromJson<String>(json['syncState']),
+      ),
+      role: $SightingsTable.$converterrole.fromJson(
+        serializer.fromJson<String>(json['role']),
+      ),
+      source: $SightingsTable.$convertersource.fromJson(
+        serializer.fromJson<String>(json['source']),
+      ),
+      observedAt: serializer.fromJson<DateTime>(json['observedAt']),
+      locationId: serializer.fromJson<String?>(json['locationId']),
+      itemId: serializer.fromJson<String?>(json['itemId']),
+      latitude: serializer.fromJson<double?>(json['latitude']),
+      longitude: serializer.fromJson<double?>(json['longitude']),
+      accuracyMeters: serializer.fromJson<double?>(json['accuracyMeters']),
+      distance: serializer.fromJson<DistanceEstimate?>(json['distance']),
+      analysis: serializer.fromJson<PestAnalysis?>(json['analysis']),
+      sound: serializer.fromJson<SoundAnalysis?>(json['sound']),
+      userValidated: serializer.fromJson<bool>(json['userValidated']),
+      userCardId: serializer.fromJson<String?>(json['userCardId']),
+      verifiedFinding: $SightingsTable.$converterverifiedFindingn.fromJson(
+        serializer.fromJson<String?>(json['verifiedFinding']),
+      ),
+      notes: serializer.fromJson<String?>(json['notes']),
+      mediaPath: serializer.fromJson<String?>(json['mediaPath']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'syncState': serializer.toJson<String>(
+        $SightingsTable.$convertersyncState.toJson(syncState),
+      ),
+      'role': serializer.toJson<String>(
+        $SightingsTable.$converterrole.toJson(role),
+      ),
+      'source': serializer.toJson<String>(
+        $SightingsTable.$convertersource.toJson(source),
+      ),
+      'observedAt': serializer.toJson<DateTime>(observedAt),
+      'locationId': serializer.toJson<String?>(locationId),
+      'itemId': serializer.toJson<String?>(itemId),
+      'latitude': serializer.toJson<double?>(latitude),
+      'longitude': serializer.toJson<double?>(longitude),
+      'accuracyMeters': serializer.toJson<double?>(accuracyMeters),
+      'distance': serializer.toJson<DistanceEstimate?>(distance),
+      'analysis': serializer.toJson<PestAnalysis?>(analysis),
+      'sound': serializer.toJson<SoundAnalysis?>(sound),
+      'userValidated': serializer.toJson<bool>(userValidated),
+      'userCardId': serializer.toJson<String?>(userCardId),
+      'verifiedFinding': serializer.toJson<String?>(
+        $SightingsTable.$converterverifiedFindingn.toJson(verifiedFinding),
+      ),
+      'notes': serializer.toJson<String?>(notes),
+      'mediaPath': serializer.toJson<String?>(mediaPath),
+    };
+  }
+
+  SightingRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    SyncState? syncState,
+    Role? role,
+    SignalSource? source,
+    DateTime? observedAt,
+    Value<String?> locationId = const Value.absent(),
+    Value<String?> itemId = const Value.absent(),
+    Value<double?> latitude = const Value.absent(),
+    Value<double?> longitude = const Value.absent(),
+    Value<double?> accuracyMeters = const Value.absent(),
+    Value<DistanceEstimate?> distance = const Value.absent(),
+    Value<PestAnalysis?> analysis = const Value.absent(),
+    Value<SoundAnalysis?> sound = const Value.absent(),
+    bool? userValidated,
+    Value<String?> userCardId = const Value.absent(),
+    Value<VerifiedFinding?> verifiedFinding = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+    Value<String?> mediaPath = const Value.absent(),
+  }) => SightingRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    syncState: syncState ?? this.syncState,
+    role: role ?? this.role,
+    source: source ?? this.source,
+    observedAt: observedAt ?? this.observedAt,
+    locationId: locationId.present ? locationId.value : this.locationId,
+    itemId: itemId.present ? itemId.value : this.itemId,
+    latitude: latitude.present ? latitude.value : this.latitude,
+    longitude: longitude.present ? longitude.value : this.longitude,
+    accuracyMeters: accuracyMeters.present
+        ? accuracyMeters.value
+        : this.accuracyMeters,
+    distance: distance.present ? distance.value : this.distance,
+    analysis: analysis.present ? analysis.value : this.analysis,
+    sound: sound.present ? sound.value : this.sound,
+    userValidated: userValidated ?? this.userValidated,
+    userCardId: userCardId.present ? userCardId.value : this.userCardId,
+    verifiedFinding: verifiedFinding.present
+        ? verifiedFinding.value
+        : this.verifiedFinding,
+    notes: notes.present ? notes.value : this.notes,
+    mediaPath: mediaPath.present ? mediaPath.value : this.mediaPath,
+  );
+  SightingRow copyWithCompanion(SightingsCompanion data) {
+    return SightingRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      syncState: data.syncState.present ? data.syncState.value : this.syncState,
+      role: data.role.present ? data.role.value : this.role,
+      source: data.source.present ? data.source.value : this.source,
+      observedAt: data.observedAt.present
+          ? data.observedAt.value
+          : this.observedAt,
+      locationId: data.locationId.present
+          ? data.locationId.value
+          : this.locationId,
+      itemId: data.itemId.present ? data.itemId.value : this.itemId,
+      latitude: data.latitude.present ? data.latitude.value : this.latitude,
+      longitude: data.longitude.present ? data.longitude.value : this.longitude,
+      accuracyMeters: data.accuracyMeters.present
+          ? data.accuracyMeters.value
+          : this.accuracyMeters,
+      distance: data.distance.present ? data.distance.value : this.distance,
+      analysis: data.analysis.present ? data.analysis.value : this.analysis,
+      sound: data.sound.present ? data.sound.value : this.sound,
+      userValidated: data.userValidated.present
+          ? data.userValidated.value
+          : this.userValidated,
+      userCardId: data.userCardId.present
+          ? data.userCardId.value
+          : this.userCardId,
+      verifiedFinding: data.verifiedFinding.present
+          ? data.verifiedFinding.value
+          : this.verifiedFinding,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      mediaPath: data.mediaPath.present ? data.mediaPath.value : this.mediaPath,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SightingRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('role: $role, ')
+          ..write('source: $source, ')
+          ..write('observedAt: $observedAt, ')
+          ..write('locationId: $locationId, ')
+          ..write('itemId: $itemId, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
+          ..write('accuracyMeters: $accuracyMeters, ')
+          ..write('distance: $distance, ')
+          ..write('analysis: $analysis, ')
+          ..write('sound: $sound, ')
+          ..write('userValidated: $userValidated, ')
+          ..write('userCardId: $userCardId, ')
+          ..write('verifiedFinding: $verifiedFinding, ')
+          ..write('notes: $notes, ')
+          ..write('mediaPath: $mediaPath')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    role,
+    source,
+    observedAt,
+    locationId,
+    itemId,
+    latitude,
+    longitude,
+    accuracyMeters,
+    distance,
+    analysis,
+    sound,
+    userValidated,
+    userCardId,
+    verifiedFinding,
+    notes,
+    mediaPath,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SightingRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.syncState == this.syncState &&
+          other.role == this.role &&
+          other.source == this.source &&
+          other.observedAt == this.observedAt &&
+          other.locationId == this.locationId &&
+          other.itemId == this.itemId &&
+          other.latitude == this.latitude &&
+          other.longitude == this.longitude &&
+          other.accuracyMeters == this.accuracyMeters &&
+          other.distance == this.distance &&
+          other.analysis == this.analysis &&
+          other.sound == this.sound &&
+          other.userValidated == this.userValidated &&
+          other.userCardId == this.userCardId &&
+          other.verifiedFinding == this.verifiedFinding &&
+          other.notes == this.notes &&
+          other.mediaPath == this.mediaPath);
+}
+
+class SightingsCompanion extends UpdateCompanion<SightingRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<SyncState> syncState;
+  final Value<Role> role;
+  final Value<SignalSource> source;
+  final Value<DateTime> observedAt;
+  final Value<String?> locationId;
+  final Value<String?> itemId;
+  final Value<double?> latitude;
+  final Value<double?> longitude;
+  final Value<double?> accuracyMeters;
+  final Value<DistanceEstimate?> distance;
+  final Value<PestAnalysis?> analysis;
+  final Value<SoundAnalysis?> sound;
+  final Value<bool> userValidated;
+  final Value<String?> userCardId;
+  final Value<VerifiedFinding?> verifiedFinding;
+  final Value<String?> notes;
+  final Value<String?> mediaPath;
+  final Value<int> rowid;
+  const SightingsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.syncState = const Value.absent(),
+    this.role = const Value.absent(),
+    this.source = const Value.absent(),
+    this.observedAt = const Value.absent(),
+    this.locationId = const Value.absent(),
+    this.itemId = const Value.absent(),
+    this.latitude = const Value.absent(),
+    this.longitude = const Value.absent(),
+    this.accuracyMeters = const Value.absent(),
+    this.distance = const Value.absent(),
+    this.analysis = const Value.absent(),
+    this.sound = const Value.absent(),
+    this.userValidated = const Value.absent(),
+    this.userCardId = const Value.absent(),
+    this.verifiedFinding = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.mediaPath = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SightingsCompanion.insert({
+    required String id,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.syncState = const Value.absent(),
+    required Role role,
+    required SignalSource source,
+    required DateTime observedAt,
+    this.locationId = const Value.absent(),
+    this.itemId = const Value.absent(),
+    this.latitude = const Value.absent(),
+    this.longitude = const Value.absent(),
+    this.accuracyMeters = const Value.absent(),
+    this.distance = const Value.absent(),
+    this.analysis = const Value.absent(),
+    this.sound = const Value.absent(),
+    required bool userValidated,
+    this.userCardId = const Value.absent(),
+    this.verifiedFinding = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.mediaPath = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       role = Value(role),
+       source = Value(source),
+       observedAt = Value(observedAt),
+       userValidated = Value(userValidated);
+  static Insertable<SightingRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? syncState,
+    Expression<String>? role,
+    Expression<String>? source,
+    Expression<DateTime>? observedAt,
+    Expression<String>? locationId,
+    Expression<String>? itemId,
+    Expression<double>? latitude,
+    Expression<double>? longitude,
+    Expression<double>? accuracyMeters,
+    Expression<String>? distance,
+    Expression<String>? analysis,
+    Expression<String>? sound,
+    Expression<bool>? userValidated,
+    Expression<String>? userCardId,
+    Expression<String>? verifiedFinding,
+    Expression<String>? notes,
+    Expression<String>? mediaPath,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (syncState != null) 'sync_state': syncState,
+      if (role != null) 'role': role,
+      if (source != null) 'source': source,
+      if (observedAt != null) 'observed_at': observedAt,
+      if (locationId != null) 'location_id': locationId,
+      if (itemId != null) 'item_id': itemId,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
+      if (accuracyMeters != null) 'accuracy_meters': accuracyMeters,
+      if (distance != null) 'distance': distance,
+      if (analysis != null) 'analysis': analysis,
+      if (sound != null) 'sound': sound,
+      if (userValidated != null) 'user_validated': userValidated,
+      if (userCardId != null) 'user_card_id': userCardId,
+      if (verifiedFinding != null) 'verified_finding': verifiedFinding,
+      if (notes != null) 'notes': notes,
+      if (mediaPath != null) 'media_path': mediaPath,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SightingsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<SyncState>? syncState,
+    Value<Role>? role,
+    Value<SignalSource>? source,
+    Value<DateTime>? observedAt,
+    Value<String?>? locationId,
+    Value<String?>? itemId,
+    Value<double?>? latitude,
+    Value<double?>? longitude,
+    Value<double?>? accuracyMeters,
+    Value<DistanceEstimate?>? distance,
+    Value<PestAnalysis?>? analysis,
+    Value<SoundAnalysis?>? sound,
+    Value<bool>? userValidated,
+    Value<String?>? userCardId,
+    Value<VerifiedFinding?>? verifiedFinding,
+    Value<String?>? notes,
+    Value<String?>? mediaPath,
+    Value<int>? rowid,
+  }) {
+    return SightingsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      syncState: syncState ?? this.syncState,
+      role: role ?? this.role,
+      source: source ?? this.source,
+      observedAt: observedAt ?? this.observedAt,
+      locationId: locationId ?? this.locationId,
+      itemId: itemId ?? this.itemId,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      accuracyMeters: accuracyMeters ?? this.accuracyMeters,
+      distance: distance ?? this.distance,
+      analysis: analysis ?? this.analysis,
+      sound: sound ?? this.sound,
+      userValidated: userValidated ?? this.userValidated,
+      userCardId: userCardId ?? this.userCardId,
+      verifiedFinding: verifiedFinding ?? this.verifiedFinding,
+      notes: notes ?? this.notes,
+      mediaPath: mediaPath ?? this.mediaPath,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (syncState.present) {
+      map['sync_state'] = Variable<String>(
+        $SightingsTable.$convertersyncState.toSql(syncState.value),
+      );
+    }
+    if (role.present) {
+      map['role'] = Variable<String>(
+        $SightingsTable.$converterrole.toSql(role.value),
+      );
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(
+        $SightingsTable.$convertersource.toSql(source.value),
+      );
+    }
+    if (observedAt.present) {
+      map['observed_at'] = Variable<DateTime>(observedAt.value);
+    }
+    if (locationId.present) {
+      map['location_id'] = Variable<String>(locationId.value);
+    }
+    if (itemId.present) {
+      map['item_id'] = Variable<String>(itemId.value);
+    }
+    if (latitude.present) {
+      map['latitude'] = Variable<double>(latitude.value);
+    }
+    if (longitude.present) {
+      map['longitude'] = Variable<double>(longitude.value);
+    }
+    if (accuracyMeters.present) {
+      map['accuracy_meters'] = Variable<double>(accuracyMeters.value);
+    }
+    if (distance.present) {
+      map['distance'] = Variable<String>(
+        $SightingsTable.$converterdistancen.toSql(distance.value),
+      );
+    }
+    if (analysis.present) {
+      map['analysis'] = Variable<String>(
+        $SightingsTable.$converteranalysisn.toSql(analysis.value),
+      );
+    }
+    if (sound.present) {
+      map['sound'] = Variable<String>(
+        $SightingsTable.$convertersoundn.toSql(sound.value),
+      );
+    }
+    if (userValidated.present) {
+      map['user_validated'] = Variable<bool>(userValidated.value);
+    }
+    if (userCardId.present) {
+      map['user_card_id'] = Variable<String>(userCardId.value);
+    }
+    if (verifiedFinding.present) {
+      map['verified_finding'] = Variable<String>(
+        $SightingsTable.$converterverifiedFindingn.toSql(verifiedFinding.value),
+      );
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (mediaPath.present) {
+      map['media_path'] = Variable<String>(mediaPath.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SightingsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('role: $role, ')
+          ..write('source: $source, ')
+          ..write('observedAt: $observedAt, ')
+          ..write('locationId: $locationId, ')
+          ..write('itemId: $itemId, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
+          ..write('accuracyMeters: $accuracyMeters, ')
+          ..write('distance: $distance, ')
+          ..write('analysis: $analysis, ')
+          ..write('sound: $sound, ')
+          ..write('userValidated: $userValidated, ')
+          ..write('userCardId: $userCardId, ')
+          ..write('verifiedFinding: $verifiedFinding, ')
+          ..write('notes: $notes, ')
+          ..write('mediaPath: $mediaPath, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SensorNodesTable extends SensorNodes
+    with TableInfo<$SensorNodesTable, SensorNodeRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SensorNodesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<SyncState, String> syncState =
+      GeneratedColumn<String>(
+        'sync_state',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(SyncState.localOnly.name),
+      ).withConverter<SyncState>($SensorNodesTable.$convertersyncState);
+  static const VerificationMeta _deviceAddressMeta = const VerificationMeta(
+    'deviceAddress',
+  );
+  @override
+  late final GeneratedColumn<String> deviceAddress = GeneratedColumn<String>(
+    'device_address',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<SensorType, String> type =
+      GeneratedColumn<String>(
+        'type',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<SensorType>($SensorNodesTable.$convertertype);
+  static const VerificationMeta _protocolVersionMeta = const VerificationMeta(
+    'protocolVersion',
+  );
+  @override
+  late final GeneratedColumn<int> protocolVersion = GeneratedColumn<int>(
+    'protocol_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _firmwareVersionMeta = const VerificationMeta(
+    'firmwareVersion',
+  );
+  @override
+  late final GeneratedColumn<String> firmwareVersion = GeneratedColumn<String>(
+    'firmware_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _keyFingerprintMeta = const VerificationMeta(
+    'keyFingerprint',
+  );
+  @override
+  late final GeneratedColumn<String> keyFingerprint = GeneratedColumn<String>(
+    'key_fingerprint',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _locationIdMeta = const VerificationMeta(
+    'locationId',
+  );
+  @override
+  late final GeneratedColumn<String> locationId = GeneratedColumn<String>(
+    'location_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES locations (id)',
+    ),
+  );
+  static const VerificationMeta _itemIdMeta = const VerificationMeta('itemId');
+  @override
+  late final GeneratedColumn<String> itemId = GeneratedColumn<String>(
+    'item_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES items (id)',
+    ),
+  );
+  static const VerificationMeta _lastSeenAtMeta = const VerificationMeta(
+    'lastSeenAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastSeenAt = GeneratedColumn<DateTime>(
+    'last_seen_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _batteryPercentMeta = const VerificationMeta(
+    'batteryPercent',
+  );
+  @override
+  late final GeneratedColumn<int> batteryPercent = GeneratedColumn<int>(
+    'battery_percent',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _eventsClearedThroughSeqMeta =
+      const VerificationMeta('eventsClearedThroughSeq');
+  @override
+  late final GeneratedColumn<int> eventsClearedThroughSeq =
+      GeneratedColumn<int>(
+        'events_cleared_through_seq',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    deviceAddress,
+    name,
+    type,
+    protocolVersion,
+    firmwareVersion,
+    keyFingerprint,
+    locationId,
+    itemId,
+    lastSeenAt,
+    batteryPercent,
+    eventsClearedThroughSeq,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sensor_nodes';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SensorNodeRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('device_address')) {
+      context.handle(
+        _deviceAddressMeta,
+        deviceAddress.isAcceptableOrUnknown(
+          data['device_address']!,
+          _deviceAddressMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceAddressMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('protocol_version')) {
+      context.handle(
+        _protocolVersionMeta,
+        protocolVersion.isAcceptableOrUnknown(
+          data['protocol_version']!,
+          _protocolVersionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_protocolVersionMeta);
+    }
+    if (data.containsKey('firmware_version')) {
+      context.handle(
+        _firmwareVersionMeta,
+        firmwareVersion.isAcceptableOrUnknown(
+          data['firmware_version']!,
+          _firmwareVersionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_firmwareVersionMeta);
+    }
+    if (data.containsKey('key_fingerprint')) {
+      context.handle(
+        _keyFingerprintMeta,
+        keyFingerprint.isAcceptableOrUnknown(
+          data['key_fingerprint']!,
+          _keyFingerprintMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_keyFingerprintMeta);
+    }
+    if (data.containsKey('location_id')) {
+      context.handle(
+        _locationIdMeta,
+        locationId.isAcceptableOrUnknown(data['location_id']!, _locationIdMeta),
+      );
+    }
+    if (data.containsKey('item_id')) {
+      context.handle(
+        _itemIdMeta,
+        itemId.isAcceptableOrUnknown(data['item_id']!, _itemIdMeta),
+      );
+    }
+    if (data.containsKey('last_seen_at')) {
+      context.handle(
+        _lastSeenAtMeta,
+        lastSeenAt.isAcceptableOrUnknown(
+          data['last_seen_at']!,
+          _lastSeenAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('battery_percent')) {
+      context.handle(
+        _batteryPercentMeta,
+        batteryPercent.isAcceptableOrUnknown(
+          data['battery_percent']!,
+          _batteryPercentMeta,
+        ),
+      );
+    }
+    if (data.containsKey('events_cleared_through_seq')) {
+      context.handle(
+        _eventsClearedThroughSeqMeta,
+        eventsClearedThroughSeq.isAcceptableOrUnknown(
+          data['events_cleared_through_seq']!,
+          _eventsClearedThroughSeqMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SensorNodeRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SensorNodeRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      syncState: $SensorNodesTable.$convertersyncState.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}sync_state'],
+        )!,
+      ),
+      deviceAddress: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_address'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      type: $SensorNodesTable.$convertertype.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}type'],
+        )!,
+      ),
+      protocolVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}protocol_version'],
+      )!,
+      firmwareVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}firmware_version'],
+      )!,
+      keyFingerprint: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}key_fingerprint'],
+      )!,
+      locationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}location_id'],
+      ),
+      itemId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}item_id'],
+      ),
+      lastSeenAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_seen_at'],
+      ),
+      batteryPercent: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}battery_percent'],
+      ),
+      eventsClearedThroughSeq: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}events_cleared_through_seq'],
+      ),
+    );
+  }
+
+  @override
+  $SensorNodesTable createAlias(String alias) {
+    return $SensorNodesTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<SyncState, String, String> $convertersyncState =
+      const EnumNameConverter<SyncState>(SyncState.values);
+  static JsonTypeConverter2<SensorType, String, String> $convertertype =
+      const EnumNameConverter<SensorType>(SensorType.values);
+}
+
+class SensorNodeRow extends DataClass implements Insertable<SensorNodeRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final SyncState syncState;
+  final String deviceAddress;
+  final String name;
+  final SensorType type;
+  final int protocolVersion;
+  final String firmwareVersion;
+  final String keyFingerprint;
+  final String? locationId;
+  final String? itemId;
+  final DateTime? lastSeenAt;
+  final int? batteryPercent;
+
+  /// Highest event seq removed by `deleteAllHistory`. Events at or below it
+  /// are never re-imported from the node's store-and-forward buffer.
+  final int? eventsClearedThroughSeq;
+  const SensorNodeRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.syncState,
+    required this.deviceAddress,
+    required this.name,
+    required this.type,
+    required this.protocolVersion,
+    required this.firmwareVersion,
+    required this.keyFingerprint,
+    this.locationId,
+    this.itemId,
+    this.lastSeenAt,
+    this.batteryPercent,
+    this.eventsClearedThroughSeq,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    {
+      map['sync_state'] = Variable<String>(
+        $SensorNodesTable.$convertersyncState.toSql(syncState),
+      );
+    }
+    map['device_address'] = Variable<String>(deviceAddress);
+    map['name'] = Variable<String>(name);
+    {
+      map['type'] = Variable<String>(
+        $SensorNodesTable.$convertertype.toSql(type),
+      );
+    }
+    map['protocol_version'] = Variable<int>(protocolVersion);
+    map['firmware_version'] = Variable<String>(firmwareVersion);
+    map['key_fingerprint'] = Variable<String>(keyFingerprint);
+    if (!nullToAbsent || locationId != null) {
+      map['location_id'] = Variable<String>(locationId);
+    }
+    if (!nullToAbsent || itemId != null) {
+      map['item_id'] = Variable<String>(itemId);
+    }
+    if (!nullToAbsent || lastSeenAt != null) {
+      map['last_seen_at'] = Variable<DateTime>(lastSeenAt);
+    }
+    if (!nullToAbsent || batteryPercent != null) {
+      map['battery_percent'] = Variable<int>(batteryPercent);
+    }
+    if (!nullToAbsent || eventsClearedThroughSeq != null) {
+      map['events_cleared_through_seq'] = Variable<int>(
+        eventsClearedThroughSeq,
+      );
+    }
+    return map;
+  }
+
+  SensorNodesCompanion toCompanion(bool nullToAbsent) {
+    return SensorNodesCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      syncState: Value(syncState),
+      deviceAddress: Value(deviceAddress),
+      name: Value(name),
+      type: Value(type),
+      protocolVersion: Value(protocolVersion),
+      firmwareVersion: Value(firmwareVersion),
+      keyFingerprint: Value(keyFingerprint),
+      locationId: locationId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(locationId),
+      itemId: itemId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(itemId),
+      lastSeenAt: lastSeenAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastSeenAt),
+      batteryPercent: batteryPercent == null && nullToAbsent
+          ? const Value.absent()
+          : Value(batteryPercent),
+      eventsClearedThroughSeq: eventsClearedThroughSeq == null && nullToAbsent
+          ? const Value.absent()
+          : Value(eventsClearedThroughSeq),
+    );
+  }
+
+  factory SensorNodeRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SensorNodeRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      syncState: $SensorNodesTable.$convertersyncState.fromJson(
+        serializer.fromJson<String>(json['syncState']),
+      ),
+      deviceAddress: serializer.fromJson<String>(json['deviceAddress']),
+      name: serializer.fromJson<String>(json['name']),
+      type: $SensorNodesTable.$convertertype.fromJson(
+        serializer.fromJson<String>(json['type']),
+      ),
+      protocolVersion: serializer.fromJson<int>(json['protocolVersion']),
+      firmwareVersion: serializer.fromJson<String>(json['firmwareVersion']),
+      keyFingerprint: serializer.fromJson<String>(json['keyFingerprint']),
+      locationId: serializer.fromJson<String?>(json['locationId']),
+      itemId: serializer.fromJson<String?>(json['itemId']),
+      lastSeenAt: serializer.fromJson<DateTime?>(json['lastSeenAt']),
+      batteryPercent: serializer.fromJson<int?>(json['batteryPercent']),
+      eventsClearedThroughSeq: serializer.fromJson<int?>(
+        json['eventsClearedThroughSeq'],
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'syncState': serializer.toJson<String>(
+        $SensorNodesTable.$convertersyncState.toJson(syncState),
+      ),
+      'deviceAddress': serializer.toJson<String>(deviceAddress),
+      'name': serializer.toJson<String>(name),
+      'type': serializer.toJson<String>(
+        $SensorNodesTable.$convertertype.toJson(type),
+      ),
+      'protocolVersion': serializer.toJson<int>(protocolVersion),
+      'firmwareVersion': serializer.toJson<String>(firmwareVersion),
+      'keyFingerprint': serializer.toJson<String>(keyFingerprint),
+      'locationId': serializer.toJson<String?>(locationId),
+      'itemId': serializer.toJson<String?>(itemId),
+      'lastSeenAt': serializer.toJson<DateTime?>(lastSeenAt),
+      'batteryPercent': serializer.toJson<int?>(batteryPercent),
+      'eventsClearedThroughSeq': serializer.toJson<int?>(
+        eventsClearedThroughSeq,
+      ),
+    };
+  }
+
+  SensorNodeRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    SyncState? syncState,
+    String? deviceAddress,
+    String? name,
+    SensorType? type,
+    int? protocolVersion,
+    String? firmwareVersion,
+    String? keyFingerprint,
+    Value<String?> locationId = const Value.absent(),
+    Value<String?> itemId = const Value.absent(),
+    Value<DateTime?> lastSeenAt = const Value.absent(),
+    Value<int?> batteryPercent = const Value.absent(),
+    Value<int?> eventsClearedThroughSeq = const Value.absent(),
+  }) => SensorNodeRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    syncState: syncState ?? this.syncState,
+    deviceAddress: deviceAddress ?? this.deviceAddress,
+    name: name ?? this.name,
+    type: type ?? this.type,
+    protocolVersion: protocolVersion ?? this.protocolVersion,
+    firmwareVersion: firmwareVersion ?? this.firmwareVersion,
+    keyFingerprint: keyFingerprint ?? this.keyFingerprint,
+    locationId: locationId.present ? locationId.value : this.locationId,
+    itemId: itemId.present ? itemId.value : this.itemId,
+    lastSeenAt: lastSeenAt.present ? lastSeenAt.value : this.lastSeenAt,
+    batteryPercent: batteryPercent.present
+        ? batteryPercent.value
+        : this.batteryPercent,
+    eventsClearedThroughSeq: eventsClearedThroughSeq.present
+        ? eventsClearedThroughSeq.value
+        : this.eventsClearedThroughSeq,
+  );
+  SensorNodeRow copyWithCompanion(SensorNodesCompanion data) {
+    return SensorNodeRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      syncState: data.syncState.present ? data.syncState.value : this.syncState,
+      deviceAddress: data.deviceAddress.present
+          ? data.deviceAddress.value
+          : this.deviceAddress,
+      name: data.name.present ? data.name.value : this.name,
+      type: data.type.present ? data.type.value : this.type,
+      protocolVersion: data.protocolVersion.present
+          ? data.protocolVersion.value
+          : this.protocolVersion,
+      firmwareVersion: data.firmwareVersion.present
+          ? data.firmwareVersion.value
+          : this.firmwareVersion,
+      keyFingerprint: data.keyFingerprint.present
+          ? data.keyFingerprint.value
+          : this.keyFingerprint,
+      locationId: data.locationId.present
+          ? data.locationId.value
+          : this.locationId,
+      itemId: data.itemId.present ? data.itemId.value : this.itemId,
+      lastSeenAt: data.lastSeenAt.present
+          ? data.lastSeenAt.value
+          : this.lastSeenAt,
+      batteryPercent: data.batteryPercent.present
+          ? data.batteryPercent.value
+          : this.batteryPercent,
+      eventsClearedThroughSeq: data.eventsClearedThroughSeq.present
+          ? data.eventsClearedThroughSeq.value
+          : this.eventsClearedThroughSeq,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SensorNodeRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('deviceAddress: $deviceAddress, ')
+          ..write('name: $name, ')
+          ..write('type: $type, ')
+          ..write('protocolVersion: $protocolVersion, ')
+          ..write('firmwareVersion: $firmwareVersion, ')
+          ..write('keyFingerprint: $keyFingerprint, ')
+          ..write('locationId: $locationId, ')
+          ..write('itemId: $itemId, ')
+          ..write('lastSeenAt: $lastSeenAt, ')
+          ..write('batteryPercent: $batteryPercent, ')
+          ..write('eventsClearedThroughSeq: $eventsClearedThroughSeq')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    deviceAddress,
+    name,
+    type,
+    protocolVersion,
+    firmwareVersion,
+    keyFingerprint,
+    locationId,
+    itemId,
+    lastSeenAt,
+    batteryPercent,
+    eventsClearedThroughSeq,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SensorNodeRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.syncState == this.syncState &&
+          other.deviceAddress == this.deviceAddress &&
+          other.name == this.name &&
+          other.type == this.type &&
+          other.protocolVersion == this.protocolVersion &&
+          other.firmwareVersion == this.firmwareVersion &&
+          other.keyFingerprint == this.keyFingerprint &&
+          other.locationId == this.locationId &&
+          other.itemId == this.itemId &&
+          other.lastSeenAt == this.lastSeenAt &&
+          other.batteryPercent == this.batteryPercent &&
+          other.eventsClearedThroughSeq == this.eventsClearedThroughSeq);
+}
+
+class SensorNodesCompanion extends UpdateCompanion<SensorNodeRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<SyncState> syncState;
+  final Value<String> deviceAddress;
+  final Value<String> name;
+  final Value<SensorType> type;
+  final Value<int> protocolVersion;
+  final Value<String> firmwareVersion;
+  final Value<String> keyFingerprint;
+  final Value<String?> locationId;
+  final Value<String?> itemId;
+  final Value<DateTime?> lastSeenAt;
+  final Value<int?> batteryPercent;
+  final Value<int?> eventsClearedThroughSeq;
+  final Value<int> rowid;
+  const SensorNodesCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.syncState = const Value.absent(),
+    this.deviceAddress = const Value.absent(),
+    this.name = const Value.absent(),
+    this.type = const Value.absent(),
+    this.protocolVersion = const Value.absent(),
+    this.firmwareVersion = const Value.absent(),
+    this.keyFingerprint = const Value.absent(),
+    this.locationId = const Value.absent(),
+    this.itemId = const Value.absent(),
+    this.lastSeenAt = const Value.absent(),
+    this.batteryPercent = const Value.absent(),
+    this.eventsClearedThroughSeq = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SensorNodesCompanion.insert({
+    required String id,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.syncState = const Value.absent(),
+    required String deviceAddress,
+    required String name,
+    required SensorType type,
+    required int protocolVersion,
+    required String firmwareVersion,
+    required String keyFingerprint,
+    this.locationId = const Value.absent(),
+    this.itemId = const Value.absent(),
+    this.lastSeenAt = const Value.absent(),
+    this.batteryPercent = const Value.absent(),
+    this.eventsClearedThroughSeq = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       deviceAddress = Value(deviceAddress),
+       name = Value(name),
+       type = Value(type),
+       protocolVersion = Value(protocolVersion),
+       firmwareVersion = Value(firmwareVersion),
+       keyFingerprint = Value(keyFingerprint);
+  static Insertable<SensorNodeRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? syncState,
+    Expression<String>? deviceAddress,
+    Expression<String>? name,
+    Expression<String>? type,
+    Expression<int>? protocolVersion,
+    Expression<String>? firmwareVersion,
+    Expression<String>? keyFingerprint,
+    Expression<String>? locationId,
+    Expression<String>? itemId,
+    Expression<DateTime>? lastSeenAt,
+    Expression<int>? batteryPercent,
+    Expression<int>? eventsClearedThroughSeq,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (syncState != null) 'sync_state': syncState,
+      if (deviceAddress != null) 'device_address': deviceAddress,
+      if (name != null) 'name': name,
+      if (type != null) 'type': type,
+      if (protocolVersion != null) 'protocol_version': protocolVersion,
+      if (firmwareVersion != null) 'firmware_version': firmwareVersion,
+      if (keyFingerprint != null) 'key_fingerprint': keyFingerprint,
+      if (locationId != null) 'location_id': locationId,
+      if (itemId != null) 'item_id': itemId,
+      if (lastSeenAt != null) 'last_seen_at': lastSeenAt,
+      if (batteryPercent != null) 'battery_percent': batteryPercent,
+      if (eventsClearedThroughSeq != null)
+        'events_cleared_through_seq': eventsClearedThroughSeq,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SensorNodesCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<SyncState>? syncState,
+    Value<String>? deviceAddress,
+    Value<String>? name,
+    Value<SensorType>? type,
+    Value<int>? protocolVersion,
+    Value<String>? firmwareVersion,
+    Value<String>? keyFingerprint,
+    Value<String?>? locationId,
+    Value<String?>? itemId,
+    Value<DateTime?>? lastSeenAt,
+    Value<int?>? batteryPercent,
+    Value<int?>? eventsClearedThroughSeq,
+    Value<int>? rowid,
+  }) {
+    return SensorNodesCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      syncState: syncState ?? this.syncState,
+      deviceAddress: deviceAddress ?? this.deviceAddress,
+      name: name ?? this.name,
+      type: type ?? this.type,
+      protocolVersion: protocolVersion ?? this.protocolVersion,
+      firmwareVersion: firmwareVersion ?? this.firmwareVersion,
+      keyFingerprint: keyFingerprint ?? this.keyFingerprint,
+      locationId: locationId ?? this.locationId,
+      itemId: itemId ?? this.itemId,
+      lastSeenAt: lastSeenAt ?? this.lastSeenAt,
+      batteryPercent: batteryPercent ?? this.batteryPercent,
+      eventsClearedThroughSeq:
+          eventsClearedThroughSeq ?? this.eventsClearedThroughSeq,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (syncState.present) {
+      map['sync_state'] = Variable<String>(
+        $SensorNodesTable.$convertersyncState.toSql(syncState.value),
+      );
+    }
+    if (deviceAddress.present) {
+      map['device_address'] = Variable<String>(deviceAddress.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(
+        $SensorNodesTable.$convertertype.toSql(type.value),
+      );
+    }
+    if (protocolVersion.present) {
+      map['protocol_version'] = Variable<int>(protocolVersion.value);
+    }
+    if (firmwareVersion.present) {
+      map['firmware_version'] = Variable<String>(firmwareVersion.value);
+    }
+    if (keyFingerprint.present) {
+      map['key_fingerprint'] = Variable<String>(keyFingerprint.value);
+    }
+    if (locationId.present) {
+      map['location_id'] = Variable<String>(locationId.value);
+    }
+    if (itemId.present) {
+      map['item_id'] = Variable<String>(itemId.value);
+    }
+    if (lastSeenAt.present) {
+      map['last_seen_at'] = Variable<DateTime>(lastSeenAt.value);
+    }
+    if (batteryPercent.present) {
+      map['battery_percent'] = Variable<int>(batteryPercent.value);
+    }
+    if (eventsClearedThroughSeq.present) {
+      map['events_cleared_through_seq'] = Variable<int>(
+        eventsClearedThroughSeq.value,
+      );
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SensorNodesCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('deviceAddress: $deviceAddress, ')
+          ..write('name: $name, ')
+          ..write('type: $type, ')
+          ..write('protocolVersion: $protocolVersion, ')
+          ..write('firmwareVersion: $firmwareVersion, ')
+          ..write('keyFingerprint: $keyFingerprint, ')
+          ..write('locationId: $locationId, ')
+          ..write('itemId: $itemId, ')
+          ..write('lastSeenAt: $lastSeenAt, ')
+          ..write('batteryPercent: $batteryPercent, ')
+          ..write('eventsClearedThroughSeq: $eventsClearedThroughSeq, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SensorEventsTable extends SensorEvents
+    with TableInfo<$SensorEventsTable, SensorEventRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SensorEventsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<SyncState, String> syncState =
+      GeneratedColumn<String>(
+        'sync_state',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(SyncState.localOnly.name),
+      ).withConverter<SyncState>($SensorEventsTable.$convertersyncState);
+  static const VerificationMeta _nodeIdMeta = const VerificationMeta('nodeId');
+  @override
+  late final GeneratedColumn<String> nodeId = GeneratedColumn<String>(
+    'node_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES sensor_nodes (id)',
+    ),
+  );
+  static const VerificationMeta _seqMeta = const VerificationMeta('seq');
+  @override
+  late final GeneratedColumn<int> seq = GeneratedColumn<int>(
+    'seq',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _startedAtMeta = const VerificationMeta(
+    'startedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startedAt = GeneratedColumn<DateTime>(
+    'started_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _durationMsMeta = const VerificationMeta(
+    'durationMs',
+  );
+  @override
+  late final GeneratedColumn<int> durationMs = GeneratedColumn<int>(
+    'duration_ms',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<SensorEventClass, String>
+  eventClass = GeneratedColumn<String>(
+    'event_class',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  ).withConverter<SensorEventClass>($SensorEventsTable.$convertereventClass);
+  static const VerificationMeta _peakHzMeta = const VerificationMeta('peakHz');
+  @override
+  late final GeneratedColumn<double> peakHz = GeneratedColumn<double>(
+    'peak_hz',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _minHzMeta = const VerificationMeta('minHz');
+  @override
+  late final GeneratedColumn<double> minHz = GeneratedColumn<double>(
+    'min_hz',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _maxHzMeta = const VerificationMeta('maxHz');
+  @override
+  late final GeneratedColumn<double> maxHz = GeneratedColumn<double>(
+    'max_hz',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _slopeHzPerMsMeta = const VerificationMeta(
+    'slopeHzPerMs',
+  );
+  @override
+  late final GeneratedColumn<double> slopeHzPerMs = GeneratedColumn<double>(
+    'slope_hz_per_ms',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _snrDbMeta = const VerificationMeta('snrDb');
+  @override
+  late final GeneratedColumn<double> snrDb = GeneratedColumn<double>(
+    'snr_db',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _peakDbfsMeta = const VerificationMeta(
+    'peakDbfs',
+  );
+  @override
+  late final GeneratedColumn<double> peakDbfs = GeneratedColumn<double>(
+    'peak_dbfs',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _impulsesMeta = const VerificationMeta(
+    'impulses',
+  );
+  @override
+  late final GeneratedColumn<int> impulses = GeneratedColumn<int>(
+    'impulses',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _repRateHzMeta = const VerificationMeta(
+    'repRateHz',
+  );
+  @override
+  late final GeneratedColumn<double> repRateHz = GeneratedColumn<double>(
+    'rep_rate_hz',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _harmonicsMeta = const VerificationMeta(
+    'harmonics',
+  );
+  @override
+  late final GeneratedColumn<int> harmonics = GeneratedColumn<int>(
+    'harmonics',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _signatureIdMeta = const VerificationMeta(
+    'signatureId',
+  );
+  @override
+  late final GeneratedColumn<String> signatureId = GeneratedColumn<String>(
+    'signature_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _packVersionMeta = const VerificationMeta(
+    'packVersion',
+  );
+  @override
+  late final GeneratedColumn<String> packVersion = GeneratedColumn<String>(
+    'pack_version',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _matchScoreMeta = const VerificationMeta(
+    'matchScore',
+  );
+  @override
+  late final GeneratedColumn<double> matchScore = GeneratedColumn<double>(
+    'match_score',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _matchExperimentalMeta = const VerificationMeta(
+    'matchExperimental',
+  );
+  @override
+  late final GeneratedColumn<bool> matchExperimental = GeneratedColumn<bool>(
+    'match_experimental',
+    aliasedName,
+    true,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("match_experimental" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _locationIdMeta = const VerificationMeta(
+    'locationId',
+  );
+  @override
+  late final GeneratedColumn<String> locationId = GeneratedColumn<String>(
+    'location_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES locations (id)',
+    ),
+  );
+  static const VerificationMeta _itemIdMeta = const VerificationMeta('itemId');
+  @override
+  late final GeneratedColumn<String> itemId = GeneratedColumn<String>(
+    'item_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES items (id)',
+    ),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    nodeId,
+    seq,
+    startedAt,
+    durationMs,
+    eventClass,
+    peakHz,
+    minHz,
+    maxHz,
+    slopeHzPerMs,
+    snrDb,
+    peakDbfs,
+    impulses,
+    repRateHz,
+    harmonics,
+    signatureId,
+    packVersion,
+    matchScore,
+    matchExperimental,
+    locationId,
+    itemId,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sensor_events';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SensorEventRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('node_id')) {
+      context.handle(
+        _nodeIdMeta,
+        nodeId.isAcceptableOrUnknown(data['node_id']!, _nodeIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nodeIdMeta);
+    }
+    if (data.containsKey('seq')) {
+      context.handle(
+        _seqMeta,
+        seq.isAcceptableOrUnknown(data['seq']!, _seqMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_seqMeta);
+    }
+    if (data.containsKey('started_at')) {
+      context.handle(
+        _startedAtMeta,
+        startedAt.isAcceptableOrUnknown(data['started_at']!, _startedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_startedAtMeta);
+    }
+    if (data.containsKey('duration_ms')) {
+      context.handle(
+        _durationMsMeta,
+        durationMs.isAcceptableOrUnknown(data['duration_ms']!, _durationMsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_durationMsMeta);
+    }
+    if (data.containsKey('peak_hz')) {
+      context.handle(
+        _peakHzMeta,
+        peakHz.isAcceptableOrUnknown(data['peak_hz']!, _peakHzMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_peakHzMeta);
+    }
+    if (data.containsKey('min_hz')) {
+      context.handle(
+        _minHzMeta,
+        minHz.isAcceptableOrUnknown(data['min_hz']!, _minHzMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_minHzMeta);
+    }
+    if (data.containsKey('max_hz')) {
+      context.handle(
+        _maxHzMeta,
+        maxHz.isAcceptableOrUnknown(data['max_hz']!, _maxHzMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_maxHzMeta);
+    }
+    if (data.containsKey('slope_hz_per_ms')) {
+      context.handle(
+        _slopeHzPerMsMeta,
+        slopeHzPerMs.isAcceptableOrUnknown(
+          data['slope_hz_per_ms']!,
+          _slopeHzPerMsMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_slopeHzPerMsMeta);
+    }
+    if (data.containsKey('snr_db')) {
+      context.handle(
+        _snrDbMeta,
+        snrDb.isAcceptableOrUnknown(data['snr_db']!, _snrDbMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_snrDbMeta);
+    }
+    if (data.containsKey('peak_dbfs')) {
+      context.handle(
+        _peakDbfsMeta,
+        peakDbfs.isAcceptableOrUnknown(data['peak_dbfs']!, _peakDbfsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_peakDbfsMeta);
+    }
+    if (data.containsKey('impulses')) {
+      context.handle(
+        _impulsesMeta,
+        impulses.isAcceptableOrUnknown(data['impulses']!, _impulsesMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_impulsesMeta);
+    }
+    if (data.containsKey('rep_rate_hz')) {
+      context.handle(
+        _repRateHzMeta,
+        repRateHz.isAcceptableOrUnknown(data['rep_rate_hz']!, _repRateHzMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_repRateHzMeta);
+    }
+    if (data.containsKey('harmonics')) {
+      context.handle(
+        _harmonicsMeta,
+        harmonics.isAcceptableOrUnknown(data['harmonics']!, _harmonicsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_harmonicsMeta);
+    }
+    if (data.containsKey('signature_id')) {
+      context.handle(
+        _signatureIdMeta,
+        signatureId.isAcceptableOrUnknown(
+          data['signature_id']!,
+          _signatureIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('pack_version')) {
+      context.handle(
+        _packVersionMeta,
+        packVersion.isAcceptableOrUnknown(
+          data['pack_version']!,
+          _packVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('match_score')) {
+      context.handle(
+        _matchScoreMeta,
+        matchScore.isAcceptableOrUnknown(data['match_score']!, _matchScoreMeta),
+      );
+    }
+    if (data.containsKey('match_experimental')) {
+      context.handle(
+        _matchExperimentalMeta,
+        matchExperimental.isAcceptableOrUnknown(
+          data['match_experimental']!,
+          _matchExperimentalMeta,
+        ),
+      );
+    }
+    if (data.containsKey('location_id')) {
+      context.handle(
+        _locationIdMeta,
+        locationId.isAcceptableOrUnknown(data['location_id']!, _locationIdMeta),
+      );
+    }
+    if (data.containsKey('item_id')) {
+      context.handle(
+        _itemIdMeta,
+        itemId.isAcceptableOrUnknown(data['item_id']!, _itemIdMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {nodeId, seq},
+  ];
+  @override
+  SensorEventRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SensorEventRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      syncState: $SensorEventsTable.$convertersyncState.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}sync_state'],
+        )!,
+      ),
+      nodeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}node_id'],
+      )!,
+      seq: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}seq'],
+      )!,
+      startedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}started_at'],
+      )!,
+      durationMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}duration_ms'],
+      )!,
+      eventClass: $SensorEventsTable.$convertereventClass.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}event_class'],
+        )!,
+      ),
+      peakHz: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}peak_hz'],
+      )!,
+      minHz: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}min_hz'],
+      )!,
+      maxHz: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}max_hz'],
+      )!,
+      slopeHzPerMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}slope_hz_per_ms'],
+      )!,
+      snrDb: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}snr_db'],
+      )!,
+      peakDbfs: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}peak_dbfs'],
+      )!,
+      impulses: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}impulses'],
+      )!,
+      repRateHz: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}rep_rate_hz'],
+      )!,
+      harmonics: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}harmonics'],
+      )!,
+      signatureId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}signature_id'],
+      ),
+      packVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pack_version'],
+      ),
+      matchScore: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}match_score'],
+      ),
+      matchExperimental: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}match_experimental'],
+      ),
+      locationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}location_id'],
+      ),
+      itemId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}item_id'],
+      ),
+    );
+  }
+
+  @override
+  $SensorEventsTable createAlias(String alias) {
+    return $SensorEventsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<SyncState, String, String> $convertersyncState =
+      const EnumNameConverter<SyncState>(SyncState.values);
+  static JsonTypeConverter2<SensorEventClass, String, String>
+  $convertereventClass = const EnumNameConverter<SensorEventClass>(
+    SensorEventClass.values,
+  );
+}
+
+class SensorEventRow extends DataClass implements Insertable<SensorEventRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final SyncState syncState;
+  final String nodeId;
+  final int seq;
+  final DateTime startedAt;
+  final int durationMs;
+  final SensorEventClass eventClass;
+  final double peakHz;
+  final double minHz;
+  final double maxHz;
+  final double slopeHzPerMs;
+  final double snrDb;
+  final double peakDbfs;
+  final int impulses;
+  final double repRateHz;
+  final int harmonics;
+
+  /// Signature match; all null when the event matched no signature.
+  final String? signatureId;
+  final String? packVersion;
+  final double? matchScore;
+  final bool? matchExperimental;
+
+  /// Where the node was placed when the event was recorded.
+  final String? locationId;
+  final String? itemId;
+  const SensorEventRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.syncState,
+    required this.nodeId,
+    required this.seq,
+    required this.startedAt,
+    required this.durationMs,
+    required this.eventClass,
+    required this.peakHz,
+    required this.minHz,
+    required this.maxHz,
+    required this.slopeHzPerMs,
+    required this.snrDb,
+    required this.peakDbfs,
+    required this.impulses,
+    required this.repRateHz,
+    required this.harmonics,
+    this.signatureId,
+    this.packVersion,
+    this.matchScore,
+    this.matchExperimental,
+    this.locationId,
+    this.itemId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    {
+      map['sync_state'] = Variable<String>(
+        $SensorEventsTable.$convertersyncState.toSql(syncState),
+      );
+    }
+    map['node_id'] = Variable<String>(nodeId);
+    map['seq'] = Variable<int>(seq);
+    map['started_at'] = Variable<DateTime>(startedAt);
+    map['duration_ms'] = Variable<int>(durationMs);
+    {
+      map['event_class'] = Variable<String>(
+        $SensorEventsTable.$convertereventClass.toSql(eventClass),
+      );
+    }
+    map['peak_hz'] = Variable<double>(peakHz);
+    map['min_hz'] = Variable<double>(minHz);
+    map['max_hz'] = Variable<double>(maxHz);
+    map['slope_hz_per_ms'] = Variable<double>(slopeHzPerMs);
+    map['snr_db'] = Variable<double>(snrDb);
+    map['peak_dbfs'] = Variable<double>(peakDbfs);
+    map['impulses'] = Variable<int>(impulses);
+    map['rep_rate_hz'] = Variable<double>(repRateHz);
+    map['harmonics'] = Variable<int>(harmonics);
+    if (!nullToAbsent || signatureId != null) {
+      map['signature_id'] = Variable<String>(signatureId);
+    }
+    if (!nullToAbsent || packVersion != null) {
+      map['pack_version'] = Variable<String>(packVersion);
+    }
+    if (!nullToAbsent || matchScore != null) {
+      map['match_score'] = Variable<double>(matchScore);
+    }
+    if (!nullToAbsent || matchExperimental != null) {
+      map['match_experimental'] = Variable<bool>(matchExperimental);
+    }
+    if (!nullToAbsent || locationId != null) {
+      map['location_id'] = Variable<String>(locationId);
+    }
+    if (!nullToAbsent || itemId != null) {
+      map['item_id'] = Variable<String>(itemId);
+    }
+    return map;
+  }
+
+  SensorEventsCompanion toCompanion(bool nullToAbsent) {
+    return SensorEventsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      syncState: Value(syncState),
+      nodeId: Value(nodeId),
+      seq: Value(seq),
+      startedAt: Value(startedAt),
+      durationMs: Value(durationMs),
+      eventClass: Value(eventClass),
+      peakHz: Value(peakHz),
+      minHz: Value(minHz),
+      maxHz: Value(maxHz),
+      slopeHzPerMs: Value(slopeHzPerMs),
+      snrDb: Value(snrDb),
+      peakDbfs: Value(peakDbfs),
+      impulses: Value(impulses),
+      repRateHz: Value(repRateHz),
+      harmonics: Value(harmonics),
+      signatureId: signatureId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(signatureId),
+      packVersion: packVersion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(packVersion),
+      matchScore: matchScore == null && nullToAbsent
+          ? const Value.absent()
+          : Value(matchScore),
+      matchExperimental: matchExperimental == null && nullToAbsent
+          ? const Value.absent()
+          : Value(matchExperimental),
+      locationId: locationId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(locationId),
+      itemId: itemId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(itemId),
+    );
+  }
+
+  factory SensorEventRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SensorEventRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      syncState: $SensorEventsTable.$convertersyncState.fromJson(
+        serializer.fromJson<String>(json['syncState']),
+      ),
+      nodeId: serializer.fromJson<String>(json['nodeId']),
+      seq: serializer.fromJson<int>(json['seq']),
+      startedAt: serializer.fromJson<DateTime>(json['startedAt']),
+      durationMs: serializer.fromJson<int>(json['durationMs']),
+      eventClass: $SensorEventsTable.$convertereventClass.fromJson(
+        serializer.fromJson<String>(json['eventClass']),
+      ),
+      peakHz: serializer.fromJson<double>(json['peakHz']),
+      minHz: serializer.fromJson<double>(json['minHz']),
+      maxHz: serializer.fromJson<double>(json['maxHz']),
+      slopeHzPerMs: serializer.fromJson<double>(json['slopeHzPerMs']),
+      snrDb: serializer.fromJson<double>(json['snrDb']),
+      peakDbfs: serializer.fromJson<double>(json['peakDbfs']),
+      impulses: serializer.fromJson<int>(json['impulses']),
+      repRateHz: serializer.fromJson<double>(json['repRateHz']),
+      harmonics: serializer.fromJson<int>(json['harmonics']),
+      signatureId: serializer.fromJson<String?>(json['signatureId']),
+      packVersion: serializer.fromJson<String?>(json['packVersion']),
+      matchScore: serializer.fromJson<double?>(json['matchScore']),
+      matchExperimental: serializer.fromJson<bool?>(json['matchExperimental']),
+      locationId: serializer.fromJson<String?>(json['locationId']),
+      itemId: serializer.fromJson<String?>(json['itemId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'syncState': serializer.toJson<String>(
+        $SensorEventsTable.$convertersyncState.toJson(syncState),
+      ),
+      'nodeId': serializer.toJson<String>(nodeId),
+      'seq': serializer.toJson<int>(seq),
+      'startedAt': serializer.toJson<DateTime>(startedAt),
+      'durationMs': serializer.toJson<int>(durationMs),
+      'eventClass': serializer.toJson<String>(
+        $SensorEventsTable.$convertereventClass.toJson(eventClass),
+      ),
+      'peakHz': serializer.toJson<double>(peakHz),
+      'minHz': serializer.toJson<double>(minHz),
+      'maxHz': serializer.toJson<double>(maxHz),
+      'slopeHzPerMs': serializer.toJson<double>(slopeHzPerMs),
+      'snrDb': serializer.toJson<double>(snrDb),
+      'peakDbfs': serializer.toJson<double>(peakDbfs),
+      'impulses': serializer.toJson<int>(impulses),
+      'repRateHz': serializer.toJson<double>(repRateHz),
+      'harmonics': serializer.toJson<int>(harmonics),
+      'signatureId': serializer.toJson<String?>(signatureId),
+      'packVersion': serializer.toJson<String?>(packVersion),
+      'matchScore': serializer.toJson<double?>(matchScore),
+      'matchExperimental': serializer.toJson<bool?>(matchExperimental),
+      'locationId': serializer.toJson<String?>(locationId),
+      'itemId': serializer.toJson<String?>(itemId),
+    };
+  }
+
+  SensorEventRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    SyncState? syncState,
+    String? nodeId,
+    int? seq,
+    DateTime? startedAt,
+    int? durationMs,
+    SensorEventClass? eventClass,
+    double? peakHz,
+    double? minHz,
+    double? maxHz,
+    double? slopeHzPerMs,
+    double? snrDb,
+    double? peakDbfs,
+    int? impulses,
+    double? repRateHz,
+    int? harmonics,
+    Value<String?> signatureId = const Value.absent(),
+    Value<String?> packVersion = const Value.absent(),
+    Value<double?> matchScore = const Value.absent(),
+    Value<bool?> matchExperimental = const Value.absent(),
+    Value<String?> locationId = const Value.absent(),
+    Value<String?> itemId = const Value.absent(),
+  }) => SensorEventRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    syncState: syncState ?? this.syncState,
+    nodeId: nodeId ?? this.nodeId,
+    seq: seq ?? this.seq,
+    startedAt: startedAt ?? this.startedAt,
+    durationMs: durationMs ?? this.durationMs,
+    eventClass: eventClass ?? this.eventClass,
+    peakHz: peakHz ?? this.peakHz,
+    minHz: minHz ?? this.minHz,
+    maxHz: maxHz ?? this.maxHz,
+    slopeHzPerMs: slopeHzPerMs ?? this.slopeHzPerMs,
+    snrDb: snrDb ?? this.snrDb,
+    peakDbfs: peakDbfs ?? this.peakDbfs,
+    impulses: impulses ?? this.impulses,
+    repRateHz: repRateHz ?? this.repRateHz,
+    harmonics: harmonics ?? this.harmonics,
+    signatureId: signatureId.present ? signatureId.value : this.signatureId,
+    packVersion: packVersion.present ? packVersion.value : this.packVersion,
+    matchScore: matchScore.present ? matchScore.value : this.matchScore,
+    matchExperimental: matchExperimental.present
+        ? matchExperimental.value
+        : this.matchExperimental,
+    locationId: locationId.present ? locationId.value : this.locationId,
+    itemId: itemId.present ? itemId.value : this.itemId,
+  );
+  SensorEventRow copyWithCompanion(SensorEventsCompanion data) {
+    return SensorEventRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      syncState: data.syncState.present ? data.syncState.value : this.syncState,
+      nodeId: data.nodeId.present ? data.nodeId.value : this.nodeId,
+      seq: data.seq.present ? data.seq.value : this.seq,
+      startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
+      durationMs: data.durationMs.present
+          ? data.durationMs.value
+          : this.durationMs,
+      eventClass: data.eventClass.present
+          ? data.eventClass.value
+          : this.eventClass,
+      peakHz: data.peakHz.present ? data.peakHz.value : this.peakHz,
+      minHz: data.minHz.present ? data.minHz.value : this.minHz,
+      maxHz: data.maxHz.present ? data.maxHz.value : this.maxHz,
+      slopeHzPerMs: data.slopeHzPerMs.present
+          ? data.slopeHzPerMs.value
+          : this.slopeHzPerMs,
+      snrDb: data.snrDb.present ? data.snrDb.value : this.snrDb,
+      peakDbfs: data.peakDbfs.present ? data.peakDbfs.value : this.peakDbfs,
+      impulses: data.impulses.present ? data.impulses.value : this.impulses,
+      repRateHz: data.repRateHz.present ? data.repRateHz.value : this.repRateHz,
+      harmonics: data.harmonics.present ? data.harmonics.value : this.harmonics,
+      signatureId: data.signatureId.present
+          ? data.signatureId.value
+          : this.signatureId,
+      packVersion: data.packVersion.present
+          ? data.packVersion.value
+          : this.packVersion,
+      matchScore: data.matchScore.present
+          ? data.matchScore.value
+          : this.matchScore,
+      matchExperimental: data.matchExperimental.present
+          ? data.matchExperimental.value
+          : this.matchExperimental,
+      locationId: data.locationId.present
+          ? data.locationId.value
+          : this.locationId,
+      itemId: data.itemId.present ? data.itemId.value : this.itemId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SensorEventRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('nodeId: $nodeId, ')
+          ..write('seq: $seq, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('durationMs: $durationMs, ')
+          ..write('eventClass: $eventClass, ')
+          ..write('peakHz: $peakHz, ')
+          ..write('minHz: $minHz, ')
+          ..write('maxHz: $maxHz, ')
+          ..write('slopeHzPerMs: $slopeHzPerMs, ')
+          ..write('snrDb: $snrDb, ')
+          ..write('peakDbfs: $peakDbfs, ')
+          ..write('impulses: $impulses, ')
+          ..write('repRateHz: $repRateHz, ')
+          ..write('harmonics: $harmonics, ')
+          ..write('signatureId: $signatureId, ')
+          ..write('packVersion: $packVersion, ')
+          ..write('matchScore: $matchScore, ')
+          ..write('matchExperimental: $matchExperimental, ')
+          ..write('locationId: $locationId, ')
+          ..write('itemId: $itemId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    nodeId,
+    seq,
+    startedAt,
+    durationMs,
+    eventClass,
+    peakHz,
+    minHz,
+    maxHz,
+    slopeHzPerMs,
+    snrDb,
+    peakDbfs,
+    impulses,
+    repRateHz,
+    harmonics,
+    signatureId,
+    packVersion,
+    matchScore,
+    matchExperimental,
+    locationId,
+    itemId,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SensorEventRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.syncState == this.syncState &&
+          other.nodeId == this.nodeId &&
+          other.seq == this.seq &&
+          other.startedAt == this.startedAt &&
+          other.durationMs == this.durationMs &&
+          other.eventClass == this.eventClass &&
+          other.peakHz == this.peakHz &&
+          other.minHz == this.minHz &&
+          other.maxHz == this.maxHz &&
+          other.slopeHzPerMs == this.slopeHzPerMs &&
+          other.snrDb == this.snrDb &&
+          other.peakDbfs == this.peakDbfs &&
+          other.impulses == this.impulses &&
+          other.repRateHz == this.repRateHz &&
+          other.harmonics == this.harmonics &&
+          other.signatureId == this.signatureId &&
+          other.packVersion == this.packVersion &&
+          other.matchScore == this.matchScore &&
+          other.matchExperimental == this.matchExperimental &&
+          other.locationId == this.locationId &&
+          other.itemId == this.itemId);
+}
+
+class SensorEventsCompanion extends UpdateCompanion<SensorEventRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<SyncState> syncState;
+  final Value<String> nodeId;
+  final Value<int> seq;
+  final Value<DateTime> startedAt;
+  final Value<int> durationMs;
+  final Value<SensorEventClass> eventClass;
+  final Value<double> peakHz;
+  final Value<double> minHz;
+  final Value<double> maxHz;
+  final Value<double> slopeHzPerMs;
+  final Value<double> snrDb;
+  final Value<double> peakDbfs;
+  final Value<int> impulses;
+  final Value<double> repRateHz;
+  final Value<int> harmonics;
+  final Value<String?> signatureId;
+  final Value<String?> packVersion;
+  final Value<double?> matchScore;
+  final Value<bool?> matchExperimental;
+  final Value<String?> locationId;
+  final Value<String?> itemId;
+  final Value<int> rowid;
+  const SensorEventsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.syncState = const Value.absent(),
+    this.nodeId = const Value.absent(),
+    this.seq = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.durationMs = const Value.absent(),
+    this.eventClass = const Value.absent(),
+    this.peakHz = const Value.absent(),
+    this.minHz = const Value.absent(),
+    this.maxHz = const Value.absent(),
+    this.slopeHzPerMs = const Value.absent(),
+    this.snrDb = const Value.absent(),
+    this.peakDbfs = const Value.absent(),
+    this.impulses = const Value.absent(),
+    this.repRateHz = const Value.absent(),
+    this.harmonics = const Value.absent(),
+    this.signatureId = const Value.absent(),
+    this.packVersion = const Value.absent(),
+    this.matchScore = const Value.absent(),
+    this.matchExperimental = const Value.absent(),
+    this.locationId = const Value.absent(),
+    this.itemId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SensorEventsCompanion.insert({
+    required String id,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.syncState = const Value.absent(),
+    required String nodeId,
+    required int seq,
+    required DateTime startedAt,
+    required int durationMs,
+    required SensorEventClass eventClass,
+    required double peakHz,
+    required double minHz,
+    required double maxHz,
+    required double slopeHzPerMs,
+    required double snrDb,
+    required double peakDbfs,
+    required int impulses,
+    required double repRateHz,
+    required int harmonics,
+    this.signatureId = const Value.absent(),
+    this.packVersion = const Value.absent(),
+    this.matchScore = const Value.absent(),
+    this.matchExperimental = const Value.absent(),
+    this.locationId = const Value.absent(),
+    this.itemId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       nodeId = Value(nodeId),
+       seq = Value(seq),
+       startedAt = Value(startedAt),
+       durationMs = Value(durationMs),
+       eventClass = Value(eventClass),
+       peakHz = Value(peakHz),
+       minHz = Value(minHz),
+       maxHz = Value(maxHz),
+       slopeHzPerMs = Value(slopeHzPerMs),
+       snrDb = Value(snrDb),
+       peakDbfs = Value(peakDbfs),
+       impulses = Value(impulses),
+       repRateHz = Value(repRateHz),
+       harmonics = Value(harmonics);
+  static Insertable<SensorEventRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? syncState,
+    Expression<String>? nodeId,
+    Expression<int>? seq,
+    Expression<DateTime>? startedAt,
+    Expression<int>? durationMs,
+    Expression<String>? eventClass,
+    Expression<double>? peakHz,
+    Expression<double>? minHz,
+    Expression<double>? maxHz,
+    Expression<double>? slopeHzPerMs,
+    Expression<double>? snrDb,
+    Expression<double>? peakDbfs,
+    Expression<int>? impulses,
+    Expression<double>? repRateHz,
+    Expression<int>? harmonics,
+    Expression<String>? signatureId,
+    Expression<String>? packVersion,
+    Expression<double>? matchScore,
+    Expression<bool>? matchExperimental,
+    Expression<String>? locationId,
+    Expression<String>? itemId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (syncState != null) 'sync_state': syncState,
+      if (nodeId != null) 'node_id': nodeId,
+      if (seq != null) 'seq': seq,
+      if (startedAt != null) 'started_at': startedAt,
+      if (durationMs != null) 'duration_ms': durationMs,
+      if (eventClass != null) 'event_class': eventClass,
+      if (peakHz != null) 'peak_hz': peakHz,
+      if (minHz != null) 'min_hz': minHz,
+      if (maxHz != null) 'max_hz': maxHz,
+      if (slopeHzPerMs != null) 'slope_hz_per_ms': slopeHzPerMs,
+      if (snrDb != null) 'snr_db': snrDb,
+      if (peakDbfs != null) 'peak_dbfs': peakDbfs,
+      if (impulses != null) 'impulses': impulses,
+      if (repRateHz != null) 'rep_rate_hz': repRateHz,
+      if (harmonics != null) 'harmonics': harmonics,
+      if (signatureId != null) 'signature_id': signatureId,
+      if (packVersion != null) 'pack_version': packVersion,
+      if (matchScore != null) 'match_score': matchScore,
+      if (matchExperimental != null) 'match_experimental': matchExperimental,
+      if (locationId != null) 'location_id': locationId,
+      if (itemId != null) 'item_id': itemId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SensorEventsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<SyncState>? syncState,
+    Value<String>? nodeId,
+    Value<int>? seq,
+    Value<DateTime>? startedAt,
+    Value<int>? durationMs,
+    Value<SensorEventClass>? eventClass,
+    Value<double>? peakHz,
+    Value<double>? minHz,
+    Value<double>? maxHz,
+    Value<double>? slopeHzPerMs,
+    Value<double>? snrDb,
+    Value<double>? peakDbfs,
+    Value<int>? impulses,
+    Value<double>? repRateHz,
+    Value<int>? harmonics,
+    Value<String?>? signatureId,
+    Value<String?>? packVersion,
+    Value<double?>? matchScore,
+    Value<bool?>? matchExperimental,
+    Value<String?>? locationId,
+    Value<String?>? itemId,
+    Value<int>? rowid,
+  }) {
+    return SensorEventsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      syncState: syncState ?? this.syncState,
+      nodeId: nodeId ?? this.nodeId,
+      seq: seq ?? this.seq,
+      startedAt: startedAt ?? this.startedAt,
+      durationMs: durationMs ?? this.durationMs,
+      eventClass: eventClass ?? this.eventClass,
+      peakHz: peakHz ?? this.peakHz,
+      minHz: minHz ?? this.minHz,
+      maxHz: maxHz ?? this.maxHz,
+      slopeHzPerMs: slopeHzPerMs ?? this.slopeHzPerMs,
+      snrDb: snrDb ?? this.snrDb,
+      peakDbfs: peakDbfs ?? this.peakDbfs,
+      impulses: impulses ?? this.impulses,
+      repRateHz: repRateHz ?? this.repRateHz,
+      harmonics: harmonics ?? this.harmonics,
+      signatureId: signatureId ?? this.signatureId,
+      packVersion: packVersion ?? this.packVersion,
+      matchScore: matchScore ?? this.matchScore,
+      matchExperimental: matchExperimental ?? this.matchExperimental,
+      locationId: locationId ?? this.locationId,
+      itemId: itemId ?? this.itemId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (syncState.present) {
+      map['sync_state'] = Variable<String>(
+        $SensorEventsTable.$convertersyncState.toSql(syncState.value),
+      );
+    }
+    if (nodeId.present) {
+      map['node_id'] = Variable<String>(nodeId.value);
+    }
+    if (seq.present) {
+      map['seq'] = Variable<int>(seq.value);
+    }
+    if (startedAt.present) {
+      map['started_at'] = Variable<DateTime>(startedAt.value);
+    }
+    if (durationMs.present) {
+      map['duration_ms'] = Variable<int>(durationMs.value);
+    }
+    if (eventClass.present) {
+      map['event_class'] = Variable<String>(
+        $SensorEventsTable.$convertereventClass.toSql(eventClass.value),
+      );
+    }
+    if (peakHz.present) {
+      map['peak_hz'] = Variable<double>(peakHz.value);
+    }
+    if (minHz.present) {
+      map['min_hz'] = Variable<double>(minHz.value);
+    }
+    if (maxHz.present) {
+      map['max_hz'] = Variable<double>(maxHz.value);
+    }
+    if (slopeHzPerMs.present) {
+      map['slope_hz_per_ms'] = Variable<double>(slopeHzPerMs.value);
+    }
+    if (snrDb.present) {
+      map['snr_db'] = Variable<double>(snrDb.value);
+    }
+    if (peakDbfs.present) {
+      map['peak_dbfs'] = Variable<double>(peakDbfs.value);
+    }
+    if (impulses.present) {
+      map['impulses'] = Variable<int>(impulses.value);
+    }
+    if (repRateHz.present) {
+      map['rep_rate_hz'] = Variable<double>(repRateHz.value);
+    }
+    if (harmonics.present) {
+      map['harmonics'] = Variable<int>(harmonics.value);
+    }
+    if (signatureId.present) {
+      map['signature_id'] = Variable<String>(signatureId.value);
+    }
+    if (packVersion.present) {
+      map['pack_version'] = Variable<String>(packVersion.value);
+    }
+    if (matchScore.present) {
+      map['match_score'] = Variable<double>(matchScore.value);
+    }
+    if (matchExperimental.present) {
+      map['match_experimental'] = Variable<bool>(matchExperimental.value);
+    }
+    if (locationId.present) {
+      map['location_id'] = Variable<String>(locationId.value);
+    }
+    if (itemId.present) {
+      map['item_id'] = Variable<String>(itemId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SensorEventsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('nodeId: $nodeId, ')
+          ..write('seq: $seq, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('durationMs: $durationMs, ')
+          ..write('eventClass: $eventClass, ')
+          ..write('peakHz: $peakHz, ')
+          ..write('minHz: $minHz, ')
+          ..write('maxHz: $maxHz, ')
+          ..write('slopeHzPerMs: $slopeHzPerMs, ')
+          ..write('snrDb: $snrDb, ')
+          ..write('peakDbfs: $peakDbfs, ')
+          ..write('impulses: $impulses, ')
+          ..write('repRateHz: $repRateHz, ')
+          ..write('harmonics: $harmonics, ')
+          ..write('signatureId: $signatureId, ')
+          ..write('packVersion: $packVersion, ')
+          ..write('matchScore: $matchScore, ')
+          ..write('matchExperimental: $matchExperimental, ')
+          ..write('locationId: $locationId, ')
+          ..write('itemId: $itemId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $RemindersTable extends Reminders
     with TableInfo<$RemindersTable, ReminderRow> {
   @override
@@ -6250,6 +9671,1727 @@ class SettingsCompanion extends UpdateCompanion<SettingRow> {
   }
 }
 
+class $KnowledgeCardsTable extends KnowledgeCards
+    with TableInfo<$KnowledgeCardsTable, KnowledgeCardRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $KnowledgeCardsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<SyncState, String> syncState =
+      GeneratedColumn<String>(
+        'sync_state',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(SyncState.localOnly.name),
+      ).withConverter<SyncState>($KnowledgeCardsTable.$convertersyncState);
+  static const VerificationMeta _cardIdMeta = const VerificationMeta('cardId');
+  @override
+  late final GeneratedColumn<String> cardId = GeneratedColumn<String>(
+    'card_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
+  names = GeneratedColumn<String>(
+    'names',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  ).withConverter<Map<String, String>>($KnowledgeCardsTable.$converternames);
+  @override
+  late final GeneratedColumnWithTypeConverter<PestGroup, String> pestGroup =
+      GeneratedColumn<String>(
+        'pest_group',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<PestGroup>($KnowledgeCardsTable.$converterpestGroup);
+  @override
+  late final GeneratedColumnWithTypeConverter<SafetyLevel, String> safety =
+      GeneratedColumn<String>(
+        'safety',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<SafetyLevel>($KnowledgeCardsTable.$convertersafety);
+  static const VerificationMeta _summaryMeta = const VerificationMeta(
+    'summary',
+  );
+  @override
+  late final GeneratedColumn<String> summary = GeneratedColumn<String>(
+    'summary',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<List<String>, String> signs =
+      GeneratedColumn<String>(
+        'signs',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<List<String>>($KnowledgeCardsTable.$convertersigns);
+  @override
+  late final GeneratedColumnWithTypeConverter<List<String>, String> lookAlikes =
+      GeneratedColumn<String>(
+        'look_alikes',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<List<String>>($KnowledgeCardsTable.$converterlookAlikes);
+  @override
+  late final GeneratedColumnWithTypeConverter<List<String>, String>
+  healthRisks = GeneratedColumn<String>(
+    'health_risks',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  ).withConverter<List<String>>($KnowledgeCardsTable.$converterhealthRisks);
+  @override
+  late final GeneratedColumnWithTypeConverter<List<String>, String> safeSteps =
+      GeneratedColumn<String>(
+        'safe_steps',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<List<String>>($KnowledgeCardsTable.$convertersafeSteps);
+  @override
+  late final GeneratedColumnWithTypeConverter<List<String>, String>
+  callProfessionalWhen =
+      GeneratedColumn<String>(
+        'call_professional_when',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<List<String>>(
+        $KnowledgeCardsTable.$convertercallProfessionalWhen,
+      );
+  @override
+  late final GeneratedColumnWithTypeConverter<List<String>, String> firstAid =
+      GeneratedColumn<String>(
+        'first_aid',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<List<String>>($KnowledgeCardsTable.$converterfirstAid);
+  static const VerificationMeta _legalMeta = const VerificationMeta('legal');
+  @override
+  late final GeneratedColumn<String> legal = GeneratedColumn<String>(
+    'legal',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<List<String>, String> sources =
+      GeneratedColumn<String>(
+        'sources',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<List<String>>($KnowledgeCardsTable.$convertersources);
+  static const VerificationMeta _reviewStatusMeta = const VerificationMeta(
+    'reviewStatus',
+  );
+  @override
+  late final GeneratedColumn<String> reviewStatus = GeneratedColumn<String>(
+    'review_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _packVersionMeta = const VerificationMeta(
+    'packVersion',
+  );
+  @override
+  late final GeneratedColumn<String> packVersion = GeneratedColumn<String>(
+    'pack_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _contentHashMeta = const VerificationMeta(
+    'contentHash',
+  );
+  @override
+  late final GeneratedColumn<String> contentHash = GeneratedColumn<String>(
+    'content_hash',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    cardId,
+    names,
+    pestGroup,
+    safety,
+    summary,
+    signs,
+    lookAlikes,
+    healthRisks,
+    safeSteps,
+    callProfessionalWhen,
+    firstAid,
+    legal,
+    sources,
+    reviewStatus,
+    packVersion,
+    contentHash,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'knowledge_cards';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<KnowledgeCardRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('card_id')) {
+      context.handle(
+        _cardIdMeta,
+        cardId.isAcceptableOrUnknown(data['card_id']!, _cardIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cardIdMeta);
+    }
+    if (data.containsKey('summary')) {
+      context.handle(
+        _summaryMeta,
+        summary.isAcceptableOrUnknown(data['summary']!, _summaryMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_summaryMeta);
+    }
+    if (data.containsKey('legal')) {
+      context.handle(
+        _legalMeta,
+        legal.isAcceptableOrUnknown(data['legal']!, _legalMeta),
+      );
+    }
+    if (data.containsKey('review_status')) {
+      context.handle(
+        _reviewStatusMeta,
+        reviewStatus.isAcceptableOrUnknown(
+          data['review_status']!,
+          _reviewStatusMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_reviewStatusMeta);
+    }
+    if (data.containsKey('pack_version')) {
+      context.handle(
+        _packVersionMeta,
+        packVersion.isAcceptableOrUnknown(
+          data['pack_version']!,
+          _packVersionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_packVersionMeta);
+    }
+    if (data.containsKey('content_hash')) {
+      context.handle(
+        _contentHashMeta,
+        contentHash.isAcceptableOrUnknown(
+          data['content_hash']!,
+          _contentHashMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_contentHashMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  KnowledgeCardRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return KnowledgeCardRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      syncState: $KnowledgeCardsTable.$convertersyncState.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}sync_state'],
+        )!,
+      ),
+      cardId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}card_id'],
+      )!,
+      names: $KnowledgeCardsTable.$converternames.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}names'],
+        )!,
+      ),
+      pestGroup: $KnowledgeCardsTable.$converterpestGroup.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}pest_group'],
+        )!,
+      ),
+      safety: $KnowledgeCardsTable.$convertersafety.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}safety'],
+        )!,
+      ),
+      summary: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}summary'],
+      )!,
+      signs: $KnowledgeCardsTable.$convertersigns.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}signs'],
+        )!,
+      ),
+      lookAlikes: $KnowledgeCardsTable.$converterlookAlikes.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}look_alikes'],
+        )!,
+      ),
+      healthRisks: $KnowledgeCardsTable.$converterhealthRisks.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}health_risks'],
+        )!,
+      ),
+      safeSteps: $KnowledgeCardsTable.$convertersafeSteps.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}safe_steps'],
+        )!,
+      ),
+      callProfessionalWhen: $KnowledgeCardsTable.$convertercallProfessionalWhen
+          .fromSql(
+            attachedDatabase.typeMapping.read(
+              DriftSqlType.string,
+              data['${effectivePrefix}call_professional_when'],
+            )!,
+          ),
+      firstAid: $KnowledgeCardsTable.$converterfirstAid.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}first_aid'],
+        )!,
+      ),
+      legal: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}legal'],
+      ),
+      sources: $KnowledgeCardsTable.$convertersources.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}sources'],
+        )!,
+      ),
+      reviewStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}review_status'],
+      )!,
+      packVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pack_version'],
+      )!,
+      contentHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}content_hash'],
+      )!,
+    );
+  }
+
+  @override
+  $KnowledgeCardsTable createAlias(String alias) {
+    return $KnowledgeCardsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<SyncState, String, String> $convertersyncState =
+      const EnumNameConverter<SyncState>(SyncState.values);
+  static TypeConverter<Map<String, String>, String> $converternames =
+      const StringMapConverter();
+  static JsonTypeConverter2<PestGroup, String, String> $converterpestGroup =
+      const EnumNameConverter<PestGroup>(PestGroup.values);
+  static JsonTypeConverter2<SafetyLevel, String, String> $convertersafety =
+      const EnumNameConverter<SafetyLevel>(SafetyLevel.values);
+  static TypeConverter<List<String>, String> $convertersigns =
+      const StringListConverter();
+  static TypeConverter<List<String>, String> $converterlookAlikes =
+      const StringListConverter();
+  static TypeConverter<List<String>, String> $converterhealthRisks =
+      const StringListConverter();
+  static TypeConverter<List<String>, String> $convertersafeSteps =
+      const StringListConverter();
+  static TypeConverter<List<String>, String> $convertercallProfessionalWhen =
+      const StringListConverter();
+  static TypeConverter<List<String>, String> $converterfirstAid =
+      const StringListConverter();
+  static TypeConverter<List<String>, String> $convertersources =
+      const StringListConverter();
+}
+
+class KnowledgeCardRow extends DataClass
+    implements Insertable<KnowledgeCardRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final SyncState syncState;
+
+  /// Stable snake_case card id from the pack.
+  final String cardId;
+
+  /// languageTag -> name as a JSON object; 'en' is always present.
+  final Map<String, String> names;
+  final PestGroup pestGroup;
+  final SafetyLevel safety;
+  final String summary;
+  final List<String> signs;
+  final List<String> lookAlikes;
+  final List<String> healthRisks;
+  final List<String> safeSteps;
+  final List<String> callProfessionalWhen;
+  final List<String> firstAid;
+  final String? legal;
+  final List<String> sources;
+  final String reviewStatus;
+
+  /// The pack's `version`.
+  final String packVersion;
+
+  /// Hash of the text that gets embedded; a change invalidates embeddings.
+  final String contentHash;
+  const KnowledgeCardRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.syncState,
+    required this.cardId,
+    required this.names,
+    required this.pestGroup,
+    required this.safety,
+    required this.summary,
+    required this.signs,
+    required this.lookAlikes,
+    required this.healthRisks,
+    required this.safeSteps,
+    required this.callProfessionalWhen,
+    required this.firstAid,
+    this.legal,
+    required this.sources,
+    required this.reviewStatus,
+    required this.packVersion,
+    required this.contentHash,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    {
+      map['sync_state'] = Variable<String>(
+        $KnowledgeCardsTable.$convertersyncState.toSql(syncState),
+      );
+    }
+    map['card_id'] = Variable<String>(cardId);
+    {
+      map['names'] = Variable<String>(
+        $KnowledgeCardsTable.$converternames.toSql(names),
+      );
+    }
+    {
+      map['pest_group'] = Variable<String>(
+        $KnowledgeCardsTable.$converterpestGroup.toSql(pestGroup),
+      );
+    }
+    {
+      map['safety'] = Variable<String>(
+        $KnowledgeCardsTable.$convertersafety.toSql(safety),
+      );
+    }
+    map['summary'] = Variable<String>(summary);
+    {
+      map['signs'] = Variable<String>(
+        $KnowledgeCardsTable.$convertersigns.toSql(signs),
+      );
+    }
+    {
+      map['look_alikes'] = Variable<String>(
+        $KnowledgeCardsTable.$converterlookAlikes.toSql(lookAlikes),
+      );
+    }
+    {
+      map['health_risks'] = Variable<String>(
+        $KnowledgeCardsTable.$converterhealthRisks.toSql(healthRisks),
+      );
+    }
+    {
+      map['safe_steps'] = Variable<String>(
+        $KnowledgeCardsTable.$convertersafeSteps.toSql(safeSteps),
+      );
+    }
+    {
+      map['call_professional_when'] = Variable<String>(
+        $KnowledgeCardsTable.$convertercallProfessionalWhen.toSql(
+          callProfessionalWhen,
+        ),
+      );
+    }
+    {
+      map['first_aid'] = Variable<String>(
+        $KnowledgeCardsTable.$converterfirstAid.toSql(firstAid),
+      );
+    }
+    if (!nullToAbsent || legal != null) {
+      map['legal'] = Variable<String>(legal);
+    }
+    {
+      map['sources'] = Variable<String>(
+        $KnowledgeCardsTable.$convertersources.toSql(sources),
+      );
+    }
+    map['review_status'] = Variable<String>(reviewStatus);
+    map['pack_version'] = Variable<String>(packVersion);
+    map['content_hash'] = Variable<String>(contentHash);
+    return map;
+  }
+
+  KnowledgeCardsCompanion toCompanion(bool nullToAbsent) {
+    return KnowledgeCardsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      syncState: Value(syncState),
+      cardId: Value(cardId),
+      names: Value(names),
+      pestGroup: Value(pestGroup),
+      safety: Value(safety),
+      summary: Value(summary),
+      signs: Value(signs),
+      lookAlikes: Value(lookAlikes),
+      healthRisks: Value(healthRisks),
+      safeSteps: Value(safeSteps),
+      callProfessionalWhen: Value(callProfessionalWhen),
+      firstAid: Value(firstAid),
+      legal: legal == null && nullToAbsent
+          ? const Value.absent()
+          : Value(legal),
+      sources: Value(sources),
+      reviewStatus: Value(reviewStatus),
+      packVersion: Value(packVersion),
+      contentHash: Value(contentHash),
+    );
+  }
+
+  factory KnowledgeCardRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return KnowledgeCardRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      syncState: $KnowledgeCardsTable.$convertersyncState.fromJson(
+        serializer.fromJson<String>(json['syncState']),
+      ),
+      cardId: serializer.fromJson<String>(json['cardId']),
+      names: serializer.fromJson<Map<String, String>>(json['names']),
+      pestGroup: $KnowledgeCardsTable.$converterpestGroup.fromJson(
+        serializer.fromJson<String>(json['pestGroup']),
+      ),
+      safety: $KnowledgeCardsTable.$convertersafety.fromJson(
+        serializer.fromJson<String>(json['safety']),
+      ),
+      summary: serializer.fromJson<String>(json['summary']),
+      signs: serializer.fromJson<List<String>>(json['signs']),
+      lookAlikes: serializer.fromJson<List<String>>(json['lookAlikes']),
+      healthRisks: serializer.fromJson<List<String>>(json['healthRisks']),
+      safeSteps: serializer.fromJson<List<String>>(json['safeSteps']),
+      callProfessionalWhen: serializer.fromJson<List<String>>(
+        json['callProfessionalWhen'],
+      ),
+      firstAid: serializer.fromJson<List<String>>(json['firstAid']),
+      legal: serializer.fromJson<String?>(json['legal']),
+      sources: serializer.fromJson<List<String>>(json['sources']),
+      reviewStatus: serializer.fromJson<String>(json['reviewStatus']),
+      packVersion: serializer.fromJson<String>(json['packVersion']),
+      contentHash: serializer.fromJson<String>(json['contentHash']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'syncState': serializer.toJson<String>(
+        $KnowledgeCardsTable.$convertersyncState.toJson(syncState),
+      ),
+      'cardId': serializer.toJson<String>(cardId),
+      'names': serializer.toJson<Map<String, String>>(names),
+      'pestGroup': serializer.toJson<String>(
+        $KnowledgeCardsTable.$converterpestGroup.toJson(pestGroup),
+      ),
+      'safety': serializer.toJson<String>(
+        $KnowledgeCardsTable.$convertersafety.toJson(safety),
+      ),
+      'summary': serializer.toJson<String>(summary),
+      'signs': serializer.toJson<List<String>>(signs),
+      'lookAlikes': serializer.toJson<List<String>>(lookAlikes),
+      'healthRisks': serializer.toJson<List<String>>(healthRisks),
+      'safeSteps': serializer.toJson<List<String>>(safeSteps),
+      'callProfessionalWhen': serializer.toJson<List<String>>(
+        callProfessionalWhen,
+      ),
+      'firstAid': serializer.toJson<List<String>>(firstAid),
+      'legal': serializer.toJson<String?>(legal),
+      'sources': serializer.toJson<List<String>>(sources),
+      'reviewStatus': serializer.toJson<String>(reviewStatus),
+      'packVersion': serializer.toJson<String>(packVersion),
+      'contentHash': serializer.toJson<String>(contentHash),
+    };
+  }
+
+  KnowledgeCardRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    SyncState? syncState,
+    String? cardId,
+    Map<String, String>? names,
+    PestGroup? pestGroup,
+    SafetyLevel? safety,
+    String? summary,
+    List<String>? signs,
+    List<String>? lookAlikes,
+    List<String>? healthRisks,
+    List<String>? safeSteps,
+    List<String>? callProfessionalWhen,
+    List<String>? firstAid,
+    Value<String?> legal = const Value.absent(),
+    List<String>? sources,
+    String? reviewStatus,
+    String? packVersion,
+    String? contentHash,
+  }) => KnowledgeCardRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    syncState: syncState ?? this.syncState,
+    cardId: cardId ?? this.cardId,
+    names: names ?? this.names,
+    pestGroup: pestGroup ?? this.pestGroup,
+    safety: safety ?? this.safety,
+    summary: summary ?? this.summary,
+    signs: signs ?? this.signs,
+    lookAlikes: lookAlikes ?? this.lookAlikes,
+    healthRisks: healthRisks ?? this.healthRisks,
+    safeSteps: safeSteps ?? this.safeSteps,
+    callProfessionalWhen: callProfessionalWhen ?? this.callProfessionalWhen,
+    firstAid: firstAid ?? this.firstAid,
+    legal: legal.present ? legal.value : this.legal,
+    sources: sources ?? this.sources,
+    reviewStatus: reviewStatus ?? this.reviewStatus,
+    packVersion: packVersion ?? this.packVersion,
+    contentHash: contentHash ?? this.contentHash,
+  );
+  KnowledgeCardRow copyWithCompanion(KnowledgeCardsCompanion data) {
+    return KnowledgeCardRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      syncState: data.syncState.present ? data.syncState.value : this.syncState,
+      cardId: data.cardId.present ? data.cardId.value : this.cardId,
+      names: data.names.present ? data.names.value : this.names,
+      pestGroup: data.pestGroup.present ? data.pestGroup.value : this.pestGroup,
+      safety: data.safety.present ? data.safety.value : this.safety,
+      summary: data.summary.present ? data.summary.value : this.summary,
+      signs: data.signs.present ? data.signs.value : this.signs,
+      lookAlikes: data.lookAlikes.present
+          ? data.lookAlikes.value
+          : this.lookAlikes,
+      healthRisks: data.healthRisks.present
+          ? data.healthRisks.value
+          : this.healthRisks,
+      safeSteps: data.safeSteps.present ? data.safeSteps.value : this.safeSteps,
+      callProfessionalWhen: data.callProfessionalWhen.present
+          ? data.callProfessionalWhen.value
+          : this.callProfessionalWhen,
+      firstAid: data.firstAid.present ? data.firstAid.value : this.firstAid,
+      legal: data.legal.present ? data.legal.value : this.legal,
+      sources: data.sources.present ? data.sources.value : this.sources,
+      reviewStatus: data.reviewStatus.present
+          ? data.reviewStatus.value
+          : this.reviewStatus,
+      packVersion: data.packVersion.present
+          ? data.packVersion.value
+          : this.packVersion,
+      contentHash: data.contentHash.present
+          ? data.contentHash.value
+          : this.contentHash,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('KnowledgeCardRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('cardId: $cardId, ')
+          ..write('names: $names, ')
+          ..write('pestGroup: $pestGroup, ')
+          ..write('safety: $safety, ')
+          ..write('summary: $summary, ')
+          ..write('signs: $signs, ')
+          ..write('lookAlikes: $lookAlikes, ')
+          ..write('healthRisks: $healthRisks, ')
+          ..write('safeSteps: $safeSteps, ')
+          ..write('callProfessionalWhen: $callProfessionalWhen, ')
+          ..write('firstAid: $firstAid, ')
+          ..write('legal: $legal, ')
+          ..write('sources: $sources, ')
+          ..write('reviewStatus: $reviewStatus, ')
+          ..write('packVersion: $packVersion, ')
+          ..write('contentHash: $contentHash')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    cardId,
+    names,
+    pestGroup,
+    safety,
+    summary,
+    signs,
+    lookAlikes,
+    healthRisks,
+    safeSteps,
+    callProfessionalWhen,
+    firstAid,
+    legal,
+    sources,
+    reviewStatus,
+    packVersion,
+    contentHash,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is KnowledgeCardRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.syncState == this.syncState &&
+          other.cardId == this.cardId &&
+          other.names == this.names &&
+          other.pestGroup == this.pestGroup &&
+          other.safety == this.safety &&
+          other.summary == this.summary &&
+          other.signs == this.signs &&
+          other.lookAlikes == this.lookAlikes &&
+          other.healthRisks == this.healthRisks &&
+          other.safeSteps == this.safeSteps &&
+          other.callProfessionalWhen == this.callProfessionalWhen &&
+          other.firstAid == this.firstAid &&
+          other.legal == this.legal &&
+          other.sources == this.sources &&
+          other.reviewStatus == this.reviewStatus &&
+          other.packVersion == this.packVersion &&
+          other.contentHash == this.contentHash);
+}
+
+class KnowledgeCardsCompanion extends UpdateCompanion<KnowledgeCardRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<SyncState> syncState;
+  final Value<String> cardId;
+  final Value<Map<String, String>> names;
+  final Value<PestGroup> pestGroup;
+  final Value<SafetyLevel> safety;
+  final Value<String> summary;
+  final Value<List<String>> signs;
+  final Value<List<String>> lookAlikes;
+  final Value<List<String>> healthRisks;
+  final Value<List<String>> safeSteps;
+  final Value<List<String>> callProfessionalWhen;
+  final Value<List<String>> firstAid;
+  final Value<String?> legal;
+  final Value<List<String>> sources;
+  final Value<String> reviewStatus;
+  final Value<String> packVersion;
+  final Value<String> contentHash;
+  final Value<int> rowid;
+  const KnowledgeCardsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.syncState = const Value.absent(),
+    this.cardId = const Value.absent(),
+    this.names = const Value.absent(),
+    this.pestGroup = const Value.absent(),
+    this.safety = const Value.absent(),
+    this.summary = const Value.absent(),
+    this.signs = const Value.absent(),
+    this.lookAlikes = const Value.absent(),
+    this.healthRisks = const Value.absent(),
+    this.safeSteps = const Value.absent(),
+    this.callProfessionalWhen = const Value.absent(),
+    this.firstAid = const Value.absent(),
+    this.legal = const Value.absent(),
+    this.sources = const Value.absent(),
+    this.reviewStatus = const Value.absent(),
+    this.packVersion = const Value.absent(),
+    this.contentHash = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  KnowledgeCardsCompanion.insert({
+    required String id,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.syncState = const Value.absent(),
+    required String cardId,
+    required Map<String, String> names,
+    required PestGroup pestGroup,
+    required SafetyLevel safety,
+    required String summary,
+    required List<String> signs,
+    required List<String> lookAlikes,
+    required List<String> healthRisks,
+    required List<String> safeSteps,
+    required List<String> callProfessionalWhen,
+    required List<String> firstAid,
+    this.legal = const Value.absent(),
+    required List<String> sources,
+    required String reviewStatus,
+    required String packVersion,
+    required String contentHash,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       cardId = Value(cardId),
+       names = Value(names),
+       pestGroup = Value(pestGroup),
+       safety = Value(safety),
+       summary = Value(summary),
+       signs = Value(signs),
+       lookAlikes = Value(lookAlikes),
+       healthRisks = Value(healthRisks),
+       safeSteps = Value(safeSteps),
+       callProfessionalWhen = Value(callProfessionalWhen),
+       firstAid = Value(firstAid),
+       sources = Value(sources),
+       reviewStatus = Value(reviewStatus),
+       packVersion = Value(packVersion),
+       contentHash = Value(contentHash);
+  static Insertable<KnowledgeCardRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? syncState,
+    Expression<String>? cardId,
+    Expression<String>? names,
+    Expression<String>? pestGroup,
+    Expression<String>? safety,
+    Expression<String>? summary,
+    Expression<String>? signs,
+    Expression<String>? lookAlikes,
+    Expression<String>? healthRisks,
+    Expression<String>? safeSteps,
+    Expression<String>? callProfessionalWhen,
+    Expression<String>? firstAid,
+    Expression<String>? legal,
+    Expression<String>? sources,
+    Expression<String>? reviewStatus,
+    Expression<String>? packVersion,
+    Expression<String>? contentHash,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (syncState != null) 'sync_state': syncState,
+      if (cardId != null) 'card_id': cardId,
+      if (names != null) 'names': names,
+      if (pestGroup != null) 'pest_group': pestGroup,
+      if (safety != null) 'safety': safety,
+      if (summary != null) 'summary': summary,
+      if (signs != null) 'signs': signs,
+      if (lookAlikes != null) 'look_alikes': lookAlikes,
+      if (healthRisks != null) 'health_risks': healthRisks,
+      if (safeSteps != null) 'safe_steps': safeSteps,
+      if (callProfessionalWhen != null)
+        'call_professional_when': callProfessionalWhen,
+      if (firstAid != null) 'first_aid': firstAid,
+      if (legal != null) 'legal': legal,
+      if (sources != null) 'sources': sources,
+      if (reviewStatus != null) 'review_status': reviewStatus,
+      if (packVersion != null) 'pack_version': packVersion,
+      if (contentHash != null) 'content_hash': contentHash,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  KnowledgeCardsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<SyncState>? syncState,
+    Value<String>? cardId,
+    Value<Map<String, String>>? names,
+    Value<PestGroup>? pestGroup,
+    Value<SafetyLevel>? safety,
+    Value<String>? summary,
+    Value<List<String>>? signs,
+    Value<List<String>>? lookAlikes,
+    Value<List<String>>? healthRisks,
+    Value<List<String>>? safeSteps,
+    Value<List<String>>? callProfessionalWhen,
+    Value<List<String>>? firstAid,
+    Value<String?>? legal,
+    Value<List<String>>? sources,
+    Value<String>? reviewStatus,
+    Value<String>? packVersion,
+    Value<String>? contentHash,
+    Value<int>? rowid,
+  }) {
+    return KnowledgeCardsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      syncState: syncState ?? this.syncState,
+      cardId: cardId ?? this.cardId,
+      names: names ?? this.names,
+      pestGroup: pestGroup ?? this.pestGroup,
+      safety: safety ?? this.safety,
+      summary: summary ?? this.summary,
+      signs: signs ?? this.signs,
+      lookAlikes: lookAlikes ?? this.lookAlikes,
+      healthRisks: healthRisks ?? this.healthRisks,
+      safeSteps: safeSteps ?? this.safeSteps,
+      callProfessionalWhen: callProfessionalWhen ?? this.callProfessionalWhen,
+      firstAid: firstAid ?? this.firstAid,
+      legal: legal ?? this.legal,
+      sources: sources ?? this.sources,
+      reviewStatus: reviewStatus ?? this.reviewStatus,
+      packVersion: packVersion ?? this.packVersion,
+      contentHash: contentHash ?? this.contentHash,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (syncState.present) {
+      map['sync_state'] = Variable<String>(
+        $KnowledgeCardsTable.$convertersyncState.toSql(syncState.value),
+      );
+    }
+    if (cardId.present) {
+      map['card_id'] = Variable<String>(cardId.value);
+    }
+    if (names.present) {
+      map['names'] = Variable<String>(
+        $KnowledgeCardsTable.$converternames.toSql(names.value),
+      );
+    }
+    if (pestGroup.present) {
+      map['pest_group'] = Variable<String>(
+        $KnowledgeCardsTable.$converterpestGroup.toSql(pestGroup.value),
+      );
+    }
+    if (safety.present) {
+      map['safety'] = Variable<String>(
+        $KnowledgeCardsTable.$convertersafety.toSql(safety.value),
+      );
+    }
+    if (summary.present) {
+      map['summary'] = Variable<String>(summary.value);
+    }
+    if (signs.present) {
+      map['signs'] = Variable<String>(
+        $KnowledgeCardsTable.$convertersigns.toSql(signs.value),
+      );
+    }
+    if (lookAlikes.present) {
+      map['look_alikes'] = Variable<String>(
+        $KnowledgeCardsTable.$converterlookAlikes.toSql(lookAlikes.value),
+      );
+    }
+    if (healthRisks.present) {
+      map['health_risks'] = Variable<String>(
+        $KnowledgeCardsTable.$converterhealthRisks.toSql(healthRisks.value),
+      );
+    }
+    if (safeSteps.present) {
+      map['safe_steps'] = Variable<String>(
+        $KnowledgeCardsTable.$convertersafeSteps.toSql(safeSteps.value),
+      );
+    }
+    if (callProfessionalWhen.present) {
+      map['call_professional_when'] = Variable<String>(
+        $KnowledgeCardsTable.$convertercallProfessionalWhen.toSql(
+          callProfessionalWhen.value,
+        ),
+      );
+    }
+    if (firstAid.present) {
+      map['first_aid'] = Variable<String>(
+        $KnowledgeCardsTable.$converterfirstAid.toSql(firstAid.value),
+      );
+    }
+    if (legal.present) {
+      map['legal'] = Variable<String>(legal.value);
+    }
+    if (sources.present) {
+      map['sources'] = Variable<String>(
+        $KnowledgeCardsTable.$convertersources.toSql(sources.value),
+      );
+    }
+    if (reviewStatus.present) {
+      map['review_status'] = Variable<String>(reviewStatus.value);
+    }
+    if (packVersion.present) {
+      map['pack_version'] = Variable<String>(packVersion.value);
+    }
+    if (contentHash.present) {
+      map['content_hash'] = Variable<String>(contentHash.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('KnowledgeCardsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('cardId: $cardId, ')
+          ..write('names: $names, ')
+          ..write('pestGroup: $pestGroup, ')
+          ..write('safety: $safety, ')
+          ..write('summary: $summary, ')
+          ..write('signs: $signs, ')
+          ..write('lookAlikes: $lookAlikes, ')
+          ..write('healthRisks: $healthRisks, ')
+          ..write('safeSteps: $safeSteps, ')
+          ..write('callProfessionalWhen: $callProfessionalWhen, ')
+          ..write('firstAid: $firstAid, ')
+          ..write('legal: $legal, ')
+          ..write('sources: $sources, ')
+          ..write('reviewStatus: $reviewStatus, ')
+          ..write('packVersion: $packVersion, ')
+          ..write('contentHash: $contentHash, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CardEmbeddingsTable extends CardEmbeddings
+    with TableInfo<$CardEmbeddingsTable, CardEmbeddingRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CardEmbeddingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<SyncState, String> syncState =
+      GeneratedColumn<String>(
+        'sync_state',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(SyncState.localOnly.name),
+      ).withConverter<SyncState>($CardEmbeddingsTable.$convertersyncState);
+  static const VerificationMeta _cardIdMeta = const VerificationMeta('cardId');
+  @override
+  late final GeneratedColumn<String> cardId = GeneratedColumn<String>(
+    'card_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES knowledge_cards (card_id)',
+    ),
+  );
+  static const VerificationMeta _modelVersionMeta = const VerificationMeta(
+    'modelVersion',
+  );
+  @override
+  late final GeneratedColumn<String> modelVersion = GeneratedColumn<String>(
+    'model_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dimMeta = const VerificationMeta('dim');
+  @override
+  late final GeneratedColumn<int> dim = GeneratedColumn<int>(
+    'dim',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _vectorMeta = const VerificationMeta('vector');
+  @override
+  late final GeneratedColumn<Uint8List> vector = GeneratedColumn<Uint8List>(
+    'vector',
+    aliasedName,
+    false,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _contentHashMeta = const VerificationMeta(
+    'contentHash',
+  );
+  @override
+  late final GeneratedColumn<String> contentHash = GeneratedColumn<String>(
+    'content_hash',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    cardId,
+    modelVersion,
+    dim,
+    vector,
+    contentHash,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'card_embeddings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CardEmbeddingRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('card_id')) {
+      context.handle(
+        _cardIdMeta,
+        cardId.isAcceptableOrUnknown(data['card_id']!, _cardIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cardIdMeta);
+    }
+    if (data.containsKey('model_version')) {
+      context.handle(
+        _modelVersionMeta,
+        modelVersion.isAcceptableOrUnknown(
+          data['model_version']!,
+          _modelVersionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_modelVersionMeta);
+    }
+    if (data.containsKey('dim')) {
+      context.handle(
+        _dimMeta,
+        dim.isAcceptableOrUnknown(data['dim']!, _dimMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dimMeta);
+    }
+    if (data.containsKey('vector')) {
+      context.handle(
+        _vectorMeta,
+        vector.isAcceptableOrUnknown(data['vector']!, _vectorMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_vectorMeta);
+    }
+    if (data.containsKey('content_hash')) {
+      context.handle(
+        _contentHashMeta,
+        contentHash.isAcceptableOrUnknown(
+          data['content_hash']!,
+          _contentHashMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_contentHashMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {cardId, modelVersion, dim},
+  ];
+  @override
+  CardEmbeddingRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CardEmbeddingRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      syncState: $CardEmbeddingsTable.$convertersyncState.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}sync_state'],
+        )!,
+      ),
+      cardId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}card_id'],
+      )!,
+      modelVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}model_version'],
+      )!,
+      dim: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}dim'],
+      )!,
+      vector: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}vector'],
+      )!,
+      contentHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}content_hash'],
+      )!,
+    );
+  }
+
+  @override
+  $CardEmbeddingsTable createAlias(String alias) {
+    return $CardEmbeddingsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<SyncState, String, String> $convertersyncState =
+      const EnumNameConverter<SyncState>(SyncState.values);
+}
+
+class CardEmbeddingRow extends DataClass
+    implements Insertable<CardEmbeddingRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final SyncState syncState;
+  final String cardId;
+  final String modelVersion;
+  final int dim;
+  final Uint8List vector;
+
+  /// The card's contentHash when this vector was computed.
+  final String contentHash;
+  const CardEmbeddingRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.syncState,
+    required this.cardId,
+    required this.modelVersion,
+    required this.dim,
+    required this.vector,
+    required this.contentHash,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    {
+      map['sync_state'] = Variable<String>(
+        $CardEmbeddingsTable.$convertersyncState.toSql(syncState),
+      );
+    }
+    map['card_id'] = Variable<String>(cardId);
+    map['model_version'] = Variable<String>(modelVersion);
+    map['dim'] = Variable<int>(dim);
+    map['vector'] = Variable<Uint8List>(vector);
+    map['content_hash'] = Variable<String>(contentHash);
+    return map;
+  }
+
+  CardEmbeddingsCompanion toCompanion(bool nullToAbsent) {
+    return CardEmbeddingsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      syncState: Value(syncState),
+      cardId: Value(cardId),
+      modelVersion: Value(modelVersion),
+      dim: Value(dim),
+      vector: Value(vector),
+      contentHash: Value(contentHash),
+    );
+  }
+
+  factory CardEmbeddingRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CardEmbeddingRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      syncState: $CardEmbeddingsTable.$convertersyncState.fromJson(
+        serializer.fromJson<String>(json['syncState']),
+      ),
+      cardId: serializer.fromJson<String>(json['cardId']),
+      modelVersion: serializer.fromJson<String>(json['modelVersion']),
+      dim: serializer.fromJson<int>(json['dim']),
+      vector: serializer.fromJson<Uint8List>(json['vector']),
+      contentHash: serializer.fromJson<String>(json['contentHash']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'syncState': serializer.toJson<String>(
+        $CardEmbeddingsTable.$convertersyncState.toJson(syncState),
+      ),
+      'cardId': serializer.toJson<String>(cardId),
+      'modelVersion': serializer.toJson<String>(modelVersion),
+      'dim': serializer.toJson<int>(dim),
+      'vector': serializer.toJson<Uint8List>(vector),
+      'contentHash': serializer.toJson<String>(contentHash),
+    };
+  }
+
+  CardEmbeddingRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    SyncState? syncState,
+    String? cardId,
+    String? modelVersion,
+    int? dim,
+    Uint8List? vector,
+    String? contentHash,
+  }) => CardEmbeddingRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    syncState: syncState ?? this.syncState,
+    cardId: cardId ?? this.cardId,
+    modelVersion: modelVersion ?? this.modelVersion,
+    dim: dim ?? this.dim,
+    vector: vector ?? this.vector,
+    contentHash: contentHash ?? this.contentHash,
+  );
+  CardEmbeddingRow copyWithCompanion(CardEmbeddingsCompanion data) {
+    return CardEmbeddingRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      syncState: data.syncState.present ? data.syncState.value : this.syncState,
+      cardId: data.cardId.present ? data.cardId.value : this.cardId,
+      modelVersion: data.modelVersion.present
+          ? data.modelVersion.value
+          : this.modelVersion,
+      dim: data.dim.present ? data.dim.value : this.dim,
+      vector: data.vector.present ? data.vector.value : this.vector,
+      contentHash: data.contentHash.present
+          ? data.contentHash.value
+          : this.contentHash,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CardEmbeddingRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('cardId: $cardId, ')
+          ..write('modelVersion: $modelVersion, ')
+          ..write('dim: $dim, ')
+          ..write('vector: $vector, ')
+          ..write('contentHash: $contentHash')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    cardId,
+    modelVersion,
+    dim,
+    $driftBlobEquality.hash(vector),
+    contentHash,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CardEmbeddingRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.syncState == this.syncState &&
+          other.cardId == this.cardId &&
+          other.modelVersion == this.modelVersion &&
+          other.dim == this.dim &&
+          $driftBlobEquality.equals(other.vector, this.vector) &&
+          other.contentHash == this.contentHash);
+}
+
+class CardEmbeddingsCompanion extends UpdateCompanion<CardEmbeddingRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<SyncState> syncState;
+  final Value<String> cardId;
+  final Value<String> modelVersion;
+  final Value<int> dim;
+  final Value<Uint8List> vector;
+  final Value<String> contentHash;
+  final Value<int> rowid;
+  const CardEmbeddingsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.syncState = const Value.absent(),
+    this.cardId = const Value.absent(),
+    this.modelVersion = const Value.absent(),
+    this.dim = const Value.absent(),
+    this.vector = const Value.absent(),
+    this.contentHash = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CardEmbeddingsCompanion.insert({
+    required String id,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.syncState = const Value.absent(),
+    required String cardId,
+    required String modelVersion,
+    required int dim,
+    required Uint8List vector,
+    required String contentHash,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       cardId = Value(cardId),
+       modelVersion = Value(modelVersion),
+       dim = Value(dim),
+       vector = Value(vector),
+       contentHash = Value(contentHash);
+  static Insertable<CardEmbeddingRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? syncState,
+    Expression<String>? cardId,
+    Expression<String>? modelVersion,
+    Expression<int>? dim,
+    Expression<Uint8List>? vector,
+    Expression<String>? contentHash,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (syncState != null) 'sync_state': syncState,
+      if (cardId != null) 'card_id': cardId,
+      if (modelVersion != null) 'model_version': modelVersion,
+      if (dim != null) 'dim': dim,
+      if (vector != null) 'vector': vector,
+      if (contentHash != null) 'content_hash': contentHash,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CardEmbeddingsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<SyncState>? syncState,
+    Value<String>? cardId,
+    Value<String>? modelVersion,
+    Value<int>? dim,
+    Value<Uint8List>? vector,
+    Value<String>? contentHash,
+    Value<int>? rowid,
+  }) {
+    return CardEmbeddingsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      syncState: syncState ?? this.syncState,
+      cardId: cardId ?? this.cardId,
+      modelVersion: modelVersion ?? this.modelVersion,
+      dim: dim ?? this.dim,
+      vector: vector ?? this.vector,
+      contentHash: contentHash ?? this.contentHash,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (syncState.present) {
+      map['sync_state'] = Variable<String>(
+        $CardEmbeddingsTable.$convertersyncState.toSql(syncState.value),
+      );
+    }
+    if (cardId.present) {
+      map['card_id'] = Variable<String>(cardId.value);
+    }
+    if (modelVersion.present) {
+      map['model_version'] = Variable<String>(modelVersion.value);
+    }
+    if (dim.present) {
+      map['dim'] = Variable<int>(dim.value);
+    }
+    if (vector.present) {
+      map['vector'] = Variable<Uint8List>(vector.value);
+    }
+    if (contentHash.present) {
+      map['content_hash'] = Variable<String>(contentHash.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CardEmbeddingsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('cardId: $cardId, ')
+          ..write('modelVersion: $modelVersion, ')
+          ..write('dim: $dim, ')
+          ..write('vector: $vector, ')
+          ..write('contentHash: $contentHash, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$KernelDatabase extends GeneratedDatabase {
   _$KernelDatabase(QueryExecutor e) : super(e);
   late final $LocationsTable locations = $LocationsTable(this);
@@ -6271,8 +11413,25 @@ abstract class _$KernelDatabase extends GeneratedDatabase {
     'CREATE TRIGGER labeled_samples_immutable BEFORE UPDATE OF id, scan_id, item_id, label, inspection_id, grain_type, sack_material, environment, notes, created_at ON labeled_samples BEGIN SELECT RAISE (ABORT, \'labeled samples are immutable\');END',
     'labeled_samples_immutable',
   );
+  late final $SightingsTable sightings = $SightingsTable(this);
+  late final Trigger sightingsAnalysisImmutable = Trigger(
+    'CREATE TRIGGER sightings_analysis_immutable BEFORE UPDATE OF id, role, source, observed_at, latitude, longitude, accuracy_meters, distance, analysis, sound, created_at ON sightings BEGIN SELECT RAISE (ABORT, \'sighting AI analysis is immutable\');END',
+    'sightings_analysis_immutable',
+  );
+  late final Trigger sightingsVerifiedOnce = Trigger(
+    'CREATE TRIGGER sightings_verified_once BEFORE UPDATE OF verified_finding ON sightings WHEN OLD.verified_finding IS NOT NULL BEGIN SELECT RAISE (ABORT, \'verified sighting finding is immutable\');END',
+    'sightings_verified_once',
+  );
+  late final $SensorNodesTable sensorNodes = $SensorNodesTable(this);
+  late final $SensorEventsTable sensorEvents = $SensorEventsTable(this);
+  late final Trigger sensorEventsAppendOnly = Trigger(
+    'CREATE TRIGGER sensor_events_append_only BEFORE UPDATE OF id, node_id, seq, started_at, duration_ms, event_class, peak_hz, min_hz, max_hz, slope_hz_per_ms, snr_db, peak_dbfs, impulses, rep_rate_hz, harmonics, signature_id, pack_version, match_score, match_experimental, location_id, item_id, created_at ON sensor_events BEGIN SELECT RAISE (ABORT, \'sensor events are append-only\');END',
+    'sensor_events_append_only',
+  );
   late final $RemindersTable reminders = $RemindersTable(this);
   late final $SettingsTable settings = $SettingsTable(this);
+  late final $KnowledgeCardsTable knowledgeCards = $KnowledgeCardsTable(this);
+  late final $CardEmbeddingsTable cardEmbeddings = $CardEmbeddingsTable(this);
   late final Index itemsOwnerRole = Index(
     'items_owner_role',
     'CREATE INDEX items_owner_role ON items (owner_role)',
@@ -6305,6 +11464,30 @@ abstract class _$KernelDatabase extends GeneratedDatabase {
     'labeled_samples_item',
     'CREATE INDEX labeled_samples_item ON labeled_samples (item_id)',
   );
+  late final Index sightingsObserved = Index(
+    'sightings_observed',
+    'CREATE INDEX sightings_observed ON sightings (observed_at)',
+  );
+  late final Index sightingsLocation = Index(
+    'sightings_location',
+    'CREATE INDEX sightings_location ON sightings (location_id)',
+  );
+  late final Index sightingsItem = Index(
+    'sightings_item',
+    'CREATE INDEX sightings_item ON sightings (item_id)',
+  );
+  late final Index sensorEventsStarted = Index(
+    'sensor_events_started',
+    'CREATE INDEX sensor_events_started ON sensor_events (started_at)',
+  );
+  late final Index sensorEventsLocation = Index(
+    'sensor_events_location',
+    'CREATE INDEX sensor_events_location ON sensor_events (location_id)',
+  );
+  late final Index sensorEventsItem = Index(
+    'sensor_events_item',
+    'CREATE INDEX sensor_events_item ON sensor_events (item_id)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -6320,8 +11503,16 @@ abstract class _$KernelDatabase extends GeneratedDatabase {
     inspectionsVerifiedImmutable,
     labeledSamples,
     labeledSamplesImmutable,
+    sightings,
+    sightingsAnalysisImmutable,
+    sightingsVerifiedOnce,
+    sensorNodes,
+    sensorEvents,
+    sensorEventsAppendOnly,
     reminders,
     settings,
+    knowledgeCards,
+    cardEmbeddings,
     itemsOwnerRole,
     itemsLocation,
     itemsLot,
@@ -6330,6 +11521,12 @@ abstract class _$KernelDatabase extends GeneratedDatabase {
     inspectionsItem,
     remindersItem,
     labeledSamplesItem,
+    sightingsObserved,
+    sightingsLocation,
+    sightingsItem,
+    sensorEventsStarted,
+    sensorEventsLocation,
+    sensorEventsItem,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -6350,6 +11547,27 @@ abstract class _$KernelDatabase extends GeneratedDatabase {
     WritePropagation(
       on: TableUpdateQuery.onTableName(
         'labeled_samples',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'sightings',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'sightings',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'sensor_events',
         limitUpdateKind: UpdateKind.update,
       ),
       result: [],

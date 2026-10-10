@@ -40,4 +40,24 @@ void main() {
       expect(h.scheduler.scheduled, isEmpty);
     },
   );
+
+  test('exposes the contracts v4 interfaces, empty on a fresh install, and '
+      'closes cleanly with a sensor attention stream attached', () async {
+    final attention = Stream<Set<String>>.periodic(
+      const Duration(milliseconds: 5),
+      (_) => const {'node-1'},
+    );
+    final h = await Harness.create(sensorAttention: attention);
+    final ops = h.ops;
+    final SightingRepository sightings = ops.sightings;
+    final SensorNodeRepository sensorNodes = ops.sensorNodes;
+    final SensorEventRepository sensorEvents = ops.sensorEvents;
+    final KnowledgeService knowledge = ops.knowledge;
+    expect(await sightings.watchRecent().first, isEmpty);
+    expect(await sensorNodes.watchAll().first, isEmpty);
+    expect(await sensorEvents.lastSeq('node-1'), isNull);
+    expect(await knowledge.all(), isEmpty);
+    expect(await knowledge.search('rat'), isEmpty);
+    await h.dispose();
+  });
 }

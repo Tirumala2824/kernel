@@ -1,22 +1,25 @@
 import 'dart:io';
 
+import 'package:drift/drift.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
 
 import '../db/database.dart';
 import '../repositories/reminder_repository.dart';
+import '../support.dart';
 
 /// Deletes retained audio kept outside this package (the audio-ai plugin's
 /// app-private recordings folder). Wired by the app.
 typedef RetainedAudioDeleter = Future<void> Function();
 
-/// User-initiated wipe. Items, lots, locations, harvests and settings
-/// remain.
+/// User-initiated wipe. Items, lots, locations, harvests, settings,
+/// knowledge cards and paired sensor nodes remain.
 class DriftPrivacyService implements PrivacyService {
   DriftPrivacyService(
     this._db,
     this._reminders,
     this._deleteRetainedAudio,
     this._datasetDirectory,
+    this._clock,
   );
 
   final KernelDatabase _db;
@@ -26,21 +29,39 @@ class DriftPrivacyService implements PrivacyService {
   /// Where DatasetExportService writes ZIPs that contain copies of retained
   /// audio; they are wiped together with the audio.
   final Directory _datasetDirectory;
+  final Clock _clock;
 
-  /// In order: cancels reminder notifications; deletes inspection photo
-  /// files (missing files are ignored); deletes all labeled samples, scans,
-  /// inspections and reminders in one transaction; deletes retained audio
-  /// if a deleter was provided; deletes exported dataset ZIPs. Photos go
-  /// before the rows that list them, so after a partial failure calling it
-  /// again finishes the job.
+  /// In order:
+  /// 1. cancels reminder notifications;
+  /// 2. deletes inspection photo files and kept sighting media files
+  ///    (missing files are ignored);
+  /// 3. in one transaction, deletes all labeled samples, inspections,
+  ///    scans, reminders, sightings and sensor events, and records on each
+  ///    node the highest event seq it cleared, so the node's
+  ///    store-and-forward buffer never brings those events back;
+  /// 4. deletes retained audio if a deleter was provided;
+  /// 5. deletes exported dataset ZIPs.
+  ///
+  /// Files go before the rows that list them, so after a partial failure
+  /// calling it again finishes the job. Paired nodes, their placement and
+  /// key fingerprints are kept.
   @override
   Future<void> deleteAllHistory() async {
     await _reminders.cancelAllNotifications();
     final inspections = await _db.select(_db.inspections).get();
     for (final inspection in inspections) {
       for (final path in inspection.photoPaths) {
-        await _deletePhoto(path);
+        await deleteFileIfPresent(path);
       }
+    }
+    final media =
+        await (_db.selectOnly(_db.sightings)
+              ..addColumns([_db.sightings.mediaPath])
+              ..where(_db.sightings.mediaPath.isNotNull()))
+            .map((row) => row.read(_db.sightings.mediaPath)!)
+            .get();
+    for (final path in media) {
+      await deleteFileIfPresent(path);
     }
     await _db.transaction(() async {
       // Children first: samples reference scans and inspections, and
@@ -49,6 +70,9 @@ class DriftPrivacyService implements PrivacyService {
       await _db.delete(_db.inspections).go();
       await _db.delete(_db.scans).go();
       await _db.delete(_db.reminders).go();
+      await _db.delete(_db.sightings).go();
+      await _markClearedSeqs();
+      await _db.delete(_db.sensorEvents).go();
     });
     final deleteAudio = _deleteRetainedAudio;
     if (deleteAudio != null) await deleteAudio();
@@ -57,22 +81,31 @@ class DriftPrivacyService implements PrivacyService {
     }
   }
 
-  /// Deletes a photo file. Missing files are fine; directories are never
-  /// touched.
-  static Future<void> _deletePhoto(String path) async {
-    final type = await FileSystemEntity.type(path, followLinks: false);
-    try {
-      switch (type) {
-        case FileSystemEntityType.file:
-          await File(path).delete();
-        case FileSystemEntityType.link:
-          // Remove the link only, never its target.
-          await Link(path).delete();
-        default:
-          return;
-      }
-    } on PathNotFoundException {
-      // Already gone.
+  Future<void> _markClearedSeqs() async {
+    final events = _db.sensorEvents;
+    final maxSeq = events.seq.max();
+    final highest =
+        await (_db.selectOnly(events)
+              ..addColumns([events.nodeId, maxSeq])
+              ..groupBy([events.nodeId]))
+            .map((row) => (row.read(events.nodeId)!, row.read(maxSeq)!))
+            .get();
+    if (highest.isEmpty) return;
+    final nodes = {
+      for (final row in await _db.select(_db.sensorNodes).get()) row.id: row,
+    };
+    final now = _clock().toUtc();
+    for (final (nodeId, seq) in highest) {
+      final cleared = nodes[nodeId]?.eventsClearedThroughSeq;
+      if (cleared != null && cleared >= seq) continue;
+      await (_db.update(
+        _db.sensorNodes,
+      )..where((n) => n.id.equals(nodeId))).write(
+        SensorNodesCompanion(
+          eventsClearedThroughSeq: Value(seq),
+          updatedAt: Value(now),
+        ),
+      );
     }
   }
 }

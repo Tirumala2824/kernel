@@ -10,6 +10,9 @@ import '../reports/report_csv.dart';
 import '../reports/report_data.dart';
 import '../reports/report_fonts.dart';
 import '../reports/report_pdf.dart';
+import '../reports/sightings_report.dart';
+import '../repositories/location_repository.dart' show locationSubtree;
+import '../repositories/sighting_repository.dart' show activeSightings;
 import '../support.dart';
 import 'scope.dart';
 
@@ -38,7 +41,8 @@ class DriftReportService implements ReportService {
   /// Items must match every filter in [scope]: owned by `scope.role`, placed
   /// in `scope.locationId` or a location nested below it, in `scope.lotId`,
   /// in `scope.harvestId`, listed in `scope.itemIds`, and not archived. Null
-  /// filters are ignored.
+  /// filters are ignored. [ReportKind.sightings] has its own scope rules;
+  /// see [loadSightings].
   ///
   /// Throws [ArgumentError] for [ReportKind.sackLabels] as CSV, a
   /// [ReportKind.lotSummary] without a known `lotId`, or a
@@ -84,8 +88,162 @@ class DriftReportService implements ReportService {
           await loadSackLabels(scope),
           await _kit(),
         );
+      case ReportKind.sightings:
+        final data = await loadSightings(scope);
+        bytes = switch (format) {
+          ReportFormat.csv => renderSightingsCsv(data),
+          ReportFormat.pdf => await renderSightingsPdf(data, await _kit()),
+        };
     }
     return _write(scope, format, bytes);
+  }
+
+  /// Pest ID sightings and sensor event counts in [scope], in one
+  /// consistent snapshot. A sighting or event is in scope when it is not in
+  /// an archived location or on an archived item, and:
+  /// - with `lotId`, `harvestId` or `itemIds`: it is on an item in scope;
+  /// - else with `locationId`: its location is that location or one nested
+  ///   below it, or it is on an item in scope;
+  /// - else: it is on no item, or on an item in scope.
+  ///
+  /// Items in scope follow the usual rules (role, nested location, lot,
+  /// harvest, item ids, not archived). Sightings must also have been saved
+  /// under `scope.role`; sensor events have no role, so an event placed
+  /// only in a location counts for every role. Events use the placement
+  /// they were recorded under.
+  Future<SightingsReportData> loadSightings(ReportScope scope) {
+    return _db.transaction(() async {
+      final generatedAt = _clock().toUtc();
+      final scoped = {
+        for (final row in await itemsInScope(
+          _db,
+          role: scope.role,
+          locationId: scope.locationId,
+          lotId: scope.lotId,
+          harvestId: scope.harvestId,
+          itemIds: scope.itemIds,
+        ))
+          row.id,
+      };
+      final narrowsItems =
+          scope.lotId != null ||
+          scope.harvestId != null ||
+          scope.itemIds != null;
+      final locationId = scope.locationId;
+      final subtree = locationId == null
+          ? null
+          : await locationSubtree(_db, locationId);
+      final locations = {
+        for (final row in await _db.select(_db.locations).get()) row.id: row,
+      };
+      final items = {
+        for (final row in await _db.select(_db.items).get()) row.id: row,
+      };
+      final lots = {
+        for (final row in await _db.select(_db.lots).get()) row.id: row,
+      };
+      final harvests = {
+        for (final row in await _db.select(_db.harvests).get()) row.id: row,
+      };
+      final paths = _Snapshot(generatedAt, locations, const {}, const {});
+
+      bool inScope(String? itemId, String? placeId) {
+        if (placeId != null && locations[placeId]?.archivedAt != null) {
+          return false;
+        }
+        if (itemId != null && items[itemId]?.archivedAt != null) return false;
+        final onScopedItem = itemId != null && scoped.contains(itemId);
+        if (narrowsItems) return onScopedItem;
+        if (subtree != null) {
+          return (placeId != null && subtree.contains(placeId)) || onScopedItem;
+        }
+        return itemId == null || onScopedItem;
+      }
+
+      final sightings = [
+        for (final s in (await activeSightings(_db, role: scope.role)).reversed)
+          if (inScope(s.itemId, s.locationId))
+            ReportSighting(
+              sighting: s,
+              locationPath: paths.pathOf(s.locationId),
+              itemLabel: s.itemId == null ? null : items[s.itemId]?.label,
+            ),
+      ];
+
+      final nodes = {
+        for (final row in await _db.select(_db.sensorNodes).get())
+          row.id: row.toModel(),
+      };
+      final eventRows =
+          await (_db.select(_db.sensorEvents)..orderBy([
+                (e) => OrderingTerm.asc(e.startedAt),
+                (e) => OrderingTerm.asc(e.seq),
+              ]))
+              .get();
+      final groups = <(String, String?), List<SensorEventRow>>{};
+      for (final row in eventRows) {
+        if (!inScope(row.itemId, row.locationId)) continue;
+        groups.putIfAbsent((row.nodeId, row.signatureId), () => []).add(row);
+      }
+      String placementOf(SensorEventRow row) {
+        final itemLabel = row.itemId == null ? null : items[row.itemId]?.label;
+        final path = paths.pathOf(row.locationId);
+        return [?itemLabel, ?path].join(' @ ');
+      }
+
+      final sensor = [
+        for (final MapEntry(key: (nodeId, signatureId), value: rows)
+            in groups.entries)
+          if (nodes[nodeId] case final node?)
+            SensorEventCount(
+              node: node,
+              placements: {for (final row in rows) placementOf(row)}
+                  .where((p) => p.isNotEmpty)
+                  .join('; '),
+              signatureId: signatureId,
+              packVersion: blankToNull(
+                {for (final row in rows) ?row.packVersion}.join('; '),
+              ),
+              events: rows.length,
+              firstStartedAt: rows.first.startedAt,
+              lastEndedAt: rows
+                  .map(
+                    (r) =>
+                        r.startedAt.add(Duration(milliseconds: r.durationMs)),
+                  )
+                  .reduce((a, b) => a.isAfter(b) ? a : b),
+              experimental: rows.any((r) => r.matchExperimental != false),
+            ),
+      ]..sort(_bySensorRow);
+
+      return SightingsReportData(
+        scope: scope,
+        generatedAt: generatedAt,
+        locationLabel: paths.pathOf(scope.locationId),
+        lotLabel: scope.lotId == null
+            ? null
+            : (lots[scope.lotId]?.code ?? scope.lotId),
+        harvestLabel: scope.harvestId == null
+            ? null
+            : (harvests[scope.harvestId]?.name ?? scope.harvestId),
+        sightings: List.unmodifiable(sightings),
+        sensor: List.unmodifiable(sensor),
+      );
+    });
+  }
+
+  /// Node name, node id, then signature (unmatched last).
+  static int _bySensorRow(SensorEventCount a, SensorEventCount b) {
+    final byName = a.node.name.compareTo(b.node.name);
+    if (byName != 0) return byName;
+    final byNode = a.node.id.compareTo(b.node.id);
+    if (byNode != 0) return byNode;
+    final sa = a.signatureId;
+    final sb = b.signatureId;
+    if (sa == null || sb == null) {
+      return sa == sb ? 0 : (sa == null ? 1 : -1);
+    }
+    return sa.compareTo(sb);
   }
 
   /// Reads everything the history report shows, in one consistent snapshot.
@@ -269,6 +427,7 @@ class DriftReportService implements ReportService {
       ReportKind.preSale => 'presale',
       ReportKind.lotSummary => 'lot-summary',
       ReportKind.sackLabels => 'sack-labels',
+      ReportKind.sightings => 'sightings',
     };
     final file = File(
       p.join(

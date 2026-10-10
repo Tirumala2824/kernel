@@ -14,11 +14,17 @@ final data = await DataOperations.open(
   deleteRetainedAudio: engine.deleteRetainedAudio,
   retainedAudioPath: engine.retainedAudioPath,
   currentModelNote: () async => (await engine.info()).modelNote,
+  // contracts v4 (all optional):
+  knowledgeCardsJson: () =>
+      rootBundle.loadString('assets/knowledge/pest_cards.json'),
+  embedder: embedder,                 // local-llm EmbeddingGemma, or null
+  sensorAttention: nodesNeedingAttention, // Stream<Set<String>> of node ids
 );
 // data.items, data.locations, data.lots, data.harvests, data.scans,
 // data.inspections, data.reminders, data.labeledSamples, data.settings,
 // data.ranking, data.analytics, data.reports, data.datasetExport,
-// data.privacy
+// data.privacy, data.sightings, data.sensorNodes, data.sensorEvents,
+// data.knowledge
 final openedFrom = await data.reminders.takeLaunchItemId(); // once per launch
 await data.close();
 ```
@@ -53,6 +59,85 @@ test scheduler, a temporary report directory and font bytes read from
 - The dataset ZIP and reports are written to app-private storage and never
   uploaded. `deleteAllHistory` also removes inspection photos, labeled samples
   and exported dataset ZIPs (they contain audio copies).
+
+## Pest ID, sensors and knowledge (contracts v4, schema v3)
+
+**Sightings (`data.sightings`).** Three records are kept apart: the AI
+analysis (`analysis`, `sound`), the user's validation (`userValidated`,
+`userCardId`) and the human `verifiedFinding`.
+
+- The AI analysis, the observation time, source, GPS fix and distance are
+  stored as written and a trigger refuses any later edit.
+- `setVerifiedFinding` works once. A second call throws `StateError`, even
+  with the same value, and a trigger enforces the same rule.
+- `create` throws `ArgumentError` for an unknown or archived location or item,
+  a half GPS fix or one without `accuracyMeters`, out-of-range values, a
+  distance given with method `unavailable`, an analysis whose source differs
+  from the sighting's, an AI confidence or agreement outside 0..1, or
+  `experimental == false`. It throws `StateError` for a `mediaPath` while the
+  keep-sighting-media setting is off.
+- `watchRecent` is newest first. It excludes sightings in archived locations
+  or on archived items. `locationId` covers nested locations and the items
+  stored there. `watchForItem` is the item's full history.
+- `delete` removes the kept media file first, then the row.
+
+**Sensor nodes and events (`data.sensorNodes`, `data.sensorEvents`).** Only
+the 8-hex-char key fingerprint is stored, never the key.
+
+- `upsert` keeps the stored placement, which only `setPlacement` changes. A
+  null `lastSeenAt` or `batteryPercent` means "not reported". A device address
+  that is already paired under another id is refused.
+- Forgetting a node (`delete`) also deletes its events.
+- `record` is idempotent on (nodeId, seq) and returns the number of new rows.
+  Each event keeps the node's placement at record time. Events are
+  append-only (trigger).
+- `watchForLocation` covers nested locations and items stored there. `window`
+  is relative to the clock when the stream recomputes.
+- `lastSeq` is the highest stored seq, or the seq a history wipe cleared,
+  whichever is higher. A node's store-and-forward buffer therefore never
+  brings deleted events back.
+
+**Knowledge (`data.knowledge`).**
+
+- The card pack (docs/knowledge-cards.md) is read on first use and mirrored
+  into `knowledge_cards`. Invalid cards are skipped: a bad id, no `names.en`,
+  no source, an unknown group or safety, or `protectedWildlife` without
+  `legal`. Cards dropped from the pack are removed.
+- A failing source keeps the stored cards and is retried on the next call.
+  Loading cards at runtime from the app's asset is not seed data, and
+  migrations stay empty.
+- `search` uses the embedder (EmbeddingGemma, dim 256, cached per model
+  version and card content hash) once every card has a vector. Missing
+  vectors are computed in the background. Until then, and whenever the
+  embedder is missing, busy or failing, it falls back to keyword search over
+  names (weight 3), signs (2) and summary (1). It never throws.
+
+**Settings.** `mapsConsent` and `keepSightingMedia` both default to false.
+This package stores the maps choice only and makes no network calls.
+
+**Sightings report (`ReportKind.sightings`, CSV and PDF).**
+
+- It contains the role's sightings in scope and the sensor events in scope,
+  counted by signature per node ("N events in M minutes").
+- The `ai_*` columns are separate from `user_validated` / `user_card_id` and
+  from `human_verified_finding`. The `ai_*` columns are label, card, group,
+  taxonomy, AI-estimated confidence, agreement, samples, safety, model and
+  prompt version, experimental, and sound labels.
+- GPS is listed only at ≤ 25 m accuracy. An unavailable distance reads
+  "Distance not available" with its reason.
+- The disclaimer starts with "AI and sensor results are experimental signals,
+  not diagnoses."
+
+Scope rules for the sightings report:
+
+- With a lot, harvest or item ids, a record must be on an item in scope.
+- With a location, its own location must be in the subtree, or its item must
+  be in scope.
+- Otherwise it must be on no item, or on an item in scope.
+- Archived locations and items are always excluded.
+
+**Wipe.** `deleteAllHistory` also deletes sightings with their media files and
+all sensor events. Paired nodes, cards and settings are kept.
 
 ## Ranking filters (contracts v3)
 
@@ -121,18 +206,35 @@ Terms:
 | Kind | Priority | Roles | Fires when | Target / count |
 |---|---|---|---|---|
 | registerFirst | 0 | all | The role has no items. For the buyer: there are no lots | — |
+| pestSafetyAlert | 1 | all | A sighting of the role whose AI analysis safety is medicalRisk, venomous or protectedWildlife has no verified finding yet | one action, count = sightings; `locationId` / `itemId` and label (item label, else location name) only when count = 1 |
 | reminderDue | 5 | household | A reminder has fired, or is scheduled and past due, and is not done or cancelled | items |
 | inspectFlagged | 10 | farmer, household, FPO; buyer only for sacks outside a listed lot | The item is flagged | items |
 | physicalCheckPending | 10 | buyer | A lot has flagged sacks | `lotId`, label = lot code, count = flagged sacks |
+| pestSightingsRepeated | 12 | all | In one location, ≥ 3 user-validated sightings of the role with the same card (the user's corrected card, else the AI's) observed in the last 7 days | per location: `locationId`, label = location name, count = sightings of the most repeated card |
+| sensorActivity | 12 | all (a node on an item: that item's owner role only) | Nodes recorded ≥ 5 signature-matched events each in the last 24 h at one placement | per placement: `itemId` and/or `locationId`, label = item label, else location name, count = those events |
 | reviewDue | 15 | household | No PASS scan, or the latest PASS scan is ≥ 30 whole days old | items |
 | finishBatch | 15 | FPO | In a location, ≥ 1 sack has a PASS scan today and ≥ 1 does not | `locationId`, label = location name, count = sacks still to do |
 | scanNeeded | 20 | farmer, FPO | No PASS scan, or the latest PASS scan is > 14 days old | items |
 | scanNeeded | 20 | buyer | A lot has sacks with no PASS scan and no inspection | `lotId`, label, count = those sacks |
+| sensorNeedsAttention | 25 | all (a node on an item: that item's owner role only) | A paired node's id is in the latest set from `DataOperations.open(sensorAttention:)` | one action, count = nodes; label = node name and the node's placement only when count = 1 |
 | exportPreSale | 40 | farmer | Per non-archived harvest with ≥ 1 sack: every sack has a PASS scan within 14 days, none is flagged, and none has an open inspection | `harvestId`, label = harvest name, count = sacks |
 | exportLotSummary | 40 | buyer | Per lot with ≥ 1 sack: every sack has a valid scan or an inspection, none is flagged, and the screening status is not reviewed | `lotId`, label = lot code, count = sacks |
 
 The "items" actions are aggregated into one action whose `count` is the
 number of items. `itemId` and `label` are set only when `count == 1`.
+
+Pest ID and sensor rules:
+
+- Sightings in archived locations or on archived items never count.
+- Sensor events count under the placement they were recorded with.
+  Unplaced nodes, and archived placements, never raise `sensorActivity`.
+- Node health is live link state and is not stored, so `sensorNeedsAttention`
+  follows the injected stream. That stream is listened to once, from
+  construction until `close()`, and its errors are ignored. Until it emits, no
+  node needs attention.
+- `pestSafetyAlert` sits right after `registerFirst`, ahead of every grain
+  action, because dangerous or protected animals come first (guardrails §9).
+  Setting a verified finding on the sighting clears it.
 
 Ordering is by priority, then by kind (enum order), then by label, then by
 target id.
@@ -203,7 +305,7 @@ exports keep exact UTF-8 text.
 
 ## Schema changes
 
-Current schema: version 2 (`drift_schemas/kernel_database/`).
+Current schema: version 3 (`drift_schemas/kernel_database/`). v3 adds `sightings`, `sensor_nodes`, `sensor_events`, `knowledge_cards` and `card_embeddings` plus their indexes and triggers; the v2 -> v3 step is additive only.
 
 1. Edit `lib/src/db/tables.dart` and bump `schemaVersion`.
 2. Run `dart run build_runner build` and then `dart run drift_dev make-migrations`.

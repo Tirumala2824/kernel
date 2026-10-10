@@ -1,5 +1,6 @@
 // Test-only doubles and fixtures. Never imported from lib/.
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:data_operations/data_operations.dart';
@@ -82,6 +83,9 @@ class Harness {
     Map<String, String>? retainedAudio,
     String? modelNote,
     bool withFonts = true,
+    KnowledgeCardsSource? knowledgeCardsJson,
+    Embedder? embedder,
+    Stream<Set<String>>? sensorAttention,
   }) async {
     // Some tests deliberately open a second database (app restart).
     driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -89,8 +93,9 @@ class Harness {
     final scheduler = FakeReminderScheduler();
     final reportDir = await Directory.systemTemp.createTemp('kernel_reports_');
     final audio = retainedAudio;
+    final db = executor ?? NativeDatabase.memory();
     final ops = DataOperations(
-      executor: executor ?? NativeDatabase.memory(),
+      executor: db,
       reminderScheduler: scheduler,
       reportDirectory: reportDir,
       clock: testClock.call,
@@ -98,9 +103,19 @@ class Harness {
       retainedAudioPath: audio == null ? null : (id) async => audio[id],
       currentModelNote: modelNote == null ? null : () async => modelNote,
       reportFonts: withFonts ? diskReportFont : null,
+      knowledgeCardsJson: knowledgeCardsJson,
+      embedder: embedder,
+      sensorAttention: sensorAttention,
     );
-    return Harness._(ops, scheduler, testClock, reportDir, audio);
+    return Harness._(ops, scheduler, testClock, reportDir, audio)
+      .._executor = db;
   }
+
+  late final QueryExecutor _executor;
+
+  /// Runs raw SQL on the open database, below the repositories (for
+  /// trigger checks). Call after the database has been used once.
+  Future<void> rawStatement(String sql) => _executor.runCustom(sql);
 
   final DataOperations ops;
   final FakeReminderScheduler scheduler;
@@ -244,6 +259,72 @@ class Harness {
     LocationDraft(type: type, name: name, parentId: parentId),
   );
 
+  /// Saves a sighting observed [minutesAgo] before the clock's now.
+  Future<Sighting> addSighting({
+    Role role = Role.household,
+    SignalSource source = SignalSource.camera,
+    int minutesAgo = 0,
+    String? locationId,
+    String? itemId,
+    bool userValidated = true,
+    String? cardId = 'german_cockroach',
+    SafetyLevel safety = SafetyLevel.caution,
+    bool withAnalysis = true,
+    SoundAnalysis? sound,
+    DistanceEstimate? distance,
+    String? userCardId,
+    String? notes,
+    String? mediaPath,
+    double? latitude,
+    double? longitude,
+    double? accuracyMeters,
+  }) => ops.sightings.create(
+    SightingDraft(
+      role: role,
+      source: source,
+      observedAt: clock.now.subtract(Duration(minutes: minutesAgo)),
+      userValidated: userValidated,
+      locationId: locationId,
+      itemId: itemId,
+      analysis: withAnalysis
+          ? pestAnalysis(cardId: cardId, safety: safety, source: source)
+          : null,
+      sound: sound,
+      distance: distance,
+      userCardId: userCardId,
+      notes: notes,
+      mediaPath: mediaPath,
+      latitude: latitude,
+      longitude: longitude,
+      accuracyMeters: accuracyMeters,
+    ),
+  );
+
+  /// Pairs a node (test values; the fingerprint is a placeholder).
+  Future<SensorNode> addNode({
+    String id = 'node-1',
+    String address = 'C0:FF:EE:00:00:01',
+    String name = 'Kitchen node',
+    SensorType type = SensorType.usAir,
+    String? locationId,
+    String? itemId,
+  }) => ops.sensorNodes.upsert(
+    SensorNode(
+      id: id,
+      deviceAddress: address,
+      name: name,
+      type: type,
+      protocolVersion: 1,
+      firmwareVersion: '0.1.0',
+      keyFingerprint: '0a1b2c3d',
+      locationId: locationId,
+      itemId: itemId,
+      createdAt: clock.now,
+      updatedAt: clock.now,
+      syncState: SyncState.localOnly,
+    ),
+  );
+
   /// A valid scan from a (test-only) model version.
   Future<ScanRecord> recordModelScan(
     String itemId,
@@ -291,6 +372,158 @@ ScanOutcome outcome({
     deviceModel: 'test-device',
     osVersion: 'Android 16 (SDK 36)',
   );
+}
+
+/// A database file that outlives one DataOperations, to simulate an app
+/// restart. Close every harness using it before [close].
+class TestDatabase {
+  TestDatabase._(this._dir);
+
+  factory TestDatabase.shared() =>
+      TestDatabase._(Directory.systemTemp.createTempSync('kernel_db_'));
+
+  final Directory _dir;
+
+  QueryExecutor connection() =>
+      NativeDatabase(File(p.join(_dir.path, 'kernel.sqlite')));
+
+  Future<void> close() => _dir.delete(recursive: true);
+}
+
+/// A Pest ID analysis as the on-device analyzer would hand it over.
+PestAnalysis pestAnalysis({
+  String? cardId = 'german_cockroach',
+  String commonName = 'German cockroach',
+  SafetyLevel safety = SafetyLevel.caution,
+  SignalSource source = SignalSource.camera,
+  double aiConfidence = 0.7,
+  double agreement = 0.6,
+  int samples = 5,
+  bool experimental = true,
+}) => PestAnalysis(
+  analysisId: const Uuid().v4(),
+  createdAt: DateTime.utc(2026, 10, 1, 7, 59),
+  source: source,
+  cardId: cardId,
+  commonName: commonName,
+  group: PestGroup.insect,
+  taxonomyPath: const ['Insect', 'Cockroach', 'German cockroach'],
+  aiConfidence: aiConfidence,
+  agreement: agreement,
+  samples: samples,
+  keyFeatures: const ['two dark stripes'],
+  anomalies: const [],
+  insights: const ['seen near food'],
+  safety: safety,
+  modelVersion: 'gemma-test-e2b',
+  promptVersion: 'pest-prompt-test-1',
+  latencyMs: 900,
+  experimental: experimental,
+);
+
+/// A sensor event as sensor-link would hand it over.
+SensorEvent sensorEvent({
+  String nodeId = 'node-1',
+  required int seq,
+  required DateTime startedAt,
+  int durationMs = 40,
+  String? signatureId = 'mouse_usv',
+  double score = 0.8,
+  SensorEventClass eventClass = SensorEventClass.fmSweep,
+}) => SensorEvent(
+  nodeId: nodeId,
+  seq: seq,
+  startedAt: startedAt,
+  durationMs: durationMs,
+  eventClass: eventClass,
+  peakHz: 70000,
+  minHz: 60000,
+  maxHz: 80000,
+  slopeHzPerMs: -150,
+  snrDb: 14,
+  peakDbfs: -32,
+  impulses: 0,
+  repRateHz: 0,
+  harmonics: 1,
+  match: signatureId == null
+      ? null
+      : SignatureMatch(
+          signatureId: signatureId,
+          packVersion: 'sig-pack-test-0.1',
+          score: score,
+        ),
+);
+
+/// Test-double embedder: maps text onto a few fixed "concept" axes by
+/// keyword, so semantic results are predictable. Calls are counted, and it
+/// can be switched off or made to fail.
+class ConceptEmbedder implements Embedder {
+  ConceptEmbedder({this.version = 'embed-test-1'});
+
+  String? version;
+  bool available = true;
+  bool failing = false;
+
+  /// When true, document embeddings return null (busy model).
+  bool refuseDocuments = false;
+  int documentCalls = 0;
+  int queryCalls = 0;
+
+  static const concepts = <List<String>>[
+    ['cockroach', 'roach', 'oothecae', 'pepper-like'],
+    ['rat', 'rodent', 'gnaw', 'burrow', 'whisker'],
+    ['scorpion', 'sting', 'pincer'],
+    ['lizard', 'monitor', 'reptile', 'scales'],
+  ];
+
+  @override
+  Future<bool> isAvailable() async => available;
+
+  @override
+  Future<String?> modelVersion() async => version;
+
+  @override
+  Future<EmbeddingVector?> embedText(
+    String text, {
+    EmbeddingTask task = EmbeddingTask.searchQuery,
+    int dim = 256,
+  }) async {
+    if (failing) throw StateError('embedder failed');
+    if (task == EmbeddingTask.searchDocument) {
+      documentCalls++;
+      if (refuseDocuments) return null;
+    } else {
+      queryCalls++;
+    }
+    final lower = text.toLowerCase();
+    final values = Float32List(dim);
+    for (var c = 0; c < concepts.length; c++) {
+      for (final word in concepts[c]) {
+        if (lower.contains(word)) values[c] += 1;
+      }
+    }
+    // A small constant axis keeps unrelated texts from being all zeros.
+    values[dim - 1] = 0.1;
+    var norm = 0.0;
+    for (final v in values) {
+      norm += v * v;
+    }
+    norm = norm == 0 ? 1 : math.sqrt(norm);
+    for (var i = 0; i < dim; i++) {
+      values[i] = values[i] / norm;
+    }
+    return EmbeddingVector(values: values, modelVersion: version ?? '');
+  }
+
+  @override
+  Future<EmbeddingVector?> embedImage(
+    Uint8List encodedImage, {
+    int dim = 256,
+  }) async => null;
+
+  @override
+  Future<EmbeddingVector?> embedAudio(Uint8List wav, {int dim = 256}) async =>
+      null;
 }
 
 /// First value of [stream] that satisfies [test].

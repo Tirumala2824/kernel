@@ -1,4 +1,21 @@
-## Unreleased (contracts v3)
+## Unreleased (contracts v4, schema v3)
+
+* Drift schema v3 with an additive v2 -> v3 migration: `sightings`,
+  `sensor_nodes`, `sensor_events` (UNIQUE(node_id, seq)), `knowledge_cards`
+  and `card_embeddings`. New triggers: `sightings_analysis_immutable`,
+  `sightings_verified_once` and `sensor_events_append_only`. Every v2
+  trigger is kept.
+* `DataOperations.sightings`, `sensorNodes`, `sensorEvents` and `knowledge`.
+* `DataOperations.open` / constructor take `knowledgeCardsJson`, `embedder`
+  and `sensorAttention`.
+* Next actions: `pestSafetyAlert` (1), `pestSightingsRepeated` (12),
+  `sensorActivity` (12) and `sensorNeedsAttention` (25).
+* `ReportKind.sightings`, as CSV and PDF.
+* Settings: `mapsConsent` and `keepSightingMedia`, both default false.
+* `deleteAllHistory` also deletes sightings with their media and sensor
+  events. Paired nodes are kept, and wiped events are never re-imported.
+
+## contracts v3
 
 * No schema change (still v2). Everything below is computed from the
   existing tables.

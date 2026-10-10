@@ -165,3 +165,154 @@ class LabeledSamples extends Table with TrackedColumns {
   TextColumn get environment => text().nullable()();
   TextColumn get notes => text().nullable()();
 }
+
+// Schema v3 (contracts v4): Pest ID sightings, BLE sensor nodes and their
+// events, and the curated knowledge cards with cached embeddings. The v2 ->
+// v3 migration only creates these tables, their indexes and triggers.
+
+/// A Pest ID sighting (v3). Three separate records live side by side: the
+/// AI analysis (`analysis`, `sound`; never edited after saving), the user's
+/// validation (`user_validated`, `user_card_id`) and the human verified
+/// finding (set once, trigger-guarded).
+@DataClassName('SightingRow')
+@TableIndex(name: 'sightings_observed', columns: {#observedAt})
+@TableIndex(name: 'sightings_location', columns: {#locationId})
+@TableIndex(name: 'sightings_item', columns: {#itemId})
+class Sightings extends Table with TrackedColumns {
+  TextColumn get role => textEnum<Role>()();
+  TextColumn get source => textEnum<SignalSource>()();
+  DateTimeColumn get observedAt => dateTime()();
+  TextColumn get locationId => text().nullable().references(Locations, #id)();
+  TextColumn get itemId => text().nullable().references(Items, #id)();
+  RealColumn get latitude => real().nullable()();
+  RealColumn get longitude => real().nullable()();
+  RealColumn get accuracyMeters => real().nullable()();
+
+  /// DistanceEstimate as JSON.
+  TextColumn get distance =>
+      text().map(const DistanceEstimateConverter()).nullable()();
+
+  /// PestAnalysis as JSON. Immutable.
+  TextColumn get analysis =>
+      text().map(const PestAnalysisConverter()).nullable()();
+
+  /// SoundAnalysis as JSON. Immutable.
+  TextColumn get sound =>
+      text().map(const SoundAnalysisConverter()).nullable()();
+  BoolColumn get userValidated => boolean()();
+  TextColumn get userCardId => text().nullable()();
+
+  /// Human physical verification. Null until set once; never overwritten.
+  TextColumn get verifiedFinding => textEnum<VerifiedFinding>().nullable()();
+  TextColumn get notes => text().nullable()();
+
+  /// App-private still or clip, only when the user chose to keep media.
+  TextColumn get mediaPath => text().nullable()();
+}
+
+/// A paired BLE sensor node (v3). The per-device key is never stored here,
+/// only its 8-hex-char fingerprint.
+@DataClassName('SensorNodeRow')
+class SensorNodes extends Table with TrackedColumns {
+  TextColumn get deviceAddress => text().unique()();
+  TextColumn get name => text()();
+  TextColumn get type => textEnum<SensorType>()();
+  IntColumn get protocolVersion => integer()();
+  TextColumn get firmwareVersion => text()();
+  TextColumn get keyFingerprint => text()();
+  TextColumn get locationId => text().nullable().references(Locations, #id)();
+  TextColumn get itemId => text().nullable().references(Items, #id)();
+  DateTimeColumn get lastSeenAt => dateTime().nullable()();
+  IntColumn get batteryPercent => integer().nullable()();
+
+  /// Highest event seq removed by `deleteAllHistory`. Events at or below it
+  /// are never re-imported from the node's store-and-forward buffer.
+  IntColumn get eventsClearedThroughSeq => integer().nullable()();
+}
+
+/// One detection event from a node (v3): features only, never audio.
+/// Append-only and unique on (node_id, seq). The node's placement at
+/// record time is kept with the event.
+@DataClassName('SensorEventRow')
+@TableIndex(name: 'sensor_events_started', columns: {#startedAt})
+@TableIndex(name: 'sensor_events_location', columns: {#locationId})
+@TableIndex(name: 'sensor_events_item', columns: {#itemId})
+class SensorEvents extends Table with TrackedColumns {
+  TextColumn get nodeId => text().references(SensorNodes, #id)();
+  IntColumn get seq => integer()();
+  DateTimeColumn get startedAt => dateTime()();
+  IntColumn get durationMs => integer()();
+  TextColumn get eventClass => textEnum<SensorEventClass>()();
+  RealColumn get peakHz => real()();
+  RealColumn get minHz => real()();
+  RealColumn get maxHz => real()();
+  RealColumn get slopeHzPerMs => real()();
+  RealColumn get snrDb => real()();
+  RealColumn get peakDbfs => real()();
+  IntColumn get impulses => integer()();
+  RealColumn get repRateHz => real()();
+  IntColumn get harmonics => integer()();
+
+  /// Signature match; all null when the event matched no signature.
+  TextColumn get signatureId => text().nullable()();
+  TextColumn get packVersion => text().nullable()();
+  RealColumn get matchScore => real().nullable()();
+  BoolColumn get matchExperimental => boolean().nullable()();
+
+  /// Where the node was placed when the event was recorded.
+  TextColumn get locationId => text().nullable().references(Locations, #id)();
+  TextColumn get itemId => text().nullable().references(Items, #id)();
+
+  @override
+  List<Set<Column<Object>>> get uniqueKeys => [
+    {nodeId, seq},
+  ];
+}
+
+/// Curated knowledge card (v3), loaded from the app's card pack
+/// (docs/knowledge-cards.md). Reference content, not a user record.
+@DataClassName('KnowledgeCardRow')
+class KnowledgeCards extends Table with TrackedColumns {
+  /// Stable snake_case card id from the pack.
+  TextColumn get cardId => text().unique()();
+
+  /// languageTag -> name as a JSON object; 'en' is always present.
+  TextColumn get names => text().map(const StringMapConverter())();
+  TextColumn get pestGroup => textEnum<PestGroup>()();
+  TextColumn get safety => textEnum<SafetyLevel>()();
+  TextColumn get summary => text()();
+  TextColumn get signs => text().map(const StringListConverter())();
+  TextColumn get lookAlikes => text().map(const StringListConverter())();
+  TextColumn get healthRisks => text().map(const StringListConverter())();
+  TextColumn get safeSteps => text().map(const StringListConverter())();
+  TextColumn get callProfessionalWhen =>
+      text().map(const StringListConverter())();
+  TextColumn get firstAid => text().map(const StringListConverter())();
+  TextColumn get legal => text().nullable()();
+  TextColumn get sources => text().map(const StringListConverter())();
+  TextColumn get reviewStatus => text()();
+
+  /// The pack's `version`.
+  TextColumn get packVersion => text()();
+
+  /// Hash of the text that gets embedded; a change invalidates embeddings.
+  TextColumn get contentHash => text()();
+}
+
+/// Cached on-device embedding of a card (v3), per model version and
+/// Matryoshka dimension. Float32, little-endian.
+@DataClassName('CardEmbeddingRow')
+class CardEmbeddings extends Table with TrackedColumns {
+  TextColumn get cardId => text().references(KnowledgeCards, #cardId)();
+  TextColumn get modelVersion => text()();
+  IntColumn get dim => integer()();
+  BlobColumn get vector => blob()();
+
+  /// The card's contentHash when this vector was computed.
+  TextColumn get contentHash => text()();
+
+  @override
+  List<Set<Column<Object>>> get uniqueKeys => [
+    {cardId, modelVersion, dim},
+  ];
+}
