@@ -184,7 +184,6 @@ class MeasureActivity : Activity(), LifecycleOwner {
             setBackgroundColor(Color.argb(160, 0, 0, 0))
             val p = (16 * d).toInt()
             setPadding(p, p, p, p)
-            fitsSystemWindows = true
         }
         root.addView(status, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.TOP))
         val bar = LinearLayout(this).apply {
@@ -193,7 +192,6 @@ class MeasureActivity : Activity(), LifecycleOwner {
             setBackgroundColor(Color.argb(160, 0, 0, 0))
             val p = (12 * d).toInt()
             setPadding(p, p, p, p)
-            fitsSystemWindows = true
         }
         val cancel = Button(this).apply {
             setText(R.string.sense_measure_cancel)
@@ -210,6 +208,18 @@ class MeasureActivity : Activity(), LifecycleOwner {
         bar.addView(cancel)
         bar.addView(closeUp)
         root.addView(bar, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM))
+        // Keep the text and buttons clear of the system bars (edge-to-edge on Android 15+).
+        root.setOnApplyWindowInsetsListener { _, insets ->
+            @Suppress("DEPRECATION")
+            val top = insets.systemWindowInsetTop
+            @Suppress("DEPRECATION")
+            val bottom = insets.systemWindowInsetBottom
+            (status.layoutParams as FrameLayout.LayoutParams).topMargin = top
+            (bar.layoutParams as FrameLayout.LayoutParams).bottomMargin = bottom
+            status.requestLayout()
+            bar.requestLayout()
+            insets
+        }
         setContentView(root)
         reticle.set(targetX, targetY)
     }
