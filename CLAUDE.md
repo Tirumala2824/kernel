@@ -60,5 +60,7 @@ grep -rniE "mock|fake|dummy|sample(Data|Sack|Lot)|random\(" --include=*.dart --i
 New dependencies: the owning agent adds them to its own package pubspec, then runs `flutter pub get` at the root. Every member keeps `resolution: workspace`.
 
 ## Status
-- Done: V0.1 foundation is integrated. Real NativeScanEngine and DataOperations are bound in `app-ui/lib/bootstrap.dart`. Analyze is clean. Tests: contracts 8, audio-ai 24, data-operations 62, app-ui 55, Kotlin 43 (results under `audio-ai/example/build/audio_ai/test-results/`). `flutter build apk --debug` succeeds.
-- Next: the iQOO 15 smoke test in [docs/device-validation.md](docs/device-validation.md) (calibrate the quality gate, effective sample rate). Then the contract follow-ups and V0.2/V0.4 items in [docs/decisions-log.md](docs/decisions-log.md) and [docs/scope-and-versions.md](docs/scope-and-versions.md).
+- Phase 2 integrated on `main`: brand, real-time scan, all role flows, contracts v2, schema v2, reports, dataset export, the experimental proxy model (`audio-ai/android/src/main/assets/models/kernel-proxy-0.1.*`) and 11 locales.
+- Tests: contracts 8, audio-ai 43 Dart + 72 Kotlin, data-operations 114, app-ui 269, model-training 62 (`cd model-training && uv run python -I -m pytest`).
+- Release: `cd app-ui && flutter build apk --release --split-per-abi`. Install `app-arm64-v8a-release.apk` on the iQOO 15 (I2501, Android 16, adb serial 10BFAT1SQT000XP).
+- Next: an on-device pass (scan flow, quality-gate calibration, onboarding redirect check). Then the follow-ups in [docs/decisions-log.md](docs/decisions-log.md) and native review of translations.

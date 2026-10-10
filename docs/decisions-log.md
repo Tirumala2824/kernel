@@ -40,8 +40,16 @@ Append new decisions at the bottom. Never rewrite past entries; supersede them w
 | 33 | 2026-10-10 | Labelled samples:<br>• one label per recording<br>• a RETRY recording can only be `unknown`<br>• research mode must be on | Guardrail: RETRY never carries a pest class |
 | 34 | 2026-10-10 | PDF Indic text renders with correct glyphs but **without complex shaping** (pdf 3.13.1 has no GSUB/GPOS). Conjuncts and pre-base vowel signs look wrong; text is readable but not typographically correct. CSV is exact UTF-8. Revisit: rasterise text runs, or switch PDF engine | W4 finding |
 | 35 | 2026-10-10 | `deleteAllHistory` also deletes exported dataset ZIPs (they contain audio) | Privacy |
+| 36 | 2026-10-10 | Proxy model kernel-proxy-0.1 trained on TreeVibes field recordings (CC0) with provenance-grouped TV-PAVC folds (CC BY 4.0), with `uncertain_below=0.7`. Test results on unseen trees: balanced accuracy 67.3%, about 50% uncertain. The graph is band-limited to 3.8 kHz | W3, see model-training/MODEL_CARD.md |
+| 37 | 2026-10-10 | 10 Indic locales shipped, **all machine-drafted, with native review pending**: hi, bn, te, mr, ta, gu, kn, ml, or, pa. English is the fallback for unsupported device languages (`preferred-supported-locales: [en]`) | W5. Uncertain terms are listed in the W5 report: scan vs inspection, "Clean" label, "experimental" |
+| 38 | 2026-10-10 | Release builds ship per ABI (arm64 is about 38 MB). No INTERNET permission in release; mobile_scanner's ML Kit telemetry INTERNET is removed through the release manifest | W1/W6 |
 
 ## Contract follow-ups (proposed by agents, not yet done)
+- Captures between 1.5 and 2 s pass the gate, but the model needs 198 frames (2.0 s), so they show NOT_EVALUATED. Raise the gate minimum to 2.0 s, giving RETRY, which is more actionable.
+- `ScanOutcome`/`ScanRecord.modelNote` so older scans keep their provenance text. Shared `kernelItemQrPrefix` constant in contracts.
+- The English `languageSheetBody` still says "More Indian languages are on the way", and the translations carry the same sentence. Update all 11.
+- Language picker order: list by native name, not by locale code.
+- On-device check: onboarding showed "Buyer — Current" on step 3 and, after picking Farmer, landed on the Scan tab. Either it was concurrent manual taps, or a race between `setActiveRole` and `setOnboardingDone` (the redirect self-corrects on the next settings emission). Reproduce on the device.
 - `LabeledSampleRepository.relabel(id, draft)`, to upgrade `unknown` once an inspection confirms the label.
 - `unarchive` for locations, lots and harvests (only items have it).
 - `deleteAllHistory` should also delete exported report files, which contain copies of the history (recommended: yes).
