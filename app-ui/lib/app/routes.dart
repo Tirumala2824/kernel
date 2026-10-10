@@ -26,6 +26,24 @@ abstract final class Routes {
   static const newHarvest = '/harvests/new';
   static const insights = '/insights';
 
+  // Pest & Animal ID. One flow at a time: camera or listen, then analysis,
+  // then save. The flow state lives in pestSessionProvider.
+  static const pestHub = '/pest';
+  static const pestCamera = '/pest/camera';
+  static const pestAnalysis = '/pest/analysis';
+  static const pestListen = '/pest/listen';
+  static const pestSave = '/pest/save';
+  static const sightings = '/sightings';
+
+  /// Scan tab opened on the "Pest & animal" segment.
+  static const scanPest = '/scan?mode=pest';
+
+  static String sighting(String sightingId) => '/sightings/$sightingId';
+
+  /// Sightings map, optionally focused on one sighting.
+  static String sightingsMap({String? sightingId}) =>
+      _withQuery('/sightings/map', {'sightingId': ?sightingId});
+
   /// Reports tab with one report preset at the top (pre-sale for a harvest,
   /// lot summary for a lot). Used by next-step actions.
   static String reportPreset(

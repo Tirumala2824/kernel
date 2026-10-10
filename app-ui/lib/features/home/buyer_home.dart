@@ -11,6 +11,7 @@ import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_card.dart';
 import '../../widgets/status_chip.dart';
+import '../pest_id/pest_hub.dart';
 import 'next_step_section.dart';
 
 class BuyerHome extends ConsumerWidget {
@@ -83,6 +84,7 @@ class BuyerHome extends ConsumerWidget {
           },
         ),
         const InsightsCard(),
+        const PestIdActionCard(),
         KernelCard(
           tone: KernelCardTone.ivory,
           icon: Icons.description_rounded,

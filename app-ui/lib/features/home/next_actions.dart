@@ -171,5 +171,36 @@ NextStep describeNextAction(AppLocalizations l, Role role, NextAction a) {
         location: Routes.reportPreset(ReportKind.lotSummary, lotId: a.lotId),
         tab: true,
       );
+    case NextActionKind.pestSightingsRepeated:
+      return NextStep(
+        title: anyName != null
+            ? l.pestNextRepeatedOne(anyName, a.count)
+            : l.pestNextRepeated(a.count),
+        subtitle: l.pestNextRepeatedBody,
+        actionLabel: l.pestNextAction,
+        icon: Icons.pest_control_rounded,
+        location: Routes.sightings,
+        attention: true,
+      );
+    case NextActionKind.pestSafetyAlert:
+      return NextStep(
+        title: l.pestNextSafety,
+        subtitle: l.pestNextSafetyBody,
+        actionLabel: l.pestNextAction,
+        icon: Icons.health_and_safety_rounded,
+        location: Routes.sightings,
+        attention: true,
+      );
+    // Sensors (Phase 4 part B) own their copy and screens; until those land
+    // these open Settings with the record label, so the switch stays total.
+    case NextActionKind.sensorActivity:
+    case NextActionKind.sensorNeedsAttention:
+      return NextStep(
+        title: anyName ?? l.menuSettings,
+        subtitle: l.settingsSubtitle,
+        actionLabel: l.nextActionOpen,
+        icon: Icons.sensors_rounded,
+        location: Routes.settings,
+      );
   }
 }

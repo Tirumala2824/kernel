@@ -120,6 +120,30 @@ class InMemorySettingsRepository implements SettingsRepository {
     localAdviceWrites.add(value);
     _localAdvice = value;
   });
+
+  // Contracts v4: maps consent and keeping sighting media (both default off).
+  bool _mapsConsent = false;
+  bool _keepSightingMedia = false;
+  final mapsConsentWrites = <bool>[];
+  bool get mapsConsent => _mapsConsent;
+  bool get keepSightingMedia => _keepSightingMedia;
+
+  @override
+  Stream<bool> watchMapsConsent() => _changes.watch(() => _mapsConsent);
+
+  @override
+  Future<void> setMapsConsent(bool value) => _set(() {
+    mapsConsentWrites.add(value);
+    _mapsConsent = value;
+  });
+
+  @override
+  Stream<bool> watchKeepSightingMedia() =>
+      _changes.watch(() => _keepSightingMedia);
+
+  @override
+  Future<void> setKeepSightingMedia(bool value) =>
+      _set(() => _keepSightingMedia = value);
 }
 
 /// Follows the contract ranking rule for the test data it is given: rank

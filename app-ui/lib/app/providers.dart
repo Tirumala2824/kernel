@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
 
@@ -150,4 +151,56 @@ typedef ModelFilePicker = Future<String?> Function();
 final modelFilePickerProvider = Provider<ModelFilePicker>(
   (ref) => _unbound('modelFilePickerProvider', 'pickLitertlmUri', 'local_llm'),
   name: 'modelFilePickerProvider',
+);
+
+// Pest & Animal ID (guardrails §8 amended, §9). Bound in bootstrap.dart:
+// the sense engine and camera preview to sense_ai, the analyzer and
+// embedder to local_llm, knowledge cards and sightings to data_operations.
+// Nothing captured here ever leaves the phone.
+
+final pestSenseEngineProvider = Provider<PestSenseEngine>(
+  (ref) => _unbound('pestSenseEngineProvider', 'PestSenseEngine', 'sense_ai'),
+  name: 'pestSenseEngineProvider',
+);
+
+final pestAnalyzerProvider = Provider<PestAnalyzer>(
+  (ref) => _unbound('pestAnalyzerProvider', 'PestAnalyzer', 'local_llm'),
+  name: 'pestAnalyzerProvider',
+);
+
+final knowledgeServiceProvider = Provider<KnowledgeService>(
+  (ref) => _unbound(
+    'knowledgeServiceProvider',
+    'KnowledgeService',
+    'data_operations',
+  ),
+  name: 'knowledgeServiceProvider',
+);
+
+final sightingRepositoryProvider = Provider<SightingRepository>(
+  (ref) => _unbound(
+    'sightingRepositoryProvider',
+    'SightingRepository',
+    'data_operations',
+  ),
+  name: 'sightingRepositoryProvider',
+);
+
+final embedderProvider = Provider<Embedder>(
+  (ref) => _unbound('embedderProvider', 'Embedder', 'local_llm'),
+  name: 'embedderProvider',
+);
+
+/// Builds the live Pest ID camera preview. The candidate stream from
+/// [PestSenseEngine.cameraCandidates] runs while this preview is shown.
+typedef SenseCameraPreviewBuilder = Widget Function(BuildContext context);
+
+/// Platform hook, bound to sense_ai's `SenseCameraPreview` in bootstrap.dart.
+final senseCameraPreviewBuilderProvider = Provider<SenseCameraPreviewBuilder>(
+  (ref) => _unbound(
+    'senseCameraPreviewBuilderProvider',
+    'SenseCameraPreview',
+    'sense_ai',
+  ),
+  name: 'senseCameraPreviewBuilderProvider',
 );

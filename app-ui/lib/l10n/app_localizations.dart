@@ -4495,6 +4495,1229 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{value} MB'**
   String unitMb(String value);
+
+  /// Pest & Animal ID mode title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pest & animal ID'**
+  String get pestIdTitle;
+
+  /// Pest ID hub subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Look with the camera or listen. The phone finds possible signs; you confirm what is real.'**
+  String get pestIdSubtitle;
+
+  /// Home entry card subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for insects, rats, spiders, lizards and other animals with the camera or by sound'**
+  String get pestHomeActionBody;
+
+  /// Action that opens Pest ID.
+  ///
+  /// In en, this message translates to:
+  /// **'Look or listen'**
+  String get pestHeroAction;
+
+  /// Scan tab segment: acoustic grain scan.
+  ///
+  /// In en, this message translates to:
+  /// **'Grain sack'**
+  String get pestSegmentGrain;
+
+  /// Scan tab segment: Pest & Animal ID.
+  ///
+  /// In en, this message translates to:
+  /// **'Pest & animal'**
+  String get pestSegmentPest;
+
+  /// Hub card: camera mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Look with the camera'**
+  String get pestCameraCardTitle;
+
+  /// Hub card body: camera mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Finds movement, dark specks and eye shine. You confirm what is real.'**
+  String get pestCameraCardBody;
+
+  /// Hub card: listen mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen for sounds'**
+  String get pestListenCardTitle;
+
+  /// Hub card body: listen mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Picks up buzzing, scratching and squeaks. You confirm what you heard.'**
+  String get pestListenCardBody;
+
+  /// Hub card: saved sightings.
+  ///
+  /// In en, this message translates to:
+  /// **'My sightings'**
+  String get pestSightingsCardTitle;
+
+  /// Saved sightings count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No sightings saved yet} =1{1 sighting saved} other{{count} sightings saved}}'**
+  String pestSightingsCount(int count);
+
+  /// Privacy note.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything is checked on this phone. Pictures and sounds are never uploaded.'**
+  String get pestOnPhoneNote;
+
+  /// Honesty note.
+  ///
+  /// In en, this message translates to:
+  /// **'AI results are estimates and may be wrong. A missed sign is not proof that nothing is there.'**
+  String get pestNotCertainNote;
+
+  /// Camera screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Look for signs'**
+  String get pestCameraTitle;
+
+  /// Camera positioning tip.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold the phone still near corners, gaps and grain. Tap a box to confirm it, or capture to see close-ups.'**
+  String get pestCameraTip;
+
+  /// Camera permission denied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is off. Allow it in settings to look for signs. Your saved sightings stay available.'**
+  String get pestCameraDenied;
+
+  /// Signal kind: motion.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement'**
+  String get pestKindMotion;
+
+  /// Signal kind: dark specks (droppings, insects).
+  ///
+  /// In en, this message translates to:
+  /// **'Dark specks'**
+  String get pestKindSpecks;
+
+  /// Signal kind: eyes reflecting light.
+  ///
+  /// In en, this message translates to:
+  /// **'Eye shine'**
+  String get pestKindEyeshine;
+
+  /// Signal kind: looks like a known card.
+  ///
+  /// In en, this message translates to:
+  /// **'Looks similar'**
+  String get pestKindEmbedding;
+
+  /// Signal kind: region proposed by a model.
+  ///
+  /// In en, this message translates to:
+  /// **'AI box'**
+  String get pestKindModelBox;
+
+  /// Signal kind: sound event.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get pestKindSound;
+
+  /// Screen-reader label of a candidate box.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm {kind}'**
+  String pestConfirmBox(String kind);
+
+  /// Torch slider label.
+  ///
+  /// In en, this message translates to:
+  /// **'Torch'**
+  String get pestTorch;
+
+  /// Torch brightness.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String pestTorchValue(int percent);
+
+  /// Take a still with close-ups.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture'**
+  String get pestCapture;
+
+  /// While capturing.
+  ///
+  /// In en, this message translates to:
+  /// **'Capturing…'**
+  String get pestCapturing;
+
+  /// Dismiss: nothing to analyse.
+  ///
+  /// In en, this message translates to:
+  /// **'Not a pest / nothing here'**
+  String get pestNothingHere;
+
+  /// Snackbar after dismissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing saved. The pictures were discarded.'**
+  String get pestNothingHereDone;
+
+  /// No live candidates.
+  ///
+  /// In en, this message translates to:
+  /// **'No possible signs yet. Move slowly or turn on the torch.'**
+  String get pestCandidatesNone;
+
+  /// Live candidate count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 possible sign} other{{count} possible signs}}'**
+  String pestCandidatesCount(int count);
+
+  /// Capture failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not take a picture. Try again.'**
+  String get pestCaptureFailed;
+
+  /// Tiles title.
+  ///
+  /// In en, this message translates to:
+  /// **'Close-ups: tap the one that is real'**
+  String get pestTilesTitle;
+
+  /// No tiles.
+  ///
+  /// In en, this message translates to:
+  /// **'No close-ups in this picture. Try again closer, or with the torch.'**
+  String get pestTilesEmpty;
+
+  /// Embedding hint on a tile.
+  ///
+  /// In en, this message translates to:
+  /// **'AI hint: {name} (not verified)'**
+  String pestTileHint(String name);
+
+  /// Tile action.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to confirm'**
+  String get pestTileConfirm;
+
+  /// Back to the live preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture again'**
+  String get pestRetake;
+
+  /// Analysis screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'AI analysis'**
+  String get pestAnalysisTitle;
+
+  /// While the on-device model runs.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysing on this phone…'**
+  String get pestAnalysing;
+
+  /// Label above the AI's common name.
+  ///
+  /// In en, this message translates to:
+  /// **'AI label'**
+  String get pestAiLabel;
+
+  /// Chip on AI-derived values.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-estimated'**
+  String get pestAiEstimated;
+
+  /// Confidence bar label.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-estimated confidence — not calibrated'**
+  String get pestConfidenceLabel;
+
+  /// Confidence value.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% (the AI\'s own estimate)'**
+  String pestConfidenceValue(int percent);
+
+  /// Self-consistency agreement.
+  ///
+  /// In en, this message translates to:
+  /// **'Agreement {agree} of {runs} runs'**
+  String pestAgreement(int agree, int runs);
+
+  /// Analysis section.
+  ///
+  /// In en, this message translates to:
+  /// **'Key features'**
+  String get pestKeyFeatures;
+
+  /// Analysis section.
+  ///
+  /// In en, this message translates to:
+  /// **'Anomalies'**
+  String get pestAnomalies;
+
+  /// Analysis section.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get pestInsights;
+
+  /// Analysis returned no card.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching card. This is not proof that nothing is there. Inspect physically.'**
+  String get pestNoMatch;
+
+  /// Analysis says not a pest.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI thinks this is not a pest. This is not proof. Inspect physically if unsure.'**
+  String get pestNotAPest;
+
+  /// Model provenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Model {version} · prompt {prompt} — Experimental'**
+  String pestModelLine(String version, String prompt);
+
+  /// Analysis returned null.
+  ///
+  /// In en, this message translates to:
+  /// **'AI analysis unavailable'**
+  String get pestAnalysisUnavailable;
+
+  /// Fallback explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'The on-phone AI could not analyse this. Showing the closest knowledge card instead.'**
+  String get pestAnalysisUnavailableBody;
+
+  /// No card at all.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching knowledge card. Inspect physically and ask a professional if unsure.'**
+  String get pestNoCardFound;
+
+  /// Safety banner: venomous.
+  ///
+  /// In en, this message translates to:
+  /// **'Venomous — keep your distance'**
+  String get pestSafetyVenomousTitle;
+
+  /// Safety banner: medical risk.
+  ///
+  /// In en, this message translates to:
+  /// **'Health risk — keep your distance'**
+  String get pestSafetyMedicalTitle;
+
+  /// Safety banner body: venomous/medical.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not touch or handle it. Get medical care for any bite or sting. Do not use home remedies.'**
+  String get pestSafetyDistanceBody;
+
+  /// Safety banner: protected species.
+  ///
+  /// In en, this message translates to:
+  /// **'Protected wildlife — do not harm it'**
+  String get pestSafetyProtectedTitle;
+
+  /// Safety banner body: protected species.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not harm, capture or kill it. Call the State Forest Department or a licensed wildlife rescuer.'**
+  String get pestSafetyProtectedBody;
+
+  /// Safety banner: caution.
+  ///
+  /// In en, this message translates to:
+  /// **'Take care'**
+  String get pestSafetyCautionTitle;
+
+  /// Safety banner body: caution.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not touch it with bare hands. Follow the safe steps on the card.'**
+  String get pestSafetyCautionBody;
+
+  /// Curated card heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Knowledge card'**
+  String get pestCardTitle;
+
+  /// Chip: the user chose this card.
+  ///
+  /// In en, this message translates to:
+  /// **'Your pick'**
+  String get pestCardYourPick;
+
+  /// Card review status.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs expert review'**
+  String get pestCardNeedsReview;
+
+  /// Other names.
+  ///
+  /// In en, this message translates to:
+  /// **'Also called: {names}'**
+  String pestCardOtherNames(String names);
+
+  /// Card section.
+  ///
+  /// In en, this message translates to:
+  /// **'Signs to look for'**
+  String get pestCardSigns;
+
+  /// Card section.
+  ///
+  /// In en, this message translates to:
+  /// **'Health risks'**
+  String get pestCardHealthRisks;
+
+  /// Card section.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe steps'**
+  String get pestCardSafeSteps;
+
+  /// Card section.
+  ///
+  /// In en, this message translates to:
+  /// **'Call a professional when'**
+  String get pestCardCallPro;
+
+  /// Card section (pointers to medical care only).
+  ///
+  /// In en, this message translates to:
+  /// **'First aid'**
+  String get pestCardFirstAid;
+
+  /// Card section.
+  ///
+  /// In en, this message translates to:
+  /// **'Look-alikes'**
+  String get pestCardLookAlikes;
+
+  /// Card section.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal status'**
+  String get pestCardLegal;
+
+  /// Card section.
+  ///
+  /// In en, this message translates to:
+  /// **'Sources'**
+  String get pestCardSources;
+
+  /// Stream an explanation grounded in the card.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain'**
+  String get pestExplain;
+
+  /// Explanation card title.
+  ///
+  /// In en, this message translates to:
+  /// **'Explanation from the card'**
+  String get pestExplainTitle;
+
+  /// Explanation unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No explanation right now. The card above is the guidance.'**
+  String get pestExplainFallback;
+
+  /// Correct the AI label.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a different card'**
+  String get pestPickCard;
+
+  /// Card picker title.
+  ///
+  /// In en, this message translates to:
+  /// **'Which one is it?'**
+  String get pestPickCardTitle;
+
+  /// Card picker explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Your pick is saved as your correction. The AI analysis is kept as it was.'**
+  String get pestPickCardBody;
+
+  /// Remove the user's pick.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the AI label'**
+  String get pestPickCardClear;
+
+  /// Measure the distance to the animal.
+  ///
+  /// In en, this message translates to:
+  /// **'Measure distance'**
+  String get pestMeasure;
+
+  /// While measuring.
+  ///
+  /// In en, this message translates to:
+  /// **'Measuring…'**
+  String get pestMeasuring;
+
+  /// Distance result.
+  ///
+  /// In en, this message translates to:
+  /// **'About {meters} m away ({low}–{high} m), by {method}'**
+  String pestDistanceValue(
+    String meters,
+    String low,
+    String high,
+    String method,
+  );
+
+  /// Distance method.
+  ///
+  /// In en, this message translates to:
+  /// **'depth sensing'**
+  String get pestDistanceMethodDepth;
+
+  /// Distance method.
+  ///
+  /// In en, this message translates to:
+  /// **'camera focus'**
+  String get pestDistanceMethodFocus;
+
+  /// Distance gate failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance not available'**
+  String get pestDistanceUnavailable;
+
+  /// Why no distance.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason: {reason}'**
+  String pestDistanceReason(String reason);
+
+  /// No distance, no reason given.
+  ///
+  /// In en, this message translates to:
+  /// **'The phone could not measure it reliably.'**
+  String get pestDistanceNoReason;
+
+  /// Save action.
+  ///
+  /// In en, this message translates to:
+  /// **'Save sighting'**
+  String get pestSave;
+
+  /// Drop this signal and its media.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get pestDiscard;
+
+  /// Back to the Pest ID start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start again'**
+  String get pestStartAgain;
+
+  /// No confirmed signal.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to analyse. Start again with the camera or listen mode.'**
+  String get pestNoSignal;
+
+  /// Animal group.
+  ///
+  /// In en, this message translates to:
+  /// **'Insect'**
+  String get pestGroupInsect;
+
+  /// Animal group.
+  ///
+  /// In en, this message translates to:
+  /// **'Spider or scorpion'**
+  String get pestGroupArachnid;
+
+  /// Animal group.
+  ///
+  /// In en, this message translates to:
+  /// **'Rat or mouse'**
+  String get pestGroupRodent;
+
+  /// Animal group.
+  ///
+  /// In en, this message translates to:
+  /// **'Reptile'**
+  String get pestGroupReptile;
+
+  /// Animal group.
+  ///
+  /// In en, this message translates to:
+  /// **'Other animal'**
+  String get pestGroupOther;
+
+  /// Animal group.
+  ///
+  /// In en, this message translates to:
+  /// **'Not a pest'**
+  String get pestGroupNotAPest;
+
+  /// Animal group.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get pestGroupUnknown;
+
+  /// Sound group hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Likely group: {group} (AI hint)'**
+  String pestGroupHint(String group);
+
+  /// Signal source.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get pestSourceCamera;
+
+  /// Signal source.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get pestSourceMic;
+
+  /// Signal source.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensor'**
+  String get pestSourceSensor;
+
+  /// Listen screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen for sounds'**
+  String get pestListenTitle;
+
+  /// Listen mode.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get pestListenModeGeneral;
+
+  /// Listen mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Mosquito close-up'**
+  String get pestListenModeMosquito;
+
+  /// Listen mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Night'**
+  String get pestListenModeNight;
+
+  /// Mode help.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the phone still near where you hear the sound.'**
+  String get pestListenModeGeneralBody;
+
+  /// Mode help.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold the phone within a hand\'s width of the buzzing.'**
+  String get pestListenModeMosquitoBody;
+
+  /// Mode help.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave the phone still in the room. A notification shows while it listens, so you can stop it at any time.'**
+  String get pestListenModeNightBody;
+
+  /// Start listen mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Start listening'**
+  String get pestListenStart;
+
+  /// Stop listening.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get pestListenStop;
+
+  /// While listening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening on this phone…'**
+  String get pestListening;
+
+  /// No sound events yet.
+  ///
+  /// In en, this message translates to:
+  /// **'No sounds picked up yet.'**
+  String get pestListenNone;
+
+  /// Sound list hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a sound you also heard to confirm it'**
+  String get pestListenTapToConfirm;
+
+  /// Mic permission denied.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone access is off. Allow it in settings to listen. Your saved sightings stay available.'**
+  String get pestListenMicDenied;
+
+  /// Notification permission denied for night mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Night mode needs notifications so you can see and stop listening. Allow notifications and try again.'**
+  String get pestListenNightNeedsNotice;
+
+  /// Start a new listen.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen again'**
+  String get pestListenAgain;
+
+  /// Sound event title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound at {time}'**
+  String pestSoundAt(String time);
+
+  /// Sound event action.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to confirm'**
+  String get pestSoundConfirm;
+
+  /// Sound-classifier label and raw score.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} · {percent}%'**
+  String pestSoundScore(String label, int percent);
+
+  /// Classifier returned nothing.
+  ///
+  /// In en, this message translates to:
+  /// **'No sound labels.'**
+  String get pestSoundNoLabels;
+
+  /// Under the labels.
+  ///
+  /// In en, this message translates to:
+  /// **'Raw sound-classifier scores, not calibrated'**
+  String get pestSoundRawNote;
+
+  /// While describeSound runs.
+  ///
+  /// In en, this message translates to:
+  /// **'Describing the sound on this phone…'**
+  String get pestSoundDescribing;
+
+  /// Experimental LLM description heading.
+  ///
+  /// In en, this message translates to:
+  /// **'AI description (experimental)'**
+  String get pestSoundDescription;
+
+  /// No description.
+  ///
+  /// In en, this message translates to:
+  /// **'No AI description available.'**
+  String get pestSoundNoDescription;
+
+  /// Sound model provenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound model {version} — Experimental'**
+  String pestSoundModel(String version);
+
+  /// Cards for the sound.
+  ///
+  /// In en, this message translates to:
+  /// **'Matching cards'**
+  String get pestSoundCards;
+
+  /// No cards for the sound.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching card. Inspect physically.'**
+  String get pestSoundNoCards;
+
+  /// Clip discarded or missing.
+  ///
+  /// In en, this message translates to:
+  /// **'That sound clip is no longer available. Listen again.'**
+  String get pestClipGone;
+
+  /// Save screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Save sighting'**
+  String get pestSaveTitle;
+
+  /// Save screen subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved only on this phone'**
+  String get pestSaveSubtitle;
+
+  /// Location picker label.
+  ///
+  /// In en, this message translates to:
+  /// **'Room or place'**
+  String get pestSaveRoom;
+
+  /// No location chosen.
+  ///
+  /// In en, this message translates to:
+  /// **'No room'**
+  String get pestSaveNoRoom;
+
+  /// No locations exist.
+  ///
+  /// In en, this message translates to:
+  /// **'No rooms or places yet. You can add them in Inventory.'**
+  String get pestSaveNoRooms;
+
+  /// Take a one-time location fix.
+  ///
+  /// In en, this message translates to:
+  /// **'Save location'**
+  String get pestSaveLocation;
+
+  /// Location explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. Location is asked only now. Indoors, the room is usually more useful.'**
+  String get pestSaveLocationBody;
+
+  /// While locating.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting location…'**
+  String get pestLocating;
+
+  /// Location denied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission denied, saved room only'**
+  String get pestLocationDenied;
+
+  /// Accuracy worse than 25 m or approximate only.
+  ///
+  /// In en, this message translates to:
+  /// **'Location too imprecise, saved room only'**
+  String get pestLocationImprecise;
+
+  /// Location service off.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is turned off on this phone, saved room only'**
+  String get pestLocationOff;
+
+  /// Location error.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not get a location, saved room only'**
+  String get pestLocationFailed;
+
+  /// Precise pin saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin saved (within {meters} m)'**
+  String pestLocationPinned(int meters);
+
+  /// Keep media toggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the picture or clip'**
+  String get pestKeepMedia;
+
+  /// Keep media explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Off by default. Kept privately on this phone with the sighting, never uploaded.'**
+  String get pestKeepMediaBody;
+
+  /// Notes field.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get pestNotes;
+
+  /// Snackbar after saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Sighting saved'**
+  String get pestSaved;
+
+  /// Save failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save. Try again.'**
+  String get pestSaveFailed;
+
+  /// Sightings list title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sightings'**
+  String get pestSightingsTitle;
+
+  /// Sightings list subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on this phone, newest first'**
+  String get pestSightingsSubtitle;
+
+  /// Empty sightings list.
+  ///
+  /// In en, this message translates to:
+  /// **'No sightings yet'**
+  String get pestSightingsEmpty;
+
+  /// Empty sightings detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Look or listen for signs and save what you confirm.'**
+  String get pestSightingsEmptyDetail;
+
+  /// Sighting with no label.
+  ///
+  /// In en, this message translates to:
+  /// **'Unidentified sighting'**
+  String get pestSightingUnnamed;
+
+  /// No verified finding.
+  ///
+  /// In en, this message translates to:
+  /// **'Not checked by a person yet'**
+  String get pestNoFindingYet;
+
+  /// Verified finding chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked: {finding}'**
+  String pestFindingChip(String finding);
+
+  /// Unknown sighting id.
+  ///
+  /// In en, this message translates to:
+  /// **'This sighting is not on this phone.'**
+  String get pestNotFound;
+
+  /// Detail title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sighting'**
+  String get pestDetailTitle;
+
+  /// Detail section.
+  ///
+  /// In en, this message translates to:
+  /// **'AI analysis'**
+  String get pestDetailAiSection;
+
+  /// AI section note.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-estimated — not calibrated. Saved as it was and never edited.'**
+  String get pestDetailAiNote;
+
+  /// Detail section.
+  ///
+  /// In en, this message translates to:
+  /// **'Your confirmation'**
+  String get pestDetailValidation;
+
+  /// userValidated true.
+  ///
+  /// In en, this message translates to:
+  /// **'You confirmed the signal was real'**
+  String get pestDetailConfirmed;
+
+  /// userValidated false.
+  ///
+  /// In en, this message translates to:
+  /// **'Not confirmed'**
+  String get pestDetailNotConfirmed;
+
+  /// User's card choice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your pick: {name}'**
+  String pestDetailYourPick(String name);
+
+  /// Detail section.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified finding'**
+  String get pestDetailVerified;
+
+  /// Verified finding explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'What a person found by checking. Separate from the AI analysis. It can be set once.'**
+  String get pestDetailVerifiedBody;
+
+  /// Save the verified finding.
+  ///
+  /// In en, this message translates to:
+  /// **'Record finding'**
+  String get pestDetailRecordFinding;
+
+  /// Confirm dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Save \"{finding}\" as the verified finding? It cannot be changed later.'**
+  String pestDetailConfirmFinding(String finding);
+
+  /// Detail section.
+  ///
+  /// In en, this message translates to:
+  /// **'Place'**
+  String get pestDetailPlace;
+
+  /// GPS pin row label.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin'**
+  String get pestDetailPinLabel;
+
+  /// GPS pin value.
+  ///
+  /// In en, this message translates to:
+  /// **'{lat}, {lng} (within {meters} m)'**
+  String pestDetailPin(String lat, String lng, int meters);
+
+  /// No location.
+  ///
+  /// In en, this message translates to:
+  /// **'No room or pin saved.'**
+  String get pestDetailNoPlace;
+
+  /// Open the sightings map.
+  ///
+  /// In en, this message translates to:
+  /// **'Show on map'**
+  String get pestDetailShowMap;
+
+  /// Media kept.
+  ///
+  /// In en, this message translates to:
+  /// **'Picture or clip kept on this phone'**
+  String get pestDetailMediaKept;
+
+  /// Next step: repeated sightings.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{A pest was seen again} other{Pests seen {count} times}}'**
+  String pestNextRepeated(int count);
+
+  /// Next step: repeated sightings in one place.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{{label}: seen again} other{{label}: seen {count} times}}'**
+  String pestNextRepeatedOne(String label, int count);
+
+  /// Next step body.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the place and follow the safe steps on the card.'**
+  String get pestNextRepeatedBody;
+
+  /// Next step: dangerous or protected animal.
+  ///
+  /// In en, this message translates to:
+  /// **'A sighting needs care'**
+  String get pestNextSafety;
+
+  /// Next step body.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the safety steps on the card before going near it.'**
+  String get pestNextSafetyBody;
+
+  /// Next step action.
+  ///
+  /// In en, this message translates to:
+  /// **'View sightings'**
+  String get pestNextAction;
+
+  /// Map screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sightings map'**
+  String get mapTitle;
+
+  /// Hub card body.
+  ///
+  /// In en, this message translates to:
+  /// **'Pins for sightings saved with a precise location'**
+  String get mapCardBody;
+
+  /// Consent sheet title.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Google Maps?'**
+  String get mapConsentTitle;
+
+  /// Consent explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'The map and the walking route come from Google. Google receives the map area you look at and the start and end points of a route.'**
+  String get mapConsentBody;
+
+  /// Consent: what is never sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Google never receives the animal, your notes, pictures or sounds.'**
+  String get mapConsentNever;
+
+  /// Give maps consent.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow maps'**
+  String get mapConsentAllow;
+
+  /// Decline maps consent.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get mapConsentDecline;
+
+  /// Consent not given.
+  ///
+  /// In en, this message translates to:
+  /// **'Maps are off. Nothing is sent until you allow them.'**
+  String get mapConsentNeeded;
+
+  /// No maps key in this build.
+  ///
+  /// In en, this message translates to:
+  /// **'Maps not configured'**
+  String get mapNotConfigured;
+
+  /// No key explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'This build has no map key. You can still open a pin in the Google Maps app.'**
+  String get mapNotConfiguredBody;
+
+  /// geo: fallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Google Maps'**
+  String get mapOpenInGoogleMaps;
+
+  /// No pins.
+  ///
+  /// In en, this message translates to:
+  /// **'No sightings with a precise location yet'**
+  String get mapNoPins;
+
+  /// No pins detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Pins appear for sightings saved with a location within 25 m.'**
+  String get mapNoPinsDetail;
+
+  /// No pins action.
+  ///
+  /// In en, this message translates to:
+  /// **'View sightings'**
+  String get mapNoPinsAction;
+
+  /// Pin info window (date only).
+  ///
+  /// In en, this message translates to:
+  /// **'Sighting {date}'**
+  String mapPinLabel(String date);
+
+  /// Compute a route.
+  ///
+  /// In en, this message translates to:
+  /// **'Route from here'**
+  String get mapRoute;
+
+  /// While routing.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding a route…'**
+  String get mapRouting;
+
+  /// Route distance and ETA.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} · about {minutes} min'**
+  String mapRouteSummary(String distance, int minutes);
+
+  /// Route failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not get a route. Check the internet connection and try again.'**
+  String get mapRouteFailed;
+
+  /// No origin.
+  ///
+  /// In en, this message translates to:
+  /// **'Your location is needed for a route. Allow location and try again.'**
+  String get mapRouteNeedsLocation;
+
+  /// Hand off to Google Maps.
+  ///
+  /// In en, this message translates to:
+  /// **'Start navigation'**
+  String get mapStartNavigation;
+
+  /// Hand-off failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open Google Maps on this phone.'**
+  String get mapNavigationFailed;
+
+  /// Distance in km.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} km'**
+  String mapDistanceKm(String km);
+
+  /// Distance in metres.
+  ///
+  /// In en, this message translates to:
+  /// **'{meters} m'**
+  String mapDistanceM(int meters);
 }
 
 class _AppLocalizationsDelegate

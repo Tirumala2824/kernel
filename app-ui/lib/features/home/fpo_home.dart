@@ -10,6 +10,7 @@ import '../../brand/illustrations.dart';
 import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_card.dart';
+import '../pest_id/pest_hub.dart';
 import 'next_step_section.dart';
 
 class FpoHome extends ConsumerWidget {
@@ -110,6 +111,7 @@ class FpoHome extends ConsumerWidget {
           },
         ),
         const InsightsCard(),
+        const PestIdActionCard(),
         KernelCard(
           tone: KernelCardTone.ivory,
           icon: Icons.add_home_work_rounded,
