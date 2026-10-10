@@ -1,5 +1,5 @@
 group = "com.kernel.sensor_link"
-version = "1.0-SNAPSHOT"
+version = "0.1.0"
 
 buildscript {
     val kotlinVersion = "2.4.0"
@@ -50,16 +50,17 @@ android {
 
     testOptions {
         unitTests {
-            isIncludeAndroidResources = true
             all {
                 it.useJUnitPlatform()
 
                 it.outputs.upToDateWhen { false }
 
                 it.testLogging {
-                    events("passed", "skipped", "failed", "standardOut", "standardError")
-                    showStandardStreams = true
+                    events("passed", "skipped", "failed")
+                    showStandardStreams = false
                 }
+                // Shared byte fixtures exported by firmware/reference (python -m kernel_ref.export).
+                it.systemProperty("kernel.vectors", file("../../firmware/reference/vectors").absolutePath)
             }
         }
     }
@@ -72,6 +73,14 @@ kotlin {
 }
 
 dependencies {
+    // Required by the pigeon-generated bridge (suspend host and Flutter API methods).
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
+
+    // Pure JVM unit tests: protocol codec, auth vectors, QR parser, reconnect plan.
+    // org.json gives the tests a real JSON parser (android.jar only has stubs).
+    testImplementation(platform("org.junit:junit-bom:5.14.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.mockito:mockito-core:5.0.0")
+    testImplementation("org.json:json:20240303")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

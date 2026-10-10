@@ -1,0 +1,2 @@
+# Node-type fragment: idf.py -B build-contact_accel -D SDKCONFIG=build-contact_accel/sdkconfig -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.contact_accel" build
+CONFIG_KERNEL_NODE_CONTACT_ACCEL=y

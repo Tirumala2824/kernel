@@ -1,0 +1,56 @@
+{
+ "schema": "kernel-sensor-detect-vector/1",
+ "scenario": "contact_termite_15hz",
+ "description": "12 drumming pulses at 15 Hz (2 ms, 2.5 kHz)",
+ "synthetic": true,
+ "sensorType": 2,
+ "sensorTypeName": "contactPiezo",
+ "seconds": 4.0,
+ "epochBaseMs": 1767225600000,
+ "expect": {
+  "classes": [
+   "impulseBurst"
+  ],
+  "signature": "termite_drum",
+  "jammed": false,
+  "clipped": false
+ },
+ "result": {
+  "jammed": false,
+  "clipped": false,
+  "eventCount": 1,
+  "healthLog": [
+   [
+    0.0,
+    4
+   ],
+   [
+    1000.0,
+    0
+   ]
+  ]
+ },
+ "events": [
+  {
+   "seq": 1,
+   "tStartS": 1767225601,
+   "tStartMs": 501,
+   "durationMs": 735,
+   "eventClass": 3,
+   "flags": 3,
+   "peakHz10": 284,
+   "minHz10": 225,
+   "maxHz10": 340,
+   "slopeDHzPerMs": 0,
+   "snrHalfDb": 62,
+   "peakDbfs": -33,
+   "impulses": 12,
+   "harmonics": 0,
+   "repRateCHz": 1501,
+   "ipiCvPct": 1,
+   "bootLow": 7,
+   "hex": "0100000001b95569f501df0203031c01e100540100003edf0c00dd050107",
+   "className": "impulseBurst"
+  }
+ ]
+}

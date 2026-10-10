@@ -1,0 +1,684 @@
+{
+ "schema": "kernel-sensor-protocol-vectors/1",
+ "protocol": {
+  "major": 1,
+  "minor": 0
+ },
+ "serviceUuid": "c7780001-4139-44b2-877d-c537908d6290",
+ "characteristics": {
+  "deviceInfo": "c7780002-4139-44b2-877d-c537908d6290",
+  "config": "c7780003-4139-44b2-877d-c537908d6290",
+  "bandTable": "c7780004-4139-44b2-877d-c537908d6290",
+  "bandFrame": "c7780005-4139-44b2-877d-c537908d6290",
+  "event": "c7780006-4139-44b2-877d-c537908d6290",
+  "status": "c7780007-4139-44b2-877d-c537908d6290",
+  "controlPoint": "c7780008-4139-44b2-877d-c537908d6290",
+  "snippet": "c7780009-4139-44b2-877d-c537908d6290"
+ },
+ "lengths": {
+  "adv": 7,
+  "deviceInfo": 22,
+  "config": 32,
+  "event": 30,
+  "status": 21,
+  "bandFrameHeader": 23
+ },
+ "cases": [
+  {
+   "kind": "adv",
+   "name": "adv_us_test_company",
+   "fields": {
+    "companyId": 65535,
+    "proto": 1,
+    "sensorType": 1,
+    "lastEventSeq16": 4660,
+    "batt": 87
+   },
+   "hex": "ffff0101341257"
+  },
+  {
+   "kind": "adv",
+   "name": "adv_contact_batt_unknown",
+   "fields": {
+    "companyId": 65535,
+    "proto": 1,
+    "sensorType": 2,
+    "lastEventSeq16": 0,
+    "batt": 255
+   },
+   "hex": "ffff01020000ff"
+  },
+  {
+   "kind": "deviceInfo",
+   "name": "device_info_us_air",
+   "fields": {
+    "protoMajor": 1,
+    "protoMinor": 0,
+    "sensorType": 1,
+    "hwRev": 1,
+    "fwMajor": 0,
+    "fwMinor": 1,
+    "fwPatch": 0,
+    "nBands": 18,
+    "capabilities": 95,
+    "sampleRateHz": 192000,
+    "fftSize": 512,
+    "hopSize": 256,
+    "ringCapacity": 1920,
+    "cfgVersion": 1
+   },
+   "hex": "01000101000100125f0000ee02000002000180070100"
+  },
+  {
+   "kind": "config",
+   "name": "config_default_usAir",
+   "fields": {
+    "cfgVersion": 1,
+    "flags": 37,
+    "bandFrameMs": 1000,
+    "dutyOnS": 60,
+    "dutyOffS": 0,
+    "detectThreshHalfDb": 28,
+    "jamThreshHalfDb": 12,
+    "jamHoldDs": 20,
+    "impulseThreshHalfDb": 30,
+    "minBlobMs": 5,
+    "maxGapMs": 4,
+    "flatMinMs": 300,
+    "contMinMs": 1000,
+    "fmMinBwHz10": 300,
+    "burstMinImpulses": 3,
+    "trainMinPulses": 3,
+    "burstMaxGapMs": 200,
+    "impulseMinHalfMs": 2,
+    "impulseMaxMs": 10,
+    "trainMaxCvPct": 15,
+    "lowBattPct": 15,
+    "chirpMaxGapMs": 120,
+    "reserved": 0
+   },
+   "hex": "0125e8033c0000001c0c141e05042c01e8032c010303c800020a0f0f78000000"
+  },
+  {
+   "kind": "config",
+   "name": "config_default_contactPiezo",
+   "fields": {
+    "cfgVersion": 1,
+    "flags": 69,
+    "bandFrameMs": 1000,
+    "dutyOnS": 60,
+    "dutyOffS": 0,
+    "detectThreshHalfDb": 28,
+    "jamThreshHalfDb": 12,
+    "jamHoldDs": 20,
+    "impulseThreshHalfDb": 30,
+    "minBlobMs": 5,
+    "maxGapMs": 4,
+    "flatMinMs": 300,
+    "contMinMs": 1000,
+    "fmMinBwHz10": 300,
+    "burstMinImpulses": 3,
+    "trainMinPulses": 3,
+    "burstMaxGapMs": 200,
+    "impulseMinHalfMs": 2,
+    "impulseMaxMs": 10,
+    "trainMaxCvPct": 15,
+    "lowBattPct": 15,
+    "chirpMaxGapMs": 120,
+    "reserved": 0
+   },
+   "hex": "0145e8033c0000001c0c141e05042c01e8032c010303c800020a0f0f78000000"
+  },
+  {
+   "kind": "config",
+   "name": "config_default_audioAir",
+   "fields": {
+    "cfgVersion": 1,
+    "flags": 61,
+    "bandFrameMs": 1000,
+    "dutyOnS": 60,
+    "dutyOffS": 0,
+    "detectThreshHalfDb": 40,
+    "jamThreshHalfDb": 12,
+    "jamHoldDs": 20,
+    "impulseThreshHalfDb": 30,
+    "minBlobMs": 8,
+    "maxGapMs": 0,
+    "flatMinMs": 300,
+    "contMinMs": 1000,
+    "fmMinBwHz10": 150,
+    "burstMinImpulses": 3,
+    "trainMinPulses": 3,
+    "burstMaxGapMs": 200,
+    "impulseMinHalfMs": 2,
+    "impulseMaxMs": 10,
+    "trainMaxCvPct": 15,
+    "lowBattPct": 15,
+    "chirpMaxGapMs": 120,
+    "reserved": 0
+   },
+   "hex": "013de8033c000000280c141e08002c01e80396000303c800020a0f0f78000000"
+  },
+  {
+   "kind": "bandTable",
+   "name": "band_table_us_air",
+   "fields": {
+    "nBands": 18,
+    "edgesHz10": [
+     2000,
+     2400,
+     2800,
+     3200,
+     3600,
+     4000,
+     4400,
+     4800,
+     5200,
+     5600,
+     6000,
+     6400,
+     6800,
+     7200,
+     7600,
+     8000,
+     8400,
+     8800,
+     9200
+    ]
+   },
+   "hex": "1200d0076009f00a800c100ea00f3011c0125014e01570170019901a201cb01d401fd0206022f023"
+  },
+  {
+   "kind": "bandTable",
+   "name": "band_table_audio_air",
+   "fields": {
+    "nBands": 20,
+    "edgesHz10": [
+     10,
+     16,
+     25,
+     32,
+     40,
+     50,
+     63,
+     80,
+     100,
+     125,
+     160,
+     200,
+     250,
+     315,
+     400,
+     500,
+     630,
+     800,
+     1000,
+     1250,
+     1500
+    ]
+   },
+   "hex": "14000a00100019002000280032003f00500064007d00a000c800fa003b019001f40176022003e803e204dc05"
+  },
+  {
+   "kind": "bandFrame",
+   "name": "band_frame_us_rat_22k",
+   "fields": {
+    "seq": 2,
+    "tStartS": 1767225601,
+    "tStartMs": 0,
+    "frameMs": 1000,
+    "flags": 1,
+    "nBands": 18,
+    "noiseFloorDeciDbfs": -832,
+    "peakHz10": 2288,
+    "peakDeciDbfs": -567,
+    "jamBandMask": 0,
+    "bandsHalfDb": [
+     40,
+     9,
+     10,
+     10,
+     9,
+     9,
+     11,
+     9,
+     10,
+     9,
+     9,
+     10,
+     10,
+     9,
+     9,
+     9,
+     11,
+     9
+    ]
+   },
+   "hex": "0200000001b955690000e8030112c0fcf008c9fd00000028090a0a09090b090a09090a0a0909090b09"
+  },
+  {
+   "kind": "bandFrame",
+   "name": "band_frame_24_bands_jammed",
+   "fields": {
+    "seq": 4294967294,
+    "tStartS": 1767225600,
+    "tStartMs": 999,
+    "frameMs": 1000,
+    "flags": 3,
+    "nBands": 24,
+    "noiseFloorDeciDbfs": -1234,
+    "peakHz10": 4000,
+    "peakDeciDbfs": -321,
+    "jamBandMask": 32,
+    "bandsHalfDb": [
+     0,
+     10,
+     20,
+     30,
+     40,
+     50,
+     60,
+     70,
+     80,
+     90,
+     100,
+     110,
+     120,
+     130,
+     140,
+     150,
+     160,
+     170,
+     180,
+     190,
+     200,
+     210,
+     220,
+     230
+    ]
+   },
+   "hex": "feffffff00b95569e703e80303182efba00fbffe200000000a141e28323c46505a646e78828c96a0aab4bec8d2dce6"
+  },
+  {
+   "kind": "event",
+   "name": "event_flatTone_us_rat_22k",
+   "fields": {
+    "seq": 102,
+    "tStartS": 1767225601,
+    "tStartMs": 519,
+    "durationMs": 561,
+    "eventClass": 2,
+    "flags": 1,
+    "peakHz10": 2282,
+    "minHz10": 2185,
+    "maxHz10": 2297,
+    "slopeDHzPerMs": -20,
+    "snrHalfDb": 55,
+    "peakDbfs": -57,
+    "impulses": 0,
+    "harmonics": 0,
+    "repRateCHz": 0,
+    "ipiCvPct": 255,
+    "bootLow": 7
+   },
+   "hex": "6600000001b95569070231020201ea088908f908ecff37c700000000ff07"
+  },
+  {
+   "kind": "event",
+   "name": "event_fmSweep_us_rat_50k",
+   "fields": {
+    "seq": 101,
+    "tStartS": 1767225601,
+    "tStartMs": 501,
+    "durationMs": 39,
+    "eventClass": 1,
+    "flags": 1,
+    "peakHz10": 5410,
+    "minHz10": 4587,
+    "maxHz10": 5715,
+    "slopeDHzPerMs": 3164,
+    "snrHalfDb": 52,
+    "peakDbfs": -58,
+    "impulses": 0,
+    "harmonics": 0,
+    "repRateCHz": 0,
+    "ipiCvPct": 255,
+    "bootLow": 7
+   },
+   "hex": "6500000001b95569f501270001012215eb1153165c0c34c600000000ff07"
+  },
+  {
+   "kind": "event",
+   "name": "event_impulseBurst_contact_termite_15hz",
+   "fields": {
+    "seq": 103,
+    "tStartS": 1767225601,
+    "tStartMs": 501,
+    "durationMs": 735,
+    "eventClass": 3,
+    "flags": 3,
+    "peakHz10": 284,
+    "minHz10": 225,
+    "maxHz10": 340,
+    "slopeDHzPerMs": 0,
+    "snrHalfDb": 62,
+    "peakDbfs": -33,
+    "impulses": 12,
+    "harmonics": 0,
+    "repRateCHz": 1501,
+    "ipiCvPct": 1,
+    "bootLow": 7
+   },
+   "hex": "6700000001b95569f501df0203031c01e100540100003edf0c00dd050107"
+  },
+  {
+   "kind": "event",
+   "name": "event_harmonic_audio_mosquito",
+   "fields": {
+    "seq": 104,
+    "tStartS": 1767225601,
+    "tStartMs": 516,
+    "durationMs": 1456,
+    "eventClass": 4,
+    "flags": 1,
+    "peakHz10": 45,
+    "minHz10": 44,
+    "maxHz10": 46,
+    "slopeDHzPerMs": 0,
+    "snrHalfDb": 72,
+    "peakDbfs": -51,
+    "impulses": 0,
+    "harmonics": 3,
+    "repRateCHz": 0,
+    "ipiCvPct": 255,
+    "bootLow": 7
+   },
+   "hex": "6800000001b955690402b00504012d002c002e00000048cd00030000ff07"
+  },
+  {
+   "kind": "event",
+   "name": "event_pulsedChirp_audio_cricket",
+   "fields": {
+    "seq": 105,
+    "tStartS": 1767225601,
+    "tStartMs": 492,
+    "durationMs": 124,
+    "eventClass": 5,
+    "flags": 3,
+    "peakHz10": 459,
+    "minHz10": 458,
+    "maxHz10": 459,
+    "slopeDHzPerMs": 0,
+    "snrHalfDb": 72,
+    "peakDbfs": -52,
+    "impulses": 4,
+    "harmonics": 0,
+    "repRateCHz": 2885,
+    "ipiCvPct": 5,
+    "bootLow": 7
+   },
+   "hex": "6900000001b95569ec017c000503cb01ca01cb01000048cc0400450b0507"
+  },
+  {
+   "kind": "event",
+   "name": "event_untimed_saturated",
+   "fields": {
+    "seq": 4294967295,
+    "tStartS": 12345,
+    "tStartMs": 7,
+    "durationMs": 65535,
+    "eventClass": 6,
+    "flags": 4,
+    "peakHz10": 65535,
+    "minHz10": 0,
+    "maxHz10": 65535,
+    "slopeDHzPerMs": -32767,
+    "snrHalfDb": 255,
+    "peakDbfs": -128,
+    "impulses": 255,
+    "harmonics": 0,
+    "repRateCHz": 0,
+    "ipiCvPct": 255,
+    "bootLow": 3
+   },
+   "hex": "ffffffff393000000700ffff0604ffff0000ffff0180ff80ff000000ff03"
+  },
+  {
+   "kind": "status",
+   "name": "status_ok_session",
+   "fields": {
+    "health": 224,
+    "battPct": 92,
+    "battMv": 4010,
+    "lastSeq": 4242,
+    "oldestSeq": 2323,
+    "uptimeS": 86400,
+    "bootCount": 7,
+    "surveyRemainingS": 0
+   },
+   "hex": "e0005caa0f92100000130900008051010007000000"
+  },
+  {
+   "kind": "status",
+   "name": "status_jammed_clipped",
+   "fields": {
+    "health": 67,
+    "battPct": 50,
+    "battMv": 3700,
+    "lastSeq": 10,
+    "oldestSeq": 1,
+    "uptimeS": 120,
+    "bootCount": 1,
+    "surveyRemainingS": 0
+   },
+   "hex": "430032740e0a000000010000007800000001000000"
+  },
+  {
+   "kind": "status",
+   "name": "status_survey_low_batt",
+   "fields": {
+    "health": 28,
+    "battPct": 9,
+    "battMv": 3350,
+    "lastSeq": 0,
+    "oldestSeq": 0,
+    "uptimeS": 30,
+    "bootCount": 65535,
+    "surveyRemainingS": 270
+   },
+   "hex": "1c0009160d00000000000000001e000000ffff0e01"
+  },
+  {
+   "kind": "status",
+   "name": "status_fault_unknown_batt",
+   "fields": {
+    "health": 1792,
+    "battPct": 255,
+    "battMv": 0,
+    "lastSeq": 4294967295,
+    "oldestSeq": 4294963200,
+    "uptimeS": 1,
+    "bootCount": 2,
+    "surveyRemainingS": 0
+   },
+   "hex": "0007ff0000ffffffff00f0ffff0100000002000000"
+  },
+  {
+   "kind": "cpRequest",
+   "name": "cp_set_time",
+   "fields": {
+    "opcode": 1,
+    "epochMs": 1767225601234
+   },
+   "hex": "01d2acda769b010000"
+  },
+  {
+   "kind": "cpRequest",
+   "name": "cp_get_events_since",
+   "fields": {
+    "opcode": 2,
+    "seq": 4242,
+    "maxCount": 0
+   },
+   "hex": "02921000000000"
+  },
+  {
+   "kind": "cpRequest",
+   "name": "cp_start_survey",
+   "fields": {
+    "opcode": 3,
+    "durationS": 300
+   },
+   "hex": "032c01"
+  },
+  {
+   "kind": "cpRequest",
+   "name": "cp_start_session",
+   "fields": {
+    "opcode": 4,
+    "flags": 1
+   },
+   "hex": "0401"
+  },
+  {
+   "kind": "cpRequest",
+   "name": "cp_stop_session",
+   "fields": {
+    "opcode": 5
+   },
+   "hex": "05"
+  },
+  {
+   "kind": "cpRequest",
+   "name": "cp_request_snippet",
+   "fields": {
+    "opcode": 6,
+    "seq": 101
+   },
+   "hex": "0665000000"
+  },
+  {
+   "kind": "cpRequest",
+   "name": "cp_clear_bond",
+   "fields": {
+    "opcode": 7
+   },
+   "hex": "07"
+  },
+  {
+   "kind": "cpRequest",
+   "name": "cp_auth_challenge",
+   "fields": {
+    "opcode": 16,
+    "nonceHex": "df2ee7da0e196dbd99faa5ebee01faac"
+   },
+   "hex": "10df2ee7da0e196dbd99faa5ebee01faac"
+  },
+  {
+   "kind": "cpRequest",
+   "name": "cp_auth_response",
+   "fields": {
+    "opcode": 17,
+    "proofHex": "abababababababababababababababababababababababababababababababab"
+   },
+   "hex": "11abababababababababababababababababababababababababababababababab"
+  },
+  {
+   "kind": "cpResponse",
+   "name": "cp_resp_set_time_ok",
+   "fields": {
+    "reqOpcode": 1,
+    "status": 0,
+    "payloadHex": ""
+   },
+   "hex": "800100"
+  },
+  {
+   "kind": "cpResponse",
+   "name": "cp_resp_events_since",
+   "fields": {
+    "reqOpcode": 2,
+    "status": 0,
+    "payloadHex": "0c00931000009e10000013090000",
+    "count": 12,
+    "firstSeq": 4243,
+    "lastSeq": 4254,
+    "oldestSeq": 2323
+   },
+   "hex": "8002000c00931000009e10000013090000"
+  },
+  {
+   "kind": "cpResponse",
+   "name": "cp_resp_auth_challenge",
+   "fields": {
+    "reqOpcode": 16,
+    "status": 0,
+    "payloadHex": "54e1d999259f04add39d36daa92fdd659daea5fee094b6f8d94aa4f401927aff62bfbb96657881e1f9c218225ecb7e22",
+    "nodeNonceHex": "54e1d999259f04add39d36daa92fdd65",
+    "nodeProofHex": "9daea5fee094b6f8d94aa4f401927aff62bfbb96657881e1f9c218225ecb7e22"
+   },
+   "hex": "80100054e1d999259f04add39d36daa92fdd659daea5fee094b6f8d94aa4f401927aff62bfbb96657881e1f9c218225ecb7e22"
+  },
+  {
+   "kind": "cpResponse",
+   "name": "cp_resp_auth_failed",
+   "fields": {
+    "reqOpcode": 17,
+    "status": 4,
+    "payloadHex": ""
+   },
+   "hex": "801104"
+  },
+  {
+   "kind": "cpResponse",
+   "name": "cp_resp_not_authenticated",
+   "fields": {
+    "reqOpcode": 2,
+    "status": 3,
+    "payloadHex": ""
+   },
+   "hex": "800203"
+  },
+  {
+   "kind": "cpResponse",
+   "name": "cp_resp_snippet_meta",
+   "fields": {
+    "reqOpcode": 6,
+    "status": 0,
+    "payloadHex": "6500000040600807b80b0d002003",
+    "eventSeq": 101,
+    "rows": 64,
+    "cols": 96,
+    "fLoHz10": 1800,
+    "fHiHz10": 3000,
+    "colDeciMs": 13,
+    "tileCount": 32,
+    "colsPerTile": 3
+   },
+   "hex": "8006006500000040600807b80b0d002003"
+  },
+  {
+   "kind": "eventsDone",
+   "name": "cp_events_done",
+   "fields": {
+    "count": 12,
+    "lastSeq": 4254
+   },
+   "hex": "810c009e100000"
+  },
+  {
+   "kind": "snippetTile",
+   "name": "snippet_tile_small",
+   "fields": {
+    "eventSeq": 101,
+    "tileIndex": 5,
+    "tileCount": 32,
+    "col0": 15,
+    "nCols": 2,
+    "rows": 4,
+    "dataHex": "000306090104070a"
+   },
+   "hex": "6500000005200f02000306090104070a"
+  }
+ ]
+}

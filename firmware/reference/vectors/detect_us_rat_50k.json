@@ -1,0 +1,56 @@
+{
+ "schema": "kernel-sensor-detect-vector/1",
+ "scenario": "us_rat_50k",
+ "description": "45->58 kHz FM sweep, 40 ms",
+ "synthetic": true,
+ "sensorType": 1,
+ "sensorTypeName": "usAir",
+ "seconds": 2.6,
+ "epochBaseMs": 1767225600000,
+ "expect": {
+  "classes": [
+   "fmSweep"
+  ],
+  "signature": "rat_50k",
+  "jammed": false,
+  "clipped": false
+ },
+ "result": {
+  "jammed": false,
+  "clipped": false,
+  "eventCount": 1,
+  "healthLog": [
+   [
+    0.0,
+    4
+   ],
+   [
+    1000.0,
+    0
+   ]
+  ]
+ },
+ "events": [
+  {
+   "seq": 1,
+   "tStartS": 1767225601,
+   "tStartMs": 501,
+   "durationMs": 39,
+   "eventClass": 1,
+   "flags": 1,
+   "peakHz10": 5410,
+   "minHz10": 4587,
+   "maxHz10": 5715,
+   "slopeDHzPerMs": 3164,
+   "snrHalfDb": 52,
+   "peakDbfs": -58,
+   "impulses": 0,
+   "harmonics": 0,
+   "repRateCHz": 0,
+   "ipiCvPct": 255,
+   "bootLow": 7,
+   "hex": "0100000001b95569f501270001012215eb1153165c0c34c600000000ff07",
+   "className": "fmSweep"
+  }
+ ]
+}

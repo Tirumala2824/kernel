@@ -1,0 +1,89 @@
+{
+ "schema": "kernel-sensor-qr-vectors/1",
+ "valid": [
+  {
+   "payload": "kernel:sensor:v1:C0:FF:EE:12:34:56:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8:us_air",
+   "address": "C0:FF:EE:12:34:56",
+   "keyHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+   "sensorType": "usAir",
+   "fingerprint": "630dcd29"
+  },
+  {
+   "payload": "kernel:sensor:v1:AA:BB:CC:DD:EE:FF:-_v7-_v7-_v7-_v7-_v7-_v7-_v7-_v7-_v7-_v7-_s:contact_piezo",
+   "address": "AA:BB:CC:DD:EE:FF",
+   "keyHex": "fbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfb",
+   "sensorType": "contactPiezo",
+   "fingerprint": "456a0498"
+  },
+  {
+   "payload": "kernel:sensor:v1:01:23:45:67:89:AB:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8:contact_accel",
+   "address": "01:23:45:67:89:AB",
+   "keyHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+   "sensorType": "contactAccel",
+   "fingerprint": "630dcd29"
+  },
+  {
+   "payload": "kernel:sensor:v1:01:23:45:67:89:AB:-_v7-_v7-_v7-_v7-_v7-_v7-_v7-_v7-_v7-_v7-_s:audio_air",
+   "address": "01:23:45:67:89:AB",
+   "keyHex": "fbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfb",
+   "sensorType": "audioAir",
+   "fingerprint": "456a0498"
+  },
+  {
+   "payload": "kernel:sensor:v1:C0:FF:EE:12:34:56:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=:audio_air",
+   "address": "C0:FF:EE:12:34:56",
+   "keyHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+   "sensorType": "audioAir",
+   "fingerprint": "630dcd29"
+  },
+  {
+   "payload": "kernel:sensor:v1:c0:ff:ee:12:34:56:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8:us_air",
+   "address": "C0:FF:EE:12:34:56",
+   "keyHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+   "sensorType": "usAir",
+   "fingerprint": "630dcd29"
+  }
+ ],
+ "invalid": [
+  {
+   "payload": "",
+   "reason": "empty"
+  },
+  {
+   "payload": "kernel:sensor:v2:C0:FF:EE:12:34:56:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8:us_air",
+   "reason": "version"
+  },
+  {
+   "payload": "kernel:sensr:v1:C0:FF:EE:12:34:56:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8:us_air",
+   "reason": "prefix"
+  },
+  {
+   "payload": "kernel:sensor:v1:C0:FF:EE:12:34:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8:us_air",
+   "reason": "fields"
+  },
+  {
+   "payload": "kernel:sensor:v1:C0:FF:EE:12:34:5G:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8:us_air",
+   "reason": "address"
+  },
+  {
+   "payload": "kernel:sensor:v1:C0:FF:EE:12:34:56:AAAAAAAAAAAAAAAAAAAAAA:us_air",
+   "reason": "keyLength"
+  },
+  {
+   "payload": "kernel:sensor:v1:C0:FF:EE:12:34:56:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh*:us_air",
+   "reason": "keyEncoding"
+  },
+  {
+   "payload": "kernel:sensor:v1:C0:FF:EE:12:34:56:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8:ultrasonic",
+   "reason": "type"
+  },
+  {
+   "payload": "kernel:sensor:v1:C0:FF:EE:12:34:56:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8:us_air:extra",
+   "reason": "fields"
+  },
+  {
+   "payload": " kernel:sensor:v1:C0:FF:EE:12:34:56:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8:us_air",
+   "reason": "prefix"
+  }
+ ]
+}

@@ -1,0 +1,2 @@
+# Node-type fragment: idf.py -B build-us_air -D SDKCONFIG=build-us_air/sdkconfig -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.us_air" build
+CONFIG_KERNEL_NODE_US_AIR=y

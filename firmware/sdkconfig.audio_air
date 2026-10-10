@@ -1,0 +1,2 @@
+# Node-type fragment: idf.py -B build-audio_air -D SDKCONFIG=build-audio_air/sdkconfig -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.audio_air" build
+CONFIG_KERNEL_NODE_AUDIO_AIR=y

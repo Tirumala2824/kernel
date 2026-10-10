@@ -1,0 +1,36 @@
+{
+ "schema": "kernel-sensor-detect-vector/1",
+ "scenario": "us_clipping",
+ "description": "50 kHz tone at 1.6x full scale, 1.5-2.5 s",
+ "synthetic": true,
+ "sensorType": 1,
+ "sensorTypeName": "usAir",
+ "seconds": 3.0,
+ "epochBaseMs": 1767225600000,
+ "expect": {
+  "classes": [],
+  "signature": null,
+  "jammed": false,
+  "clipped": true
+ },
+ "result": {
+  "jammed": false,
+  "clipped": true,
+  "eventCount": 0,
+  "healthLog": [
+   [
+    0.0,
+    4
+   ],
+   [
+    1000.0,
+    0
+   ],
+   [
+    1498.667,
+    2
+   ]
+  ]
+ },
+ "events": []
+}

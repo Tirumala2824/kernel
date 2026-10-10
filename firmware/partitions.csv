@@ -1,0 +1,6 @@
+# Name,    Type, SubType, Offset,   Size,     Flags
+# kevents: 64 KiB event ring (16 x 4 KiB sectors, 32 B records). Features only.
+nvs,       data, nvs,     0x9000,   0x6000,
+phy_init,  data, phy,     0xf000,   0x1000,
+factory,   app,  factory, 0x10000,  0x1E0000,
+kevents,   data, 0x40,    0x1F0000, 0x10000,

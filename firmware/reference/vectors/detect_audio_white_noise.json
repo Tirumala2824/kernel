@@ -1,0 +1,32 @@
+{
+ "schema": "kernel-sensor-detect-vector/1",
+ "scenario": "audio_white_noise",
+ "description": "10 s of white noise",
+ "synthetic": true,
+ "sensorType": 4,
+ "sensorTypeName": "audioAir",
+ "seconds": 10.0,
+ "epochBaseMs": 1767225600000,
+ "expect": {
+  "classes": [],
+  "signature": null,
+  "jammed": false,
+  "clipped": false
+ },
+ "result": {
+  "jammed": false,
+  "clipped": false,
+  "eventCount": 0,
+  "healthLog": [
+   [
+    0.0,
+    4
+   ],
+   [
+    1000.0,
+    0
+   ]
+  ]
+ },
+ "events": []
+}

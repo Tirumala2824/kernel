@@ -1,0 +1,28 @@
+[project]
+name = "kernel-sensor-ref"
+version = "0.1.0"
+description = "Python reference for the Kernel sensor-node detectors (firmware/components/kernel_detect) and wire codec (kernel_proto). Off-device only; generates the shared test vectors."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.13",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["kernel_ref"]
+
+[tool.uv]
+# Installed editable so `python -I -m kernel_ref.export` works without the cwd on sys.path.
+package = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

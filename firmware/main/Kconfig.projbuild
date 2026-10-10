@@ -1,0 +1,87 @@
+menu "Kernel sensor node"
+
+    choice KERNEL_NODE_TYPE
+        prompt "Node type"
+        default KERNEL_NODE_US_AIR
+        help
+            One firmware image per node type (docs/sensor-protocol.md section 5).
+
+        config KERNEL_NODE_US_AIR
+            bool "US_AIR: SPH0641LU4H-1 ultrasonic PDM mic, 192 kSPS"
+        config KERNEL_NODE_CONTACT_PIEZO
+            bool "CONTACT: piezo disc + JFET buffer into PCM1808 I2S ADC, 48 kSPS"
+        config KERNEL_NODE_CONTACT_ACCEL
+            bool "CONTACT: ST IIS3DWB accelerometer over SPI, 26.7 kSPS"
+        config KERNEL_NODE_AUDIO_AIR
+            bool "AUDIO_AIR: standard PDM mic, 32 kSPS"
+    endchoice
+
+    config KERNEL_HW_REV
+        int "Hardware revision reported in DeviceInfo"
+        range 0 255
+        default 1
+
+    config KERNEL_COMPANY_ID
+        hex "Bluetooth SIG company id in advertising"
+        default 0xFFFF
+        help
+            0xFFFF means test/unregistered. A production build needs a
+            registered company id.
+
+    menu "Pins"
+        config KERNEL_PIN_MIC_CLK
+            int "PDM clock (US_AIR / AUDIO_AIR) or I2S BCLK (CONTACT_PIEZO)"
+            default 4
+        config KERNEL_PIN_MIC_DATA
+            int "PDM data or I2S DIN"
+            default 5
+        config KERNEL_PIN_I2S_WS
+            int "I2S LRCK (CONTACT_PIEZO)"
+            default 6
+        config KERNEL_PIN_I2S_MCLK
+            int "I2S MCLK / SCKI (CONTACT_PIEZO)"
+            default 7
+        config KERNEL_PIN_SPI_SCLK
+            int "SPI SCLK (CONTACT_ACCEL)"
+            default 12
+        config KERNEL_PIN_SPI_MOSI
+            int "SPI MOSI (CONTACT_ACCEL)"
+            default 11
+        config KERNEL_PIN_SPI_MISO
+            int "SPI MISO (CONTACT_ACCEL)"
+            default 13
+        config KERNEL_PIN_SPI_CS
+            int "SPI CS (CONTACT_ACCEL)"
+            default 10
+        config KERNEL_PIN_BATT_ADC
+            int "Battery sense GPIO (1:2 divider), -1 if none"
+            default 1
+        config KERNEL_PIN_BUTTON
+            int "Pairing button GPIO (active low), -1 if none"
+            default 0
+    endmenu
+
+    config KERNEL_PDM_BCLK_INVERT
+        bool "Invert the raw-PDM sampling clock edge (US_AIR)"
+        default n
+        help
+            Set if the decoded US_AIR stream looks like noise on the bench: the
+            mic's SELECT strap and the I2S sampling edge must agree.
+
+    choice KERNEL_KEY_STORE
+        prompt "Per-device auth key storage"
+        default KERNEL_KEY_EFUSE
+
+        config KERNEL_KEY_EFUSE
+            bool "eFuse key block (HMAC peripheral, key not readable by software)"
+        config KERNEL_KEY_NVS
+            bool "NVS blob 'auth/key' (development boards only; enable NVS encryption)"
+    endchoice
+
+    config KERNEL_HMAC_KEY_ID
+        int "eFuse HMAC key id (0 = BLOCK_KEY0 ... 5 = BLOCK_KEY5)"
+        depends on KERNEL_KEY_EFUSE
+        range 0 5
+        default 4
+
+endmenu

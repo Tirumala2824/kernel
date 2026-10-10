@@ -1,0 +1,10 @@
+# Wire codec for docs/sensor-protocol.md (C11, no crypto, no ESP dependency).
+if(ESP_PLATFORM)
+    idf_component_register(SRCS kernel_proto.c INCLUDE_DIRS include REQUIRES kernel_detect)
+    target_compile_options(${COMPONENT_LIB} PRIVATE -Wall -Wextra -Werror)
+else()
+    add_library(kernel_proto STATIC kernel_proto.c)
+    target_include_directories(kernel_proto PUBLIC include)
+    target_link_libraries(kernel_proto PUBLIC kernel_detect)
+    target_compile_features(kernel_proto PRIVATE c_std_11)
+endif()
