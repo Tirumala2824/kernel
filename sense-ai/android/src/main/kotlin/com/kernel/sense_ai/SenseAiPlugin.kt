@@ -159,7 +159,8 @@ class SenseAiPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityResul
     override suspend fun distanceCapability(): NativeDistanceCapability {
         val ctx = context ?: return NativeDistanceCapability(false, false, DistanceReason.ARCORE_UNSUPPORTED)
         return try {
-            DistanceProbe.capability(ctx)
+            // ARCore sessions are normally created with an Activity context.
+            DistanceProbe.capability(activityBinding?.activity ?: ctx)
         } catch (_: RuntimeException) {
             NativeDistanceCapability(false, false, DistanceReason.ARCORE_UNSUPPORTED)
         }

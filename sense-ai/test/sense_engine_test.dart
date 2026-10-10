@@ -369,6 +369,44 @@ void main() {
       },
     );
 
+    test(
+      'a stop event from an earlier session does not end a new one',
+      () async {
+        host.onStart = (mode, _) {
+          // Arrives while this session is starting (left over from a stop).
+          host.listen.add(
+            TestSenseHost.status(
+              NativeListenState.stopped,
+              NativeListenMode.general,
+            ),
+          );
+          return TestSenseHost.status(NativeListenState.listening, mode);
+        };
+        final e = engine();
+        var done = false;
+        final got = <SignalCandidate>[];
+        e.listen(ListenMode.general).listen(got.add, onDone: () => done = true);
+        await _pump();
+        await _pump();
+        expect(done, isFalse);
+        host.sounds.add(
+          NativeSoundEvent(
+            id: 'e9',
+            score: 0.5,
+            detectedAtEpochMs: 1700000004000,
+            hint: null,
+            labelled: false,
+            onsetCount: 1,
+          ),
+        );
+        await _pump();
+        expect(got.single.id, 'e9');
+        await e.stopListening();
+        await _pump();
+        expect(done, isTrue);
+      },
+    );
+
     test('cancelling the subscription stops native listening', () async {
       final e = engine();
       final sub = e.listen(ListenMode.general).listen((_) {});

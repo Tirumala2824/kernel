@@ -7,6 +7,7 @@ import com.google.ar.core.ArCoreApk
 import com.google.ar.core.Config
 import com.google.ar.core.Session
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
 
 /**
@@ -20,6 +21,7 @@ import kotlin.coroutines.resume
  */
 object DistanceProbe {
     const val REASON_ARCORE_NOT_INSTALLED = "arcore_not_installed"
+    private const val AVAILABILITY_TIMEOUT_MS = 5_000L
 
     class ArDepth(val supported: Boolean, val automatic: Boolean, val reason: String?)
 
@@ -35,13 +37,15 @@ object DistanceProbe {
     }
 
     suspend fun arDepth(context: Context): ArDepth {
-        val availability = suspendCancellableCoroutine<ArCoreApk.Availability> { cont ->
-            try {
-                ArCoreApk.getInstance().checkAvailabilityAsync(context) { a -> if (cont.isActive) cont.resume(a) }
-            } catch (_: Throwable) {
-                if (cont.isActive) cont.resume(ArCoreApk.Availability.UNKNOWN_ERROR)
+        val availability = withTimeoutOrNull(AVAILABILITY_TIMEOUT_MS) {
+            suspendCancellableCoroutine<ArCoreApk.Availability> { cont ->
+                try {
+                    ArCoreApk.getInstance().checkAvailabilityAsync(context) { a -> if (cont.isActive) cont.resume(a) }
+                } catch (_: Throwable) {
+                    if (cont.isActive) cont.resume(ArCoreApk.Availability.UNKNOWN_ERROR)
+                }
             }
-        }
+        } ?: ArCoreApk.Availability.UNKNOWN_TIMED_OUT
         when (availability) {
             ArCoreApk.Availability.SUPPORTED_INSTALLED -> Unit
             ArCoreApk.Availability.SUPPORTED_APK_TOO_OLD,

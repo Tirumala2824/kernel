@@ -177,6 +177,8 @@ class SenseEngine implements PestSenseEngine {
     StreamSubscription<NativeSoundEvent>? events;
     StreamSubscription<NativeListenStatus>? status;
     late final StreamController<SignalCandidate> controller;
+    // Status events before this session started belong to an earlier one.
+    var sessionStarted = false;
 
     Future<void> end([String? reason]) async {
       if (identical(_activeListen, controller)) _activeListen = null;
@@ -194,8 +196,8 @@ class SenseEngine implements PestSenseEngine {
           if (!controller.isClosed) controller.add(mapSoundEvent(e));
         }, onError: (Object _) {});
         status = _host.listenStatus().listen((s) {
+          if (!sessionStarted) return;
           final mapped = mapListenStatus(s);
-          _emitListenStatus(mapped);
           if (mapped.state == ListenState.failed) {
             unawaited(end(mapped.reason ?? ListenReasons.captureError));
           } else if (mapped.state == ListenState.stopped) {
@@ -220,7 +222,8 @@ class SenseEngine implements PestSenseEngine {
         }
         final mapped = mapListenStatus(started);
         _emitListenStatus(mapped);
-        if (mapped.state != ListenState.listening) {
+        sessionStarted = mapped.state == ListenState.listening;
+        if (!sessionStarted) {
           await end(mapped.reason ?? ListenReasons.captureError);
         } else if (controller.isClosed ||
             !identical(_activeListen, controller)) {
