@@ -67,6 +67,13 @@ Append new decisions at the bottom. Never rewrite past entries; supersede them w
 | 60 | 2026-10-10 | Pins:<br>• EmbeddingGemma 2 740m @ `86b903a293f96d042bb92e1b7af333d94114458f`, sha256 `e7a8a220…df77f4c`, 484,622,336 B<br>• YAMNet: MediaPipe GCS `float32/1/yamnet.tflite`, sha256 `4d8b4a53…4c584faf`, 4,126,810 B, Apache-2.0 (Kaggle google/yamnet), pinned by `sha256-prefix` because GCS has no commit<br>• MagicTouch: listed, but licence unknown, so it is never auto-downloaded | model-hub W1 |
 
 ## Contract follow-ups (proposed by agents, not yet done)
+- **PestSenseEngine (from sense-ai):**
+  - add `cameraStatus()` (thermal, gyro gating, torch, low-light boost)
+  - add `rankStill(still)` for Stage-1 embedding candidates, or `hint`/`score` on `ImageTile`
+  - add `keepMedia(id)`, returning an app-private path under `files/sense_media/`; `PrivacyService.deleteAllHistory` must also wipe that folder
+  - document the `listen()` error semantics (start/native failure gives a `SenseException(reason)` and closes the stream; a user stop closes the stream with no error) and the reason keys the UI must localize
+  - Stage 1 needs a **multimodal** embedder (EmbeddingGemma 2 **740m** is text+image+audio; the 270m text model can't rank images)
+- **NextAction** gains optional `cardId`, `sightingId` and `nodeId`. Add `SightingRepository.setUserValidation(id, {userValidated, userCardId})` and `KnowledgeService.warmUp()` (from data-ops v3).
 - `ModelProvisioner.install(entryId)` (a user-chosen entry from search) and `blockReason(entry)`. Document `CatalogEntry.revision` as a git commit or `sha256[:40]` for non-git hosts. Document that `ModelSearchHit.score` is a keyword share in fallback mode.
 - **LLM GPU accelerator libraries:** LiteRT-LM looks up `libLiteRtGpuAccelerator.so` / `libLiteRtOpenClAccelerator.so`, which the AAR does not ship, so the iQOO 15 may run on CPU. Measure latency against the 25 s budget. If it's too slow, bundle the accelerator libs or lower `maxOutputToken`.
 - `AdviceModelManager.importFromUri`: cancelling only stops listening; the native copy keeps going. Add a native abort, and document that the first event is `copying` at 0 bytes.
