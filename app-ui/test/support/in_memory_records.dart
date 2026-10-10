@@ -93,6 +93,7 @@ class InMemoryInspectionRepository implements InspectionRepository {
   final drafts = <InspectionDraft>[];
   final assignCalls = <(String, String?)>[];
   final _changes = Changes();
+  Stream<void> get changes => _changes.stream;
 
   Inspection _copy(Inspection old, {FollowUpStatus? status, String? assignee, bool setAssignee = false}) =>
       Inspection(
@@ -240,6 +241,19 @@ class InMemoryReminderRepository implements ReminderRepository {
     final id = launchItemId;
     launchItemId = null;
     return id;
+  }
+
+  /// Scripted rule-based suggestion; defaults to 10 days from now at 09:00.
+  DateTime? suggestion;
+  final suggestCalls = <String>[];
+
+  @override
+  Future<DateTime> suggestDueAt(String itemId) async {
+    suggestCalls.add(itemId);
+    final scripted = suggestion;
+    if (scripted != null) return scripted;
+    final day = DateTime.now().add(const Duration(days: 10));
+    return DateTime(day.year, day.month, day.day, 9);
   }
 
   void clear() {

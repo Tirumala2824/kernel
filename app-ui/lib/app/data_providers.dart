@@ -44,6 +44,12 @@ final voicePromptsProvider = StreamProvider<bool>(
   name: 'voicePromptsProvider',
 );
 
+/// On-phone AI assistant opt-in. Off by default.
+final localAdviceOptInProvider = StreamProvider<bool>(
+  (ref) => ref.watch(settingsRepositoryProvider).watchLocalAdviceOptIn(),
+  name: 'localAdviceOptInProvider',
+);
+
 // ---------------------------------------------------------------------------
 // Items, places, lots, harvests.
 
@@ -212,6 +218,136 @@ final inspectionQueueProvider = StreamProvider.autoDispose
             lotId: scope.lotId,
           ),
     );
+
+/// Arguments for [filteredQueueProvider]. Records compare by value.
+typedef QueueFilter = ({
+  Role? role,
+  String? locationId,
+  Classification? result,
+  int? maxAgeDays,
+});
+
+/// The inspection queue narrowed by the queue screen's filter chips. The
+/// ranking rule itself stays in RankingService.
+final filteredQueueProvider = StreamProvider.autoDispose
+    .family<InspectionQueue, QueueFilter>(
+      (ref, filter) => ref
+          .watch(rankingServiceProvider)
+          .watchQueue(
+            role: filter.role,
+            locationId: filter.locationId,
+            result: filter.result,
+            maxAge: filter.maxAgeDays == null
+                ? null
+                : Duration(days: filter.maxAgeDays!),
+          ),
+    );
+
+// ---------------------------------------------------------------------------
+// On-device analytics (computed locally by AnalyticsService).
+
+/// Arguments for the analytics providers. Records compare by value, unlike
+/// AnalyticsFilter, so each scope gets one stream.
+typedef AnalyticsScope = ({
+  Role? role,
+  String? locationId,
+  String? lotId,
+  Duration? window,
+});
+
+AnalyticsFilter analyticsFilterOf(AnalyticsScope scope) => AnalyticsFilter(
+  role: scope.role,
+  locationId: scope.locationId,
+  lotId: scope.lotId,
+  window: scope.window,
+);
+
+/// Scope covering everything a role owns, all time.
+AnalyticsScope roleScope(Role role, {Duration? window}) =>
+    (role: role, locationId: null, lotId: null, window: window);
+
+/// Next steps for a role, most urgent (lowest priority value) first.
+final nextActionsProvider = StreamProvider.autoDispose
+    .family<List<NextAction>, Role>(
+      (ref, role) => ref
+          .watch(analyticsServiceProvider)
+          .watchNextActions(role)
+          .map(
+            (actions) =>
+                [...actions]..sort((a, b) => a.priority.compareTo(b.priority)),
+          ),
+    );
+
+final resultRatesProvider = StreamProvider.autoDispose
+    .family<ResultRates, AnalyticsScope>(
+      (ref, scope) => ref
+          .watch(analyticsServiceProvider)
+          .watchResultRates(analyticsFilterOf(scope)),
+    );
+
+final qualityFailuresProvider = StreamProvider.autoDispose
+    .family<QualityFailures, AnalyticsScope>(
+      (ref, scope) => ref
+          .watch(analyticsServiceProvider)
+          .watchQualityFailures(analyticsFilterOf(scope)),
+    );
+
+final itemFreshnessProvider = StreamProvider.autoDispose
+    .family<List<ItemFreshness>, AnalyticsScope>(
+      (ref, scope) => ref
+          .watch(analyticsServiceProvider)
+          .watchItemFreshness(analyticsFilterOf(scope)),
+    );
+
+final inspectionStatsProvider = StreamProvider.autoDispose
+    .family<InspectionStats, AnalyticsScope>(
+      (ref, scope) => ref
+          .watch(analyticsServiceProvider)
+          .watchInspectionStats(analyticsFilterOf(scope)),
+    );
+
+final scanActivityProvider = StreamProvider.autoDispose
+    .family<ScanActivity, AnalyticsScope>(
+      (ref, scope) => ref
+          .watch(analyticsServiceProvider)
+          .watchScanActivity(analyticsFilterOf(scope)),
+    );
+
+// ---------------------------------------------------------------------------
+// On-phone AI assistant status. An unbound or failing engine surfaces as an
+// error value, which every caller treats as "not ready".
+
+final adviceStatusProvider = StreamProvider.autoDispose<AdviceStatus>(
+  (ref) => ref.watch(adviceEngineProvider).watchStatus(),
+);
+
+/// Status as the user should see it: the settings opt-in wins, so an
+/// opted-out user always sees [AdviceStatus.optedOut].
+final effectiveAdviceStatusProvider = Provider.autoDispose<AdviceStatus?>((
+  ref,
+) {
+  final optIn = ref.watch(localAdviceOptInProvider).value;
+  if (optIn == null) return null;
+  if (!optIn) return AdviceStatus.optedOut;
+  final status = ref.watch(adviceStatusProvider);
+  if (status.hasError) return AdviceStatus.failed;
+  return status.value;
+});
+
+/// True only when the user opted in and the model is loaded and idle.
+/// Advice entry points are hidden otherwise.
+final adviceReadyProvider = Provider.autoDispose<bool>(
+  (ref) => ref.watch(effectiveAdviceStatusProvider) == AdviceStatus.ready,
+);
+
+/// Installed model details, re-read whenever the engine status changes.
+final adviceModelInfoProvider = FutureProvider.autoDispose<AdviceModelInfo?>((
+  ref,
+) async {
+  final engine = ref.watch(adviceEngineProvider);
+  ref.watch(adviceStatusProvider);
+  return engine.modelInfo();
+});
 
 // ---------------------------------------------------------------------------
 // Engine and research samples.

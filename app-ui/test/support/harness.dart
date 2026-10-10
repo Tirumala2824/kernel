@@ -19,13 +19,20 @@ import 'in_memory.dart';
 final en = lookupAppLocalizations(const Locale('en'));
 
 class TestEnv {
-  TestEnv({Role? role, this.offline = true, bool onboardingDone = true})
-    : settings = InMemorySettingsRepository(
-        activeRole: role,
-        onboardingDone: onboardingDone,
-      ) {
+  TestEnv({
+    Role? role,
+    this.offline = true,
+    bool onboardingDone = true,
+    InMemorySettingsRepository? settings,
+  }) : settings =
+           settings ??
+           InMemorySettingsRepository(
+             activeRole: role,
+             onboardingDone: onboardingDone,
+           ) {
     scans = InMemoryScanRepository(items);
     ranking = InMemoryRankingService(items, scans, locations);
+    analytics = InMemoryAnalyticsService(items, scans, inspections, locations);
     samples = InMemoryLabeledSampleRepository(scans, inspections);
     privacy = RecordingPrivacyService(
       onDelete: () {
@@ -57,8 +64,32 @@ class TestEnv {
   final voice = RecordingVoicePrompter();
   final photos = ScriptedPhotoStore();
   final qr = ScriptedQrScanner();
+  late final InMemoryAnalyticsService analytics;
+  final advice = ScriptedAdviceEngine();
+  final adviceModels = ScriptedAdviceModelManager();
+
+  /// What the model file picker returns (null = the user cancelled).
+  String? pickedModelUri;
+  int pickerCalls = 0;
+
+  Future<String?> _pickModel() async {
+    pickerCalls++;
+    return pickedModelUri;
+  }
+
+  /// Opts in to the on-phone assistant with a loaded, idle model.
+  Future<void> enableAdvice() async {
+    advice
+      ..info = testAdviceModel
+      ..status = AdviceStatus.ready;
+    await settings.setLocalAdviceOptIn(true);
+  }
 
   List<Override> get overrides => [
+    analyticsServiceProvider.overrideWithValue(analytics),
+    adviceEngineProvider.overrideWithValue(advice),
+    adviceModelManagerProvider.overrideWithValue(adviceModels),
+    modelFilePickerProvider.overrideWithValue(_pickModel),
     scanEngineProvider.overrideWithValue(engine),
     itemRepositoryProvider.overrideWithValue(items),
     locationRepositoryProvider.overrideWithValue(locations),
