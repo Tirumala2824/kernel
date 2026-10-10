@@ -839,6 +839,8 @@
   "sensorHealthLowBattery": "बैटरी कम",
   "sensorHealthSurveyNeeded": "सर्वे ज़रूरी",
   "sensorHealthAuthFailed": "सुरक्षा जाँच नहीं हुई — फिर से जोड़ें",
+  "sensorHealthSensorFault": "सेंसर में खराबी — जाँच नहीं हुई",
+  "sensorHealthEventsOverwritten": "कुछ घटनाएँ छूट गईं — इस अवधि की जाँच नहीं हुई",
   "sensorNotEvaluatedTitle": "जाँचा नहीं गया",
   "sensorNotEvaluatedBody": "यह सेंसर अभी जाँच नहीं कर सकता। इसका मतलब यह नहीं कि वहाँ कुछ नहीं है। खुद देखकर जाँचें।",
   "sensorPairTitle": "सेंसर जोड़ें",

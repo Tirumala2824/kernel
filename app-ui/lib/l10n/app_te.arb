@@ -839,6 +839,8 @@
   "sensorHealthLowBattery": "బ్యాటరీ తక్కువ",
   "sensorHealthSurveyNeeded": "సర్వే అవసరం",
   "sensorHealthAuthFailed": "భద్రతా తనిఖీ విఫలమైంది — మళ్లీ జత చేయండి",
+  "sensorHealthSensorFault": "సెన్సార్ లోపం — అంచనా వేయలేదు",
+  "sensorHealthEventsOverwritten": "కొన్ని సంఘటనలు కోల్పోయాయి — ఈ వ్యవధి అంచనా వేయలేదు",
   "sensorNotEvaluatedTitle": "పరిశీలించలేదు",
   "sensorNotEvaluatedBody": "ఈ సెన్సార్ ఇప్పుడు పరిశీలించలేదు. అక్కడ ఏమీ లేదని దీని అర్థం కాదు. స్వయంగా తెరిచి తనిఖీ చేయండి.",
   "sensorPairTitle": "సెన్సార్ జత చేయండి",

@@ -3292,6 +3292,13 @@ class AppLocalizationsOr extends AppLocalizations {
   String get sensorHealthAuthFailed => 'ସୁରକ୍ଷା ଯାଞ୍ଚ ବିଫଳ — ପୁଣି ଯୋଡ଼ନ୍ତୁ';
 
   @override
+  String get sensorHealthSensorFault => 'ସେନ୍ସର ତ୍ରୁଟି — ଯାଞ୍ଚ ହୋଇନାହିଁ';
+
+  @override
+  String get sensorHealthEventsOverwritten =>
+      'କିଛି ଘଟଣା ହଜିଗଲା — ଏହି ସମୟ ଯାଞ୍ଚ ହୋଇନାହିଁ';
+
+  @override
   String get sensorNotEvaluatedTitle => 'ଯାଞ୍ଚ ହୋଇନାହିଁ';
 
   @override

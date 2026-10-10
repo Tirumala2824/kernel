@@ -839,6 +839,8 @@
   "sensorHealthLowBattery": "ବ୍ୟାଟେରୀ କମ",
   "sensorHealthSurveyNeeded": "ସର୍ଭେ ଦରକାର",
   "sensorHealthAuthFailed": "ସୁରକ୍ଷା ଯାଞ୍ଚ ବିଫଳ — ପୁଣି ଯୋଡ଼ନ୍ତୁ",
+  "sensorHealthSensorFault": "ସେନ୍ସର ତ୍ରୁଟି — ଯାଞ୍ଚ ହୋଇନାହିଁ",
+  "sensorHealthEventsOverwritten": "କିଛି ଘଟଣା ହଜିଗଲା — ଏହି ସମୟ ଯାଞ୍ଚ ହୋଇନାହିଁ",
   "sensorNotEvaluatedTitle": "ଯାଞ୍ଚ ହୋଇନାହିଁ",
   "sensorNotEvaluatedBody": "ଏହି ସେନ୍ସର ଏବେ ଯାଞ୍ଚ କରିପାରୁନାହିଁ। ଏହାର ଅର୍ଥ ନୁହେଁ ଯେ ସେଠାରେ କିଛି ନାହିଁ। ନିଜେ ଖୋଲି ଦେଖନ୍ତୁ।",
   "sensorPairTitle": "ସେନ୍ସର ଯୋଡ଼ନ୍ତୁ",

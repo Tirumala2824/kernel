@@ -3287,6 +3287,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sensorHealthAuthFailed => 'Security check failed — pair again';
 
   @override
+  String get sensorHealthSensorFault => 'Sensor fault — not evaluated';
+
+  @override
+  String get sensorHealthEventsOverwritten =>
+      'Some events were lost — gap not evaluated';
+
+  @override
   String get sensorNotEvaluatedTitle => 'Not evaluated';
 
   @override

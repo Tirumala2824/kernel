@@ -3286,6 +3286,13 @@ class AppLocalizationsPa extends AppLocalizations {
   String get sensorHealthAuthFailed => 'ਸੁਰੱਖਿਆ ਜਾਂਚ ਨਹੀਂ ਹੋਈ — ਮੁੜ ਜੋੜੋ';
 
   @override
+  String get sensorHealthSensorFault => 'ਸੈਂਸਰ ਵਿੱਚ ਖਰਾਬੀ — ਜਾਂਚ ਨਹੀਂ ਹੋਈ';
+
+  @override
+  String get sensorHealthEventsOverwritten =>
+      'ਕੁਝ ਘਟਨਾਵਾਂ ਗੁੰਮ ਹੋ ਗਈਆਂ — ਇਸ ਸਮੇਂ ਦੀ ਜਾਂਚ ਨਹੀਂ ਹੋਈ';
+
+  @override
   String get sensorNotEvaluatedTitle => 'ਜਾਂਚਿਆ ਨਹੀਂ ਗਿਆ';
 
   @override

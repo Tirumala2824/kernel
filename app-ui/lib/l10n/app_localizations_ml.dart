@@ -3311,6 +3311,13 @@ class AppLocalizationsMl extends AppLocalizations {
       'സുരക്ഷാ പരിശോധന പരാജയപ്പെട്ടു — വീണ്ടും ജോടിയാക്കുക';
 
   @override
+  String get sensorHealthSensorFault => 'സെൻസർ തകരാർ — പരിശോധിച്ചിട്ടില്ല';
+
+  @override
+  String get sensorHealthEventsOverwritten =>
+      'ചില സംഭവങ്ങൾ നഷ്ടമായി — ഈ ഇടവേള പരിശോധിച്ചിട്ടില്ല';
+
+  @override
   String get sensorNotEvaluatedTitle => 'വിലയിരുത്തിയിട്ടില്ല';
 
   @override

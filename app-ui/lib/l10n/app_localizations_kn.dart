@@ -3286,6 +3286,13 @@ class AppLocalizationsKn extends AppLocalizations {
   String get sensorHealthAuthFailed => 'ಸುರಕ್ಷತಾ ಪರಿಶೀಲನೆ ವಿಫಲ — ಮತ್ತೆ ಜೋಡಿಸಿ';
 
   @override
+  String get sensorHealthSensorFault => 'ಸೆನ್ಸರ್ ದೋಷ — ಪರಿಶೀಲಿಸಿಲ್ಲ';
+
+  @override
+  String get sensorHealthEventsOverwritten =>
+      'ಕೆಲವು ಘಟನೆಗಳು ಕಳೆದುಹೋಗಿವೆ — ಈ ಅವಧಿ ಪರಿಶೀಲಿಸಿಲ್ಲ';
+
+  @override
   String get sensorNotEvaluatedTitle => 'ಪರಿಶೀಲಿಸಿಲ್ಲ';
 
   @override

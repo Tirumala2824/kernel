@@ -3283,6 +3283,13 @@ class AppLocalizationsMr extends AppLocalizations {
   String get sensorHealthAuthFailed => 'सुरक्षा तपासणी झाली नाही — पुन्हा जोडा';
 
   @override
+  String get sensorHealthSensorFault => 'सेन्सरमध्ये बिघाड — तपासणी झाली नाही';
+
+  @override
+  String get sensorHealthEventsOverwritten =>
+      'काही घटना हरवल्या — या कालावधीची तपासणी झाली नाही';
+
+  @override
   String get sensorNotEvaluatedTitle => 'तपासले नाही';
 
   @override
