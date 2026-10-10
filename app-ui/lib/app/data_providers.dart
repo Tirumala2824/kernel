@@ -313,6 +313,23 @@ final scanActivityProvider = StreamProvider.autoDispose
           .watchScanActivity(analyticsFilterOf(scope)),
     );
 
+/// Analytics, next actions and the queue recompute only when stored records
+/// change, so "today", scan ages, maxAge and staleness would not move on
+/// their own. Re-subscribing them picks up the current time. Called on app
+/// resume and when the local date changes.
+void refreshTimeBasedReads(WidgetRef ref) {
+  ref
+    ..invalidate(nextActionsProvider)
+    ..invalidate(resultRatesProvider)
+    ..invalidate(qualityFailuresProvider)
+    ..invalidate(itemFreshnessProvider)
+    ..invalidate(inspectionStatsProvider)
+    ..invalidate(scanActivityProvider)
+    ..invalidate(inspectionQueueProvider)
+    ..invalidate(filteredQueueProvider)
+    ..invalidate(scansSinceProvider);
+}
+
 // ---------------------------------------------------------------------------
 // On-phone AI assistant status. An unbound or failing engine surfaces as an
 // error value, which every caller treats as "not ready".

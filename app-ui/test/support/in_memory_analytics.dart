@@ -123,11 +123,18 @@ class InMemoryAnalyticsService implements AnalyticsService {
 
   List<ItemFreshness> _freshness(AnalyticsFilter f) {
     final now = DateTime.now();
+    // "Scanned" means any PASS scan, including not-evaluated ones.
     final list = [
       for (final item in _itemsIn(f))
         () {
           final latest =
-              (scans.scans.where((s) => s.itemId == item.id).toList()
+              (scans.scans
+                      .where(
+                        (s) =>
+                            s.itemId == item.id &&
+                            s.quality == ScanQuality.pass,
+                      )
+                      .toList()
                     ..sort((a, b) => b.capturedAt.compareTo(a.capturedAt)))
                   .firstOrNull;
           return ItemFreshness(
@@ -153,9 +160,13 @@ class InMemoryAnalyticsService implements AnalyticsService {
 
   InspectionStats _inspections(AnalyticsFilter f) {
     final ids = {for (final i in _itemsIn(f)) i.id};
+    final window = f.window;
+    final since = window == null ? null : DateTime.now().subtract(window);
     var open = 0, inProgress = 0, done = 0;
     for (final i in inspections.inspections.where(
-      (i) => ids.contains(i.itemId),
+      (i) =>
+          ids.contains(i.itemId) &&
+          (since == null || !i.inspectedAt.isBefore(since)),
     )) {
       switch (i.followUpStatus) {
         case FollowUpStatus.open:
@@ -173,11 +184,9 @@ class InMemoryAnalyticsService implements AnalyticsService {
     final now = DateTime.now();
     final midnight = DateTime(now.year, now.month, now.day);
     final weekStart = midnight.subtract(const Duration(days: 6));
-    final all = _scansIn(AnalyticsFilter(
-      role: f.role,
-      locationId: f.locationId,
-      lotId: f.lotId,
-    ));
+    final all = _scansIn(
+      AnalyticsFilter(role: f.role, locationId: f.locationId, lotId: f.lotId),
+    ).where((s) => s.quality == ScanQuality.pass);
     return ScanActivity(
       today: all.where((s) => !s.capturedAt.isBefore(midnight)).length,
       last7Days: all.where((s) => !s.capturedAt.isBefore(weekStart)).length,
@@ -224,9 +233,15 @@ class InMemoryAnalyticsService implements AnalyticsService {
     return _watch(() => _activity(filter));
   }
 
+  /// How many times each role's next-action stream was opened (a new
+  /// subscription after an app resume shows up here).
+  final nextActionWatches = <Role, int>{};
+
   @override
-  Stream<List<NextAction>> watchNextActions(Role role) =>
-      _watch(() => List.of(_next[role] ?? const <NextAction>[]));
+  Stream<List<NextAction>> watchNextActions(Role role) {
+    nextActionWatches[role] = (nextActionWatches[role] ?? 0) + 1;
+    return _watch(() => List.of(_next[role] ?? const <NextAction>[]));
+  }
 
   @override
   Future<AnalyticsSummary> summarize(ReportScope scope) async {

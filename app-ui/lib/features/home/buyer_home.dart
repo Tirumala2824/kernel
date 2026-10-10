@@ -11,26 +11,30 @@ import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_card.dart';
 import '../../widgets/status_chip.dart';
+import 'next_step_section.dart';
 
 class BuyerHome extends ConsumerWidget {
   const BuyerHome({super.key});
+
+  static const role = Role.buyer;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final lots = ref.watch(lotsProvider);
+    final stats = ref.watch(inspectionStatsProvider(roleScope(role))).value;
+    final registerLot = HeroActionCard(
+      key: const Key('hero-register-lot'),
+      eyebrow: l.heroEyebrowDelivery,
+      title: l.buyerHeroTitle,
+      subtitle: l.buyerHeroSubtitle,
+      actionLabel: l.buyerHeroAction,
+      icon: Icons.local_shipping_rounded,
+      onTap: () => context.push(Routes.newLot),
+    );
     return PageList(
       children: [
         ScreenHeader(title: l.buyerHomeTitle, subtitle: l.buyerHomeSubtitle),
-        HeroActionCard(
-          key: const Key('hero-register-lot'),
-          eyebrow: l.heroEyebrowDelivery,
-          title: l.buyerHeroTitle,
-          subtitle: l.buyerHeroSubtitle,
-          actionLabel: l.buyerHeroAction,
-          icon: Icons.local_shipping_rounded,
-          onTap: () => context.push(Routes.newLot),
-        ),
         AsyncView<List<Lot>>(
           value: lots,
           data: (lots) {
@@ -46,8 +50,29 @@ class BuyerHome extends ConsumerWidget {
             }
             final sorted = [...lots]
               ..sort((a, b) => b.receivedAt.compareTo(a.receivedAt));
+            final open = stats == null ? 0 : stats.open + stats.inProgress;
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                NextStepSection(
+                  role: role,
+                  fallback: registerLot,
+                  shortcut: OutlinedButton.icon(
+                    key: const Key('quick-register-lot'),
+                    onPressed: () => context.push(Routes.newLot),
+                    icon: const Icon(Icons.local_shipping_rounded),
+                    label: Text(l.buyerHeroAction),
+                  ),
+                ),
+                if (stats != null && stats.total > 0) ...[
+                  const SizedBox(height: 12),
+                  QuietNote(
+                    open == 0 ? l.assignedNone : l.inspectionsOpen(open),
+                    key: const Key('buyer-inspections'),
+                    icon: Icons.person_search_rounded,
+                  ),
+                ],
+                const SizedBox(height: 12),
                 for (final lot in sorted)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -57,6 +82,7 @@ class BuyerHome extends ConsumerWidget {
             );
           },
         ),
+        const InsightsCard(),
         KernelCard(
           tone: KernelCardTone.ivory,
           icon: Icons.description_rounded,

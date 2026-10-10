@@ -14,6 +14,15 @@ String languageName(AppLocalizations l, String? tag) => tag == null
     ? l.languageFollowDevice
     : nativeLanguageNames[tag] ?? tag;
 
+/// Picker order: English first, then the rest by native name (so a reader
+/// finds their language by its own script, not by its locale code).
+List<String> pickerLanguageOrder(Iterable<String> tags) {
+  String name(String tag) => nativeLanguageNames[tag] ?? tag;
+  final rest = tags.where((t) => t != 'en').toList()
+    ..sort((a, b) => name(a).compareTo(name(b)));
+  return [if (tags.contains('en')) 'en', ...rest];
+}
+
 /// Settings row that opens the language picker.
 class LanguageTile extends ConsumerWidget {
   const LanguageTile({super.key});
@@ -46,10 +55,10 @@ class LanguagePickerSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final current = ref.watch(languageTagProvider).value ?? _deviceLanguage;
-    final tags = [
+    final tags = pickerLanguageOrder([
       for (final locale in AppLocalizations.supportedLocales)
         locale.languageCode,
-    ];
+    ]);
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(

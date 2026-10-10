@@ -150,6 +150,7 @@ class _LotBody extends ConsumerWidget {
           value: items,
           data: (items) => items.isEmpty
               ? EmptyState(
+                  key: const Key('empty-lot-sacks'),
                   illustration: KernelIllustrations.sacks,
                   message: l.lotSacksEmpty,
                   actionLabel: l.lotSacksEmptyAction,

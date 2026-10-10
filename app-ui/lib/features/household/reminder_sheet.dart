@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kernel_contracts/kernel_contracts.dart';
 
+import '../../app/copy.dart';
+import '../../app/data_providers.dart';
 import '../../app/platform_providers.dart';
 import '../../app/providers.dart';
 import '../../l10n/l10n.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/form_fields.dart';
+import '../advice/advice_card.dart';
 
 /// Opens the reminder sheet for [itemId]. Asks for POST_NOTIFICATIONS, then
 /// schedules an on-device reminder via ReminderRepository.schedule.
@@ -43,8 +47,71 @@ class _ReminderSheetState extends ConsumerState<ReminderSheet> {
   bool _saving = false;
   String? _error;
 
+  /// Rule-based suggestion from ReminderRepository.suggestDueAt. Only a
+  /// prefill: the user confirms or changes the date and time.
+  DateTime? _suggested;
+
+  /// True once the user changed the date or time themselves.
+  bool _touched = false;
+
+  /// Input for the optional on-phone wording, once the suggestion is known.
+  ReminderAdviceInput? _adviceInput;
+  String? _languageTag;
+
   DateTime get _dueAt =>
       DateTime(_date.year, _date.month, _date.day, _time.hour, _time.minute);
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSuggestion();
+  }
+
+  Future<void> _loadSuggestion() async {
+    final DateTime suggested;
+    try {
+      suggested = (await ref
+              .read(reminderRepositoryProvider)
+              .suggestDueAt(widget.itemId))
+          .toLocal();
+    } on Object {
+      return; // Keep the plain default; the user picks a date anyway.
+    }
+    if (!mounted) return;
+    setState(() {
+      _suggested = suggested;
+      // Never overwrite a date the user already picked.
+      if (_touched) return;
+      _date = DateUtils.dateOnly(suggested);
+      if (DateUtils.isSameDay(suggested, DateTime.now())) {
+        _time = TimeOfDay.fromDateTime(suggested);
+      }
+    });
+    if (ref.read(adviceReadyProvider)) await _prepareAdvice(suggested);
+  }
+
+  Future<void> _prepareAdvice(DateTime suggested) async {
+    try {
+      final item = await ref.read(itemRepositoryProvider).get(widget.itemId);
+      if (item == null) return;
+      final last = await ref
+          .read(scanRepositoryProvider)
+          .latestValidForItem(widget.itemId);
+      if (!mounted) return;
+      setState(() {
+        _languageTag = adviceLanguageTag(context);
+        _adviceInput = ReminderAdviceInput(
+          role: item.ownerRole,
+          grainType: item.grainType,
+          storageDays: daysSince(item.storageDate),
+          lastResult: last?.result,
+          suggestedDueAt: suggested,
+        );
+      });
+    } on Object {
+      // Optional wording only; the sheet works without it.
+    }
+  }
 
   Future<void> _save() async {
     final l = context.l10n;
@@ -118,9 +185,10 @@ class _ReminderSheetState extends ConsumerState<ReminderSheet> {
                     key: Key('reminder-preset-$days'),
                     label: Text(l.reminderInDays(days)),
                     selected: _date == today.add(Duration(days: days)),
-                    onSelected: (_) => setState(
-                      () => _date = today.add(Duration(days: days)),
-                    ),
+                    onSelected: (_) => setState(() {
+                      _touched = true;
+                      _date = today.add(Duration(days: days));
+                    }),
                   ),
               ],
             ),
@@ -131,15 +199,59 @@ class _ReminderSheetState extends ConsumerState<ReminderSheet> {
               value: _date,
               firstDate: today,
               lastDate: today.add(const Duration(days: 366)),
-              onChanged: (d) => setState(() => _date = DateUtils.dateOnly(d)),
+              onChanged: (d) => setState(() {
+                _touched = true;
+                _date = DateUtils.dateOnly(d);
+              }),
             ),
+            if (_suggested case final suggested?) ...[
+              const SizedBox(height: KernelSpace.xs),
+              Row(
+                key: const Key('reminder-suggested'),
+                children: [
+                  Icon(
+                    DateUtils.isSameDay(suggested, _date)
+                        ? Icons.lightbulb_outline_rounded
+                        : Icons.edit_calendar_rounded,
+                    size: 18,
+                    color: KernelColors.forest,
+                  ),
+                  const SizedBox(width: KernelSpace.xs),
+                  Expanded(
+                    child: Text(
+                      DateUtils.isSameDay(suggested, _date)
+                          ? l.reminderSuggestedLabel
+                          : l.reminderSuggestedOther(
+                              formatDate(context, suggested),
+                            ),
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: KernelColors.inkMuted,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
             const SizedBox(height: KernelSpace.md),
             TimeField(
               key: const Key('reminder-time'),
               label: l.reminderTimeLabel,
               value: _time,
-              onChanged: (t) => setState(() => _time = t),
+              onChanged: (t) => setState(() {
+                _touched = true;
+                _time = t;
+              }),
             ),
+            if (_adviceInput case final input?) ...[
+              const SizedBox(height: KernelSpace.md),
+              AdviceStreamCard(
+                key: const Key('reminder-wording'),
+                title: l.reminderWordingTitle,
+                request: () => ref
+                    .read(adviceEngineProvider)
+                    .suggestReminderText(input, languageTag: _languageTag),
+              ),
+            ],
             const SizedBox(height: KernelSpace.md),
             Text(
               l.reminderOnDeviceNote,

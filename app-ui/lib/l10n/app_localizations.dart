@@ -131,7 +131,7 @@ abstract class AppLocalizations {
   /// Language picker explanation.
   ///
   /// In en, this message translates to:
-  /// **'Kernel\'s words change straight away. More Indian languages are on the way.'**
+  /// **'Kernel\'s words change straight away.'**
   String get languageSheetBody;
 
   /// Settings subtitle.
@@ -3649,6 +3649,852 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{date}, {time}'**
   String dateTimeJoin(String date, String time);
+
+  /// Overline on the home hero when it shows the most urgent next action.
+  ///
+  /// In en, this message translates to:
+  /// **'Next step'**
+  String get nextStepEyebrow;
+
+  /// Home note when AnalyticsService has no next actions.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing urgent right now. Scan regularly to keep track.'**
+  String get nextNothingPending;
+
+  /// Compact scan shortcut next to a non-scan next step; also the insights empty-state action.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan now'**
+  String get quickScanAction;
+
+  /// Scans recorded since local midnight (AnalyticsService.watchScanActivity).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No scans today} =1{1 scan today} other{{count} scans today}}'**
+  String scansTodayCount(int count);
+
+  /// Household home activity line.
+  ///
+  /// In en, this message translates to:
+  /// **'Scans: {today} today · {week} in the last 7 days'**
+  String scanActivityLine(int today, int week);
+
+  /// Next step: nothing registered yet.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, container{Register your first container} other{Register your first sack}}'**
+  String nextRegisterFirst(String kind);
+
+  /// Next step detail for registering the first item.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a name, grain and quantity. It takes a minute.'**
+  String get nextRegisterFirstBody;
+
+  /// Buyer next step: no lots yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Register your first delivery'**
+  String get nextRegisterFirstLot;
+
+  /// Buyer next step detail for registering a lot.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier, lot, grain and quantity.'**
+  String get nextRegisterFirstLotBody;
+
+  /// Next step: one named item needs a scan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan {label}'**
+  String nextScanOne(String label);
+
+  /// Next step: sacks that need a scan.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 sack needs a scan} other{{count} sacks need a scan}}'**
+  String nextScanSacks(int count);
+
+  /// Household next step: containers that need a scan.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 container needs a scan} other{{count} containers need a scan}}'**
+  String nextScanContainers(int count);
+
+  /// Next step detail for scanning.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, container{A 2-second listening check with the phone pressed on the container.} other{A 2-second listening check, one sack at a time.}}'**
+  String nextScanBody(String kind);
+
+  /// Next step: one flagged item needs a human inspection.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspect {label}'**
+  String nextInspectOne(String label);
+
+  /// Next step: flagged sacks to inspect.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 flagged sack to inspect} other{{count} flagged sacks to inspect}}'**
+  String nextInspectSacks(int count);
+
+  /// Household next step: flagged containers to inspect.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 flagged container to inspect} other{{count} flagged containers to inspect}}'**
+  String nextInspectContainers(int count);
+
+  /// Next step detail for inspecting flagged items. Must keep 'not verified'.
+  ///
+  /// In en, this message translates to:
+  /// **'The model result is not verified. Check the grain by hand.'**
+  String get nextInspectBody;
+
+  /// Next step: one item is due for a re-check.
+  ///
+  /// In en, this message translates to:
+  /// **'{label}: review due'**
+  String nextReviewOne(String label);
+
+  /// Next step: sacks due for review.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 sack due for review} other{{count} sacks due for review}}'**
+  String nextReviewSacks(int count);
+
+  /// Household next step: containers due for review.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 container due for review} other{{count} containers due for review}}'**
+  String nextReviewContainers(int count);
+
+  /// Next step detail for a review that is due.
+  ///
+  /// In en, this message translates to:
+  /// **'It has been a while since the last check. Listen again or inspect.'**
+  String get nextReviewBody;
+
+  /// Next step: a scheduled reminder for one item is due.
+  ///
+  /// In en, this message translates to:
+  /// **'{label}: reminder due'**
+  String nextReminderOne(String label);
+
+  /// Next step: reminders due.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 reminder due} other{{count} reminders due}}'**
+  String nextReminderMany(int count);
+
+  /// Next step detail for a due reminder.
+  ///
+  /// In en, this message translates to:
+  /// **'A re-check you scheduled is due. Check this grain.'**
+  String get nextReminderBody;
+
+  /// Buyer next step: one lot waits for a physical check.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot {label}: physical check pending'**
+  String nextPhysicalOne(String label);
+
+  /// Buyer next step: lots waiting for a physical check.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 lot needs a physical check} other{{count} lots need a physical check}}'**
+  String nextPhysicalMany(int count);
+
+  /// Buyer next step detail. Must not imply an automatic decision.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the lot and record what a person found. Kernel never accepts or rejects a lot.'**
+  String get nextPhysicalBody;
+
+  /// Next step: a batch scan is incomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish the batch scan'**
+  String get nextFinishBatch;
+
+  /// Next step: the batch for a named place or lot is incomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish the batch: {label}'**
+  String nextFinishBatchOne(String label);
+
+  /// Next step detail: sacks left in the batch.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Every sack in this batch has a scan} =1{1 sack left to scan, one at a time} other{{count} sacks left to scan, one at a time}}'**
+  String nextFinishBatchBody(int count);
+
+  /// Farmer next step: export a pre-sale report.
+  ///
+  /// In en, this message translates to:
+  /// **'Share a pre-sale report'**
+  String get nextPreSale;
+
+  /// Farmer next step for a named harvest.
+  ///
+  /// In en, this message translates to:
+  /// **'Share the pre-sale report for {label}'**
+  String nextPreSaleOne(String label);
+
+  /// Buyer next step: export a lot summary.
+  ///
+  /// In en, this message translates to:
+  /// **'Share a lot summary'**
+  String get nextLotSummary;
+
+  /// Buyer next step for a named lot.
+  ///
+  /// In en, this message translates to:
+  /// **'Share the lot summary for {label}'**
+  String nextLotSummaryOne(String label);
+
+  /// Next step detail for exporting a report.
+  ///
+  /// In en, this message translates to:
+  /// **'Made on this phone from your records. You choose who to share it with.'**
+  String get nextExportBody;
+
+  /// Next step button: open the registration form.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get nextActionRegister;
+
+  /// Next step button: start a scan.
+  ///
+  /// In en, this message translates to:
+  /// **'Start scan'**
+  String get nextActionScan;
+
+  /// Next step button: start a batch scan of a place or lot.
+  ///
+  /// In en, this message translates to:
+  /// **'Start batch scan'**
+  String get nextActionBatch;
+
+  /// Next step button: open the item.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get nextActionOpen;
+
+  /// Next step button: open the inspection queue.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the queue'**
+  String get nextActionQueue;
+
+  /// Next step button: open the lot.
+  ///
+  /// In en, this message translates to:
+  /// **'Open lot'**
+  String get nextActionOpenLot;
+
+  /// Next step button: continue a batch scan.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue batch'**
+  String get nextActionContinueBatch;
+
+  /// Next step button: open Reports with the report preset.
+  ///
+  /// In en, this message translates to:
+  /// **'Open report'**
+  String get nextActionReport;
+
+  /// Local analytics screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get insightsTitle;
+
+  /// Insights screen subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Worked out on this phone from your own records'**
+  String get insightsSubtitle;
+
+  /// Home and Reports card that opens Insights.
+  ///
+  /// In en, this message translates to:
+  /// **'Results, recording problems and what needs a check'**
+  String get insightsCardSubtitle;
+
+  /// Accessibility label for the period selector.
+  ///
+  /// In en, this message translates to:
+  /// **'Period'**
+  String get insightsWindowLabel;
+
+  /// Period chip: last 7 days.
+  ///
+  /// In en, this message translates to:
+  /// **'7 days'**
+  String get insightsWindow7;
+
+  /// Period chip: last 30 days.
+  ///
+  /// In en, this message translates to:
+  /// **'30 days'**
+  String get insightsWindow30;
+
+  /// Period chip: all records.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get insightsWindowAll;
+
+  /// Insights section.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning activity'**
+  String get insightsActivityTitle;
+
+  /// Stat tile label under a count.
+  ///
+  /// In en, this message translates to:
+  /// **'Scans today'**
+  String get insightsScansToday;
+
+  /// Stat tile label under a count.
+  ///
+  /// In en, this message translates to:
+  /// **'Scans in the last 7 days'**
+  String get insightsScans7;
+
+  /// Insights section: result counts.
+  ///
+  /// In en, this message translates to:
+  /// **'Results'**
+  String get insightsRatesTitle;
+
+  /// Insights empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'No scans in this period'**
+  String get insightsRatesEmpty;
+
+  /// Insights empty state detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a sack or container to see results here.'**
+  String get insightsRatesEmptyDetail;
+
+  /// Shown with every result chart. Must keep 'experimental', 'not verified', 'inspect physically'.
+  ///
+  /// In en, this message translates to:
+  /// **'Experimental model: these results are not verified and may be wrong. Inspect physically before any storage or sale decision.'**
+  String get insightsExperimentalNote;
+
+  /// Shown when every usable scan is NOT_EVALUATED.
+  ///
+  /// In en, this message translates to:
+  /// **'No model results yet: no usable recording was evaluated by a model.'**
+  String get insightsNoModelResults;
+
+  /// Bar label for RETRY scans.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording not usable (retry)'**
+  String get insightsRetryLabel;
+
+  /// Value printed on a bar: count and share.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} · {percent}%'**
+  String insightsBarValue(int count, int percent);
+
+  /// Total under the result chart.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 scan in this period} other{{count} scans in this period}}'**
+  String insightsTotalScans(int count);
+
+  /// Insights section: why recordings needed a retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording problems'**
+  String get insightsQualityTitle;
+
+  /// Quality section empty note.
+  ///
+  /// In en, this message translates to:
+  /// **'No unusable recordings in this period'**
+  String get insightsQualityEmpty;
+
+  /// Tip under the recording-problems chart.
+  ///
+  /// In en, this message translates to:
+  /// **'Most problems go away when the phone is pressed firmly on the sack in a quiet place.'**
+  String get insightsQualityHint;
+
+  /// Insights section: human inspections.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspections'**
+  String get insightsInspectionsTitle;
+
+  /// Inspections section empty note.
+  ///
+  /// In en, this message translates to:
+  /// **'No inspections recorded yet'**
+  String get insightsInspectionsEmpty;
+
+  /// Inspection closure rate.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% of inspections are done'**
+  String insightsClosureRate(int percent);
+
+  /// Insights section: most stale items.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest since last check'**
+  String get insightsStaleTitle;
+
+  /// Stale item chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Never scanned'**
+  String get staleNeverScanned;
+
+  /// Short bar label for the silence quality reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Too quiet'**
+  String get qualityShortSilence;
+
+  /// Short bar label for the clipping quality reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Too loud (clipping)'**
+  String get qualityShortClipping;
+
+  /// Short bar label for the high-noise quality reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Too noisy'**
+  String get qualityShortHighNoise;
+
+  /// Short bar label for the too-short quality reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Too short'**
+  String get qualityShortTooShort;
+
+  /// Short bar label for the permission-denied quality reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone blocked'**
+  String get qualityShortPermissionDenied;
+
+  /// Short bar label for the capture-error quality reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording error'**
+  String get qualityShortCaptureError;
+
+  /// Queue filter row label.
+  ///
+  /// In en, this message translates to:
+  /// **'Model result'**
+  String get queueFilterResult;
+
+  /// Queue filter chip: no result filter.
+  ///
+  /// In en, this message translates to:
+  /// **'All results'**
+  String get queueFilterAllResults;
+
+  /// Queue filter row label.
+  ///
+  /// In en, this message translates to:
+  /// **'Place'**
+  String get queueFilterPlace;
+
+  /// Queue filter chip: no place filter.
+  ///
+  /// In en, this message translates to:
+  /// **'All places'**
+  String get queueFilterAllPlaces;
+
+  /// Queue filter row label (scan age).
+  ///
+  /// In en, this message translates to:
+  /// **'Last usable scan'**
+  String get queueFilterAge;
+
+  /// Queue filter chip: no age filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Any time'**
+  String get queueFilterAnyAge;
+
+  /// Queue filter chip: last usable scan within N days.
+  ///
+  /// In en, this message translates to:
+  /// **'Within {days} days'**
+  String queueFilterWithinDays(int days);
+
+  /// Explains the age filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Items whose last usable scan is older than {days} days move to Needs scan.'**
+  String queueFilterAgeNote(int days);
+
+  /// Queue empty note when filters are active.
+  ///
+  /// In en, this message translates to:
+  /// **'No ranked items match these filters.'**
+  String get queueNoMatch;
+
+  /// Queue rank reason chip. Must keep 'not verified'.
+  ///
+  /// In en, this message translates to:
+  /// **'Why here: possible infestation (not verified)'**
+  String get rankReasonInfested;
+
+  /// Queue rank reason chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Why here: the model was unsure'**
+  String get rankReasonUncertain;
+
+  /// Queue rank reason chip. Must keep 'not a guarantee'.
+  ///
+  /// In en, this message translates to:
+  /// **'Why lower: no signal detected (not a guarantee)'**
+  String get rankReasonClean;
+
+  /// Age of the latest usable (PASS) scan: on queue entries and stale items.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =0{Scanned today} =1{Scanned 1 day ago} other{Scanned {days} days ago}}'**
+  String scannedDaysAgo(int days);
+
+  /// Under the reminder date when it is the rule-based suggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested — you choose'**
+  String get reminderSuggestedLabel;
+
+  /// Under the reminder date after the user picked another date.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested: {date} — you choose'**
+  String reminderSuggestedOther(String date);
+
+  /// Optional on-phone AI wording in the reminder sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested wording'**
+  String get reminderWordingTitle;
+
+  /// Settings section for the local LLM.
+  ///
+  /// In en, this message translates to:
+  /// **'On-phone AI assistant (experimental)'**
+  String get settingsAdviceSection;
+
+  /// Local LLM opt-in toggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the on-phone AI assistant'**
+  String get adviceToggle;
+
+  /// Local LLM opt-in explanation (guardrails §8).
+  ///
+  /// In en, this message translates to:
+  /// **'Off by default. It runs only on this phone and never hears your recordings; it only sees results and dates. It may be wrong. You can turn it off at any time.'**
+  String get adviceToggleBody;
+
+  /// Card title for the assistant status.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistant status'**
+  String get adviceStatusTitle;
+
+  /// Assistant status: opted out.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get adviceStatusOff;
+
+  /// Assistant status: enabled without a model file.
+  ///
+  /// In en, this message translates to:
+  /// **'On — no model imported yet'**
+  String get adviceStatusNoModel;
+
+  /// Assistant status: loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading the model…'**
+  String get adviceStatusLoading;
+
+  /// Assistant status: ready.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready on this phone'**
+  String get adviceStatusReady;
+
+  /// Assistant status: generating.
+  ///
+  /// In en, this message translates to:
+  /// **'Busy writing'**
+  String get adviceStatusBusy;
+
+  /// Assistant status: failed to load.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the model — Kernel uses its standard text'**
+  String get adviceStatusFailed;
+
+  /// Model file card title.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistant model'**
+  String get adviceModelTitle;
+
+  /// Model card when no file is installed.
+  ///
+  /// In en, this message translates to:
+  /// **'No model imported yet'**
+  String get adviceModelNone;
+
+  /// Field label: model id.
+  ///
+  /// In en, this message translates to:
+  /// **'Model'**
+  String get adviceModelId;
+
+  /// Field label: model version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get adviceModelVersion;
+
+  /// Field label: model file size.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get adviceModelSize;
+
+  /// Field label: inference backend.
+  ///
+  /// In en, this message translates to:
+  /// **'Runs on'**
+  String get adviceModelBackend;
+
+  /// Backend value: GPU.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone graphics chip (GPU)'**
+  String get adviceBackendGpu;
+
+  /// Backend value: CPU.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone processor (CPU)'**
+  String get adviceBackendCpu;
+
+  /// Backend value before the first load.
+  ///
+  /// In en, this message translates to:
+  /// **'Not loaded yet'**
+  String get adviceBackendNone;
+
+  /// Opens the file picker for a .litertlm file.
+  ///
+  /// In en, this message translates to:
+  /// **'Import model'**
+  String get adviceImportAction;
+
+  /// Accessibility label of the import progress bar.
+  ///
+  /// In en, this message translates to:
+  /// **'Importing the model'**
+  String get adviceImporting;
+
+  /// Import progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Copying {copied} of {total}'**
+  String adviceImportCopying(String copied, String total);
+
+  /// Import progress when the size is unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied {copied}'**
+  String adviceImportCopied(String copied);
+
+  /// Import phase: verifying.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking the model file…'**
+  String get adviceImportVerifying;
+
+  /// Import finished.
+  ///
+  /// In en, this message translates to:
+  /// **'Model imported. It stays on this phone.'**
+  String get adviceImportDone;
+
+  /// Import failed.
+  ///
+  /// In en, this message translates to:
+  /// **'The model could not be imported: {detail}'**
+  String adviceImportFailed(String detail);
+
+  /// Free-space check failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough space: the model needs {needed} but only {free} is free on this phone.'**
+  String adviceImportNoSpace(String needed, String free);
+
+  /// Deletes the model file.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete model'**
+  String get adviceDeleteAction;
+
+  /// Delete confirmation title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the assistant model?'**
+  String get adviceDeleteConfirmTitle;
+
+  /// Delete confirmation body.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes the model file from this phone. Your records are not affected. You can import it again later.'**
+  String get adviceDeleteConfirmBody;
+
+  /// Delete failed.
+  ///
+  /// In en, this message translates to:
+  /// **'The model could not be deleted: {detail}'**
+  String adviceDeleteFailed(String detail);
+
+  /// Where to get a model file. Keep product names and the repository path in Latin script.
+  ///
+  /// In en, this message translates to:
+  /// **'Get a .litertlm model with Google AI Edge Gallery or from Hugging Face litert-community/gemma-4-E2B-it-litert-lm (Gemma terms apply), then import it here.'**
+  String get adviceHelp;
+
+  /// Label on every piece of generated text (guardrails §8).
+  ///
+  /// In en, this message translates to:
+  /// **'Generated on this phone — experimental · {modelVersion}'**
+  String adviceProvenance(String modelVersion);
+
+  /// Footnote on generated text. Must keep 'inspect physically'.
+  ///
+  /// In en, this message translates to:
+  /// **'Not a decision — inspect physically'**
+  String get adviceNotDecision;
+
+  /// While the local model generates.
+  ///
+  /// In en, this message translates to:
+  /// **'Writing on this phone…'**
+  String get adviceGenerating;
+
+  /// Result screen button (only when the assistant is ready).
+  ///
+  /// In en, this message translates to:
+  /// **'Explain this result'**
+  String get adviceExplainAction;
+
+  /// Title of the explanation card.
+  ///
+  /// In en, this message translates to:
+  /// **'What this result means'**
+  String get adviceExplainTitle;
+
+  /// Static explanation for RETRY when the assistant is unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The recording could not be used, so no result was saved. Press the phone firmly against the sack or container, keep still and quiet, and record again.'**
+  String get adviceStaticRetry;
+
+  /// Static explanation for NOT_EVALUATED.
+  ///
+  /// In en, this message translates to:
+  /// **'No result was produced for this recording, so it says nothing about pests. Inspect the grain physically.'**
+  String get adviceStaticNotEvaluated;
+
+  /// Static explanation for INFESTED/UNCERTAIN.
+  ///
+  /// In en, this message translates to:
+  /// **'The experimental model picked up something that may need attention. This is not verified. Inspect the grain physically before any decision.'**
+  String get adviceStaticInspection;
+
+  /// Static explanation for CLEAN.
+  ///
+  /// In en, this message translates to:
+  /// **'The experimental model did not pick up a signal. This is not a guarantee. Inspect the grain physically before storage or sale decisions.'**
+  String get adviceStaticClean;
+
+  /// Export panel switch (only when the assistant is ready).
+  ///
+  /// In en, this message translates to:
+  /// **'Add AI-drafted summary'**
+  String get reportAiSummaryToggle;
+
+  /// Explains the AI summary switch.
+  ///
+  /// In en, this message translates to:
+  /// **'Drafted on this phone from the report\'s figures. You see it first and choose whether to include it. Experimental.'**
+  String get reportAiSummaryBody;
+
+  /// Narrative preview dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-drafted summary'**
+  String get reportAiPreviewTitle;
+
+  /// Narrative preview explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'If you include it, it appears in its own labelled section, separate from your records and inspection findings. It cannot be edited.'**
+  String get reportAiPreviewBody;
+
+  /// Card title inside the preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft summary'**
+  String get reportAiSummaryTitle;
+
+  /// Include the narrative in the report.
+  ///
+  /// In en, this message translates to:
+  /// **'Include'**
+  String get reportAiInclude;
+
+  /// Export without the narrative.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get reportAiSkip;
+
+  /// File size in gigabytes.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} GB'**
+  String unitGb(String value);
+
+  /// File size in megabytes.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} MB'**
+  String unitMb(String value);
 }
 
 class _AppLocalizationsDelegate

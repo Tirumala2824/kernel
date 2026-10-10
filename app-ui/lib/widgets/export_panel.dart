@@ -2,15 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
 
+import '../app/data_providers.dart';
 import '../app/platform_providers.dart';
 import '../app/providers.dart';
+import '../features/advice/narrative_preview.dart';
 import '../l10n/l10n.dart';
 import 'common.dart';
 import 'kernel_card.dart';
 
+/// [scope] with an optional user-approved narrative attached.
+ReportScope scopeWithNarrative(ReportScope scope, AdviceText? narrative) =>
+    ReportScope(
+      role: scope.role,
+      kind: scope.kind,
+      locationId: scope.locationId,
+      lotId: scope.lotId,
+      harvestId: scope.harvestId,
+      itemIds: scope.itemIds,
+      narrative: narrative,
+    );
+
 /// CSV / PDF export for one report scope. The file is written to
 /// app-private storage by ReportService and then offered through the
-/// system share sheet.
+/// system share sheet. When the on-phone assistant is ready, the user may
+/// add an AI-drafted summary: it is previewed first, included only if the
+/// user chooses, and never edited into the records.
 class ExportPanel extends ConsumerStatefulWidget {
   const ExportPanel({
     super.key,
@@ -35,6 +51,27 @@ class _ExportPanelState extends ConsumerState<ExportPanel> {
   ReportFormat? _busy;
   String? _error;
   String? _lastPath;
+  bool _addSummary = false;
+
+  bool get _summaryAllowed => widget.scope.kind != ReportKind.sackLabels;
+
+  /// Drafts and previews the narrative. Null means export without one
+  /// (skipped, or the assistant could not produce a complete draft).
+  Future<AdviceText?> _narrative() async {
+    final AnalyticsSummary summary;
+    try {
+      summary = await ref.read(analyticsServiceProvider).summarize(widget.scope);
+    } on Object {
+      return null;
+    }
+    if (!mounted) return null;
+    final input = ReportNarrativeInput(
+      role: widget.scope.role,
+      kind: widget.scope.kind,
+      summary: summary,
+    );
+    return showNarrativePreview(context, input: input);
+  }
 
   Future<void> _export(ReportFormat format) async {
     final l = context.l10n;
@@ -45,7 +82,13 @@ class _ExportPanelState extends ConsumerState<ExportPanel> {
     final reports = ref.read(reportServiceProvider);
     final sharer = ref.read(reportSharerProvider);
     try {
-      final path = await reports.export(widget.scope, format);
+      var scope = widget.scope;
+      if (_summaryAllowed && _addSummary && ref.read(adviceReadyProvider)) {
+        final narrative = await _narrative();
+        if (!mounted) return;
+        scope = scopeWithNarrative(scope, narrative);
+      }
+      final path = await reports.export(scope, format);
       if (!mounted) return;
       setState(() => _lastPath = path);
       await sharer.shareFile(path, subject: l.shareSubject(widget.title));
@@ -61,6 +104,8 @@ class _ExportPanelState extends ConsumerState<ExportPanel> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final kind = widget.scope.kind.name;
+    final history = widget.scope.kind == ReportKind.history;
+    final adviceReady = _summaryAllowed && ref.watch(adviceReadyProvider);
     return KernelCard(
       key: Key('export-panel-$kind'),
       tone: KernelCardTone.sage,
@@ -70,14 +115,25 @@ class _ExportPanelState extends ConsumerState<ExportPanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (adviceReady) ...[
+            SwitchListTile(
+              key: Key(history ? 'ai-summary' : 'ai-summary-$kind'),
+              contentPadding: EdgeInsets.zero,
+              value: _addSummary,
+              onChanged: _busy == null
+                  ? (v) => setState(() => _addSummary = v)
+                  : null,
+              title: Text(l.reportAiSummaryToggle),
+              subtitle: Text(l.reportAiSummaryBody),
+            ),
+            const SizedBox(height: 8),
+          ],
           ActionWrap(
             children: [
               for (final format in widget.formats)
                 FilledButton.icon(
                   key: Key(
-                    kind == ReportKind.history.name
-                        ? 'export-${format.name}'
-                        : 'export-$kind-${format.name}',
+                    history ? 'export-${format.name}' : 'export-$kind-${format.name}',
                   ),
                   onPressed: _busy == null ? () => _export(format) : null,
                   icon: _busy == format

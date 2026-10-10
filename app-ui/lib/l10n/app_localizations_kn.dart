@@ -2304,4 +2304,608 @@ class AppLocalizationsKn extends AppLocalizations {
   String dateTimeJoin(String date, String time) {
     return '$date, $time';
   }
+
+  @override
+  String get nextStepEyebrow => 'Next step';
+
+  @override
+  String get nextNothingPending =>
+      'Nothing urgent right now. Scan regularly to keep track.';
+
+  @override
+  String get quickScanAction => 'Scan now';
+
+  @override
+  String scansTodayCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count scans today',
+      one: '1 scan today',
+      zero: 'No scans today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String scanActivityLine(int today, int week) {
+    return 'Scans: $today today · $week in the last 7 days';
+  }
+
+  @override
+  String nextRegisterFirst(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container': 'Register your first container',
+      'other': 'Register your first sack',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get nextRegisterFirstBody =>
+      'Add a name, grain and quantity. It takes a minute.';
+
+  @override
+  String get nextRegisterFirstLot => 'Register your first delivery';
+
+  @override
+  String get nextRegisterFirstLotBody => 'Supplier, lot, grain and quantity.';
+
+  @override
+  String nextScanOne(String label) {
+    return 'Scan $label';
+  }
+
+  @override
+  String nextScanSacks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sacks need a scan',
+      one: '1 sack needs a scan',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nextScanContainers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count containers need a scan',
+      one: '1 container needs a scan',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nextScanBody(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'container':
+          'A 2-second listening check with the phone pressed on the container.',
+      'other': 'A 2-second listening check, one sack at a time.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String nextInspectOne(String label) {
+    return 'Inspect $label';
+  }
+
+  @override
+  String nextInspectSacks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count flagged sacks to inspect',
+      one: '1 flagged sack to inspect',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nextInspectContainers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count flagged containers to inspect',
+      one: '1 flagged container to inspect',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nextInspectBody =>
+      'The model result is not verified. Check the grain by hand.';
+
+  @override
+  String nextReviewOne(String label) {
+    return '$label: review due';
+  }
+
+  @override
+  String nextReviewSacks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sacks due for review',
+      one: '1 sack due for review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nextReviewContainers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count containers due for review',
+      one: '1 container due for review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nextReviewBody =>
+      'It has been a while since the last check. Listen again or inspect.';
+
+  @override
+  String nextReminderOne(String label) {
+    return '$label: reminder due';
+  }
+
+  @override
+  String nextReminderMany(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reminders due',
+      one: '1 reminder due',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nextReminderBody =>
+      'A re-check you scheduled is due. Check this grain.';
+
+  @override
+  String nextPhysicalOne(String label) {
+    return 'Lot $label: physical check pending';
+  }
+
+  @override
+  String nextPhysicalMany(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count lots need a physical check',
+      one: '1 lot needs a physical check',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nextPhysicalBody =>
+      'Open the lot and record what a person found. Kernel never accepts or rejects a lot.';
+
+  @override
+  String get nextFinishBatch => 'Finish the batch scan';
+
+  @override
+  String nextFinishBatchOne(String label) {
+    return 'Finish the batch: $label';
+  }
+
+  @override
+  String nextFinishBatchBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sacks left to scan, one at a time',
+      one: '1 sack left to scan, one at a time',
+      zero: 'Every sack in this batch has a scan',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nextPreSale => 'Share a pre-sale report';
+
+  @override
+  String nextPreSaleOne(String label) {
+    return 'Share the pre-sale report for $label';
+  }
+
+  @override
+  String get nextLotSummary => 'Share a lot summary';
+
+  @override
+  String nextLotSummaryOne(String label) {
+    return 'Share the lot summary for $label';
+  }
+
+  @override
+  String get nextExportBody =>
+      'Made on this phone from your records. You choose who to share it with.';
+
+  @override
+  String get nextActionRegister => 'Register';
+
+  @override
+  String get nextActionScan => 'Start scan';
+
+  @override
+  String get nextActionBatch => 'Start batch scan';
+
+  @override
+  String get nextActionOpen => 'Open';
+
+  @override
+  String get nextActionQueue => 'Open the queue';
+
+  @override
+  String get nextActionOpenLot => 'Open lot';
+
+  @override
+  String get nextActionContinueBatch => 'Continue batch';
+
+  @override
+  String get nextActionReport => 'Open report';
+
+  @override
+  String get insightsTitle => 'Insights';
+
+  @override
+  String get insightsSubtitle =>
+      'Worked out on this phone from your own records';
+
+  @override
+  String get insightsCardSubtitle =>
+      'Results, recording problems and what needs a check';
+
+  @override
+  String get insightsWindowLabel => 'Period';
+
+  @override
+  String get insightsWindow7 => '7 days';
+
+  @override
+  String get insightsWindow30 => '30 days';
+
+  @override
+  String get insightsWindowAll => 'All time';
+
+  @override
+  String get insightsActivityTitle => 'Scanning activity';
+
+  @override
+  String get insightsScansToday => 'Scans today';
+
+  @override
+  String get insightsScans7 => 'Scans in the last 7 days';
+
+  @override
+  String get insightsRatesTitle => 'Results';
+
+  @override
+  String get insightsRatesEmpty => 'No scans in this period';
+
+  @override
+  String get insightsRatesEmptyDetail =>
+      'Scan a sack or container to see results here.';
+
+  @override
+  String get insightsExperimentalNote =>
+      'Experimental model: these results are not verified and may be wrong. Inspect physically before any storage or sale decision.';
+
+  @override
+  String get insightsNoModelResults =>
+      'No model results yet: no usable recording was evaluated by a model.';
+
+  @override
+  String get insightsRetryLabel => 'Recording not usable (retry)';
+
+  @override
+  String insightsBarValue(int count, int percent) {
+    return '$count · $percent%';
+  }
+
+  @override
+  String insightsTotalScans(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count scans in this period',
+      one: '1 scan in this period',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insightsQualityTitle => 'Recording problems';
+
+  @override
+  String get insightsQualityEmpty => 'No unusable recordings in this period';
+
+  @override
+  String get insightsQualityHint =>
+      'Most problems go away when the phone is pressed firmly on the sack in a quiet place.';
+
+  @override
+  String get insightsInspectionsTitle => 'Inspections';
+
+  @override
+  String get insightsInspectionsEmpty => 'No inspections recorded yet';
+
+  @override
+  String insightsClosureRate(int percent) {
+    return '$percent% of inspections are done';
+  }
+
+  @override
+  String get insightsStaleTitle => 'Longest since last check';
+
+  @override
+  String get staleNeverScanned => 'Never scanned';
+
+  @override
+  String get qualityShortSilence => 'Too quiet';
+
+  @override
+  String get qualityShortClipping => 'Too loud (clipping)';
+
+  @override
+  String get qualityShortHighNoise => 'Too noisy';
+
+  @override
+  String get qualityShortTooShort => 'Too short';
+
+  @override
+  String get qualityShortPermissionDenied => 'Microphone blocked';
+
+  @override
+  String get qualityShortCaptureError => 'Recording error';
+
+  @override
+  String get queueFilterResult => 'Model result';
+
+  @override
+  String get queueFilterAllResults => 'All results';
+
+  @override
+  String get queueFilterPlace => 'Place';
+
+  @override
+  String get queueFilterAllPlaces => 'All places';
+
+  @override
+  String get queueFilterAge => 'Last usable scan';
+
+  @override
+  String get queueFilterAnyAge => 'Any time';
+
+  @override
+  String queueFilterWithinDays(int days) {
+    return 'Within $days days';
+  }
+
+  @override
+  String queueFilterAgeNote(int days) {
+    return 'Items whose last usable scan is older than $days days move to Needs scan.';
+  }
+
+  @override
+  String get queueNoMatch => 'No ranked items match these filters.';
+
+  @override
+  String get rankReasonInfested =>
+      'Why here: possible infestation (not verified)';
+
+  @override
+  String get rankReasonUncertain => 'Why here: the model was unsure';
+
+  @override
+  String get rankReasonClean =>
+      'Why lower: no signal detected (not a guarantee)';
+
+  @override
+  String scannedDaysAgo(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Scanned $days days ago',
+      one: 'Scanned 1 day ago',
+      zero: 'Scanned today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reminderSuggestedLabel => 'Suggested — you choose';
+
+  @override
+  String reminderSuggestedOther(String date) {
+    return 'Suggested: $date — you choose';
+  }
+
+  @override
+  String get reminderWordingTitle => 'Suggested wording';
+
+  @override
+  String get settingsAdviceSection => 'On-phone AI assistant (experimental)';
+
+  @override
+  String get adviceToggle => 'Use the on-phone AI assistant';
+
+  @override
+  String get adviceToggleBody =>
+      'Off by default. It runs only on this phone and never hears your recordings; it only sees results and dates. It may be wrong. You can turn it off at any time.';
+
+  @override
+  String get adviceStatusTitle => 'Assistant status';
+
+  @override
+  String get adviceStatusOff => 'Off';
+
+  @override
+  String get adviceStatusNoModel => 'On — no model imported yet';
+
+  @override
+  String get adviceStatusLoading => 'Loading the model…';
+
+  @override
+  String get adviceStatusReady => 'Ready on this phone';
+
+  @override
+  String get adviceStatusBusy => 'Busy writing';
+
+  @override
+  String get adviceStatusFailed =>
+      'Could not load the model — Kernel uses its standard text';
+
+  @override
+  String get adviceModelTitle => 'Assistant model';
+
+  @override
+  String get adviceModelNone => 'No model imported yet';
+
+  @override
+  String get adviceModelId => 'Model';
+
+  @override
+  String get adviceModelVersion => 'Version';
+
+  @override
+  String get adviceModelSize => 'Size';
+
+  @override
+  String get adviceModelBackend => 'Runs on';
+
+  @override
+  String get adviceBackendGpu => 'Phone graphics chip (GPU)';
+
+  @override
+  String get adviceBackendCpu => 'Phone processor (CPU)';
+
+  @override
+  String get adviceBackendNone => 'Not loaded yet';
+
+  @override
+  String get adviceImportAction => 'Import model';
+
+  @override
+  String get adviceImporting => 'Importing the model';
+
+  @override
+  String adviceImportCopying(String copied, String total) {
+    return 'Copying $copied of $total';
+  }
+
+  @override
+  String adviceImportCopied(String copied) {
+    return 'Copied $copied';
+  }
+
+  @override
+  String get adviceImportVerifying => 'Checking the model file…';
+
+  @override
+  String get adviceImportDone => 'Model imported. It stays on this phone.';
+
+  @override
+  String adviceImportFailed(String detail) {
+    return 'The model could not be imported: $detail';
+  }
+
+  @override
+  String adviceImportNoSpace(String needed, String free) {
+    return 'Not enough space: the model needs $needed but only $free is free on this phone.';
+  }
+
+  @override
+  String get adviceDeleteAction => 'Delete model';
+
+  @override
+  String get adviceDeleteConfirmTitle => 'Delete the assistant model?';
+
+  @override
+  String get adviceDeleteConfirmBody =>
+      'This removes the model file from this phone. Your records are not affected. You can import it again later.';
+
+  @override
+  String adviceDeleteFailed(String detail) {
+    return 'The model could not be deleted: $detail';
+  }
+
+  @override
+  String get adviceHelp =>
+      'Get a .litertlm model with Google AI Edge Gallery or from Hugging Face litert-community/gemma-4-E2B-it-litert-lm (Gemma terms apply), then import it here.';
+
+  @override
+  String adviceProvenance(String modelVersion) {
+    return 'Generated on this phone — experimental · $modelVersion';
+  }
+
+  @override
+  String get adviceNotDecision => 'Not a decision — inspect physically';
+
+  @override
+  String get adviceGenerating => 'Writing on this phone…';
+
+  @override
+  String get adviceExplainAction => 'Explain this result';
+
+  @override
+  String get adviceExplainTitle => 'What this result means';
+
+  @override
+  String get adviceStaticRetry =>
+      'The recording could not be used, so no result was saved. Press the phone firmly against the sack or container, keep still and quiet, and record again.';
+
+  @override
+  String get adviceStaticNotEvaluated =>
+      'No result was produced for this recording, so it says nothing about pests. Inspect the grain physically.';
+
+  @override
+  String get adviceStaticInspection =>
+      'The experimental model picked up something that may need attention. This is not verified. Inspect the grain physically before any decision.';
+
+  @override
+  String get adviceStaticClean =>
+      'The experimental model did not pick up a signal. This is not a guarantee. Inspect the grain physically before storage or sale decisions.';
+
+  @override
+  String get reportAiSummaryToggle => 'Add AI-drafted summary';
+
+  @override
+  String get reportAiSummaryBody =>
+      'Drafted on this phone from the report\'s figures. You see it first and choose whether to include it. Experimental.';
+
+  @override
+  String get reportAiPreviewTitle => 'AI-drafted summary';
+
+  @override
+  String get reportAiPreviewBody =>
+      'If you include it, it appears in its own labelled section, separate from your records and inspection findings. It cannot be edited.';
+
+  @override
+  String get reportAiSummaryTitle => 'Draft summary';
+
+  @override
+  String get reportAiInclude => 'Include';
+
+  @override
+  String get reportAiSkip => 'Skip';
+
+  @override
+  String unitGb(String value) {
+    return '$value GB';
+  }
+
+  @override
+  String unitMb(String value) {
+    return '$value MB';
+  }
 }

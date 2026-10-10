@@ -119,7 +119,7 @@ void main() {
       final a = await env.addItem(role: Role.storageFpo, label: 'S-1');
       await env.scans.record(notEvaluatedOutcome(a.id));
       await pumpKernelApp(tester, env);
-      expect(find.text(en.sacksScannedToday(1)), findsOneWidget);
+      expect(find.text(en.scansTodayCount(1)), findsOneWidget);
       await tapVisible(tester, find.byKey(const Key('items-summary')));
       expect(find.text(en.scansTodayTitle), findsWidgets);
       expect(find.textContaining('S-1'), findsWidgets);
