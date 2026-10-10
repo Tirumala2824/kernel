@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
@@ -32,6 +34,40 @@ double requireNonNegative(double value, String name) {
     throw ArgumentError.value(value, name, 'must be zero or more');
   }
   return value;
+}
+
+/// Rejects NaN and infinities (they cannot be stored or exported).
+double requireFinite(double value, String name) {
+  if (!value.isFinite) {
+    throw ArgumentError.value(value, name, 'must be a finite number');
+  }
+  return value;
+}
+
+/// Rejects values outside 0..1 (scores, AI-estimated confidence).
+double requireUnitInterval(double value, String name) {
+  if (!value.isFinite || value < 0 || value > 1) {
+    throw ArgumentError.value(value, name, 'must be between 0 and 1');
+  }
+  return value;
+}
+
+/// Deletes an app-private file. Missing files are fine; a link is removed
+/// without touching its target, and directories are never touched.
+Future<void> deleteFileIfPresent(String path) async {
+  final type = await FileSystemEntity.type(path, followLinks: false);
+  try {
+    switch (type) {
+      case FileSystemEntityType.file:
+        await File(path).delete();
+      case FileSystemEntityType.link:
+        await Link(path).delete();
+      default:
+        return;
+    }
+  } on PathNotFoundException {
+    // Already gone.
+  }
 }
 
 /// Emits [compute] once on listen and again whenever any of [tables]

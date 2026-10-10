@@ -23,6 +23,11 @@ part 'database.g.dart';
     Reminders,
     Settings,
     LabeledSamples,
+    Sightings,
+    SensorNodes,
+    SensorEvents,
+    KnowledgeCards,
+    CardEmbeddings,
   ],
   include: {'integrity.drift'},
 )
@@ -32,7 +37,7 @@ class KernelDatabase extends _$KernelDatabase {
   /// Bump together with a drift migration step, a new schema dump
   /// (`dart run drift_dev make-migrations`) and a migration test.
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -76,6 +81,24 @@ class KernelDatabase extends _$KernelDatabase {
       await m.drop(schema.inspectionsVerifiedImmutable);
       await m.create(schema.inspectionsVerifiedImmutable);
       await m.create(schema.labeledSamplesImmutable);
+    },
+    from2To3: (m, schema) async {
+      // Additive only: new tables (parents first), their indexes and
+      // triggers. Every v2 table, column and trigger is left as it is.
+      await m.createTable(schema.sightings);
+      await m.createIndex(schema.sightingsObserved);
+      await m.createIndex(schema.sightingsLocation);
+      await m.createIndex(schema.sightingsItem);
+      await m.create(schema.sightingsAnalysisImmutable);
+      await m.create(schema.sightingsVerifiedOnce);
+      await m.createTable(schema.sensorNodes);
+      await m.createTable(schema.sensorEvents);
+      await m.createIndex(schema.sensorEventsStarted);
+      await m.createIndex(schema.sensorEventsLocation);
+      await m.createIndex(schema.sensorEventsItem);
+      await m.create(schema.sensorEventsAppendOnly);
+      await m.createTable(schema.knowledgeCards);
+      await m.createTable(schema.cardEmbeddings);
     },
   );
 }

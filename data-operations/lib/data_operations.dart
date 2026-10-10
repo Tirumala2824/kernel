@@ -2,9 +2,9 @@
 /// the repository and service interfaces in `package:kernel_contracts`.
 ///
 /// Only [DataOperations] and the wiring types (scheduler, callbacks, font
-/// loader) are public. The database and its tables are internal; the UI
-/// works through the contracts interfaces only. Everything runs offline and
-/// makes no network calls.
+/// loader, card pack source) are public. The database and its tables are
+/// internal; the UI works through the contracts interfaces only. Everything
+/// runs offline and makes no network calls.
 library;
 
 import 'dart:io';
@@ -30,9 +30,12 @@ import 'src/repositories/location_repository.dart';
 import 'src/repositories/lot_repository.dart';
 import 'src/repositories/reminder_repository.dart';
 import 'src/repositories/scan_repository.dart';
+import 'src/repositories/sensor_repositories.dart';
 import 'src/repositories/settings_repository.dart';
+import 'src/repositories/sighting_repository.dart';
 import 'src/services/analytics_service.dart';
 import 'src/services/dataset_export_service.dart';
+import 'src/services/knowledge_service.dart';
 import 'src/services/privacy_service.dart';
 import 'src/services/ranking_service.dart';
 import 'src/services/report_service.dart';
@@ -46,6 +49,7 @@ export 'src/reports/report_fonts.dart'
     show ReportFontLoader, bundledReportFont, reportFontFamilies;
 export 'src/services/dataset_export_service.dart'
     show RetainedAudioPathResolver;
+export 'src/services/knowledge_service.dart' show KnowledgeCardsSource;
 export 'src/services/privacy_service.dart' show RetainedAudioDeleter;
 export 'src/services/report_service.dart' show ModelNoteSource;
 
@@ -63,6 +67,14 @@ class DataOperations {
   /// - [currentModelNote]: the installed model's note for report headers.
   /// - [reportFonts]: loads the bundled Noto fonts for PDFs. Without it,
   ///   PDFs use the built-in Latin-1 fonts and other characters become `?`.
+  /// - [knowledgeCardsJson]: returns the knowledge card pack JSON; read on
+  ///   first use of `knowledge`. Without it, `knowledge` serves the cards
+  ///   already stored (none on a fresh install).
+  /// - [embedder]: on-device text embedder for `knowledge.search`. Without
+  ///   it, search is keyword-only.
+  /// - [sensorAttention]: ids of sensor nodes that are jammed, clipped, low
+  ///   on battery or need a survey, for the `sensorNeedsAttention` next
+  ///   action. Listened to from construction until [close].
   factory DataOperations({
     required QueryExecutor executor,
     required ReminderScheduler reminderScheduler,
@@ -73,6 +85,9 @@ class DataOperations {
     RetainedAudioPathResolver? retainedAudioPath,
     ModelNoteSource? currentModelNote,
     ReportFontLoader? reportFonts,
+    KnowledgeCardsSource? knowledgeCardsJson,
+    Embedder? embedder,
+    Stream<Set<String>>? sensorAttention,
   }) {
     final db = KernelDatabase(executor);
     final now = clock ?? systemClock;
@@ -92,7 +107,7 @@ class DataOperations {
       labeledSamples: DriftLabeledSampleRepository(db, now),
       settings: DriftSettingsRepository(db, now),
       ranking: DriftRankingService(db, now),
-      analytics: DriftAnalyticsService(db, now),
+      analytics: DriftAnalyticsService(db, now, sensorAttention),
       reports: DriftReportService(
         db,
         reportDirectory,
@@ -111,6 +126,16 @@ class DataOperations {
         reminders,
         deleteRetainedAudio,
         datasets,
+        now,
+      ),
+      sightings: DriftSightingRepository(db, now),
+      sensorNodes: DriftSensorNodeRepository(db, now),
+      sensorEvents: DriftSensorEventRepository(db, now),
+      knowledge: DriftKnowledgeService(
+        db,
+        now,
+        cardsJson: knowledgeCardsJson,
+        embedder: embedder,
       ),
     );
   }
@@ -128,10 +153,14 @@ class DataOperations {
     required this.labeledSamples,
     required this.settings,
     required this.ranking,
-    required this.analytics,
+    required this._analytics,
     required this.reports,
     required this.datasetExport,
     required this.privacy,
+    required this.sightings,
+    required this.sensorNodes,
+    required this.sensorEvents,
+    required this._knowledge,
   });
 
   /// Opens the on-device database (`kernel.sqlite` in the app-private
@@ -149,12 +178,21 @@ class DataOperations {
   ///   while the app is running (a launch from closed goes through
   ///   `reminders.takeLaunchItemId()`).
   /// - [notificationIcon]: Android resource for the status-bar icon.
+  /// - [knowledgeCardsJson]: the card pack, e.g.
+  ///   `() => rootBundle.loadString('assets/knowledge/pest_cards.json')`.
+  /// - [embedder]: the on-device EmbeddingGemma embedder (local-llm), for
+  ///   semantic card search.
+  /// - [sensorAttention]: node ids needing attention, derived by the app
+  ///   from `SensorLink.watchStatus`.
   static Future<DataOperations> open({
     RetainedAudioDeleter? deleteRetainedAudio,
     RetainedAudioPathResolver? retainedAudioPath,
     ModelNoteSource? currentModelNote,
     ReminderTapCallback? onReminderTapped,
     String notificationIcon = '@mipmap/ic_launcher',
+    KnowledgeCardsSource? knowledgeCardsJson,
+    Embedder? embedder,
+    Stream<Set<String>>? sensorAttention,
   }) async {
     final support = await getApplicationSupportDirectory();
     final scheduler = LocalNotificationReminderScheduler(
@@ -175,6 +213,9 @@ class DataOperations {
       retainedAudioPath: retainedAudioPath,
       currentModelNote: currentModelNote,
       reportFonts: bundledReportFont,
+      knowledgeCardsJson: knowledgeCardsJson,
+      embedder: embedder,
+      sensorAttention: sensorAttention,
     );
     try {
       await ops.restoreReminders();
@@ -201,6 +242,8 @@ class DataOperations {
   final KernelDatabase _db;
   final ReminderScheduler _scheduler;
   final DriftReminderRepository _reminders;
+  final DriftAnalyticsService _analytics;
+  final DriftKnowledgeService _knowledge;
 
   final ItemRepository items;
   final LocationRepository locations;
@@ -214,10 +257,23 @@ class DataOperations {
   final RankingService ranking;
 
   /// On-device analytics and next actions, computed from stored records.
-  final AnalyticsService analytics;
+  AnalyticsService get analytics => _analytics;
   final ReportService reports;
   final DatasetExportService datasetExport;
   final PrivacyService privacy;
+
+  /// Pest ID sightings: AI analysis, user validation and verified finding
+  /// kept separate.
+  final SightingRepository sightings;
+
+  /// Paired BLE sensor nodes.
+  final SensorNodeRepository sensorNodes;
+
+  /// Signature-matched sensor events (features only).
+  final SensorEventRepository sensorEvents;
+
+  /// Curated knowledge cards with on-device semantic search.
+  KnowledgeService get knowledge => _knowledge;
 
   /// Reschedules future reminders and marks past-due ones fired. [open]
   /// calls this; the app may call it again, e.g. on resume.
@@ -228,5 +284,11 @@ class DataOperations {
   Future<bool> requestNotificationPermission() =>
       _scheduler.requestPermission();
 
-  Future<void> close() => _db.close();
+  /// Stops background card indexing and the sensor attention subscription,
+  /// then closes the database.
+  Future<void> close() async {
+    await _knowledge.dispose();
+    await _analytics.dispose();
+    await _db.close();
+  }
 }

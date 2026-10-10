@@ -31,3 +31,35 @@ ON labeled_samples
 BEGIN
   SELECT RAISE(ABORT, 'labeled samples are immutable');
 END;
+
+-- Pest ID (v3, guardrails §9): the AI analysis and the observation itself
+-- are never edited after saving. The user's validation, placement, notes
+-- and sync bookkeeping stay writable.
+CREATE TRIGGER sightings_analysis_immutable
+BEFORE UPDATE OF id, role, source, observed_at, latitude, longitude,
+  accuracy_meters, distance, analysis, sound, created_at
+ON sightings
+BEGIN
+  SELECT RAISE(ABORT, 'sighting AI analysis is immutable');
+END;
+
+-- A human verified finding on a sighting is set once, never overwritten.
+CREATE TRIGGER sightings_verified_once
+BEFORE UPDATE OF verified_finding
+ON sightings
+WHEN OLD.verified_finding IS NOT NULL
+BEGIN
+  SELECT RAISE(ABORT, 'verified sighting finding is immutable');
+END;
+
+-- Sensor events are recorded facts (guardrails §10); only sync bookkeeping
+-- may change.
+CREATE TRIGGER sensor_events_append_only
+BEFORE UPDATE OF id, node_id, seq, started_at, duration_ms, event_class,
+  peak_hz, min_hz, max_hz, slope_hz_per_ms, snr_db, peak_dbfs, impulses,
+  rep_rate_hz, harmonics, signature_id, pack_version, match_score,
+  match_experimental, location_id, item_id, created_at
+ON sensor_events
+BEGIN
+  SELECT RAISE(ABORT, 'sensor events are append-only');
+END;

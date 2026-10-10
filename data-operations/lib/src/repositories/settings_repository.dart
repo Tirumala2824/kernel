@@ -17,6 +17,8 @@ class DriftSettingsRepository implements SettingsRepository {
   static const voicePromptsKey = 'voicePrompts';
   static const onboardingDoneKey = 'onboardingDone';
   static const localAdviceOptInKey = 'localAdviceOptIn';
+  static const mapsConsentKey = 'mapsConsent';
+  static const keepSightingMediaKey = 'keepSightingMedia';
 
   final KernelDatabase _db;
   final Clock _clock;
@@ -105,11 +107,39 @@ class DriftSettingsRepository implements SettingsRepository {
   Future<void> setLocalAdviceOptIn(bool value) =>
       _putBool(localAdviceOptInKey, value);
 
+  /// False until the user consents to Google map tiles and routes
+  /// (guardrails §7). This package only stores the choice; it makes no
+  /// network calls.
+  @override
+  Stream<bool> watchMapsConsent() =>
+      _watchBool(mapsConsentKey, defaultValue: false);
+
+  @override
+  Future<void> setMapsConsent(bool value) => _putBool(mapsConsentKey, value);
+
+  /// False unless the user chose to keep validated stills/clips with saved
+  /// sightings. While false, `sightings.create` refuses a media path.
+  @override
+  Stream<bool> watchKeepSightingMedia() =>
+      _watchBool(keepSightingMediaKey, defaultValue: false);
+
+  @override
+  Future<void> setKeepSightingMedia(bool value) =>
+      _putBool(keepSightingMediaKey, value);
+
   /// Current research opt-in, read inside other repositories' transactions.
-  static Future<bool> researchModeEnabled(KernelDatabase db) async {
+  static Future<bool> researchModeEnabled(KernelDatabase db) =>
+      _readBool(db, researchModeOptInKey);
+
+  /// Current keep-sighting-media choice, read inside other repositories'
+  /// transactions.
+  static Future<bool> keepSightingMediaEnabled(KernelDatabase db) =>
+      _readBool(db, keepSightingMediaKey);
+
+  static Future<bool> _readBool(KernelDatabase db, String key) async {
     final row = await (db.select(
       db.settings,
-    )..where((s) => s.key.equals(researchModeOptInKey))).getSingleOrNull();
+    )..where((s) => s.key.equals(key))).getSingleOrNull();
     return row?.value == 'true';
   }
 

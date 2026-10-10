@@ -137,3 +137,93 @@ extension LabeledSampleRowMapping on LabeledSampleRow {
     syncState: syncState,
   );
 }
+
+extension SightingRowMapping on SightingRow {
+  Sighting toModel() => Sighting(
+    id: id,
+    role: role,
+    source: source,
+    observedAt: observedAt,
+    locationId: locationId,
+    itemId: itemId,
+    latitude: latitude,
+    longitude: longitude,
+    accuracyMeters: accuracyMeters,
+    distance: distance,
+    analysis: analysis,
+    sound: sound,
+    userValidated: userValidated,
+    userCardId: userCardId,
+    verifiedFinding: verifiedFinding,
+    notes: notes,
+    mediaPath: mediaPath,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+    syncState: syncState,
+  );
+}
+
+extension SensorNodeRowMapping on SensorNodeRow {
+  SensorNode toModel() => SensorNode(
+    id: id,
+    deviceAddress: deviceAddress,
+    name: name,
+    type: type,
+    protocolVersion: protocolVersion,
+    firmwareVersion: firmwareVersion,
+    keyFingerprint: keyFingerprint,
+    locationId: locationId,
+    itemId: itemId,
+    lastSeenAt: lastSeenAt,
+    batteryPercent: batteryPercent,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+    syncState: syncState,
+  );
+}
+
+extension SensorEventRowMapping on SensorEventRow {
+  SensorEvent toModel() => SensorEvent(
+    nodeId: nodeId,
+    seq: seq,
+    startedAt: startedAt,
+    durationMs: durationMs,
+    eventClass: eventClass,
+    peakHz: peakHz,
+    minHz: minHz,
+    maxHz: maxHz,
+    slopeHzPerMs: slopeHzPerMs,
+    snrDb: snrDb,
+    peakDbfs: peakDbfs,
+    impulses: impulses,
+    repRateHz: repRateHz,
+    harmonics: harmonics,
+    match: signatureId == null
+        ? null
+        : SignatureMatch(
+            signatureId: signatureId!,
+            packVersion: packVersion ?? '',
+            score: matchScore ?? 0,
+            experimental: matchExperimental ?? true,
+          ),
+  );
+}
+
+extension KnowledgeCardRowMapping on KnowledgeCardRow {
+  KnowledgeCard toModel() => KnowledgeCard(
+    id: cardId,
+    names: names,
+    group: pestGroup,
+    safety: safety,
+    summary: summary,
+    signs: signs,
+    lookAlikes: lookAlikes,
+    healthRisks: healthRisks,
+    safeSteps: safeSteps,
+    callProfessionalWhen: callProfessionalWhen,
+    firstAid: firstAid,
+    legal: legal,
+    sources: sources,
+    reviewStatus: reviewStatus,
+  );
+}
