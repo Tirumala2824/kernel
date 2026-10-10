@@ -18,7 +18,31 @@ enum SensorLinkState {
   error,
 }
 
-enum SensorHealth { ok, jammed, clipped, lowBattery, surveyNeeded, authFailed }
+enum SensorHealth {
+  ok,
+  jammed,
+  clipped,
+  lowBattery,
+  surveyNeeded,
+  authFailed,
+
+  /// Capture errors on the node (I2S/SPI). Not evaluated.
+  sensorFault,
+
+  /// The node's ring overwrote events the phone had not synced. The gap is
+  /// not evaluated.
+  eventsOverwritten,
+}
+
+/// Health values that make a time window "not evaluated", never "nothing
+/// there" (guardrails §10).
+const notEvaluatedHealth = {
+  SensorHealth.jammed,
+  SensorHealth.clipped,
+  SensorHealth.surveyNeeded,
+  SensorHealth.sensorFault,
+  SensorHealth.eventsOverwritten,
+};
 
 enum SensorEventClass {
   tonal,
@@ -164,6 +188,8 @@ class SensorStatus {
     required this.health,
     this.batteryPercent,
     this.rssi,
+    this.errorCode,
+    this.sessionActive = false,
   });
 
   final String nodeId;
@@ -173,6 +199,59 @@ class SensorStatus {
   final Set<SensorHealth> health;
   final int? batteryPercent;
   final int? rssi;
+
+  /// Stable reason when [linkState] is error, for the UI to localize:
+  /// 'bt_permission', 'bt_off', 're_pair_needed', 'not_visible',
+  /// 'fgs_not_allowed', 'link'.
+  final String? errorCode;
+
+  /// A foreground monitoring session is running for this node.
+  final bool sessionActive;
+
+  /// Evaluation is off right now: any [notEvaluatedHealth], a link error, or
+  /// no health reported yet.
+  bool get notEvaluated =>
+      linkState == SensorLinkState.error ||
+      health.isEmpty ||
+      health.any(notEvaluatedHealth.contains);
+}
+
+/// A node's health from [at] until the next change. Live status changes and
+/// health records replayed from the node's ring (store-and-forward) both
+/// arrive as changes, so a jam while the phone was away is still known.
+class SensorHealthChange {
+  const SensorHealthChange({
+    required this.nodeId,
+    required this.at,
+    required this.health,
+    this.seq,
+  });
+
+  final String nodeId;
+  final DateTime at;
+  final Set<SensorHealth> health;
+
+  /// Ring sequence number when replayed from the node; null for live status.
+  final int? seq;
+}
+
+/// A closed or open window during which a node was not evaluated.
+class SensorNotEvaluatedPeriod {
+  const SensorNotEvaluatedPeriod({
+    required this.nodeId,
+    required this.from,
+    required this.health,
+    this.until,
+  });
+
+  final String nodeId;
+  final DateTime from;
+
+  /// Null while still ongoing.
+  final DateTime? until;
+
+  /// The [notEvaluatedHealth] values seen in the window.
+  final Set<SensorHealth> health;
 }
 
 class SensorPlacement {
@@ -196,8 +275,15 @@ abstract interface class SensorLink {
   /// Events from every connected node, already signature-matched.
   Stream<SensorEvent> events();
 
+  /// Health changes from every connected node, live and replayed from the
+  /// node's ring, including an [SensorHealth.eventsOverwritten] gap.
+  Stream<SensorHealthChange> healthChanges();
+
   /// Learns per-band noise floors and stationary lines (default 5 min).
-  Future<void> startSurvey(String nodeId, {Duration duration = const Duration(minutes: 5)});
+  Future<void> startSurvey(
+    String nodeId, {
+    Duration duration = const Duration(minutes: 5),
+  });
 
   /// Foreground-service monitoring session (overnight allowed).
   Future<void> startSession(String nodeId);
@@ -221,9 +307,24 @@ abstract interface class SensorEventRepository {
 
   /// Newest first.
   Stream<List<SensorEvent>> watchForNode(String nodeId, {int limit = 500});
-  Stream<List<SensorEvent>> watchForLocation(String locationId, {Duration? window});
+  Stream<List<SensorEvent>> watchForLocation(
+    String locationId, {
+    Duration? window,
+  });
   Stream<List<SensorEvent>> watchForItem(String itemId, {Duration? window});
 
   /// Latest synced seq per node, for GET_EVENTS_SINCE.
   Future<int?> lastSeq(String nodeId);
+
+  /// Idempotent on (nodeId, at, health). Consecutive equal health is merged.
+  Future<void> recordHealth(List<SensorHealthChange> changes);
+
+  /// Not-evaluated windows overlapping [window] (or all), newest first. A
+  /// summary or rate whose window overlaps one must say "not evaluated".
+  Stream<List<SensorNotEvaluatedPeriod>> watchNotEvaluated({
+    String? nodeId,
+    String? locationId,
+    String? itemId,
+    Duration? window,
+  });
 }

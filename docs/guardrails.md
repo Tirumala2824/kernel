@@ -41,6 +41,7 @@ Every contributor and every subagent reads this file before changing code. If a 
 - **Allowed network (Phase 4, user decision):**
   - **Model catalogs and model downloads** in `model-hub/` only: the AI Edge Gallery catalog on `raw.githubusercontent.com`, Hugging Face, and Google AI Edge / MediaPipe model storage. Downloads need a one-time consent, use Wi-Fi by default, are pinned to a full commit and verified by sha256, and come only from ungated repos with approved licences.
   - **Google Maps SDK tiles and the Routes API**, only after maps consent. Only the map viewport and route origin/destination are sent, never species, notes, media or audio.
+  - **Navigation hand-off** to the Google Maps app (`google.navigation:`), only after maps consent and a tap on "Start navigation". Only the destination coordinates are passed. There is no browser fallback.
 - All inference, embeddings, search and data handling run on the phone. Nothing captured (images, audio, sensor data, LLM prompts or outputs) is ever sent over the network.
 - GCP is optional, metadata-only and deferred (see gcp-deferred.md). No secrets or service-account keys go in the APK. The Maps key is an Android-restricted key supplied from `local.properties` and is never committed.
 
@@ -66,10 +67,11 @@ Every contributor and every subagent reads this file before changing code. If a 
 - **No poisons.** No pesticide, rodenticide or fumigant dosing or recommendations, from the LLM or the cards. Guidance is sanitation, exclusion, traps where lawful, and professional help. The output guard covers rodenticides, poisons and pesticides.
 - **Grounding.** Guidance is grounded in the curated knowledge cards (sourced, marked "needs expert review"). The LLM may only rephrase and explain card content.
 - **Distance** is shown only when the method's reliability gates pass. Otherwise the app says "Distance not available" and gives the reason.
-- **Location** is a room for indoor sightings. A GPS pin is shown only when accuracy is 25 m or better. Location is taken only when the user taps "Save location".
+- **Location** is a room for indoor sightings. A GPS pin is shown only when accuracy is 25 m or better, and that is enforced in the data layer as well as on the map. Location is taken only when the user taps "Save location" or "Route from here". A short in-app explanation comes before the system prompt. The route origin goes only to the Routes API (§7).
+- **Every concern applies.** A card can carry several safety levels (`extraSafety`). The AI-matched card and the user's pick both count. A venomous snake that is also protected gets both banners and both required sentences. A protected animal never gets trap, catch or capture steps, and glue or sticky boards are never advised for any animal.
 
 ## 10. Sensors (BLE frequency-detection nodes)
 - **Features, not audio.** Nodes run the FFT and detection on board and send band energies and events only. Raw contact-vibration audio is never stored or sent. The ultrasonic path is high-passed at 20 kHz or above in firmware before any buffering. Spectrogram snippets are sent only on explicit request, held in memory, and never uploaded.
 - **Secure links.** Every characteristic requires encryption and bonding (LE Secure Connections), plus an app-layer HMAC challenge using the per-device key from the node's QR label. The key is stored with Android Keystore protection.
-- **Signals, not diagnoses.** Events are matched against a versioned, literature-derived signature pack marked **experimental**. Results are reported as "N events in M minutes". A jammed, clipped or survey-needed node is "not evaluated", never "nothing there".
+- **Signals, not diagnoses.** Events are matched against a versioned, literature-derived signature pack marked **experimental**. Results are reported as "N events in M minutes", where M is the watched window. A jammed, clipped, faulty or survey-needed node is "not evaluated", never "nothing there". So is a window with an overwritten-events gap. The node records health changes in its ring, so a jam while the phone was away is still reported.
 - **Additive only.** Sensor evidence is shown alongside existing records (e.g. "Sensor evidence" on a sack) and never changes `ScanRecord`, the acoustic grain scan or the phone-mic features.

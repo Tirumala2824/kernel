@@ -62,7 +62,9 @@ class ScanOutcome {
     }
     if (modelVersion == noModelVersion &&
         classification != Classification.notEvaluated) {
-      violations.add('No model bundled, so classification must be notEvaluated');
+      violations.add(
+        'No model bundled, so classification must be notEvaluated',
+      );
     }
     if (modelVersion == noModelVersion && !experimental) {
       violations.add('No-model outcome must be marked experimental');

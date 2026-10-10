@@ -166,13 +166,23 @@ abstract interface class RankingService {
 /// On-device analytics computed from stored records only. No network.
 /// Archived records are excluded, like every other list.
 abstract interface class AnalyticsService {
-  Stream<ResultRates> watchResultRates([AnalyticsFilter filter = const AnalyticsFilter()]);
-  Stream<QualityFailures> watchQualityFailures([AnalyticsFilter filter = const AnalyticsFilter()]);
+  Stream<ResultRates> watchResultRates([
+    AnalyticsFilter filter = const AnalyticsFilter(),
+  ]);
+  Stream<QualityFailures> watchQualityFailures([
+    AnalyticsFilter filter = const AnalyticsFilter(),
+  ]);
 
   /// Most stale first; never-scanned items first of all.
-  Stream<List<ItemFreshness>> watchItemFreshness([AnalyticsFilter filter = const AnalyticsFilter()]);
-  Stream<InspectionStats> watchInspectionStats([AnalyticsFilter filter = const AnalyticsFilter()]);
-  Stream<ScanActivity> watchScanActivity([AnalyticsFilter filter = const AnalyticsFilter()]);
+  Stream<List<ItemFreshness>> watchItemFreshness([
+    AnalyticsFilter filter = const AnalyticsFilter(),
+  ]);
+  Stream<InspectionStats> watchInspectionStats([
+    AnalyticsFilter filter = const AnalyticsFilter(),
+  ]);
+  Stream<ScanActivity> watchScanActivity([
+    AnalyticsFilter filter = const AnalyticsFilter(),
+  ]);
 
   /// Prioritized next steps for [role], most urgent first.
   Stream<List<NextAction>> watchNextActions(Role role);

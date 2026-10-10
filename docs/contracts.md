@@ -172,6 +172,20 @@ The source of truth is `contracts/lib/src/model_hub.dart`, `embedding.dart`, `pe
 
 **Settings:** `watchMapsConsent` / `setMapsConsent` and `watchKeepSightingMedia` / `setKeepSightingMedia`, both default false.
 
+## Contracts v4.1 (2026-10-10): W3 review fixes
+- **Several safety levels at once.** `KnowledgeCard.extraSafety` (JSON `extraSafety`, default empty) adds levels to a card, e.g. a venomous snake that is also protected, or a protected bat that is also a medical risk. `safetyConcerns(aiLevel:, cards:)` joins the AI level with the primary and extra levels of every card involved, both the AI-matched card and the user's pick, and drops `low` when anything else applies. Banners, the guide prompt, the output guard, next actions and reports all use it. An empty set means unknown, so the app shows "stay back, don't touch". `mostSerious(levels)` orders them.
+- `KnowledgeCard.trapSteps` (JSON `trapSteps`) holds the "where lawful" trap steps, apart from `safeSteps`. They are hidden from the UI and the prompt whenever a concern is `protectedWildlife`.
+- `SoundAnalysis.cardIds` holds the cards suggested by the sound match, best first. They are saved so the banners survive, and they are never the user's pick.
+- **Sensor health:**
+  - `SensorHealth` gains `sensorFault` and `eventsOverwritten`. `notEvaluatedHealth` = {jammed, clipped, surveyNeeded, sensorFault, eventsOverwritten}.
+  - `SensorStatus.notEvaluated` is also true for a link error or an empty health set.
+  - `SensorStatus.errorCode` is one of `bt_permission`, `bt_off`, `re_pair_needed`, `not_visible`, `fgs_not_allowed` or `link`, and the UI localizes it.
+  - `SensorStatus.sessionActive` reports a running session.
+- **Health history:**
+  - `SensorLink.healthChanges()` carries live status changes plus health records replayed from the node's ring (protocol v1.1). This includes an `eventsOverwritten` gap.
+  - `SensorEventRepository.recordHealth` stores them, and `watchNotEvaluated({nodeId, locationId, itemId, window})` returns `SensorNotEvaluatedPeriod`s.
+  - Any summary or rate whose window overlaps such a period says "not evaluated". "N events in M minutes" uses the watched window for M, not the span between the first and last event.
+
 ## Package entry points (what the lead wires in `app-ui/lib/bootstrap.dart`)
 - `package:audio_ai/audio_ai.dart` exports `class NativeScanEngine implements ScanEngine` with a no-arg constructor.
 - `package:data_operations/data_operations.dart` exports `class DataOperations` with:

@@ -15,11 +15,13 @@ Curated, sourced cards that ground every Pest ID answer (guardrails §9). The LL
       "names": { "en": "German cockroach", "hi": "..." },  // en required; others optional (machine-drafted, flagged)
       "group": "insect",                      // insect | arachnid | rodent | reptile | other
       "safety": "caution",                    // low | caution | medicalRisk | venomous | protectedWildlife
+      "extraSafety": [],                      // optional further levels that also apply, e.g. ["protectedWildlife"] on a snake
       "summary": "One or two plain sentences.",
       "signs": ["Pepper-like droppings ...", "Egg cases (oothecae) ..."],   // what a camera or mic can pick up
       "lookAlikes": ["american_cockroach", "..."],                          // card ids or plain names
       "healthRisks": ["Allergens and asthma triggers ..."],
-      "safeSteps": ["Remove food and water sources ...", "Seal gaps ..."],  // non-chemical first; no poisons or doses
+      "safeSteps": ["Remove food and water sources ...", "Seal gaps ..."],  // non-chemical first; no poisons or doses; no trap steps
+      "trapSteps": [],                        // optional; "where lawful" trap steps, hidden whenever a protected concern applies
       "callProfessionalWhen": ["Seen in daylight or in large numbers ..."],
       "firstAid": [],                         // pointers only ("seek medical care"); no home remedies
       "legal": null,                          // e.g. Wild Life (Protection) Act status for protected species
@@ -35,6 +37,8 @@ Curated, sourced cards that ground every Pest ID answer (guardrails §9). The LL
 - `safeSteps` must never name a pesticide, rodenticide, fumigant or dose. "Call a licensed pest-control professional" is allowed.
 - Protected species (e.g. monitor lizards): `safety: protectedWildlife`, a `legal` text, and "do not harm, catch or injure it; contact the State Forest Department or a rescuer authorised by it".
 - Venomous or medically important species: lead with keeping distance and getting medical care for bites or stings.
+- Several levels: when more than one applies, set the primary `safety` and list the rest in `extraSafety`. For example, snakes are `venomous` + `protectedWildlife` (many Indian snakes are Schedule I/II), and bats and palm civets are `protectedWildlife` + `medicalRisk` (rabies, Nipah). Every applicable required sentence must be present.
+- No glue or sticky boards for any animal. Trap or capture steps go only in `trapSteps`, never in `safeSteps`, and a protected animal's card has none. When any concern is `protectedWildlife` (for example the AI said palm squirrel but the user picked black rat), the app and the guide prompt leave out every card's `trapSteps`.
 - No absolute claims ("safe", "harmless", "pest-free").
 - **Guard-compatible wording.** The on-device output guard drops answers containing these words in any language, so a card that uses them makes every grounded answer silently fall back. Use the alternatives instead:
 

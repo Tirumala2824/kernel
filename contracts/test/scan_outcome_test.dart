@@ -8,23 +8,22 @@ ScanOutcome _outcome({
   double? confidence,
   bool experimental = true,
   String modelVersion = noModelVersion,
-}) =>
-    ScanOutcome(
-      scanId: 's1',
-      itemId: 'i1',
-      capturedAt: DateTime.utc(2026, 10, 9),
-      quality: quality,
-      qualityReasons: reasons,
-      classification: classification,
-      confidence: confidence,
-      experimental: experimental,
-      modelVersion: modelVersion,
-      latencyMs: 10,
-      durationMs: 2000,
-      sampleRate: 16000,
-      deviceModel: 'test',
-      osVersion: 'test',
-    );
+}) => ScanOutcome(
+  scanId: 's1',
+  itemId: 'i1',
+  capturedAt: DateTime.utc(2026, 10, 9),
+  quality: quality,
+  qualityReasons: reasons,
+  classification: classification,
+  confidence: confidence,
+  experimental: experimental,
+  modelVersion: modelVersion,
+  latencyMs: 10,
+  durationMs: 2000,
+  sampleRate: 16000,
+  deviceModel: 'test',
+  osVersion: 'test',
+);
 
 void main() {
   test('no-model pass outcome is valid', () {
@@ -33,8 +32,10 @@ void main() {
 
   test('retry with reason and notEvaluated is valid', () {
     expect(
-      _outcome(quality: ScanQuality.retry, reasons: [QualityReason.silence])
-          .invariantViolations(),
+      _outcome(
+        quality: ScanQuality.retry,
+        reasons: [QualityReason.silence],
+      ).invariantViolations(),
       isEmpty,
     );
   });
@@ -52,13 +53,18 @@ void main() {
   });
 
   test('retry must state a reason', () {
-    expect(_outcome(quality: ScanQuality.retry).invariantViolations(), isNotEmpty);
+    expect(
+      _outcome(quality: ScanQuality.retry).invariantViolations(),
+      isNotEmpty,
+    );
   });
 
   test('no model cannot classify', () {
     expect(
-      _outcome(classification: Classification.clean, confidence: 0.9)
-          .invariantViolations(),
+      _outcome(
+        classification: Classification.clean,
+        confidence: 0.9,
+      ).invariantViolations(),
       isNotEmpty,
     );
   });

@@ -129,7 +129,10 @@ abstract interface class AdviceEngine {
   /// Null when no model is installed.
   Future<AdviceModelInfo?> modelInfo();
 
-  Stream<AdviceText> explainResult(ResultAdviceInput input, {String? languageTag});
+  Stream<AdviceText> explainResult(
+    ResultAdviceInput input, {
+    String? languageTag,
+  });
 
   Stream<AdviceText> draftReportNarrative(
     ReportNarrativeInput input, {

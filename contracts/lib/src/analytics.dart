@@ -117,12 +117,16 @@ enum NextActionKind {
   finishBatch,
   exportPreSale,
   exportLotSummary,
+
   /// Pest ID: the same pest seen repeatedly in a room or on an item.
   pestSightingsRepeated,
+
   /// Pest ID: a sighting with a dangerous or protected animal to act on.
   pestSafetyAlert,
+
   /// Sensors: signature-matched events in a room or on a sack.
   sensorActivity,
+
   /// Sensors: a node is jammed, clipped, low on battery or needs a survey.
   sensorNeedsAttention,
 }

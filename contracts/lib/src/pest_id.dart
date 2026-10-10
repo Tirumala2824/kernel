@@ -11,8 +11,35 @@ import 'models.dart';
 
 enum PestGroup { insect, arachnid, rodent, reptile, other, notAPest, unknown }
 
-/// Drives the safety banner. Ordered from least to most serious.
+/// Drives the safety banners. Ordered from least to most serious. More than
+/// one can apply (a snake is venomous and often protected): see
+/// [safetyConcerns].
 enum SafetyLevel { low, caution, medicalRisk, venomous, protectedWildlife }
+
+/// Every safety concern that applies, so no banner, guard rule or alert is
+/// ever dropped because another level was more serious (guardrails §9).
+///
+/// Joins the AI's own level with each card's [KnowledgeCard.safety] and
+/// [KnowledgeCard.extraSafety]. Pass every card involved: the AI-matched card
+/// and the user's pick, never only the one being shown. [SafetyLevel.low] is
+/// dropped when anything more serious applies. Empty means nothing is known
+/// (no analysis, no card): show the "unknown animal, stay back" copy.
+Set<SafetyLevel> safetyConcerns({
+  SafetyLevel? aiLevel,
+  Iterable<KnowledgeCard?> cards = const [],
+}) {
+  final all = <SafetyLevel>{
+    ?aiLevel,
+    for (final card in cards)
+      if (card != null) ...{card.safety, ...card.extraSafety},
+  };
+  if (all.length > 1) all.remove(SafetyLevel.low);
+  return all;
+}
+
+/// The most serious of [levels], or null when empty.
+SafetyLevel? mostSerious(Iterable<SafetyLevel> levels) =>
+    levels.isEmpty ? null : levels.reduce((a, b) => a.index >= b.index ? a : b);
 
 enum SignalSource { camera, microphone, sensor }
 
@@ -132,12 +159,17 @@ class SoundAnalysis {
     required this.groupHint,
     required this.modelVersion,
     this.description,
+    this.cardIds = const [],
   });
 
   /// Sound-classifier scores (e.g. YAMNet), top first.
   final List<ScoredLabel> preFilter;
   final PestGroup groupHint;
   final String modelVersion;
+
+  /// Cards suggested by the sound match, best first. Saved with the sighting
+  /// so its safety banners survive; never the user's own pick.
+  final List<String> cardIds;
 
   /// Optional experimental LLM description of the clip.
   final String? description;
@@ -237,7 +269,8 @@ class DistanceEstimate {
   /// Why no distance is shown, plus a fix hint key, when unavailable.
   final String? unavailableReason;
 
-  bool get isAvailable => method != DistanceMethod.unavailable && meters != null;
+  bool get isAvailable =>
+      method != DistanceMethod.unavailable && meters != null;
 }
 
 class DistanceCapability {
@@ -295,7 +328,11 @@ class CapturedStill {
 }
 
 class ImageTile {
-  const ImageTile({required this.candidateId, required this.box, required this.image});
+  const ImageTile({
+    required this.candidateId,
+    required this.box,
+    required this.image,
+  });
 
   final String candidateId;
   final NormalizedBox box;
@@ -319,6 +356,8 @@ class KnowledgeCard {
     required this.legal,
     required this.sources,
     required this.reviewStatus,
+    this.extraSafety = const {},
+    this.trapSteps = const [],
   });
 
   final String id;
@@ -326,12 +365,23 @@ class KnowledgeCard {
   /// languageTag -> name; 'en' is always present.
   final Map<String, String> names;
   final PestGroup group;
+
+  /// Primary banner level.
   final SafetyLevel safety;
+
+  /// Further levels that also apply, e.g. {protectedWildlife} on a venomous
+  /// snake or {medicalRisk} on a protected bat. JSON field `extraSafety`.
+  final Set<SafetyLevel> extraSafety;
   final String summary;
   final List<String> signs;
   final List<String> lookAlikes;
   final List<String> healthRisks;
   final List<String> safeSteps;
+
+  /// "Where lawful" trap steps, kept apart from [safeSteps]. Left out of the
+  /// UI and the guide prompt whenever [safetyConcerns] includes
+  /// [SafetyLevel.protectedWildlife]. Never glue or sticky boards.
+  final List<String> trapSteps;
   final List<String> callProfessionalWhen;
   final List<String> firstAid;
   final String? legal;
@@ -459,7 +509,11 @@ abstract interface class SightingRepository {
   Future<Sighting?> get(String id);
 
   /// Newest first; archived locations excluded.
-  Stream<List<Sighting>> watchRecent({Role? role, String? locationId, int limit = 100});
+  Stream<List<Sighting>> watchRecent({
+    Role? role,
+    String? locationId,
+    int limit = 100,
+  });
   Stream<List<Sighting>> watchForItem(String itemId);
 
   /// Set once by a human; never overwritten.
