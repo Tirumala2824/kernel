@@ -4,7 +4,9 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.media.AudioDeviceInfo
 import android.media.AudioFormat
+import android.media.AudioManager
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Build
@@ -57,6 +59,9 @@ class AudioCapture(private val context: Context) {
      */
     @SuppressLint("MissingPermission") // Checked by the caller via hasPermission().
     fun record(durationMs: Int, onLevel: ((LevelReading) -> Unit)? = null): Recording {
+        // Pinned to the built-in mic (see MicRouting): a headset, USB or
+        // Bluetooth input would change the calibration reference.
+        val mic = builtInMic() ?: throw CaptureException("built-in microphone not listed")
         for (rate in CANDIDATE_RATES) {
             val minBuffer = AudioRecord.getMinBufferSize(rate, CHANNEL, ENCODING)
             if (minBuffer <= 0) continue
@@ -70,9 +75,33 @@ class AudioCapture(private val context: Context) {
                 record.release()
                 continue
             }
+            if (!record.setPreferredDevice(mic)) {
+                record.release()
+                throw CaptureException("built-in microphone could not be selected")
+            }
             return recordWith(record, durationMs, onLevel)
         }
         throw CaptureException("no supported AudioRecord configuration")
+    }
+
+    /** The built-in mic chosen by [MicRouting.pickBuiltInMic], or null. */
+    private fun builtInMic(): AudioDeviceInfo? {
+        val audio = context.getSystemService(AudioManager::class.java) ?: return null
+        val inputs = audio.getDevices(AudioManager.GET_DEVICES_INPUTS)
+        val pick = MicRouting.pickBuiltInMic(inputs.map(MicRouting::from)) ?: return null
+        return inputs.firstOrNull { it.id == pick.id }
+    }
+
+    /**
+     * Device type Android actually routed this recording to: the active
+     * recording configuration (API 29+), else the routed device; null when
+     * neither is known yet.
+     */
+    private fun activeInputType(record: AudioRecord): Int? {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            record.activeRecordingConfiguration?.audioDevice?.let { return it.type }
+        }
+        return record.routedDevice?.type
     }
 
     private fun recordWith(record: AudioRecord, durationMs: Int, onLevel: ((LevelReading) -> Unit)?): Recording {
@@ -104,6 +133,12 @@ class AudioCapture(private val context: Context) {
                     break
                 }
                 discarded += n
+            }
+
+            // Checked once audio is flowing (after the warm-up), before any
+            // sample is kept: the route must really be the built-in mic.
+            if (readError == 0 && !MicRouting.isVerifiedBuiltIn(activeInputType(record))) {
+                throw CaptureException("capture not routed to the built-in microphone")
             }
 
             startedAtEpochMs = System.currentTimeMillis()

@@ -1,7 +1,7 @@
 name: local_llm
-description: "Kernel opt-in on-device LLM advice (LiteRT-LM). Text in, text out; never audio."
+description: "Kernel on-device LiteRT-LM: opt-in grain advice (text only), EmbeddingGemma embeddings and the Pest ID analyzer."
 publish_to: none
-version: 0.1.0
+version: 0.2.0
 
 environment:
   sdk: ^3.13.5

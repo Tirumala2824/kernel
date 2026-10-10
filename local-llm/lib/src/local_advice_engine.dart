@@ -7,6 +7,7 @@ import 'llm_api.g.dart';
 import 'llm_host.dart';
 import 'output_guard.dart';
 import 'prompts.dart';
+import 'runtime_manager.dart';
 
 /// Whole-request budget, model load included. Past it the request is
 /// cancelled and the stream ends without a complete event (static copy).
@@ -32,21 +33,40 @@ const Duration _optInWait = Duration(seconds: 2);
 /// - Generated text is always experimental and carries the model's
 ///   sidecar version as `modelVersion`.
 ///
+/// - Runs on the shared [RuntimeManager] (slot [RuntimeSlot.advice]), so it
+///   never shares memory with the Pest ID engine or EmbeddingGemma, and
+///   waits its turn behind them within the same [adviceTimeout].
+/// - [modelPath], if given, picks the model file (e.g. model-hub's
+///   registry); without it the legacy getExternalFilesDir("llm") file is
+///   used, as before.
+///
 /// The app must not request advice while a scan capture is running.
 class LocalAdviceEngine implements AdviceEngine {
   LocalAdviceEngine({
     required Stream<bool> optIn,
+    this._modelPath,
+    RuntimeManager? runtime,
     @visibleForTesting LlmHost? host,
     @visibleForTesting this._timeout = adviceTimeout,
     @visibleForTesting DateTime Function()? clock,
   }) : _optInSource = optIn,
-       _host = host ?? PigeonLlmHost(),
+       _runtime =
+           runtime ??
+           (host != null ? RuntimeManager(host: host) : RuntimeManager.shared),
+       _ownsRuntime = runtime == null && host != null,
        _clock = clock ?? DateTime.now;
 
   final Stream<bool> _optInSource;
-  final LlmHost _host;
+  final ModelPathResolver? _modelPath;
+  final RuntimeManager _runtime;
+  final bool _ownsRuntime;
   final Duration _timeout;
   final DateTime Function() _clock;
+
+  LlmHost get _host => _runtime.host;
+
+  /// Last resolver answer (resolver mode only): is a model installed?
+  bool? _resolvedPresent;
 
   bool? _optedIn;
   final Completer<void> _optInKnown = Completer<void>();
@@ -79,10 +99,27 @@ class LocalAdviceEngine implements AdviceEngine {
       _nativeSub ??= _host.engineStatus.listen(_onNative);
       unawaited(_refreshNative());
     } else if (!value && was == true) {
-      // Free the model's memory as soon as the user turns the assistant off.
-      unawaited(_host.unload().catchError((Object _) {}));
+      // Free the model's memory as soon as the user turns the assistant off
+      // (never an engine another feature is using).
+      unawaited(_runtime.release(RuntimeSlot.advice).catchError((Object _) {}));
     }
     _recompute();
+  }
+
+  /// Resolver mode: asks for the current path and updates presence.
+  Future<String?> _resolvePath() async {
+    final resolver = _modelPath;
+    if (resolver == null) return null;
+    String? path;
+    try {
+      path = await resolver();
+    } catch (_) {
+      path = null;
+    }
+    if (path != null && path.isEmpty) path = null;
+    _resolvedPresent = path != null;
+    _recompute();
+    return path;
   }
 
   void _onNative(NativeEngineStatus status) {
@@ -92,7 +129,9 @@ class LocalAdviceEngine implements AdviceEngine {
 
   Future<void> _refreshNative() async {
     try {
-      _onNative(await _host.status());
+      final status = await _host.status();
+      if (_modelPath != null) await _resolvePath();
+      _onNative(status);
     } catch (_) {
       // The plugin cannot be reached: report failed (static copy), not
       // noModel, which would invite the user to import a model.
@@ -116,15 +155,23 @@ class LocalAdviceEngine implements AdviceEngine {
     if (_optedIn != true) return AdviceStatus.optedOut;
     final n = _native;
     if (n == null) return null;
-    if (!n.modelPresent) return AdviceStatus.noModel;
+    final present = _modelPath == null
+        ? n.modelPresent
+        : (_resolvedPresent ?? false);
+    if (!present) return AdviceStatus.noModel;
     if (_generating) return AdviceStatus.busy;
+    // Another engine (Pest ID, embedder) occupying the runtime reads as busy
+    // while it loads or runs; its load failure is not the advice engine's.
+    final mine = n.slot == null || n.slot == NativeRuntimeSlot.advice;
     return switch (n.state) {
       // Present but not in memory: it loads on the first request.
       NativeEngineState.unloaded => AdviceStatus.ready,
-      NativeEngineState.loading => AdviceStatus.loading,
+      NativeEngineState.loading =>
+        mine ? AdviceStatus.loading : AdviceStatus.busy,
       NativeEngineState.ready => AdviceStatus.ready,
       NativeEngineState.busy => AdviceStatus.busy,
-      NativeEngineState.failed => AdviceStatus.failed,
+      NativeEngineState.failed =>
+        mine ? AdviceStatus.failed : AdviceStatus.ready,
     };
   }
 
@@ -149,7 +196,9 @@ class LocalAdviceEngine implements AdviceEngine {
   Future<AdviceModelInfo?> modelInfo() async {
     _ensureStarted();
     try {
-      final info = await _host.modelInfo();
+      final path = await _resolvePath();
+      if (_modelPath != null && path == null) return null;
+      final info = await _host.modelInfo(path, NativeRuntimeSlot.advice);
       if (info == null) return null;
       return AdviceModelInfo(
         id: info.id,
@@ -168,7 +217,14 @@ class LocalAdviceEngine implements AdviceEngine {
     _ensureStarted();
     if (!await _isOptedIn()) return;
     try {
-      _onNative(await _host.load());
+      final path = await _resolvePath();
+      if (_modelPath != null && path == null) return;
+      final status = await _runtime.run(
+        RuntimeSlot.advice,
+        () => _host.load(path),
+        wait: _timeout,
+      );
+      _onNative(status);
     } catch (_) {}
   }
 
@@ -233,8 +289,17 @@ class LocalAdviceEngine implements AdviceEngine {
     void Function(String id) onRequestId,
   ) async {
     if (!await _isOptedIn()) return null;
+    final clock = Stopwatch()..start();
+    Duration remaining() => _timeout - clock.elapsed;
+    String? path;
+    if (_modelPath != null) {
+      // Resolver mode: presence is checked per request, so a model that
+      // model-hub installed since the last status is picked up.
+      path = await _resolvePath();
+      if (path == null) return null;
+    }
     final status = _status;
-    if (status == AdviceStatus.noModel ||
+    if ((_modelPath == null && status == AdviceStatus.noModel) ||
         status == AdviceStatus.failed ||
         status == AdviceStatus.busy ||
         _generating) {
@@ -245,26 +310,36 @@ class LocalAdviceEngine implements AdviceEngine {
     onRequestId(id);
     _generating = true;
     _recompute();
-    final clock = Stopwatch()..start();
-    Duration remaining() => _timeout - clock.elapsed;
     try {
-      final NativeModelInfo? info;
+      final NativeModelInfo info;
       final NativeGenerateResult result;
       try {
-        // The first call after an adb copy hashes the file once; it counts
-        // against the same budget as the generation.
-        info = await _host.modelInfo().timeout(_timeout);
-        if (info == null) return null;
-        final left = remaining();
-        if (left <= Duration.zero) return null;
-        result = await _host
-            .generate(
-              id,
-              rendered.systemInstruction,
-              rendered.prompt,
-              left.inMilliseconds,
-            )
-            .timeout(left);
+        final wait = remaining();
+        if (wait <= Duration.zero) return null;
+        // Serialised with the other engines; waiting counts against the
+        // same budget, and the turn is skipped if the budget runs out.
+        final pair = await _runtime.run(RuntimeSlot.advice, () async {
+          // The first call after an adb copy hashes the file once; it
+          // counts against the same budget as the generation.
+          final i = await _host
+              .modelInfo(path, NativeRuntimeSlot.advice)
+              .timeout(remaining());
+          if (i == null) return null;
+          final left = remaining();
+          if (left <= Duration.zero) return null;
+          final r = await _host
+              .generate(
+                id,
+                path,
+                rendered.systemInstruction,
+                rendered.prompt,
+                left.inMilliseconds,
+              )
+              .timeout(left);
+          return (i, r);
+        }, wait: wait);
+        if (pair == null) return null;
+        (info, result) = pair;
       } on TimeoutException {
         unawaited(_host.cancel(id).catchError((Object _) {}));
         return null;
@@ -288,9 +363,11 @@ class LocalAdviceEngine implements AdviceEngine {
   }
 
   /// Stops listening to the opt-in and native streams (tests, app exit).
+  /// A shared [RuntimeManager] passed in is left running.
   Future<void> dispose() async {
     await _optInSub?.cancel();
     await _nativeSub?.cancel();
     await _changes.close();
+    if (_ownsRuntime) await _runtime.dispose();
   }
 }

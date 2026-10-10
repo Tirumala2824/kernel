@@ -10,9 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-  List<Object?>? replyList,
-  String channelName, {
-  required bool isNullValid,
+    List<Object?>? replyList,
+    String channelName, {
+    required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -46,9 +46,8 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(
-          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
-        );
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -97,37 +96,69 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
-/// Lifecycle of the native LiteRT-LM engine.
+
+/// Lifecycle of the single native LiteRT-LM engine slot.
 enum NativeEngineState {
   /// No engine in memory (never loaded, idle-unloaded or trimmed).
   unloaded,
   loading,
   ready,
-
-  /// One generation is running; others are rejected.
+  /// One request is running; others are rejected.
   busy,
+  /// The last load attempt failed on every backend.
+  failed;
+}
 
-  /// The last load attempt failed on both GPU and CPU.
-  failed,
+/// Which engine occupies the runtime. Only one is ever in memory.
+enum NativeRuntimeSlot {
+  /// Gemma, text-only (grain advice).
+  advice,
+  /// Gemma with the vision and audio encoders (Pest ID mode only).
+  pestId,
+  /// EmbeddingGemma.
+  embedder;
 }
 
 enum NativeGenerateStatus {
   ok,
-
-  /// Another generation is running.
+  /// Another request is running.
   busy,
   noModel,
-
-  /// The engine could not be loaded on GPU or CPU.
+  /// The engine could not be loaded on any backend.
   loadFailed,
   timeout,
   cancelled,
-
   /// Native runtime error (message is never forwarded: it may echo text).
   error,
+  /// The model cannot take this input (e.g. no vision or audio encoder).
+  unsupported;
 }
 
-enum NativeImportPhase { copying, verifying, done, failed }
+enum NativeImportPhase {
+  copying,
+  verifying,
+  done,
+  failed;
+}
+
+/// Constrained decoding for a Pest ID generation.
+enum NativeResponseFormat {
+  none,
+  json,
+  regex;
+}
+
+enum NativeEmbedKind {
+  text,
+  image,
+  audio;
+}
+
+enum NativeProbedKind {
+  llm,
+  embedding,
+  unknown;
+}
 
 /// Engine state plus whether a model file is installed.
 class NativeEngineStatus {
@@ -135,22 +166,34 @@ class NativeEngineStatus {
     required this.state,
     required this.modelPresent,
     required this.backend,
+    this.slot,
   });
 
   NativeEngineState state;
 
+  /// A language model is present in the legacy getExternalFilesDir("llm")
+  /// directory. Callers with a model-path resolver decide presence
+  /// themselves.
   bool modelPresent;
 
   /// "gpu", "cpu" or "none" while nothing is loaded.
   String backend;
 
+  /// Slot of the loaded engine, or of the load attempt while loading or
+  /// failed. Null when nothing is loaded or attempted.
+  NativeRuntimeSlot? slot;
+
   List<Object?> _toList() {
-    return <Object?>[state, modelPresent, backend];
+    return <Object?>[
+      state,
+      modelPresent,
+      backend,
+      slot,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static NativeEngineStatus decode(Object result) {
     result as List<Object?>;
@@ -158,6 +201,7 @@ class NativeEngineStatus {
       state: result[0]! as NativeEngineState,
       modelPresent: result[1]! as bool,
       backend: result[2]! as String,
+      slot: result[3] as NativeRuntimeSlot?,
     );
   }
 
@@ -170,9 +214,7 @@ class NativeEngineStatus {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(state, other.state) &&
-        _deepEquals(modelPresent, other.modelPresent) &&
-        _deepEquals(backend, other.backend);
+    return _deepEquals(state, other.state) && _deepEquals(modelPresent, other.modelPresent) && _deepEquals(backend, other.backend) && _deepEquals(slot, other.slot);
   }
 
   @override
@@ -181,7 +223,7 @@ class NativeEngineStatus {
 
   @override
   String toString() {
-    return 'NativeEngineStatus(state: $state, modelPresent: $modelPresent, backend: $backend)';
+    return 'NativeEngineStatus(state: $state, modelPresent: $modelPresent, backend: $backend, slot: $slot)';
   }
 }
 
@@ -196,7 +238,7 @@ class NativeModelInfo {
   /// File name without the .litertlm extension.
   String id;
 
-  /// `<id>@<first 12 hex chars of the sha256>`, from the sidecar.
+  /// `<id>@<first 12 hex chars of the sha256>`.
   String version;
 
   int sizeBytes;
@@ -205,12 +247,16 @@ class NativeModelInfo {
   String backend;
 
   List<Object?> _toList() {
-    return <Object?>[id, version, sizeBytes, backend];
+    return <Object?>[
+      id,
+      version,
+      sizeBytes,
+      backend,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static NativeModelInfo decode(Object result) {
     result as List<Object?>;
@@ -231,10 +277,7 @@ class NativeModelInfo {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(id, other.id) &&
-        _deepEquals(version, other.version) &&
-        _deepEquals(sizeBytes, other.sizeBytes) &&
-        _deepEquals(backend, other.backend);
+    return _deepEquals(id, other.id) && _deepEquals(version, other.version) && _deepEquals(sizeBytes, other.sizeBytes) && _deepEquals(backend, other.backend);
   }
 
   @override
@@ -261,7 +304,7 @@ class NativeGenerateResult {
   NativeGenerateStatus status;
 
   /// Full raw model output; empty unless [status] is ok. The Dart side runs
-  /// the output guard on it before anything reaches the UI.
+  /// the output guard / parser on it before anything reaches the UI.
   String text;
 
   String modelVersion;
@@ -289,8 +332,7 @@ class NativeGenerateResult {
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static NativeGenerateResult decode(Object result) {
     result as List<Object?>;
@@ -314,13 +356,7 @@ class NativeGenerateResult {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(status, other.status) &&
-        _deepEquals(text, other.text) &&
-        _deepEquals(modelVersion, other.modelVersion) &&
-        _deepEquals(backend, other.backend) &&
-        _deepEquals(loadMs, other.loadMs) &&
-        _deepEquals(firstTokenMs, other.firstTokenMs) &&
-        _deepEquals(totalMs, other.totalMs);
+    return _deepEquals(status, other.status) && _deepEquals(text, other.text) && _deepEquals(modelVersion, other.modelVersion) && _deepEquals(backend, other.backend) && _deepEquals(loadMs, other.loadMs) && _deepEquals(firstTokenMs, other.firstTokenMs) && _deepEquals(totalMs, other.totalMs);
   }
 
   @override
@@ -353,12 +389,16 @@ class NativeGenerationProgress {
   int elapsedMs;
 
   List<Object?> _toList() {
-    return <Object?>[requestId, chunks, chars, elapsedMs];
+    return <Object?>[
+      requestId,
+      chunks,
+      chars,
+      elapsedMs,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static NativeGenerationProgress decode(Object result) {
     result as List<Object?>;
@@ -373,17 +413,13 @@ class NativeGenerationProgress {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! NativeGenerationProgress ||
-        other.runtimeType != runtimeType) {
+    if (other is! NativeGenerationProgress || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(requestId, other.requestId) &&
-        _deepEquals(chunks, other.chunks) &&
-        _deepEquals(chars, other.chars) &&
-        _deepEquals(elapsedMs, other.elapsedMs);
+    return _deepEquals(requestId, other.requestId) && _deepEquals(chunks, other.chunks) && _deepEquals(chars, other.chars) && _deepEquals(elapsedMs, other.elapsedMs);
   }
 
   @override
@@ -418,12 +454,17 @@ class NativeImportProgress {
   String? error;
 
   List<Object?> _toList() {
-    return <Object?>[importId, phase, bytesCopied, totalBytes, error];
+    return <Object?>[
+      importId,
+      phase,
+      bytesCopied,
+      totalBytes,
+      error,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static NativeImportProgress decode(Object result) {
     result as List<Object?>;
@@ -445,11 +486,7 @@ class NativeImportProgress {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(importId, other.importId) &&
-        _deepEquals(phase, other.phase) &&
-        _deepEquals(bytesCopied, other.bytesCopied) &&
-        _deepEquals(totalBytes, other.totalBytes) &&
-        _deepEquals(error, other.error);
+    return _deepEquals(importId, other.importId) && _deepEquals(phase, other.phase) && _deepEquals(bytesCopied, other.bytesCopied) && _deepEquals(totalBytes, other.totalBytes) && _deepEquals(error, other.error);
   }
 
   @override
@@ -462,6 +499,344 @@ class NativeImportProgress {
   }
 }
 
+/// One Pest ID generation (guardrails §8 amendment): images first, then the
+/// optional audio clip, then the text prompt, in a fresh conversation.
+class NativePestRequest {
+  NativePestRequest({
+    this.modelPath,
+    required this.systemInstruction,
+    required this.prompt,
+    required this.images,
+    this.audioWav,
+    required this.format,
+    this.formatSpec,
+    required this.temperature,
+    required this.topK,
+    required this.topP,
+    required this.seed,
+    required this.maxOutputTokens,
+    required this.timeoutMs,
+  });
+
+  String? modelPath;
+
+  String systemInstruction;
+
+  String prompt;
+
+  /// PNG or JPEG, user-confirmed crop first, optional context frame second.
+  List<Uint8List> images;
+
+  /// RIFF WAV, mono, 16 kHz, 16-bit, at most 30 s.
+  Uint8List? audioWav;
+
+  NativeResponseFormat format;
+
+  /// JSON schema (json) or pattern (regex); null for none.
+  String? formatSpec;
+
+  double temperature;
+
+  int topK;
+
+  double topP;
+
+  int seed;
+
+  int maxOutputTokens;
+
+  /// Bounds load plus generation of this one request.
+  int timeoutMs;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      modelPath,
+      systemInstruction,
+      prompt,
+      images,
+      audioWav,
+      format,
+      formatSpec,
+      temperature,
+      topK,
+      topP,
+      seed,
+      maxOutputTokens,
+      timeoutMs,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static NativePestRequest decode(Object result) {
+    result as List<Object?>;
+    return NativePestRequest(
+      modelPath: result[0] as String?,
+      systemInstruction: result[1]! as String,
+      prompt: result[2]! as String,
+      images: (result[3]! as List<Object?>).cast<Uint8List>(),
+      audioWav: result[4] as Uint8List?,
+      format: result[5]! as NativeResponseFormat,
+      formatSpec: result[6] as String?,
+      temperature: result[7]! as double,
+      topK: result[8]! as int,
+      topP: result[9]! as double,
+      seed: result[10]! as int,
+      maxOutputTokens: result[11]! as int,
+      timeoutMs: result[12]! as int,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativePestRequest || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(modelPath, other.modelPath) && _deepEquals(systemInstruction, other.systemInstruction) && _deepEquals(prompt, other.prompt) && _deepEquals(images, other.images) && _deepEquals(audioWav, other.audioWav) && _deepEquals(format, other.format) && _deepEquals(formatSpec, other.formatSpec) && _deepEquals(temperature, other.temperature) && _deepEquals(topK, other.topK) && _deepEquals(topP, other.topP) && _deepEquals(seed, other.seed) && _deepEquals(maxOutputTokens, other.maxOutputTokens) && _deepEquals(timeoutMs, other.timeoutMs);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NativePestRequest(modelPath: $modelPath, systemInstruction: $systemInstruction, prompt: $prompt, images: $images, audioWav: $audioWav, format: $format, formatSpec: $formatSpec, temperature: $temperature, topK: $topK, topP: $topP, seed: $seed, maxOutputTokens: $maxOutputTokens, timeoutMs: $timeoutMs)';
+  }
+}
+
+class NativeEmbedRequest {
+  NativeEmbedRequest({
+    this.modelPath,
+    required this.kind,
+    this.text,
+    this.bytes,
+    required this.timeoutMs,
+  });
+
+  String? modelPath;
+
+  NativeEmbedKind kind;
+
+  /// Already prompt-formatted (EmbeddingGemma task prefix) for [kind] text.
+  String? text;
+
+  /// PNG/JPEG for image, RIFF WAV for audio.
+  Uint8List? bytes;
+
+  int timeoutMs;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      modelPath,
+      kind,
+      text,
+      bytes,
+      timeoutMs,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static NativeEmbedRequest decode(Object result) {
+    result as List<Object?>;
+    return NativeEmbedRequest(
+      modelPath: result[0] as String?,
+      kind: result[1]! as NativeEmbedKind,
+      text: result[2] as String?,
+      bytes: result[3] as Uint8List?,
+      timeoutMs: result[4]! as int,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativeEmbedRequest || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(modelPath, other.modelPath) && _deepEquals(kind, other.kind) && _deepEquals(text, other.text) && _deepEquals(bytes, other.bytes) && _deepEquals(timeoutMs, other.timeoutMs);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NativeEmbedRequest(modelPath: $modelPath, kind: $kind, text: $text, bytes: $bytes, timeoutMs: $timeoutMs)';
+  }
+}
+
+class NativeEmbedResult {
+  NativeEmbedResult({
+    required this.status,
+    this.values,
+    required this.modelVersion,
+    required this.backend,
+    required this.totalMs,
+  });
+
+  NativeGenerateStatus status;
+
+  /// Full-length embedding; null unless [status] is ok. Dart truncates
+  /// (Matryoshka) and re-normalises.
+  Float64List? values;
+
+  String modelVersion;
+
+  String backend;
+
+  int totalMs;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      status,
+      values,
+      modelVersion,
+      backend,
+      totalMs,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static NativeEmbedResult decode(Object result) {
+    result as List<Object?>;
+    return NativeEmbedResult(
+      status: result[0]! as NativeGenerateStatus,
+      values: result[1] as Float64List?,
+      modelVersion: result[2]! as String,
+      backend: result[3]! as String,
+      totalMs: result[4]! as int,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativeEmbedResult || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(status, other.status) && _deepEquals(values, other.values) && _deepEquals(modelVersion, other.modelVersion) && _deepEquals(backend, other.backend) && _deepEquals(totalMs, other.totalMs);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NativeEmbedResult(status: $status, values: $values, modelVersion: $modelVersion, backend: $backend, totalMs: $totalMs)';
+  }
+}
+
+/// LiteRT-LM ModelInfo header fields. Reading them never loads weights.
+class NativeProbeResult {
+  NativeProbeResult({
+    required this.kind,
+    required this.text,
+    required this.vision,
+    required this.audio,
+    required this.video,
+    required this.backends,
+    this.maxContextTokens,
+    this.embeddingDim,
+    this.socName,
+    this.npuBrand,
+  });
+
+  NativeProbedKind kind;
+
+  bool text;
+
+  bool vision;
+
+  bool audio;
+
+  bool video;
+
+  /// "cpu", "gpu", "npu" for the text modality (main backend).
+  List<String> backends;
+
+  int? maxContextTokens;
+
+  int? embeddingDim;
+
+  String? socName;
+
+  String? npuBrand;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      kind,
+      text,
+      vision,
+      audio,
+      video,
+      backends,
+      maxContextTokens,
+      embeddingDim,
+      socName,
+      npuBrand,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static NativeProbeResult decode(Object result) {
+    result as List<Object?>;
+    return NativeProbeResult(
+      kind: result[0]! as NativeProbedKind,
+      text: result[1]! as bool,
+      vision: result[2]! as bool,
+      audio: result[3]! as bool,
+      video: result[4]! as bool,
+      backends: (result[5]! as List<Object?>).cast<String>(),
+      maxContextTokens: result[6] as int?,
+      embeddingDim: result[7] as int?,
+      socName: result[8] as String?,
+      npuBrand: result[9] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativeProbeResult || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(kind, other.kind) && _deepEquals(text, other.text) && _deepEquals(vision, other.vision) && _deepEquals(audio, other.audio) && _deepEquals(video, other.video) && _deepEquals(backends, other.backends) && _deepEquals(maxContextTokens, other.maxContextTokens) && _deepEquals(embeddingDim, other.embeddingDim) && _deepEquals(socName, other.socName) && _deepEquals(npuBrand, other.npuBrand);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NativeProbeResult(kind: $kind, text: $text, vision: $vision, audio: $audio, video: $video, backends: $backends, maxContextTokens: $maxContextTokens, embeddingDim: $embeddingDim, socName: $socName, npuBrand: $npuBrand)';
+  }
+}
+
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -469,29 +844,53 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is NativeEngineState) {
+    }    else if (value is NativeEngineState) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is NativeGenerateStatus) {
+    }    else if (value is NativeRuntimeSlot) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is NativeImportPhase) {
+    }    else if (value is NativeGenerateStatus) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    } else if (value is NativeEngineStatus) {
+    }    else if (value is NativeImportPhase) {
       buffer.putUint8(132);
-      writeValue(buffer, value.encode());
-    } else if (value is NativeModelInfo) {
+      writeValue(buffer, value.index);
+    }    else if (value is NativeResponseFormat) {
       buffer.putUint8(133);
-      writeValue(buffer, value.encode());
-    } else if (value is NativeGenerateResult) {
+      writeValue(buffer, value.index);
+    }    else if (value is NativeEmbedKind) {
       buffer.putUint8(134);
-      writeValue(buffer, value.encode());
-    } else if (value is NativeGenerationProgress) {
+      writeValue(buffer, value.index);
+    }    else if (value is NativeProbedKind) {
       buffer.putUint8(135);
-      writeValue(buffer, value.encode());
-    } else if (value is NativeImportProgress) {
+      writeValue(buffer, value.index);
+    }    else if (value is NativeEngineStatus) {
       buffer.putUint8(136);
+      writeValue(buffer, value.encode());
+    }    else if (value is NativeModelInfo) {
+      buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    }    else if (value is NativeGenerateResult) {
+      buffer.putUint8(138);
+      writeValue(buffer, value.encode());
+    }    else if (value is NativeGenerationProgress) {
+      buffer.putUint8(139);
+      writeValue(buffer, value.encode());
+    }    else if (value is NativeImportProgress) {
+      buffer.putUint8(140);
+      writeValue(buffer, value.encode());
+    }    else if (value is NativePestRequest) {
+      buffer.putUint8(141);
+      writeValue(buffer, value.encode());
+    }    else if (value is NativeEmbedRequest) {
+      buffer.putUint8(142);
+      writeValue(buffer, value.encode());
+    }    else if (value is NativeEmbedResult) {
+      buffer.putUint8(143);
+      writeValue(buffer, value.encode());
+    }    else if (value is NativeProbeResult) {
+      buffer.putUint8(144);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -506,50 +905,67 @@ class _PigeonCodec extends StandardMessageCodec {
         return value == null ? null : NativeEngineState.values[value];
       case 130:
         final value = readValue(buffer) as int?;
-        return value == null ? null : NativeGenerateStatus.values[value];
+        return value == null ? null : NativeRuntimeSlot.values[value];
       case 131:
         final value = readValue(buffer) as int?;
-        return value == null ? null : NativeImportPhase.values[value];
+        return value == null ? null : NativeGenerateStatus.values[value];
       case 132:
-        return NativeEngineStatus.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : NativeImportPhase.values[value];
       case 133:
-        return NativeModelInfo.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : NativeResponseFormat.values[value];
       case 134:
-        return NativeGenerateResult.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : NativeEmbedKind.values[value];
       case 135:
-        return NativeGenerationProgress.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : NativeProbedKind.values[value];
       case 136:
+        return NativeEngineStatus.decode(readValue(buffer)!);
+      case 137:
+        return NativeModelInfo.decode(readValue(buffer)!);
+      case 138:
+        return NativeGenerateResult.decode(readValue(buffer)!);
+      case 139:
+        return NativeGenerationProgress.decode(readValue(buffer)!);
+      case 140:
         return NativeImportProgress.decode(readValue(buffer)!);
+      case 141:
+        return NativePestRequest.decode(readValue(buffer)!);
+      case 142:
+        return NativeEmbedRequest.decode(readValue(buffer)!);
+      case 143:
+        return NativeEmbedResult.decode(readValue(buffer)!);
+      case 144:
+        return NativeProbeResult.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(
-  _PigeonCodec(),
-);
+const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
 
 class LlmHostApi {
   /// Constructor for [LlmHostApi]. The [binaryMessenger] named argument is
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   LlmHostApi({
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-           ? '.$messageChannelSuffix'
-           : '';
+      BinaryMessenger? binaryMessenger, 
+      String messageChannelSuffix = '', 
+      })
+      : pigeonVar_binaryMessenger = binaryMessenger,
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
 
+
   Future<NativeEngineStatus> status() async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.local_llm.LlmHostApi.status$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.status$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -559,107 +975,163 @@ class LlmHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as NativeEngineStatus;
   }
 
-  /// Null when no .litertlm is installed. Writes the sidecar on first use
-  /// for a file copied in by adb (one streamed sha256 pass).
-  Future<NativeModelInfo?> modelInfo() async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.local_llm.LlmHostApi.modelInfo$pigeonVar_messageChannelSuffix';
+  /// Null when no model is found. [modelPath] null = legacy discovery of
+  /// the first model of [slot]'s kind in getExternalFilesDir("llm").
+  /// The first call for a new file hashes it once (sha256) for the version.
+  Future<NativeModelInfo?> modelInfo(String? modelPath, NativeRuntimeSlot slot) async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.modelInfo$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[modelPath, slot]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
     return pigeonVar_replyValue as NativeModelInfo?;
   }
 
-  /// Loads the engine now (GPU, then CPU). Returns the final status.
-  Future<NativeEngineStatus> load() async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.local_llm.LlmHostApi.load$pigeonVar_messageChannelSuffix';
+  /// Loads the text-only advice engine now (GPU, then CPU). Returns the
+  /// final status.
+  Future<NativeEngineStatus> load(String? modelPath) async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.load$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[modelPath]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as NativeEngineStatus;
   }
 
-  /// One short-lived conversation. Rejects with busy while another runs.
-  /// [timeoutMs] bounds the generation itself; loading is not counted.
-  Future<NativeGenerateResult> generate(
-    String requestId,
-    String systemInstruction,
-    String prompt,
-    int timeoutMs,
-  ) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.local_llm.LlmHostApi.generate$pigeonVar_messageChannelSuffix';
+  /// Grain advice: one short-lived text-only conversation. Rejects with
+  /// busy while another request runs. [timeoutMs] bounds the generation;
+  /// loading is not counted.
+  Future<NativeGenerateResult> generate(String requestId, String? modelPath, String systemInstruction, String prompt, int timeoutMs) async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.generate$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[requestId, systemInstruction, prompt, timeoutMs],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[requestId, modelPath, systemInstruction, prompt, timeoutMs]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as NativeGenerateResult;
   }
 
-  /// Cancels [requestId] if it is the running generation. No-op otherwise.
-  Future<void> cancel(String requestId) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.local_llm.LlmHostApi.cancel$pigeonVar_messageChannelSuffix';
+  /// Pest ID only: one multimodal conversation on the Pest ID engine.
+  Future<NativeGenerateResult> pestGenerate(String requestId, NativePestRequest request) async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.pestGenerate$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[requestId],
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[requestId, request]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
+    return pigeonVar_replyValue! as NativeGenerateResult;
+  }
+
+  /// One embedding on EmbeddingGemma.
+  Future<NativeEmbedResult> embed(String requestId, NativeEmbedRequest request) async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.embed$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
     );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[requestId, request]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
+    return pigeonVar_replyValue! as NativeEmbedResult;
+  }
+
+  /// Reads the model header (LiteRT-LM ModelInfo) without loading weights.
+  /// Null when the file is not a readable LiteRT-LM model or lies outside
+  /// the app's own storage.
+  Future<NativeProbeResult?> probe(String absolutePath) async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.probe$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[absolutePath]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
+    return pigeonVar_replyValue as NativeProbeResult?;
+  }
+
+  /// Cancels [requestId] if it is the running request. No-op otherwise.
+  Future<void> cancel(String requestId) async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.cancel$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[requestId]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
   }
 
-  /// Frees the engine (cancels a running generation first).
+  /// Frees whichever engine is loaded (cancels a running request first).
   Future<void> unload() async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.local_llm.LlmHostApi.unload$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.unload$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -669,43 +1141,38 @@ class LlmHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
   }
 
   /// Copies a SAF content:// URI into app-specific storage, verifies it and
   /// writes the sidecar. Progress arrives on [LlmEvents.importProgress];
   /// the reply is the final event.
-  Future<NativeImportProgress> importFromUri(
-    String importId,
-    String contentUri,
-  ) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.local_llm.LlmHostApi.importFromUri$pigeonVar_messageChannelSuffix';
+  Future<NativeImportProgress> importFromUri(String importId, String contentUri) async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.importFromUri$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[importId, contentUri],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[importId, contentUri]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as NativeImportProgress;
   }
 
   /// Unloads, then removes every model file, sidecar and partial copy.
   Future<void> deleteModel() async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.local_llm.LlmHostApi.deleteModel$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.deleteModel$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -715,15 +1182,15 @@ class LlmHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
   }
 
   Future<int> freeSpaceBytes() async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.local_llm.LlmHostApi.freeSpaceBytes$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.freeSpaceBytes$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -733,18 +1200,18 @@ class LlmHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as int;
   }
 
   /// System document picker (ACTION_OPEN_DOCUMENT, any MIME type). Returns the
   /// content:// URI of a picked .litertlm file, or null.
   Future<String?> pickLitertlmUri() async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.local_llm.LlmHostApi.pickLitertlmUri$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.local_llm.LlmHostApi.pickLitertlmUri$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -754,10 +1221,11 @@ class LlmHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
     return pigeonVar_replyValue as String?;
   }
 }
@@ -770,19 +1238,17 @@ class LlmHostApi {
 /// not be called multiple times for the same `instanceName`. To deliver
 /// events to multiple listeners, call this method once and listen to the
 /// returned broadcast stream multiple times instead.
-Stream<NativeEngineStatus> engineStatus({String instanceName = ''}) {
+Stream<NativeEngineStatus> engineStatus( {String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel engineStatusChannel = EventChannel(
-    'dev.flutter.pigeon.local_llm.LlmEvents.engineStatus$instanceName',
-    pigeonMethodCodec,
-  );
+  final EventChannel engineStatusChannel =
+      EventChannel('dev.flutter.pigeon.local_llm.LlmEvents.engineStatus$instanceName', pigeonMethodCodec);
   return engineStatusChannel.receiveBroadcastStream().map((dynamic event) {
     return event as NativeEngineStatus;
   });
 }
-
+    
 /// Streaming progress of the running generation (sizes only, no text).
 ///
 /// Returns a broadcast [Stream] of events from the `generationProgress` event channel.
@@ -791,23 +1257,17 @@ Stream<NativeEngineStatus> engineStatus({String instanceName = ''}) {
 /// not be called multiple times for the same `instanceName`. To deliver
 /// events to multiple listeners, call this method once and listen to the
 /// returned broadcast stream multiple times instead.
-Stream<NativeGenerationProgress> generationProgress({
-  String instanceName = '',
-}) {
+Stream<NativeGenerationProgress> generationProgress( {String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel generationProgressChannel = EventChannel(
-    'dev.flutter.pigeon.local_llm.LlmEvents.generationProgress$instanceName',
-    pigeonMethodCodec,
-  );
-  return generationProgressChannel.receiveBroadcastStream().map((
-    dynamic event,
-  ) {
+  final EventChannel generationProgressChannel =
+      EventChannel('dev.flutter.pigeon.local_llm.LlmEvents.generationProgress$instanceName', pigeonMethodCodec);
+  return generationProgressChannel.receiveBroadcastStream().map((dynamic event) {
     return event as NativeGenerationProgress;
   });
 }
-
+    
 /// Import progress, throttled to about 4 per second.
 ///
 /// Returns a broadcast [Stream] of events from the `importProgress` event channel.
@@ -816,15 +1276,14 @@ Stream<NativeGenerationProgress> generationProgress({
 /// not be called multiple times for the same `instanceName`. To deliver
 /// events to multiple listeners, call this method once and listen to the
 /// returned broadcast stream multiple times instead.
-Stream<NativeImportProgress> importProgress({String instanceName = ''}) {
+Stream<NativeImportProgress> importProgress( {String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel importProgressChannel = EventChannel(
-    'dev.flutter.pigeon.local_llm.LlmEvents.importProgress$instanceName',
-    pigeonMethodCodec,
-  );
+  final EventChannel importProgressChannel =
+      EventChannel('dev.flutter.pigeon.local_llm.LlmEvents.importProgress$instanceName', pigeonMethodCodec);
   return importProgressChannel.receiveBroadcastStream().map((dynamic event) {
     return event as NativeImportProgress;
   });
 }
+    

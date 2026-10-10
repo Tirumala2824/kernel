@@ -198,15 +198,15 @@ class LlmApiError (
   val details: Any? = null
 ) : RuntimeException()
 
-/** Lifecycle of the native LiteRT-LM engine. */
+/** Lifecycle of the single native LiteRT-LM engine slot. */
 enum class NativeEngineState(val raw: Int) {
   /** No engine in memory (never loaded, idle-unloaded or trimmed). */
   UNLOADED(0),
   LOADING(1),
   READY(2),
-  /** One generation is running; others are rejected. */
+  /** One request is running; others are rejected. */
   BUSY(3),
-  /** The last load attempt failed on both GPU and CPU. */
+  /** The last load attempt failed on every backend. */
   FAILED(4);
 
   companion object {
@@ -216,17 +216,35 @@ enum class NativeEngineState(val raw: Int) {
   }
 }
 
+/** Which engine occupies the runtime. Only one is ever in memory. */
+enum class NativeRuntimeSlot(val raw: Int) {
+  /** Gemma, text-only (grain advice). */
+  ADVICE(0),
+  /** Gemma with the vision and audio encoders (Pest ID mode only). */
+  PEST_ID(1),
+  /** EmbeddingGemma. */
+  EMBEDDER(2);
+
+  companion object {
+    fun ofRaw(raw: Int): NativeRuntimeSlot? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 enum class NativeGenerateStatus(val raw: Int) {
   OK(0),
-  /** Another generation is running. */
+  /** Another request is running. */
   BUSY(1),
   NO_MODEL(2),
-  /** The engine could not be loaded on GPU or CPU. */
+  /** The engine could not be loaded on any backend. */
   LOAD_FAILED(3),
   TIMEOUT(4),
   CANCELLED(5),
   /** Native runtime error (message is never forwarded: it may echo text). */
-  ERROR(6);
+  ERROR(6),
+  /** The model cannot take this input (e.g. no vision or audio encoder). */
+  UNSUPPORTED(7);
 
   companion object {
     fun ofRaw(raw: Int): NativeGenerateStatus? {
@@ -248,6 +266,43 @@ enum class NativeImportPhase(val raw: Int) {
   }
 }
 
+/** Constrained decoding for a Pest ID generation. */
+enum class NativeResponseFormat(val raw: Int) {
+  NONE(0),
+  JSON(1),
+  REGEX(2);
+
+  companion object {
+    fun ofRaw(raw: Int): NativeResponseFormat? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class NativeEmbedKind(val raw: Int) {
+  TEXT(0),
+  IMAGE(1),
+  AUDIO(2);
+
+  companion object {
+    fun ofRaw(raw: Int): NativeEmbedKind? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class NativeProbedKind(val raw: Int) {
+  LLM(0),
+  EMBEDDING(1),
+  UNKNOWN(2);
+
+  companion object {
+    fun ofRaw(raw: Int): NativeProbedKind? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 /**
  * Engine state plus whether a model file is installed.
  *
@@ -255,9 +310,19 @@ enum class NativeImportPhase(val raw: Int) {
  */
 data class NativeEngineStatus (
   val state: NativeEngineState,
+  /**
+   * A language model is present in the legacy getExternalFilesDir("llm")
+   * directory. Callers with a model-path resolver decide presence
+   * themselves.
+   */
   val modelPresent: Boolean,
   /** "gpu", "cpu" or "none" while nothing is loaded. */
-  val backend: String
+  val backend: String,
+  /**
+   * Slot of the loaded engine, or of the load attempt while loading or
+   * failed. Null when nothing is loaded or attempted.
+   */
+  val slot: NativeRuntimeSlot? = null
 )
  {
   companion object {
@@ -265,7 +330,8 @@ data class NativeEngineStatus (
       val state = pigeonVar_list[0] as NativeEngineState
       val modelPresent = pigeonVar_list[1] as Boolean
       val backend = pigeonVar_list[2] as String
-      return NativeEngineStatus(state, modelPresent, backend)
+      val slot = pigeonVar_list[3] as NativeRuntimeSlot?
+      return NativeEngineStatus(state, modelPresent, backend, slot)
     }
   }
   fun toList(): List<Any?> {
@@ -273,6 +339,7 @@ data class NativeEngineStatus (
       state,
       modelPresent,
       backend,
+      slot,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -283,7 +350,7 @@ data class NativeEngineStatus (
       return true
     }
     val other = other as NativeEngineStatus
-    return LlmApiPigeonUtils.deepEquals(this.state, other.state) && LlmApiPigeonUtils.deepEquals(this.modelPresent, other.modelPresent) && LlmApiPigeonUtils.deepEquals(this.backend, other.backend)
+    return LlmApiPigeonUtils.deepEquals(this.state, other.state) && LlmApiPigeonUtils.deepEquals(this.modelPresent, other.modelPresent) && LlmApiPigeonUtils.deepEquals(this.backend, other.backend) && LlmApiPigeonUtils.deepEquals(this.slot, other.slot)
   }
 
   override fun hashCode(): Int {
@@ -291,10 +358,11 @@ data class NativeEngineStatus (
     result = 31 * result + LlmApiPigeonUtils.deepHash(this.state)
     result = 31 * result + LlmApiPigeonUtils.deepHash(this.modelPresent)
     result = 31 * result + LlmApiPigeonUtils.deepHash(this.backend)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.slot)
     return result
   }
   override fun toString(): String {
-    return "NativeEngineStatus(state=$state, modelPresent=$modelPresent, backend=$backend)"
+    return "NativeEngineStatus(state=$state, modelPresent=$modelPresent, backend=$backend, slot=$slot)"
   }
 }
 
@@ -302,7 +370,7 @@ data class NativeEngineStatus (
 data class NativeModelInfo (
   /** File name without the .litertlm extension. */
   val id: String,
-  /** `<id>@<first 12 hex chars of the sha256>`, from the sidecar. */
+  /** `<id>@<first 12 hex chars of the sha256>`. */
   val version: String,
   val sizeBytes: Long,
   /** "gpu", "cpu" or "none" before the first load. */
@@ -355,7 +423,7 @@ data class NativeGenerateResult (
   val status: NativeGenerateStatus,
   /**
    * Full raw model output; empty unless [status] is ok. The Dart side runs
-   * the output guard on it before anything reaches the UI.
+   * the output guard / parser on it before anything reaches the UI.
    */
   val text: String,
   val modelVersion: String,
@@ -526,6 +594,290 @@ data class NativeImportProgress (
     return "NativeImportProgress(importId=$importId, phase=$phase, bytesCopied=$bytesCopied, totalBytes=$totalBytes, error=$error)"
   }
 }
+
+/**
+ * One Pest ID generation (guardrails §8 amendment): images first, then the
+ * optional audio clip, then the text prompt, in a fresh conversation.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class NativePestRequest (
+  val modelPath: String? = null,
+  val systemInstruction: String,
+  val prompt: String,
+  /** PNG or JPEG, user-confirmed crop first, optional context frame second. */
+  val images: List<ByteArray>,
+  /** RIFF WAV, mono, 16 kHz, 16-bit, at most 30 s. */
+  val audioWav: ByteArray? = null,
+  val format: NativeResponseFormat,
+  /** JSON schema (json) or pattern (regex); null for none. */
+  val formatSpec: String? = null,
+  val temperature: Double,
+  val topK: Long,
+  val topP: Double,
+  val seed: Long,
+  val maxOutputTokens: Long,
+  /** Bounds load plus generation of this one request. */
+  val timeoutMs: Long
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NativePestRequest {
+      val modelPath = pigeonVar_list[0] as String?
+      val systemInstruction = pigeonVar_list[1] as String
+      val prompt = pigeonVar_list[2] as String
+      val images = pigeonVar_list[3] as List<ByteArray>
+      val audioWav = pigeonVar_list[4] as ByteArray?
+      val format = pigeonVar_list[5] as NativeResponseFormat
+      val formatSpec = pigeonVar_list[6] as String?
+      val temperature = pigeonVar_list[7] as Double
+      val topK = pigeonVar_list[8] as Long
+      val topP = pigeonVar_list[9] as Double
+      val seed = pigeonVar_list[10] as Long
+      val maxOutputTokens = pigeonVar_list[11] as Long
+      val timeoutMs = pigeonVar_list[12] as Long
+      return NativePestRequest(modelPath, systemInstruction, prompt, images, audioWav, format, formatSpec, temperature, topK, topP, seed, maxOutputTokens, timeoutMs)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      modelPath,
+      systemInstruction,
+      prompt,
+      images,
+      audioWav,
+      format,
+      formatSpec,
+      temperature,
+      topK,
+      topP,
+      seed,
+      maxOutputTokens,
+      timeoutMs,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as NativePestRequest
+    return LlmApiPigeonUtils.deepEquals(this.modelPath, other.modelPath) && LlmApiPigeonUtils.deepEquals(this.systemInstruction, other.systemInstruction) && LlmApiPigeonUtils.deepEquals(this.prompt, other.prompt) && LlmApiPigeonUtils.deepEquals(this.images, other.images) && LlmApiPigeonUtils.deepEquals(this.audioWav, other.audioWav) && LlmApiPigeonUtils.deepEquals(this.format, other.format) && LlmApiPigeonUtils.deepEquals(this.formatSpec, other.formatSpec) && LlmApiPigeonUtils.deepEquals(this.temperature, other.temperature) && LlmApiPigeonUtils.deepEquals(this.topK, other.topK) && LlmApiPigeonUtils.deepEquals(this.topP, other.topP) && LlmApiPigeonUtils.deepEquals(this.seed, other.seed) && LlmApiPigeonUtils.deepEquals(this.maxOutputTokens, other.maxOutputTokens) && LlmApiPigeonUtils.deepEquals(this.timeoutMs, other.timeoutMs)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.modelPath)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.systemInstruction)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.prompt)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.images)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.audioWav)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.format)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.formatSpec)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.temperature)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.topK)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.topP)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.seed)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.maxOutputTokens)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.timeoutMs)
+    return result
+  }
+  override fun toString(): String {
+    return "NativePestRequest(modelPath=$modelPath, systemInstruction=$systemInstruction, prompt=$prompt, images=$images, audioWav=${audioWav?.contentToString()}, format=$format, formatSpec=$formatSpec, temperature=$temperature, topK=$topK, topP=$topP, seed=$seed, maxOutputTokens=$maxOutputTokens, timeoutMs=$timeoutMs)"
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class NativeEmbedRequest (
+  val modelPath: String? = null,
+  val kind: NativeEmbedKind,
+  /** Already prompt-formatted (EmbeddingGemma task prefix) for [kind] text. */
+  val text: String? = null,
+  /** PNG/JPEG for image, RIFF WAV for audio. */
+  val bytes: ByteArray? = null,
+  val timeoutMs: Long
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NativeEmbedRequest {
+      val modelPath = pigeonVar_list[0] as String?
+      val kind = pigeonVar_list[1] as NativeEmbedKind
+      val text = pigeonVar_list[2] as String?
+      val bytes = pigeonVar_list[3] as ByteArray?
+      val timeoutMs = pigeonVar_list[4] as Long
+      return NativeEmbedRequest(modelPath, kind, text, bytes, timeoutMs)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      modelPath,
+      kind,
+      text,
+      bytes,
+      timeoutMs,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as NativeEmbedRequest
+    return LlmApiPigeonUtils.deepEquals(this.modelPath, other.modelPath) && LlmApiPigeonUtils.deepEquals(this.kind, other.kind) && LlmApiPigeonUtils.deepEquals(this.text, other.text) && LlmApiPigeonUtils.deepEquals(this.bytes, other.bytes) && LlmApiPigeonUtils.deepEquals(this.timeoutMs, other.timeoutMs)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.modelPath)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.kind)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.text)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.bytes)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.timeoutMs)
+    return result
+  }
+  override fun toString(): String {
+    return "NativeEmbedRequest(modelPath=$modelPath, kind=$kind, text=$text, bytes=${bytes?.contentToString()}, timeoutMs=$timeoutMs)"
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class NativeEmbedResult (
+  val status: NativeGenerateStatus,
+  /**
+   * Full-length embedding; null unless [status] is ok. Dart truncates
+   * (Matryoshka) and re-normalises.
+   */
+  val values: DoubleArray? = null,
+  val modelVersion: String,
+  val backend: String,
+  val totalMs: Long
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NativeEmbedResult {
+      val status = pigeonVar_list[0] as NativeGenerateStatus
+      val values = pigeonVar_list[1] as DoubleArray?
+      val modelVersion = pigeonVar_list[2] as String
+      val backend = pigeonVar_list[3] as String
+      val totalMs = pigeonVar_list[4] as Long
+      return NativeEmbedResult(status, values, modelVersion, backend, totalMs)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      status,
+      values,
+      modelVersion,
+      backend,
+      totalMs,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as NativeEmbedResult
+    return LlmApiPigeonUtils.deepEquals(this.status, other.status) && LlmApiPigeonUtils.deepEquals(this.values, other.values) && LlmApiPigeonUtils.deepEquals(this.modelVersion, other.modelVersion) && LlmApiPigeonUtils.deepEquals(this.backend, other.backend) && LlmApiPigeonUtils.deepEquals(this.totalMs, other.totalMs)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.status)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.values)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.modelVersion)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.backend)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.totalMs)
+    return result
+  }
+  override fun toString(): String {
+    return "NativeEmbedResult(status=$status, values=${values?.contentToString()}, modelVersion=$modelVersion, backend=$backend, totalMs=$totalMs)"
+  }
+}
+
+/**
+ * LiteRT-LM ModelInfo header fields. Reading them never loads weights.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class NativeProbeResult (
+  val kind: NativeProbedKind,
+  val text: Boolean,
+  val vision: Boolean,
+  val audio: Boolean,
+  val video: Boolean,
+  /** "cpu", "gpu", "npu" for the text modality (main backend). */
+  val backends: List<String>,
+  val maxContextTokens: Long? = null,
+  val embeddingDim: Long? = null,
+  val socName: String? = null,
+  val npuBrand: String? = null
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NativeProbeResult {
+      val kind = pigeonVar_list[0] as NativeProbedKind
+      val text = pigeonVar_list[1] as Boolean
+      val vision = pigeonVar_list[2] as Boolean
+      val audio = pigeonVar_list[3] as Boolean
+      val video = pigeonVar_list[4] as Boolean
+      val backends = pigeonVar_list[5] as List<String>
+      val maxContextTokens = pigeonVar_list[6] as Long?
+      val embeddingDim = pigeonVar_list[7] as Long?
+      val socName = pigeonVar_list[8] as String?
+      val npuBrand = pigeonVar_list[9] as String?
+      return NativeProbeResult(kind, text, vision, audio, video, backends, maxContextTokens, embeddingDim, socName, npuBrand)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      kind,
+      text,
+      vision,
+      audio,
+      video,
+      backends,
+      maxContextTokens,
+      embeddingDim,
+      socName,
+      npuBrand,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as NativeProbeResult
+    return LlmApiPigeonUtils.deepEquals(this.kind, other.kind) && LlmApiPigeonUtils.deepEquals(this.text, other.text) && LlmApiPigeonUtils.deepEquals(this.vision, other.vision) && LlmApiPigeonUtils.deepEquals(this.audio, other.audio) && LlmApiPigeonUtils.deepEquals(this.video, other.video) && LlmApiPigeonUtils.deepEquals(this.backends, other.backends) && LlmApiPigeonUtils.deepEquals(this.maxContextTokens, other.maxContextTokens) && LlmApiPigeonUtils.deepEquals(this.embeddingDim, other.embeddingDim) && LlmApiPigeonUtils.deepEquals(this.socName, other.socName) && LlmApiPigeonUtils.deepEquals(this.npuBrand, other.npuBrand)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.kind)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.text)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.vision)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.audio)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.video)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.backends)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.maxContextTokens)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.embeddingDim)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.socName)
+    result = 31 * result + LlmApiPigeonUtils.deepHash(this.npuBrand)
+    return result
+  }
+  override fun toString(): String {
+    return "NativeProbeResult(kind=$kind, text=$text, vision=$vision, audio=$audio, video=$video, backends=$backends, maxContextTokens=$maxContextTokens, embeddingDim=$embeddingDim, socName=$socName, npuBrand=$npuBrand)"
+  }
+}
 private open class LlmApiPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
@@ -536,37 +888,77 @@ private open class LlmApiPigeonCodec : StandardMessageCodec() {
       }
       130.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          NativeGenerateStatus.ofRaw(it.toInt())
+          NativeRuntimeSlot.ofRaw(it.toInt())
         }
       }
       131.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          NativeImportPhase.ofRaw(it.toInt())
+          NativeGenerateStatus.ofRaw(it.toInt())
         }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          NativeEngineStatus.fromList(it)
+        return (readValue(buffer) as Long?)?.let {
+          NativeImportPhase.ofRaw(it.toInt())
         }
       }
       133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          NativeModelInfo.fromList(it)
+        return (readValue(buffer) as Long?)?.let {
+          NativeResponseFormat.ofRaw(it.toInt())
         }
       }
       134.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          NativeGenerateResult.fromList(it)
+        return (readValue(buffer) as Long?)?.let {
+          NativeEmbedKind.ofRaw(it.toInt())
         }
       }
       135.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          NativeGenerationProgress.fromList(it)
+        return (readValue(buffer) as Long?)?.let {
+          NativeProbedKind.ofRaw(it.toInt())
         }
       }
       136.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
+          NativeEngineStatus.fromList(it)
+        }
+      }
+      137.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeModelInfo.fromList(it)
+        }
+      }
+      138.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeGenerateResult.fromList(it)
+        }
+      }
+      139.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeGenerationProgress.fromList(it)
+        }
+      }
+      140.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
           NativeImportProgress.fromList(it)
+        }
+      }
+      141.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativePestRequest.fromList(it)
+        }
+      }
+      142.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeEmbedRequest.fromList(it)
+        }
+      }
+      143.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeEmbedResult.fromList(it)
+        }
+      }
+      144.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeProbeResult.fromList(it)
         }
       }
       else -> super.readValueOfType(type, buffer)
@@ -578,32 +970,64 @@ private open class LlmApiPigeonCodec : StandardMessageCodec() {
         stream.write(129)
         writeValue(stream, value.raw.toLong())
       }
-      is NativeGenerateStatus -> {
+      is NativeRuntimeSlot -> {
         stream.write(130)
         writeValue(stream, value.raw.toLong())
       }
-      is NativeImportPhase -> {
+      is NativeGenerateStatus -> {
         stream.write(131)
         writeValue(stream, value.raw.toLong())
       }
-      is NativeEngineStatus -> {
+      is NativeImportPhase -> {
         stream.write(132)
+        writeValue(stream, value.raw.toLong())
+      }
+      is NativeResponseFormat -> {
+        stream.write(133)
+        writeValue(stream, value.raw.toLong())
+      }
+      is NativeEmbedKind -> {
+        stream.write(134)
+        writeValue(stream, value.raw.toLong())
+      }
+      is NativeProbedKind -> {
+        stream.write(135)
+        writeValue(stream, value.raw.toLong())
+      }
+      is NativeEngineStatus -> {
+        stream.write(136)
         writeValue(stream, value.toList())
       }
       is NativeModelInfo -> {
-        stream.write(133)
+        stream.write(137)
         writeValue(stream, value.toList())
       }
       is NativeGenerateResult -> {
-        stream.write(134)
+        stream.write(138)
         writeValue(stream, value.toList())
       }
       is NativeGenerationProgress -> {
-        stream.write(135)
+        stream.write(139)
         writeValue(stream, value.toList())
       }
       is NativeImportProgress -> {
-        stream.write(136)
+        stream.write(140)
+        writeValue(stream, value.toList())
+      }
+      is NativePestRequest -> {
+        stream.write(141)
+        writeValue(stream, value.toList())
+      }
+      is NativeEmbedRequest -> {
+        stream.write(142)
+        writeValue(stream, value.toList())
+      }
+      is NativeEmbedResult -> {
+        stream.write(143)
+        writeValue(stream, value.toList())
+      }
+      is NativeProbeResult -> {
+        stream.write(144)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -618,20 +1042,35 @@ val LlmApiPigeonMethodCodec = StandardMethodCodec(LlmApiPigeonCodec())
 interface LlmHostApi {
   suspend fun status(): NativeEngineStatus
   /**
-   * Null when no .litertlm is installed. Writes the sidecar on first use
-   * for a file copied in by adb (one streamed sha256 pass).
+   * Null when no model is found. [modelPath] null = legacy discovery of
+   * the first model of [slot]'s kind in getExternalFilesDir("llm").
+   * The first call for a new file hashes it once (sha256) for the version.
    */
-  suspend fun modelInfo(): NativeModelInfo?
-  /** Loads the engine now (GPU, then CPU). Returns the final status. */
-  suspend fun load(): NativeEngineStatus
+  suspend fun modelInfo(modelPath: String?, slot: NativeRuntimeSlot): NativeModelInfo?
   /**
-   * One short-lived conversation. Rejects with busy while another runs.
-   * [timeoutMs] bounds the generation itself; loading is not counted.
+   * Loads the text-only advice engine now (GPU, then CPU). Returns the
+   * final status.
    */
-  suspend fun generate(requestId: String, systemInstruction: String, prompt: String, timeoutMs: Long): NativeGenerateResult
-  /** Cancels [requestId] if it is the running generation. No-op otherwise. */
+  suspend fun load(modelPath: String?): NativeEngineStatus
+  /**
+   * Grain advice: one short-lived text-only conversation. Rejects with
+   * busy while another request runs. [timeoutMs] bounds the generation;
+   * loading is not counted.
+   */
+  suspend fun generate(requestId: String, modelPath: String?, systemInstruction: String, prompt: String, timeoutMs: Long): NativeGenerateResult
+  /** Pest ID only: one multimodal conversation on the Pest ID engine. */
+  suspend fun pestGenerate(requestId: String, request: NativePestRequest): NativeGenerateResult
+  /** One embedding on EmbeddingGemma. */
+  suspend fun embed(requestId: String, request: NativeEmbedRequest): NativeEmbedResult
+  /**
+   * Reads the model header (LiteRT-LM ModelInfo) without loading weights.
+   * Null when the file is not a readable LiteRT-LM model or lies outside
+   * the app's own storage.
+   */
+  suspend fun probe(absolutePath: String): NativeProbeResult?
+  /** Cancels [requestId] if it is the running request. No-op otherwise. */
   fun cancel(requestId: String)
-  /** Frees the engine (cancels a running generation first). */
+  /** Frees whichever engine is loaded (cancels a running request first). */
   suspend fun unload()
   /**
    * Copies a SAF content:// URI into app-specific storage, verifies it and
@@ -677,10 +1116,13 @@ interface LlmHostApi {
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.local_llm.LlmHostApi.modelInfo$separatedMessageChannelSuffix", codec)
         if (api != null) {
-          channel.setMessageHandler { _, reply ->
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val modelPathArg = args[0] as String?
+            val slotArg = args[1] as NativeRuntimeSlot
             CoroutineScope(Dispatchers.Main).launch {
               val wrapped: List<Any?> = try {
-                listOf(api.modelInfo())
+                listOf(api.modelInfo(modelPathArg, slotArg))
               } catch (exception: Throwable) {
                 LlmApiPigeonUtils.wrapError(exception)
               }
@@ -694,10 +1136,12 @@ interface LlmHostApi {
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.local_llm.LlmHostApi.load$separatedMessageChannelSuffix", codec)
         if (api != null) {
-          channel.setMessageHandler { _, reply ->
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val modelPathArg = args[0] as String?
             CoroutineScope(Dispatchers.Main).launch {
               val wrapped: List<Any?> = try {
-                listOf(api.load())
+                listOf(api.load(modelPathArg))
               } catch (exception: Throwable) {
                 LlmApiPigeonUtils.wrapError(exception)
               }
@@ -714,12 +1158,72 @@ interface LlmHostApi {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val requestIdArg = args[0] as String
-            val systemInstructionArg = args[1] as String
-            val promptArg = args[2] as String
-            val timeoutMsArg = args[3] as Long
+            val modelPathArg = args[1] as String?
+            val systemInstructionArg = args[2] as String
+            val promptArg = args[3] as String
+            val timeoutMsArg = args[4] as Long
             CoroutineScope(Dispatchers.Main).launch {
               val wrapped: List<Any?> = try {
-                listOf(api.generate(requestIdArg, systemInstructionArg, promptArg, timeoutMsArg))
+                listOf(api.generate(requestIdArg, modelPathArg, systemInstructionArg, promptArg, timeoutMsArg))
+              } catch (exception: Throwable) {
+                LlmApiPigeonUtils.wrapError(exception)
+              }
+              reply.reply(wrapped)
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.local_llm.LlmHostApi.pestGenerate$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val requestIdArg = args[0] as String
+            val requestArg = args[1] as NativePestRequest
+            CoroutineScope(Dispatchers.Main).launch {
+              val wrapped: List<Any?> = try {
+                listOf(api.pestGenerate(requestIdArg, requestArg))
+              } catch (exception: Throwable) {
+                LlmApiPigeonUtils.wrapError(exception)
+              }
+              reply.reply(wrapped)
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.local_llm.LlmHostApi.embed$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val requestIdArg = args[0] as String
+            val requestArg = args[1] as NativeEmbedRequest
+            CoroutineScope(Dispatchers.Main).launch {
+              val wrapped: List<Any?> = try {
+                listOf(api.embed(requestIdArg, requestArg))
+              } catch (exception: Throwable) {
+                LlmApiPigeonUtils.wrapError(exception)
+              }
+              reply.reply(wrapped)
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.local_llm.LlmHostApi.probe$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val absolutePathArg = args[0] as String
+            CoroutineScope(Dispatchers.Main).launch {
+              val wrapped: List<Any?> = try {
+                listOf(api.probe(absolutePathArg))
               } catch (exception: Throwable) {
                 LlmApiPigeonUtils.wrapError(exception)
               }

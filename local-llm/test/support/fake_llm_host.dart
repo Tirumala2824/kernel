@@ -1,6 +1,7 @@
 // Test-only stand-in for the Kotlin side (LlmHost). Lives under test/ only;
 // never reachable from the production dependency graph.
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:local_llm/src/llm_api.g.dart';
 import 'package:local_llm/src/llm_host.dart';
@@ -9,10 +10,12 @@ NativeEngineStatus nativeStatus({
   NativeEngineState state = NativeEngineState.unloaded,
   bool modelPresent = true,
   String backend = 'none',
+  NativeRuntimeSlot? slot,
 }) => NativeEngineStatus(
   state: state,
   modelPresent: modelPresent,
   backend: backend,
+  slot: slot,
 );
 
 NativeModelInfo nativeInfo({
@@ -44,26 +47,49 @@ NativeGenerateResult nativeResult({
   totalMs: 900,
 );
 
+NativeEmbedResult nativeEmbed({
+  NativeGenerateStatus status = NativeGenerateStatus.ok,
+  List<double>? values,
+  String modelVersion = 'embeddinggemma-2@abcdef012345',
+}) => NativeEmbedResult(
+  status: status,
+  values: values == null ? null : Float64List.fromList(values),
+  modelVersion: modelVersion,
+  backend: 'gpu',
+  totalMs: 40,
+);
+
 class GenerateCall {
   GenerateCall(
     this.requestId,
     this.systemInstruction,
     this.prompt,
-    this.timeoutMs,
-  );
+    this.timeoutMs, {
+    this.modelPath,
+  });
 
   final String requestId;
   final String systemInstruction;
   final String prompt;
   final int timeoutMs;
+  final String? modelPath;
 }
 
 class FakeLlmHost implements LlmHost {
   NativeEngineStatus currentStatus = nativeStatus();
   NativeModelInfo? info = nativeInfo();
+  NativeModelInfo? embedderInfo = nativeInfo(
+    id: 'embeddinggemma-2',
+    version: 'embeddinggemma-2@abcdef012345',
+    sizeBytes: 485000000,
+  );
 
   /// Answer for generate; may return a never-completing future.
   Future<NativeGenerateResult> Function(GenerateCall call)? onGenerate;
+  Future<NativeGenerateResult> Function(String id, NativePestRequest r)?
+  onPest;
+  Future<NativeEmbedResult> Function(String id, NativeEmbedRequest r)? onEmbed;
+  Future<NativeProbeResult?> Function(String path)? onProbe;
   Future<NativeImportProgress> Function(String importId, String uri)? onImport;
   Object? statusError;
   Object? freeSpaceError;
@@ -73,7 +99,12 @@ class FakeLlmHost implements LlmHost {
 
   final List<String> calls = [];
   final List<GenerateCall> generateCalls = [];
+  final List<NativePestRequest> pestCalls = [];
+  final List<String> pestIds = [];
+  final List<NativeEmbedRequest> embedCalls = [];
   final List<String> cancelled = [];
+  final List<(String?, NativeRuntimeSlot)> modelInfoCalls = [];
+  final List<String?> loadPaths = [];
 
   final StreamController<NativeEngineStatus> statusEvents =
       StreamController<NativeEngineStatus>.broadcast(sync: true);
@@ -96,28 +127,78 @@ class FakeLlmHost implements LlmHost {
   }
 
   @override
-  Future<NativeModelInfo?> modelInfo() async {
+  Future<NativeModelInfo?> modelInfo(
+    String? modelPath,
+    NativeRuntimeSlot slot,
+  ) async {
     calls.add('modelInfo');
-    return info;
+    modelInfoCalls.add((modelPath, slot));
+    return slot == NativeRuntimeSlot.embedder ? embedderInfo : info;
   }
 
   @override
-  Future<NativeEngineStatus> load() async {
+  Future<NativeEngineStatus> load(String? modelPath) async {
     calls.add('load');
+    loadPaths.add(modelPath);
     return currentStatus;
   }
 
   @override
   Future<NativeGenerateResult> generate(
     String requestId,
+    String? modelPath,
     String systemInstruction,
     String prompt,
     int timeoutMs,
   ) {
     calls.add('generate');
-    final call = GenerateCall(requestId, systemInstruction, prompt, timeoutMs);
+    final call = GenerateCall(
+      requestId,
+      systemInstruction,
+      prompt,
+      timeoutMs,
+      modelPath: modelPath,
+    );
     generateCalls.add(call);
     return (onGenerate ?? (_) async => nativeResult())(call);
+  }
+
+  @override
+  Future<NativeGenerateResult> pestGenerate(
+    String requestId,
+    NativePestRequest request,
+  ) {
+    calls.add('pestGenerate');
+    pestIds.add(requestId);
+    pestCalls.add(request);
+    final answer = onPest;
+    if (answer == null) {
+      return Future.value(
+        nativeResult(status: NativeGenerateStatus.noModel, text: ''),
+      );
+    }
+    return answer(requestId, request);
+  }
+
+  @override
+  Future<NativeEmbedResult> embed(
+    String requestId,
+    NativeEmbedRequest request,
+  ) {
+    calls.add('embed');
+    embedCalls.add(request);
+    final answer = onEmbed;
+    if (answer == null) {
+      return Future.value(nativeEmbed(status: NativeGenerateStatus.noModel));
+    }
+    return answer(requestId, request);
+  }
+
+  @override
+  Future<NativeProbeResult?> probe(String absolutePath) {
+    calls.add('probe');
+    final answer = onProbe;
+    return answer == null ? Future.value(null) : answer(absolutePath);
   }
 
   @override
