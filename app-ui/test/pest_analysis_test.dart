@@ -5,8 +5,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kernel_app/app/kernel_app.dart';
 import 'package:kernel_app/app/routes.dart';
+import 'package:kernel_app/features/pest_id/pest_session.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
 
 import 'support/harness.dart';
@@ -111,6 +114,56 @@ void main() {
     });
   }
 
+  testWidgets('keeps every safety concern after the user picks another card', (
+    tester,
+  ) async {
+    final env = _env(analysis: testAnalysis(safety: SafetyLevel.medicalRisk));
+    env.knowledge.cards = [
+      const KnowledgeCard(
+        id: 'test_cockroach',
+        names: {'en': 'Test protected animal'},
+        group: PestGroup.reptile,
+        safety: SafetyLevel.venomous,
+        extraSafety: {SafetyLevel.protectedWildlife, SafetyLevel.low},
+        summary: 'Test protected animal card.',
+        signs: [],
+        lookAlikes: [],
+        healthRisks: [],
+        safeSteps: ['Keep away from the animal.'],
+        trapSteps: ['Catch it in a trap.'],
+        callProfessionalWhen: [],
+        firstAid: [],
+        legal: null,
+        sources: [],
+        reviewStatus: 'needs-expert-review',
+      ),
+      testCard('test_rat', name: 'Test rat', safety: SafetyLevel.caution),
+    ];
+    await _openAnalysis(tester, env);
+    await tester.ensureVisible(
+      find.byKey(const Key('knowledge-card-test_cockroach')),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Keep away from the animal.'), findsOneWidget);
+    expect(find.text('Catch it in a trap.'), findsNothing);
+    await tapVisible(tester, find.byKey(const Key('pest-pick-card')));
+    await tapVisible(tester, find.byKey(const Key('pest-pick-test_rat')));
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, 3000));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const Key('pest-safety-protectedWildlife')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('pest-safety-venomous')), findsOneWidget);
+    expect(find.byKey(const Key('pest-safety-medicalRisk')), findsOneWidget);
+    expect(find.byKey(const Key('pest-safety-caution')), findsOneWidget);
+    expect(find.byKey(const Key('pest-safety-low')), findsNothing);
+    expect(find.text(en.pestSafetyProtectedBody), findsOneWidget);
+    expect(find.text(en.pestSafetyDistanceBody), findsNWidgets(2));
+    expect(find.text('Catch it in a trap.'), findsNothing);
+  });
+
   test('safety copy follows the glossary wording', () {
     expect(en.pestSafetyDistanceBody, contains('medical care'));
     expect(en.pestSafetyDistanceBody, contains('home remedies'));
@@ -192,6 +245,71 @@ void main() {
     expect(find.text('Keep food sealed. Seal gaps.'), findsOneWidget);
     expect(find.byKey(const Key('advice-provenance')), findsOneWidget);
     unawaited(controller.close());
+  });
+
+  testWidgets('Explain retains only the involved cards after a user pick', (
+    tester,
+  ) async {
+    final analysis = testAnalysis(safety: SafetyLevel.medicalRisk);
+    final env = _env(analysis: analysis);
+    env.knowledge.cards.add(
+      testCard('unrelated', safety: SafetyLevel.protectedWildlife),
+    );
+    await _openAnalysis(tester, env);
+    final fallback = testCard('fallback', safety: SafetyLevel.venomous);
+    ProviderScope.containerOf(tester.element(find.byType(KernelApp)))
+        .read(pestSessionProvider.notifier)
+        .setAnalysis(
+          analysis,
+          cards: env.knowledge.cards,
+          fallbackCard: fallback,
+        );
+    await tester.pumpAndSettle();
+    await tapVisible(tester, find.byKey(const Key('pest-pick-card')));
+    await tapVisible(tester, find.byKey(const Key('pest-pick-test_rat')));
+    await tapVisible(tester, find.byKey(const Key('pest-explain')));
+
+    final input = env.analyzer.guideInputs.single;
+    expect(
+      input.cards.map((card) => card.id),
+      unorderedEquals(['test_cockroach', 'fallback', 'test_rat']),
+    );
+    expect(input.analysis, same(analysis));
+    expect(find.byKey(const Key('pest-safety-protectedWildlife')), findsNothing);
+  });
+
+  testWidgets('picking a protected card discards the previous explanation', (
+    tester,
+  ) async {
+    final env = _env(analysis: testAnalysis());
+    env.knowledge.cards.add(
+      testCard(
+        'protected',
+        safety: SafetyLevel.protectedWildlife,
+        safeSteps: ['Keep away from this animal.'],
+      ),
+    );
+    env.analyzer.guideScript = adviceEvents(['Use a lawful trap.']);
+    await _openAnalysis(tester, env);
+    await tapVisible(tester, find.byKey(const Key('pest-explain')));
+    expect(find.text('Use a lawful trap.'), findsOneWidget);
+
+    await tapVisible(tester, find.byKey(const Key('pest-pick-card')));
+    await tapVisible(tester, find.byKey(const Key('pest-pick-protected')));
+    expect(find.text('Use a lawful trap.'), findsNothing);
+    expect(find.byKey(const Key('knowledge-card-protected')), findsOneWidget);
+    expect(find.text('Keep away from this animal.'), findsOneWidget);
+    expect(find.text(en.pestSafetyProtectedBody), findsOneWidget);
+
+    env.analyzer.guideScript = const [];
+    await tapVisible(tester, find.byKey(const Key('pest-explain')));
+    expect(
+      env.analyzer.guideInputs.last.cards.map((card) => card.id),
+      unorderedEquals(['test_cockroach', 'protected']),
+    );
+    expect(find.byKey(const Key('pest-explain-fallback')), findsOneWidget);
+    expect(find.text(en.pestSafetyProtectedBody), findsOneWidget);
+    expect(find.text('Keep away from this animal.'), findsOneWidget);
   });
 
   testWidgets('an empty guide stream falls back to the static note', (

@@ -5,8 +5,9 @@ import 'package:kernel_contracts/kernel_contracts.dart';
 
 import '../../app/providers.dart';
 
-/// What Pest ID needs on the phone, in display order: image understanding,
-/// embeddings (semantic search) and a sound classifier.
+/// Optional downloadable Pest ID capabilities, in display order: image
+/// understanding, embeddings (semantic search) and live sound (YAMNet).
+/// Android's bundled insect WAV classifier is separate from this registry.
 const pestIdNeeds = [
   ModelCapability.imageIn,
   ModelCapability.embedText,
@@ -28,8 +29,8 @@ final downloadConsentProvider = StreamProvider.autoDispose<DownloadConsent>(
   name: 'downloadConsentProvider',
 );
 
-/// Entries still to download for Pest ID. Re-planned whenever the
-/// installed set changes; empty when everything needed is on the phone.
+/// Entries still to download for optional Pest ID capabilities. Re-planned
+/// whenever the installed set changes; this does not track bundled WAV checks.
 final pestIdPlanProvider = FutureProvider.autoDispose<List<CatalogEntry>>((
   ref,
 ) async {

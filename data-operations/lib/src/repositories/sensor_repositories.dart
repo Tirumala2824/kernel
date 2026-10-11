@@ -143,7 +143,7 @@ class DriftSensorNodeRepository implements SensorNodeRepository {
     });
   }
 
-  /// Forgets a node together with its recorded events (user-initiated). An
+  /// Forgets a node, its events and health history (user-initiated). An
   /// unknown id is a no-op.
   @override
   Future<void> delete(String id) {
@@ -151,6 +151,9 @@ class DriftSensorNodeRepository implements SensorNodeRepository {
       await (_db.delete(
         _db.sensorEvents,
       )..where((e) => e.nodeId.equals(id))).go();
+      await (_db.delete(
+        _db.sensorHealthChanges,
+      )..where((h) => h.nodeId.equals(id))).go();
       await (_db.delete(_db.sensorNodes)..where((n) => n.id.equals(id))).go();
     });
   }
@@ -394,7 +397,54 @@ class DriftSensorEventRepository implements SensorEventRepository {
   Future<void> beginEpoch(String nodeId) async {}
 
   @override
-  Future<void> recordHealth(List<SensorHealthChange> changes) async {}
+  Future<void> recordHealth(List<SensorHealthChange> changes) async {
+    if (changes.isEmpty) return;
+    for (final change in changes) {
+      if (change.seq != null && change.seq! < 0) {
+        throw ArgumentError.value(change.seq, 'seq', 'must be zero or more');
+      }
+    }
+    await _db.transaction(() async {
+      final now = _clock().toUtc();
+      for (final change in changes) {
+        final node = await (_db.select(
+          _db.sensorNodes,
+        )..where((n) => n.id.equals(change.nodeId))).getSingleOrNull();
+        if (node == null) {
+          throw ArgumentError.value(
+            change.nodeId,
+            'nodeId',
+            'unknown sensor node',
+          );
+        }
+        final cutoff = node.healthClearedThroughAt;
+        if (cutoff != null && !change.at.isAfter(cutoff)) continue;
+        final names = change.health.map((h) => h.name).toList()..sort();
+        await _db
+            .into(_db.sensorHealthChanges)
+            .insert(
+              SensorHealthChangesCompanion.insert(
+                id: newId(),
+                createdAt: now,
+                updatedAt: now,
+                nodeId: change.nodeId,
+                at: change.at.toUtc(),
+                health: names.join(','),
+                seq: Value(change.seq),
+                locationId: Value(node.locationId),
+                itemId: Value(node.itemId),
+              ),
+              onConflict: DoNothing(
+                target: [
+                  _db.sensorHealthChanges.nodeId,
+                  _db.sensorHealthChanges.at,
+                  _db.sensorHealthChanges.health,
+                ],
+              ),
+            );
+      }
+    });
+  }
 
   @override
   Stream<List<SensorNotEvaluatedPeriod>> watchNotEvaluated({
@@ -402,8 +452,111 @@ class DriftSensorEventRepository implements SensorEventRepository {
     String? locationId,
     String? itemId,
     Duration? window,
-  }) =>
-      Stream.value(const []);
+  }) {
+    return watchTables(
+      _db,
+      {_db.sensorHealthChanges, _db.locations, _db.items},
+      () async {
+        final subtree = locationId == null
+            ? null
+            : await locationSubtree(_db, locationId);
+        final items = subtree == null
+            ? <String>{}
+            : (await (_db.select(_db.items)
+                        ..where((i) => i.locationId.isIn(subtree)))
+                      .map((i) => i.id)
+                      .get())
+                  .toSet();
+        final now = _clock().toUtc();
+        final since = window == null ? null : now.subtract(window);
+        // Placement and time are filtered AFTER deriving each closing change:
+        // recovery can be outside the requested scope or start-time window.
+        final observations =
+            await (_db.select(_db.sensorHealthChanges)
+                  ..where(
+                    (r) => nodeId == null
+                        ? const Constant(true)
+                        : r.nodeId.equals(nodeId),
+                  )
+                  ..orderBy([
+                    (r) => OrderingTerm.asc(r.nodeId),
+                    (r) => OrderingTerm.asc(r.at),
+                    (r) => OrderingTerm.asc(r.id),
+                  ]))
+                .get();
+        // Two reports at the same instant cannot establish an ordering.
+        // Union their health rather than allowing UUID order to imply recovery.
+        final simultaneous =
+            <(String, DateTime, String?, String?), SensorHealthChangeRow>{};
+        for (final row in observations) {
+          final key = (row.nodeId, row.at, row.locationId, row.itemId);
+          final previous = simultaneous[key];
+          if (previous == null) {
+            simultaneous[key] = row;
+          } else {
+            final names = {
+              ...previous.health.split(','),
+              ...row.health.split(','),
+            }.where((s) => s.isNotEmpty).toList()..sort();
+            simultaneous[key] = previous.copyWith(health: names.join(','));
+          }
+        }
+        final rows = <SensorHealthChangeRow>[];
+        for (final row in simultaneous.values) {
+          final previous = rows.isEmpty ? null : rows.last;
+          if (previous?.nodeId == row.nodeId &&
+              previous?.health == row.health &&
+              previous?.locationId == row.locationId &&
+              previous?.itemId == row.itemId) {
+            continue;
+          }
+          rows.add(row);
+        }
+        final periods = <SensorNotEvaluatedPeriod>[];
+        for (var i = 0; i < rows.length; i++) {
+          final row = rows[i];
+          final health = row.health
+              .split(',')
+              .where((s) => s.isNotEmpty)
+              .map(SensorHealth.values.byName)
+              .where(notEvaluatedHealth.contains)
+              .toSet();
+          // An observed empty set is unknown, just as SensorStatus is.
+          // Missing observations still yield no invented historical interval.
+          if (health.isEmpty && row.health.isNotEmpty) continue;
+          var nextIndex = i + 1;
+          while (nextIndex < rows.length &&
+              rows[nextIndex].nodeId == row.nodeId &&
+              rows[nextIndex].at == row.at) {
+            nextIndex++;
+          }
+          final next = nextIndex < rows.length ? rows[nextIndex] : null;
+          final until = next?.nodeId == row.nodeId ? next!.at : null;
+          if (itemId != null && row.itemId != itemId) continue;
+          if (subtree != null &&
+              !subtree.contains(row.locationId) &&
+              !items.contains(row.itemId)) {
+            continue;
+          }
+          if (since != null &&
+              (row.at.isAfter(now) ||
+                  (until != null && !until.isAfter(since)))) {
+            continue;
+          }
+          periods.add(
+            SensorNotEvaluatedPeriod(
+              nodeId: row.nodeId,
+              from: row.at,
+              until: until,
+              health: Set.unmodifiable(health),
+            ),
+          );
+        }
+        periods.sort((a, b) => b.from.compareTo(a.from));
+        return List.unmodifiable(periods);
+      },
+    );
+  }
 
   DateTime? _since(Duration? window) =>
       window == null ? null : _clock().toUtc().subtract(window);

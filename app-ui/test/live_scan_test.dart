@@ -44,7 +44,15 @@ void main() {
       expect(env.engine.hasLevelListener, isTrue);
       expect(find.byKey(const Key('level-meter')), findsOneWidget);
       expect(_hint(tester), en.hintWaiting);
-      expect(_progress(tester), 0);
+      expect(_progress(tester), isNull);
+      expect(find.text(en.captureElapsed('0.0', '2.0')), findsNothing);
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('level-meter')),
+          matching: find.byType(CustomPaint),
+        ),
+        findsNothing,
+      );
 
       // Quiet: RMS below -65 dBFS.
       for (var i = 1; i <= 6; i++) {
@@ -79,6 +87,36 @@ void main() {
       // The level subscription ends with the capture.
       expect(env.engine.hasLevelListener, isFalse);
     });
+
+    for (final closes in [false, true]) {
+      testWidgets(
+        'missing telemetry clears previous measurements (closed=$closes)',
+        (tester) async {
+          final env = TestEnv(role: Role.farmer);
+          final item = await env.addItem();
+          env.engine.gate = Completer<void>();
+          await pumpKernelApp(tester, env, location: Routes.scanItem(item.id));
+          await tester.tap(find.byKey(const Key('start-capture')));
+          await _deliver(tester);
+          env.engine.emitLevel(level(600, -30, peak: -20));
+          await _deliver(tester);
+          expect(_progress(tester), closeTo(0.3, 1e-9));
+          expect(find.text(en.captureElapsed('0.6', '2.0')), findsOneWidget);
+          if (closes) {
+            await env.engine.closeLevels();
+          } else {
+            env.engine.failLevels(StateError('test level stream lost'));
+          }
+          await _deliver(tester);
+          expect(_progress(tester), isNull);
+          expect(find.text(en.captureElapsed('0.6', '2.0')), findsNothing);
+          expect(find.text(en.levelMeterWaiting), findsOneWidget);
+          expect(tester.takeException(), isNull);
+          env.engine.gate!.complete();
+          await tester.pumpAndSettle();
+        },
+      );
+    }
 
     test('hint thresholds: -65 dBFS RMS and -1 dBFS peak', () {
       expect(levelHint(const []), LevelHint.waiting);

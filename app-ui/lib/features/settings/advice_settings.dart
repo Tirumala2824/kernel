@@ -10,14 +10,13 @@ import '../../app/providers.dart';
 import '../../l10n/l10n.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/common.dart';
-import '../../widgets/dialogs.dart';
 import '../../widgets/kernel_card.dart';
 import '../../widgets/status_chip.dart';
 import 'settings_sections.dart';
 
 /// Settings → "On-phone AI assistant (experimental)": the opt-in, the
-/// engine status, model details, import from a file the user already has,
-/// and delete. Nothing is downloaded by the app.
+/// engine status, model details and import from a file the user already has.
+/// Model Hub manages removal of its installed files.
 class AdviceSettingsSection extends ConsumerWidget {
   const AdviceSettingsSection({super.key});
 
@@ -161,38 +160,26 @@ class _ModelCardState extends ConsumerState<_ModelCard> {
     });
   }
 
-  Future<void> _delete() async {
-    final l = context.l10n;
-    final confirmed = await confirmAction(
-      context,
-      icon: Icons.delete_outline_rounded,
-      title: l.adviceDeleteConfirmTitle,
-      body: l.adviceDeleteConfirmBody,
-      confirmLabel: l.adviceDeleteAction,
-      destructive: true,
-    );
-    if (!confirmed || !mounted) return;
-    try {
-      await ref.read(adviceModelManagerProvider).deleteModel();
-      if (!mounted) return;
-      setState(() => _imported = false);
-      ref.invalidate(adviceModelInfoProvider);
-    } on Object catch (e) {
-      _fail(l.adviceDeleteFailed('$e'));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final info = ref.watch(adviceModelInfoProvider).value;
+    final modelInfo = ref.watch(adviceModelInfoProvider);
+    final info = modelInfo.isLoading || modelInfo.hasError
+        ? null
+        : modelInfo.value;
     final progress = _progress;
     return KernelCard(
       key: const Key('advice-model'),
       tone: KernelCardTone.sage,
       icon: Icons.inventory_2_rounded,
       title: l.adviceModelTitle,
-      subtitle: info == null ? l.adviceModelNone : null,
+      subtitle: modelInfo.isLoading
+          ? l.loading
+          : modelInfo.hasError
+          ? l.errorCouldNotLoad
+          : info == null
+          ? l.adviceModelNone
+          : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -255,13 +242,6 @@ class _ModelCardState extends ConsumerState<_ModelCard> {
                 icon: const Icon(Icons.file_open_rounded),
                 label: Text(l.adviceImportAction),
               ),
-              if (info != null)
-                OutlinedButton.icon(
-                  key: const Key('advice-delete'),
-                  onPressed: _busy ? null : _delete,
-                  icon: const Icon(Icons.delete_outline_rounded),
-                  label: Text(l.adviceDeleteAction),
-                ),
             ],
           ),
         ],

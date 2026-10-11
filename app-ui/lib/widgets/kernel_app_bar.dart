@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../app/platform_providers.dart';
 import '../app/routes.dart';
+import '../features/chat/chat_copy.dart';
 import '../brand/kernel_brand.dart';
 import '../l10n/l10n.dart';
 import '../theme/tokens.dart';
@@ -39,10 +40,13 @@ class OfflineIndicator extends ConsumerWidget {
               color: KernelColors.forest,
             ),
             const SizedBox(width: 6),
-            Text(
-              offline ? l.offlineLabel : l.onlineLabel,
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: KernelColors.forest,
+            Flexible(
+              child: Text(
+                offline ? l.offlineLabel : l.onlineLabel,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.labelMedium
+                    ?.copyWith(color: KernelColors.forest),
               ),
             ),
           ],
@@ -86,12 +90,15 @@ class KernelAppBar extends StatelessWidget implements PreferredSizeWidget {
           : Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
       actions: [
         ...actions,
-        const Center(child: OfflineIndicator()),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 120),
+          child: const Center(child: OfflineIndicator()),
+        ),
         if (showMenu) ...[
           IconButton(
             key: const Key('open-chat'),
-            tooltip: 'Agent Screening Chat',
-            icon: const Icon(Icons.smart_toy_outlined),
+            tooltip: ChatCopy.title,
+            icon: const Icon(Icons.chat_bubble_outline_rounded),
             onPressed: () => context.push(Routes.chat),
           ),
           IconButton(

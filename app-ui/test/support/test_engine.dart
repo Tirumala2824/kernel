@@ -35,6 +35,8 @@ class ScriptedScanEngine implements ScanEngine {
   bool get hasLevelListener => _levels.hasListener;
 
   void emitLevel(CaptureLevel level) => _levels.add(level);
+  void failLevels(Object error) => _levels.addError(error);
+  Future<void> closeLevels() => _levels.close();
 
   @override
   Future<ScanOutcome> captureAndAnalyze(

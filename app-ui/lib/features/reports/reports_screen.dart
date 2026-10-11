@@ -69,7 +69,9 @@ class _ReportsBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final items = ref.watch(itemsByRoleProvider(role));
-    final recent = ref.watch(recentScansProvider(reportHistoryLimit));
+    final recent = ref.watch(
+      recentScansProvider((limit: reportHistoryLimit, role: role)),
+    );
     return PageList(
       children: [
         ScreenHeader(title: l.reportsTitle, subtitle: role.reportTitle(l)),

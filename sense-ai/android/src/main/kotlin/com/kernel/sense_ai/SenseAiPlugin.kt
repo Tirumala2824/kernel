@@ -29,6 +29,8 @@ class SenseAiPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityResul
     private var messenger: BinaryMessenger? = null
     private var stash: MediaStash? = null
     private var camera: CameraController? = null
+    private var insectSound: InsectSoundChannel? = null
+    private var chatMedia: ChatMediaChannel? = null
     private val batches = CameraBatchEmitter()
     private val sounds = SoundEventEmitter()
     private val listenStatus = ListenStatusEmitter()
@@ -61,6 +63,10 @@ class SenseAiPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityResul
         ListenController.stash = s
         ListenController.sink = listenSink
         SenseHostApi.setUp(binding.binaryMessenger, this)
+        insectSound = InsectSoundChannel(binding.binaryMessenger) { name ->
+            ctx.assets.open(name).use { it.readBytes() }
+        }
+        chatMedia = ChatMediaChannel(binding.binaryMessenger, ctx)
         CameraBatchesStreamHandler.register(binding.binaryMessenger, batches)
         SoundEventsStreamHandler.register(binding.binaryMessenger, sounds)
         ListenStatusStreamHandler.register(binding.binaryMessenger, listenStatus)
@@ -69,6 +75,10 @@ class SenseAiPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityResul
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         SenseHostApi.setUp(binding.binaryMessenger, null)
+        insectSound?.detach()
+        insectSound = null
+        chatMedia?.detach()
+        chatMedia = null
         // The generated register() has no unregister; clear the same channels.
         for (name in EVENT_CHANNELS) {
             EventChannel(binding.binaryMessenger, "$EVENT_PREFIX.$name", SenseApiPigeonMethodCodec).setStreamHandler(null)
@@ -90,6 +100,7 @@ class SenseAiPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityResul
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activityBinding = binding
+        chatMedia?.attach(binding.activity)
         binding.addActivityResultListener(this)
         val lifecycle = (binding.activity as? LifecycleOwner)?.lifecycle
         activityLifecycle = lifecycle
@@ -102,11 +113,14 @@ class SenseAiPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityResul
         }
     }
 
-    override fun onDetachedFromActivityForConfigChanges() = onDetachedFromActivity()
+    override fun onDetachedFromActivityForConfigChanges() = detachActivity(true)
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) = onAttachedToActivity(binding)
 
-    override fun onDetachedFromActivity() {
+    override fun onDetachedFromActivity() = detachActivity(false)
+
+    private fun detachActivity(forConfigurationChange: Boolean) {
+        chatMedia?.detachActivity(forConfigurationChange)
         activityLifecycle?.removeObserver(activityObserver)
         activityLifecycle = null
         activityBinding?.removeActivityResultListener(this)
@@ -116,6 +130,7 @@ class SenseAiPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityResul
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+        if (chatMedia?.onActivityResult(requestCode, resultCode, data) == true) return true
         if (requestCode != MEASURE_REQUEST) return false
         val pending = pendingMeasure ?: return true
         pendingMeasure = null

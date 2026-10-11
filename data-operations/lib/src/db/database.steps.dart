@@ -2124,9 +2124,614 @@ i1.GeneratedColumn<i2.Uint8List> _column_112(String aliasedName) =>
       type: i1.DriftSqlType.blob,
       $customConstraints: 'NOT NULL',
     );
+
+final class Schema4 extends i0.VersionedSchema {
+  Schema4({required super.database}) : super(version: 4);
+  @override
+  late final List<i1.DatabaseSchemaEntity> entities = [
+    locations,
+    lots,
+    harvests,
+    items,
+    scans,
+    scansAppendOnly,
+    inspections,
+    inspectionsVerifiedImmutable,
+    labeledSamples,
+    labeledSamplesImmutable,
+    sightings,
+    sightingsAnalysisImmutable,
+    sightingsVerifiedOnce,
+    sensorNodes,
+    sensorEvents,
+    sensorEventsAppendOnly,
+    reminders,
+    settings,
+    sensorHealthChanges,
+    knowledgeCards,
+    cardEmbeddings,
+    itemsOwnerRole,
+    itemsLocation,
+    itemsLot,
+    itemsHarvest,
+    scansItemCaptured,
+    inspectionsItem,
+    remindersItem,
+    labeledSamplesItem,
+    sightingsObserved,
+    sightingsLocation,
+    sightingsItem,
+    sensorEventsStarted,
+    sensorEventsLocation,
+    sensorEventsItem,
+    sensorHealthNodeAt,
+  ];
+  late final Shape0 locations = Shape0(
+    source: i0.VersionedTable(
+      entityName: 'locations',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_4,
+        _column_5,
+        _column_6,
+        _column_7,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape1 lots = Shape1(
+    source: i0.VersionedTable(
+      entityName: 'lots',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_8,
+        _column_9,
+        _column_10,
+        _column_11,
+        _column_12,
+        _column_13,
+        _column_14,
+        _column_15,
+        _column_7,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape2 harvests = Shape2(
+    source: i0.VersionedTable(
+      entityName: 'harvests',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_5,
+        _column_11,
+        _column_16,
+        _column_17,
+        _column_7,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape3 items = Shape3(
+    source: i0.VersionedTable(
+      entityName: 'items',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_18,
+        _column_19,
+        _column_11,
+        _column_20,
+        _column_13,
+        _column_21,
+        _column_22,
+        _column_23,
+        _column_24,
+        _column_7,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape4 scans = Shape4(
+    source: i0.VersionedTable(
+      entityName: 'scans',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_25,
+        _column_26,
+        _column_27,
+        _column_28,
+        _column_29,
+        _column_30,
+        _column_31,
+        _column_32,
+        _column_33,
+        _column_34,
+        _column_35,
+        _column_36,
+        _column_37,
+        _column_38,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger scansAppendOnly = i1.Trigger(
+    'CREATE TRIGGER scans_append_only BEFORE UPDATE OF id, item_id, captured_at, duration_ms, sample_rate, quality, quality_reasons, model_version, result, confidence, experimental, latency_ms, device_model, os_version, audio_retained, created_at ON scans BEGIN SELECT RAISE (ABORT, \'scans are append-only\');END',
+    'scans_append_only',
+  );
+  late final Shape5 inspections = Shape5(
+    source: i0.VersionedTable(
+      entityName: 'inspections',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_25,
+        _column_39,
+        _column_40,
+        _column_41,
+        _column_42,
+        _column_43,
+        _column_44,
+        _column_45,
+        _column_46,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger inspectionsVerifiedImmutable = i1.Trigger(
+    'CREATE TRIGGER inspections_verified_immutable BEFORE UPDATE OF id, item_id, scan_id, inspected_at, inspector, observations, verified_finding, photo_paths, created_at ON inspections BEGIN SELECT RAISE (ABORT, \'verified inspection fields are immutable\');END',
+    'inspections_verified_immutable',
+  );
+  late final Shape6 labeledSamples = Shape6(
+    source: i0.VersionedTable(
+      entityName: 'labeled_samples',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_47,
+        _column_25,
+        _column_19,
+        _column_48,
+        _column_11,
+        _column_49,
+        _column_50,
+        _column_17,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger labeledSamplesImmutable = i1.Trigger(
+    'CREATE TRIGGER labeled_samples_immutable BEFORE UPDATE OF id, scan_id, item_id, label, inspection_id, grain_type, sack_material, environment, notes, created_at ON labeled_samples BEGIN SELECT RAISE (ABORT, \'labeled samples are immutable\');END',
+    'labeled_samples_immutable',
+  );
+  late final Shape9 sightings = Shape9(
+    source: i0.VersionedTable(
+      entityName: 'sightings',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_56,
+        _column_57,
+        _column_58,
+        _column_22,
+        _column_59,
+        _column_60,
+        _column_61,
+        _column_62,
+        _column_63,
+        _column_64,
+        _column_65,
+        _column_66,
+        _column_67,
+        _column_68,
+        _column_17,
+        _column_69,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger sightingsAnalysisImmutable = i1.Trigger(
+    'CREATE TRIGGER sightings_analysis_immutable BEFORE UPDATE OF id, role, source, observed_at, latitude, longitude, accuracy_meters, distance, analysis, sound, created_at ON sightings BEGIN SELECT RAISE (ABORT, \'sighting AI analysis is immutable\');END',
+    'sightings_analysis_immutable',
+  );
+  final i1.Trigger sightingsVerifiedOnce = i1.Trigger(
+    'CREATE TRIGGER sightings_verified_once BEFORE UPDATE OF verified_finding ON sightings WHEN OLD.verified_finding IS NOT NULL BEGIN SELECT RAISE (ABORT, \'verified sighting finding is immutable\');END',
+    'sightings_verified_once',
+  );
+  late final Shape14 sensorNodes = Shape14(
+    source: i0.VersionedTable(
+      entityName: 'sensor_nodes',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_70,
+        _column_5,
+        _column_4,
+        _column_71,
+        _column_72,
+        _column_73,
+        _column_22,
+        _column_59,
+        _column_74,
+        _column_75,
+        _column_76,
+        _column_113,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape11 sensorEvents = Shape11(
+    source: i0.VersionedTable(
+      entityName: 'sensor_events',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)', 'UNIQUE(node_id, seq)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_77,
+        _column_78,
+        _column_79,
+        _column_27,
+        _column_80,
+        _column_81,
+        _column_82,
+        _column_83,
+        _column_84,
+        _column_85,
+        _column_86,
+        _column_87,
+        _column_88,
+        _column_89,
+        _column_90,
+        _column_91,
+        _column_92,
+        _column_93,
+        _column_22,
+        _column_59,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger sensorEventsAppendOnly = i1.Trigger(
+    'CREATE TRIGGER sensor_events_append_only BEFORE UPDATE OF id, node_id, seq, started_at, duration_ms, event_class, peak_hz, min_hz, max_hz, slope_hz_per_ms, snr_db, peak_dbfs, impulses, rep_rate_hz, harmonics, signature_id, pack_version, match_score, match_experimental, location_id, item_id, created_at ON sensor_events BEGIN SELECT RAISE (ABORT, \'sensor events are append-only\');END',
+    'sensor_events_append_only',
+  );
+  late final Shape7 reminders = Shape7(
+    source: i0.VersionedTable(
+      entityName: 'reminders',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_25,
+        _column_51,
+        _column_52,
+        _column_53,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape8 settings = Shape8(
+    source: i0.VersionedTable(
+      entityName: 'settings',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_54,
+        _column_55,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape15 sensorHealthChanges = Shape15(
+    source: i0.VersionedTable(
+      entityName: 'sensor_health_changes',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)', 'UNIQUE(node_id, at, health)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_77,
+        _column_114,
+        _column_115,
+        _column_116,
+        _column_22,
+        _column_59,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape12 knowledgeCards = Shape12(
+    source: i0.VersionedTable(
+      entityName: 'knowledge_cards',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_94,
+        _column_95,
+        _column_96,
+        _column_97,
+        _column_98,
+        _column_99,
+        _column_100,
+        _column_101,
+        _column_102,
+        _column_103,
+        _column_104,
+        _column_105,
+        _column_106,
+        _column_107,
+        _column_108,
+        _column_109,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape13 cardEmbeddings = Shape13(
+    source: i0.VersionedTable(
+      entityName: 'card_embeddings',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [
+        'PRIMARY KEY(id)',
+        'UNIQUE(card_id, model_version, dim)',
+      ],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_110,
+        _column_31,
+        _column_111,
+        _column_112,
+        _column_109,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Index itemsOwnerRole = i1.Index(
+    'items_owner_role',
+    'CREATE INDEX items_owner_role ON items (owner_role)',
+  );
+  final i1.Index itemsLocation = i1.Index(
+    'items_location',
+    'CREATE INDEX items_location ON items (location_id)',
+  );
+  final i1.Index itemsLot = i1.Index(
+    'items_lot',
+    'CREATE INDEX items_lot ON items (lot_id)',
+  );
+  final i1.Index itemsHarvest = i1.Index(
+    'items_harvest',
+    'CREATE INDEX items_harvest ON items (harvest_id)',
+  );
+  final i1.Index scansItemCaptured = i1.Index(
+    'scans_item_captured',
+    'CREATE INDEX scans_item_captured ON scans (item_id, captured_at)',
+  );
+  final i1.Index inspectionsItem = i1.Index(
+    'inspections_item',
+    'CREATE INDEX inspections_item ON inspections (item_id)',
+  );
+  final i1.Index remindersItem = i1.Index(
+    'reminders_item',
+    'CREATE INDEX reminders_item ON reminders (item_id)',
+  );
+  final i1.Index labeledSamplesItem = i1.Index(
+    'labeled_samples_item',
+    'CREATE INDEX labeled_samples_item ON labeled_samples (item_id)',
+  );
+  final i1.Index sightingsObserved = i1.Index(
+    'sightings_observed',
+    'CREATE INDEX sightings_observed ON sightings (observed_at)',
+  );
+  final i1.Index sightingsLocation = i1.Index(
+    'sightings_location',
+    'CREATE INDEX sightings_location ON sightings (location_id)',
+  );
+  final i1.Index sightingsItem = i1.Index(
+    'sightings_item',
+    'CREATE INDEX sightings_item ON sightings (item_id)',
+  );
+  final i1.Index sensorEventsStarted = i1.Index(
+    'sensor_events_started',
+    'CREATE INDEX sensor_events_started ON sensor_events (started_at)',
+  );
+  final i1.Index sensorEventsLocation = i1.Index(
+    'sensor_events_location',
+    'CREATE INDEX sensor_events_location ON sensor_events (location_id)',
+  );
+  final i1.Index sensorEventsItem = i1.Index(
+    'sensor_events_item',
+    'CREATE INDEX sensor_events_item ON sensor_events (item_id)',
+  );
+  final i1.Index sensorHealthNodeAt = i1.Index(
+    'sensor_health_node_at',
+    'CREATE INDEX sensor_health_node_at ON sensor_health_changes (node_id, at)',
+  );
+}
+
+class Shape14 extends i0.VersionedTable {
+  Shape14({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get createdAt =>
+      columnsByName['created_at']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get updatedAt =>
+      columnsByName['updated_at']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get syncState =>
+      columnsByName['sync_state']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get deviceAddress =>
+      columnsByName['device_address']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get name =>
+      columnsByName['name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get type =>
+      columnsByName['type']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get protocolVersion =>
+      columnsByName['protocol_version']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get firmwareVersion =>
+      columnsByName['firmware_version']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get keyFingerprint =>
+      columnsByName['key_fingerprint']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get locationId =>
+      columnsByName['location_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get itemId =>
+      columnsByName['item_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get lastSeenAt =>
+      columnsByName['last_seen_at']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get batteryPercent =>
+      columnsByName['battery_percent']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get eventsClearedThroughSeq =>
+      columnsByName['events_cleared_through_seq']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get healthClearedThroughAt =>
+      columnsByName['health_cleared_through_at']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_113(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'health_cleared_through_at',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
+
+class Shape15 extends i0.VersionedTable {
+  Shape15({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get createdAt =>
+      columnsByName['created_at']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get updatedAt =>
+      columnsByName['updated_at']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get syncState =>
+      columnsByName['sync_state']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get nodeId =>
+      columnsByName['node_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get at =>
+      columnsByName['at']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get health =>
+      columnsByName['health']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get seq =>
+      columnsByName['seq']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get locationId =>
+      columnsByName['location_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get itemId =>
+      columnsByName['item_id']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_114(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'at',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_115(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'health',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<int> _column_116(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'seq',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NULL',
+    );
 i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
   required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
+  required Future<void> Function(i1.Migrator m, Schema4 schema) from3To4,
 }) {
   return (currentVersion, database) async {
     switch (currentVersion) {
@@ -2140,6 +2745,11 @@ i0.MigrationStepWithVersion migrationSteps({
         final migrator = i1.Migrator(database, schema);
         await from2To3(migrator, schema);
         return 3;
+      case 3:
+        final schema = Schema4(database: database);
+        final migrator = i1.Migrator(database, schema);
+        await from3To4(migrator, schema);
+        return 4;
       default:
         throw ArgumentError.value('Unknown migration from $currentVersion');
     }
@@ -2149,6 +2759,11 @@ i0.MigrationStepWithVersion migrationSteps({
 i1.OnUpgrade stepByStep({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
   required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
+  required Future<void> Function(i1.Migrator m, Schema4 schema) from3To4,
 }) => i0.VersionedSchema.stepByStepHelper(
-  step: migrationSteps(from1To2: from1To2, from2To3: from2To3),
+  step: migrationSteps(
+    from1To2: from1To2,
+    from2To3: from2To3,
+    from3To4: from3To4,
+  ),
 );

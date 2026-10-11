@@ -115,7 +115,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get settingsFooter =>
-      'எல்லா ஒலிச் சோதனையும் இந்தப் போனிலேயே நடக்கும். Kernel இணையம் இல்லாமலே வேலை செய்யும், ஒருபோதும் ஒலியைப் பதிவேற்றாது.';
+      'Kernel ஒலியை இந்தப் போனிலேயே வைத்திருக்கும். போனில் உள்ள பதிவுகளும் செயலியுடன் வரும் சோதனைகளும் இணையமின்றி வேலை செய்யும்; மாதிரிப் பதிவிறக்கங்களுக்கும் இணைய வரைபடங்களுக்கும் இணையம் தேவை.';
 
   @override
   String get diagnosticsTitle => 'தொழில்நுட்ப விவரங்கள்';
@@ -1230,7 +1230,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get onboardingPrivacy2 =>
-      'எதுவும் பதிவேற்றப்படாது. கணக்கு இல்லை, கிளவுட் இல்லை, எல்லாமே இணையம் இல்லாமல் வேலை செய்யும்.';
+      'ஒலி இந்தப் போனிலேயே இருக்கும். போனில் உள்ள பதிவுகளும் செயலியுடன் வரும் சோதனைகளும் இணையமின்றி வேலை செய்யும்; மாதிரிப் பதிவிறக்கங்களுக்கும் இணைய வரைபடங்களுக்கும் இணையம் தேவை.';
 
   @override
   String get onboardingPrivacy3 =>
@@ -1900,10 +1900,11 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get offlineSemantics =>
-      'ஆஃப்லைன். இந்தப் போனில் எல்லாமே தொடர்ந்து வேலை செய்யும்.';
+      'இணைய இணைப்பு இல்லை. போனில் உள்ள பதிவுகளும் செயலியுடன் வரும் சோதனைகளும் இணையமின்றி வேலை செய்யும்; மாதிரிப் பதிவிறக்கங்களுக்கும் இணைய வரைபடங்களுக்கும் இணையம் தேவை.';
 
   @override
-  String get onlineSemantics => 'ஆன்லைன். Kernel-க்கு இணையம் தேவையில்லை.';
+  String get onlineSemantics =>
+      'இணைய இணைப்பு உள்ளது. போனில் உள்ள பதிவுகளும் செயலியுடன் வரும் சோதனைகளும் இணையமின்றி வேலை செய்யும்; மாதிரிப் பதிவிறக்கங்களுக்கும் இணைய வரைபடங்களுக்கும் இணையம் தேவை.';
 
   @override
   String get qrTooltip => 'QR லேபிளிலிருந்து மூட்டையைத் திற';
@@ -2017,7 +2018,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get levelMeterLabel => 'மைக் ஒலி அளவு';
 
   @override
-  String get levelMeterWaiting => 'ஒலிக்காகக் காத்திருக்கிறது';
+  String get levelMeterWaiting => 'மைக்ரோஃபோன் அளவுகளுக்காகக் காத்திருக்கிறது';
 
   @override
   String levelMeterValue(int dbfs) {
@@ -2939,10 +2940,10 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get hubSubtitle =>
-      'பூச்சி அடையாளத்துக்கான, போனில் இயங்கும் மாடல்கள். இவை இந்தப் போனில் மட்டுமே இயங்கும்.';
+      'Android செயலியில் WAV ஒலித் துண்டுகளிலிருந்து பூச்சிகளைப் பரிசோதனை முறையில் வகைப்படுத்தும் வசதி உள்ளது. கீழுள்ள விருப்பப் பதிவிறக்கங்கள் படப் பகுப்பாய்வு, தேடல், நேரடி ஒலி வகைப்பாடு (YAMNet) ஆகிய வசதிகளைச் சேர்க்கின்றன.';
 
   @override
-  String get hubNeedsTitle => 'பூச்சி அடையாளத்துக்குத் தேவை';
+  String get hubNeedsTitle => 'விருப்ப மாதிரிப் பதிவிறக்கங்கள்';
 
   @override
   String get hubNeedImage => 'படத்தைப் புரிந்துகொள்ளுதல்';
@@ -2951,7 +2952,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get hubNeedEmbeddings => 'எம்பெடிங் (தேடலுக்கு)';
 
   @override
-  String get hubNeedSound => 'ஒலியை அடையாளம் காணும் மாடல்';
+  String get hubNeedSound => 'நேரடி ஒலி வகைப்படுத்தும் மாதிரி (YAMNet)';
 
   @override
   String get hubInstalledChip => 'நிறுவப்பட்டது';
@@ -2961,25 +2962,25 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get hubAllInstalled =>
-      'பூச்சி அடையாளத்துக்குத் தேவையான அனைத்தும் இந்தப் போனில் உள்ளன.';
+      'இங்கே பட்டியலிட்டுள்ள அனைத்து விருப்ப வசதிகளுக்குமான மாதிரிகள் நிறுவப்பட்டுள்ளன.';
 
   @override
   String get hubNothingToDownload =>
-      'இல்லாத பகுதிகளுக்கு இப்போது எந்தப் பதிவிறக்கமும் கிடைக்கவில்லை.';
+      'இன்னும் இல்லாத விருப்ப மாதிரிகளுக்கான பதிவிறக்கங்கள் தற்போது கிடைக்கவில்லை.';
 
   @override
   String hubDownloadSummary(int count, String size) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count மாடல்கள் பதிவிறக்க வேண்டும், சுமார் $size',
-      one: '1 மாடல் பதிவிறக்க வேண்டும், சுமார் $size',
+      other: '$count விருப்ப மாதிரிகளைப் பதிவிறக்க வேண்டும், சுமார் $size',
+      one: '1 விருப்ப மாதிரியைப் பதிவிறக்க வேண்டும், சுமார் $size',
     );
     return '$_temp0';
   }
 
   @override
-  String get hubDownloadAction => 'மாடல்களைப் பதிவிறக்கு';
+  String get hubDownloadAction => 'விருப்ப மாதிரிகளைப் பதிவிறக்கு';
 
   @override
   String hubDownloadFailed(String error) {
@@ -2990,14 +2991,16 @@ class AppLocalizationsTa extends AppLocalizations {
   String get hubCatalogUnavailable => 'மாடல் பட்டியலைப் படிக்க முடியவில்லை';
 
   @override
-  String get hubInstalledUnavailable => 'நிறுவிய மாடல்களைப் படிக்க முடியவில்லை';
+  String get hubInstalledUnavailable =>
+      'நிறுவப்பட்ட விருப்ப மாதிரிகளைப் படிக்க முடியவில்லை';
 
   @override
   String get hubGalleryNote =>
       'AI Edge Gallery ஏற்கெனவே பதிவிறக்கிய கோப்புகளை Kernel பயன்படுத்த முடியாது (Android ஒவ்வொரு ஆப்பின் கோப்புகளையும் தனிப்பட்டதாக வைக்கிறது), அதனால் அதே மாடல்களை ஒருமுறை பதிவிறக்குகிறது.';
 
   @override
-  String get hubConsentTitle => 'பூச்சி அடையாள மாடல்களைப் பதிவிறக்கவா?';
+  String get hubConsentTitle =>
+      'பூச்சி அடையாளத்திற்கான விருப்ப மாதிரிகளைப் பதிவிறக்கவா?';
 
   @override
   String get hubConsentBody =>
@@ -3090,14 +3093,15 @@ class AppLocalizationsTa extends AppLocalizations {
   String get hubCancel => 'ரத்து செய்';
 
   @override
-  String get hubInstalledTitle => 'நிறுவிய மாடல்கள்';
+  String get hubInstalledTitle => 'நிறுவப்பட்ட விருப்ப மாதிரிகள்';
 
   @override
-  String get hubInstalledEmpty => 'இன்னும் எந்த மாடலும் நிறுவப்படவில்லை';
+  String get hubInstalledEmpty =>
+      'இன்னும் விருப்ப மாதிரிகள் எதுவும் நிறுவப்படவில்லை';
 
   @override
   String get hubInstalledEmptyDetail =>
-      'மாடல்கள் ஒருமுறை பதிவிறங்கிய பிறகு பூச்சி அடையாளம் வேலை செய்யும்.';
+      'Android செயலியுடன் வரும் பூச்சிகளுக்கான WAV சோதனைகளுக்கு இந்தப் பதிவிறக்கங்கள் தேவையில்லை.';
 
   @override
   String get hubFieldPath => 'கோப்பு';
@@ -3203,7 +3207,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get hubSettingsCard =>
-      'பூச்சி அடையாளம் பயன்படுத்தும் போன் மாடல்களைப் பதிவிறக்கி நிர்வகி.';
+      'படங்கள், தேடல், நேரடி ஒலிக்கான விருப்ப மாதிரிப் பதிவிறக்கங்களை நிர்வகிக்கவும்.';
 
   @override
   String get hubMapsToggle => 'Google Maps பயன்படுத்து';
@@ -4210,23 +4214,23 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get pestLocationDenied =>
-      'இருப்பிட அனுமதி மறுக்கப்பட்டது, அறை மட்டும் சேமிக்கப்பட்டது';
+      'இருப்பிட அனுமதி மறுக்கப்பட்டது. பின் கிடைக்கவில்லை.';
 
   @override
   String get pestLocationImprecise =>
-      'இருப்பிடம் மிகவும் தோராயமானது, அறை மட்டும் சேமிக்கப்பட்டது';
+      'இருப்பிடம் மிகவும் தோராயமானது. பின் கிடைக்கவில்லை.';
 
   @override
   String get pestLocationOff =>
-      'இந்தப் போனில் இருப்பிடம் முடக்கப்பட்டுள்ளது, அறை மட்டும் சேமிக்கப்பட்டது';
+      'இந்தப் போனில் இருப்பிடம் முடக்கப்பட்டுள்ளது. பின் கிடைக்கவில்லை.';
 
   @override
   String get pestLocationFailed =>
-      'இருப்பிடம் கிடைக்கவில்லை, அறை மட்டும் சேமிக்கப்பட்டது';
+      'இருப்பிடம் கிடைக்கவில்லை. பின் கிடைக்கவில்லை.';
 
   @override
   String pestLocationPinned(int meters) {
-    return 'பின் சேமிக்கப்பட்டது ($meters மீ.க்குள்)';
+    return 'பின் சேமிக்கத் தயார் ($meters மீ.க்குள்)';
   }
 
   @override

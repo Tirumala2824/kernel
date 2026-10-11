@@ -28,9 +28,18 @@ class FpoHome extends ConsumerWidget {
     final l = context.l10n;
     final items = ref.watch(itemsByRoleProvider(role));
     final places = ref.watch(childLocationsProvider(null)).value ?? const [];
-    final activity = ref.watch(scanActivityProvider(roleScope(role))).value;
-    final stats = ref.watch(inspectionStatsProvider(roleScope(role))).value;
-    final queue = ref.watch(inspectionQueueProvider(queueScope)).value;
+    final activityValue = ref.watch(scanActivityProvider(roleScope(role)));
+    final activity = activityValue.isLoading || activityValue.hasError
+        ? null
+        : activityValue.value;
+    final statsValue = ref.watch(inspectionStatsProvider(roleScope(role)));
+    final stats = statsValue.isLoading || statsValue.hasError
+        ? null
+        : statsValue.value;
+    final queueValue = ref.watch(inspectionQueueProvider(queueScope));
+    final queue = queueValue.isLoading || queueValue.hasError
+        ? null
+        : queueValue.value;
 
     return PageList(
       children: [
@@ -53,7 +62,7 @@ class FpoHome extends ConsumerWidget {
                 onAction: () => context.push(Routes.newItem()),
               );
             }
-            final open = stats == null ? 0 : stats.open + stats.inProgress;
+            final open = stats == null ? null : stats.open + stats.inProgress;
             final flagged = queue?.ranked
                 .where((e) => e.reason != RankReason.clean)
                 .length;
@@ -77,21 +86,31 @@ class FpoHome extends ConsumerWidget {
                   key: const Key('items-summary'),
                   icon: Icons.inventory_2_rounded,
                   title: l.registeredSacks(items.length),
-                  subtitle: activity == null
+                  subtitle: activityValue.isLoading
                       ? l.loading
+                      : activityValue.hasError
+                      ? l.errorCouldNotLoad
+                      : activity == null
+                      ? null
                       : l.scansTodayCount(activity.today),
                   onTap: () => context.push(Routes.scansToday),
                 ),
                 const SizedBox(height: 12),
                 KernelCard(
                   key: const Key('queue-card'),
-                  tone: (flagged ?? 0) > 0
+                  tone: flagged == null
+                      ? KernelCardTone.ivory
+                      : flagged > 0
                       ? KernelCardTone.attention
                       : KernelCardTone.sage,
                   icon: Icons.format_list_numbered_rounded,
                   title: l.queueTitle,
-                  subtitle: queue == null || flagged == null
+                  subtitle: queueValue.isLoading
                       ? l.loading
+                      : queueValue.hasError
+                      ? l.errorCouldNotLoad
+                      : queue == null || flagged == null
+                      ? null
                       : l.queueSummary(flagged, queue.needsScan.length),
                   onTap: () => context.push(Routes.queue),
                 ),
@@ -101,7 +120,9 @@ class FpoHome extends ConsumerWidget {
                   tone: KernelCardTone.ivory,
                   icon: Icons.assignment_ind_rounded,
                   title: l.assignedTitle,
-                  subtitle: open == 0
+                  subtitle: open == null
+                      ? null
+                      : open == 0
                       ? l.assignedNone
                       : l.inspectionsOpen(open),
                   onTap: () => context.push(Routes.assignedInspections),

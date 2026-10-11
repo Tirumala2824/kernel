@@ -125,7 +125,7 @@
   "@engineNoModel": {
     "description": "Engine card without a model."
   },
-  "settingsFooter": "All scanning runs on this phone. Kernel works without a network connection and never uploads audio.",
+  "settingsFooter": "Kernel keeps audio on this phone. Local records and bundled checks work offline; model downloads and online maps need internet.",
   "@settingsFooter": {
     "description": "Settings footer."
   },
@@ -1526,7 +1526,7 @@
   "@onboardingPrivacy1": {
     "description": "Onboarding privacy point."
   },
-  "onboardingPrivacy2": "Nothing is uploaded. There is no account and no cloud, and everything works offline.",
+  "onboardingPrivacy2": "Audio stays on this phone. Local records and bundled checks work offline; model downloads and online maps need internet.",
   "@onboardingPrivacy2": {
     "description": "Onboarding privacy point."
   },
@@ -2348,11 +2348,11 @@
   "@onlineLabel": {
     "description": "Connectivity indicator. Informational only."
   },
-  "offlineSemantics": "Offline. Everything keeps working on this phone.",
+  "offlineSemantics": "Offline. Local records and bundled checks work offline; model downloads and online maps need internet.",
   "@offlineSemantics": {
     "description": "Screen reader text for the indicator."
   },
-  "onlineSemantics": "Online. Kernel does not need the network.",
+  "onlineSemantics": "Online. Local records and bundled checks work offline; model downloads and online maps need internet.",
   "@onlineSemantics": {
     "description": "Screen reader text for the indicator."
   },
@@ -2543,9 +2543,9 @@
   "@levelMeterLabel": {
     "description": "Screen reader label for the live level meter."
   },
-  "levelMeterWaiting": "Waiting for sound",
+  "levelMeterWaiting": "Waiting for microphone levels",
   "@levelMeterWaiting": {
-    "description": "Level meter value before levels arrive."
+    "description": "Microphone level readings have not arrived or are no longer available. This does not mean silence was measured."
   },
   "levelMeterValue": "{dbfs} dBFS",
   "@levelMeterValue": {
@@ -3747,11 +3747,11 @@
   "@hubTitle": {
     "description": "Model Hub screen title and Settings entry."
   },
-  "hubSubtitle": "On-phone models for Pest ID. They run only on this phone.",
+  "hubSubtitle": "Android includes experimental insect classification for WAV clips. The optional downloads below add image analysis, search and live sound (YAMNet).",
   "@hubSubtitle": {
     "description": "Model Hub subtitle."
   },
-  "hubNeedsTitle": "Pest ID needs",
+  "hubNeedsTitle": "Optional model downloads",
   "@hubNeedsTitle": {
     "description": "Status card title; followed by each need with Installed/Missing."
   },
@@ -3763,7 +3763,7 @@
   "@hubNeedEmbeddings": {
     "description": "Pest ID need: embedding model for on-phone search."
   },
-  "hubNeedSound": "Sound classifier",
+  "hubNeedSound": "Live sound classifier (YAMNet)",
   "@hubNeedSound": {
     "description": "Pest ID need: a model that labels sounds."
   },
@@ -3775,15 +3775,15 @@
   "@hubMissingChip": {
     "description": "Chip: the model is not on the phone yet."
   },
-  "hubAllInstalled": "Everything Pest ID needs is on this phone.",
+  "hubAllInstalled": "All optional capabilities listed here have installed models.",
   "@hubAllInstalled": {
     "description": "Status card when nothing is missing."
   },
-  "hubNothingToDownload": "No download is available for the missing parts yet.",
+  "hubNothingToDownload": "No download is available for the missing optional models yet.",
   "@hubNothingToDownload": {
     "description": "Status card when a need is missing but the catalog has nothing to download."
   },
-  "hubDownloadSummary": "{count, plural, =1{1 model to download, about {size}} other{{count} models to download, about {size}}}",
+  "hubDownloadSummary": "{count, plural, =1{1 optional model to download, about {size}} other{{count} optional models to download, about {size}}}",
   "@hubDownloadSummary": {
     "description": "What is left to download and its total size.",
     "placeholders": {
@@ -3795,7 +3795,7 @@
       }
     }
   },
-  "hubDownloadAction": "Download models",
+  "hubDownloadAction": "Download optional models",
   "@hubDownloadAction": {
     "description": "Button: start the Pest ID model downloads (asks for consent first)."
   },
@@ -3812,7 +3812,7 @@
   "@hubCatalogUnavailable": {
     "description": "Error prefix when the model catalog cannot be read."
   },
-  "hubInstalledUnavailable": "Could not read installed models",
+  "hubInstalledUnavailable": "Could not read installed optional models",
   "@hubInstalledUnavailable": {
     "description": "Error prefix when installed models cannot be read."
   },
@@ -3820,7 +3820,7 @@
   "@hubGalleryNote": {
     "description": "Why models already in Google's AI Edge Gallery app are downloaded again. Keep Kernel and AI Edge Gallery in Latin script."
   },
-  "hubConsentTitle": "Download Pest ID models?",
+  "hubConsentTitle": "Download optional Pest ID models?",
   "@hubConsentTitle": {
     "description": "One-time download consent sheet title."
   },
@@ -3964,15 +3964,15 @@
   "@hubCancel": {
     "description": "Button: cancel one download."
   },
-  "hubInstalledTitle": "Installed models",
+  "hubInstalledTitle": "Installed optional models",
   "@hubInstalledTitle": {
     "description": "Section title."
   },
-  "hubInstalledEmpty": "No models installed yet",
+  "hubInstalledEmpty": "No optional models installed yet",
   "@hubInstalledEmpty": {
     "description": "Empty state for installed models."
   },
-  "hubInstalledEmptyDetail": "Pest ID works after its models are downloaded once.",
+  "hubInstalledEmptyDetail": "Bundled insect WAV checks on Android do not need these downloads.",
   "@hubInstalledEmptyDetail": {
     "description": "Empty state detail."
   },
@@ -4115,7 +4115,7 @@
   "@hubSettingsSection": {
     "description": "Settings section title."
   },
-  "hubSettingsCard": "Download and manage the on-phone models Pest ID uses.",
+  "hubSettingsCard": "Manage optional model downloads for images, search and live sound.",
   "@hubSettingsCard": {
     "description": "Settings entry subtitle for Model Hub."
   },
@@ -5407,25 +5407,25 @@
   "@pestLocating": {
     "description": "While locating."
   },
-  "pestLocationDenied": "Location permission denied, saved room only",
+  "pestLocationDenied": "Location permission denied. No pin available.",
   "@pestLocationDenied": {
-    "description": "Location denied."
+    "description": "Location permission was denied, so no pin is available. Nothing has been saved and a room may not be selected."
   },
-  "pestLocationImprecise": "Location too imprecise, saved room only",
+  "pestLocationImprecise": "Location too imprecise. No pin available.",
   "@pestLocationImprecise": {
-    "description": "Accuracy worse than 25 m or approximate only."
+    "description": "Accuracy worse than 25 m or approximate only, so no pin is available. Nothing has been saved and a room may not be selected."
   },
-  "pestLocationOff": "Location is turned off on this phone, saved room only",
+  "pestLocationOff": "Location is turned off on this phone. No pin available.",
   "@pestLocationOff": {
-    "description": "Location service off."
+    "description": "Location services are off, so no pin is available. Nothing has been saved and a room may not be selected."
   },
-  "pestLocationFailed": "Could not get a location, saved room only",
+  "pestLocationFailed": "Could not get a location. No pin available.",
   "@pestLocationFailed": {
-    "description": "Location error."
+    "description": "Location acquisition failed, so no pin is available. Nothing has been saved and a room may not be selected."
   },
-  "pestLocationPinned": "Pin saved (within {meters} m)",
+  "pestLocationPinned": "Pin ready to save (within {meters} m)",
   "@pestLocationPinned": {
-    "description": "Precise pin saved.",
+    "description": "A precise fix is staged in memory, ready to save with the sighting. Nothing is persisted yet. Keep the meters placeholder.",
     "placeholders": {
       "meters": {
         "type": "int"

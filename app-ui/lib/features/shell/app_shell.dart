@@ -6,13 +6,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/copy.dart';
 import '../../app/data_providers.dart';
-import '../../app/providers.dart';
-import '../../app/routes.dart';
 import '../../l10n/l10n.dart';
 
 /// Bottom navigation: Home / Scan / Inventory / Reports, with the
-/// role-specific Inventory label. On first build it opens the item whose
-/// reminder notification launched the app (consumed once).
+/// role-specific Inventory label. Notification launch is handled by KernelApp.
 class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key, required this.navigationShell});
 
@@ -30,7 +27,6 @@ class _AppShellState extends ConsumerState<AppShell>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _openLaunchItem());
     _scheduleMidnight();
   }
 
@@ -59,18 +55,6 @@ class _AppShellState extends ConsumerState<AppShell>
       refreshTimeBasedReads(ref);
       _scheduleMidnight();
     });
-  }
-
-  Future<void> _openLaunchItem() async {
-    try {
-      final itemId = await ref
-          .read(reminderRepositoryProvider)
-          .takeLaunchItemId();
-      if (itemId == null || !mounted) return;
-      context.push(Routes.item(itemId));
-    } on Object catch (error) {
-      debugPrint('Kernel: could not read the launch reminder: $error');
-    }
   }
 
   @override

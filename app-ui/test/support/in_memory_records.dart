@@ -52,8 +52,18 @@ class InMemoryScanRepository implements ScanRepository {
   );
 
   @override
-  Stream<List<ScanRecord>> watchRecent({int limit = 50}) =>
-      _changes.watch(() => _newestFirst.take(limit).toList());
+  Stream<List<ScanRecord>> watchRecent({int limit = 50, Role? role}) =>
+      _changes.watch(() {
+        final owned = {
+          for (final item in items.items)
+            if (!item.isArchived && (role == null || item.ownerRole == role))
+              item.id,
+        };
+        return _newestFirst
+            .where((scan) => owned.contains(scan.itemId))
+            .take(limit)
+            .toList();
+      });
 
   @override
   Stream<List<ScanRecord>> watchSince(DateTime since, {Role? role}) =>

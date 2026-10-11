@@ -100,7 +100,7 @@ void main() {
     final h = hub();
     final entries = await h.catalog.entries(refresh: true);
     expect(http.requests, isEmpty);
-    expect(entries, hasLength(13));
+    expect(entries, hasLength(12));
     expect(entries.first.source, ModelSource.kernelCatalog);
   });
 
@@ -205,7 +205,7 @@ void main() {
     final h = hub();
     await h.provisioner.setConsent(const DownloadConsent(granted: true));
     final entries = await h.catalog.entries(refresh: true);
-    expect(entries, hasLength(13));
+    expect(entries, hasLength(12));
   });
 
   test('IoHubHttp refuses hosts outside the catalog allow-list', () async {

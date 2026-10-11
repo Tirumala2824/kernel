@@ -74,6 +74,42 @@ void main() {
       ]);
     });
 
+    test('incomplete route measurements never become zero-valued facts', () {
+      for (final route in <Map<String, Object?>>[
+        {},
+        {'duration': '10s'},
+        {'distanceMeters': 10},
+        {'distanceMeters': -1, 'duration': '10s'},
+        {'distanceMeters': '10', 'duration': '10s'},
+        {'distanceMeters': 1.5, 'duration': '10s'},
+        {'distanceMeters': 10, 'duration': 'n/a'},
+        {'distanceMeters': 10, 'duration': 's10s'},
+        {'distanceMeters': 10, 'duration': '-1s'},
+        {'distanceMeters': 10, 'duration': 'NaNs'},
+        {'distanceMeters': 10, 'duration': 'Infinitys'},
+      ]) {
+        expect(
+          RoutesClient.parseRoute(
+            jsonEncode({
+              'routes': [route],
+            }),
+          ),
+          isNull,
+          reason: '$route',
+        );
+      }
+      final zero = RoutesClient.parseRoute(
+        '{"routes":[{"distanceMeters":0,"duration":"0s"}]}',
+      );
+      expect(zero, isNotNull);
+      expect(zero!.distanceMeters, 0);
+      expect(zero.duration, Duration.zero);
+      final fraction = RoutesClient.parseRoute(
+        '{"routes":[{"distanceMeters":3,"duration":"0.5s"}]}',
+      );
+      expect(fraction!.duration, const Duration(milliseconds: 500));
+    });
+
     test('the request body has only origin and destination', () {
       final body = RoutesClient.requestBody(
         const GeoPoint(1, 2),
@@ -210,6 +246,20 @@ void main() {
     expect(find.text(en.mapRouteNeedsLocation), findsOneWidget);
     expect(env.routesHttp.requests, isEmpty);
   });
+
+  testWidgets(
+    'incomplete route response shows unavailable without zero distance or ETA',
+    (tester) async {
+      final (env, _) = await _pinnedEnv(consent: true);
+      env.mapsConfig.config = _config;
+      env.locator.fix = classifyFix(12.97, 77.59, 15);
+      env.routesHttp.responseBody = '{"routes":[{}]}';
+      await pumpKernelApp(tester, env, location: Routes.sightingsMap());
+      await tapVisible(tester, find.byKey(const Key('map-route')));
+      expect(find.text(en.mapRouteFailed), findsOneWidget);
+      expect(find.byKey(const Key('map-route-summary')), findsNothing);
+    },
+  );
 
   testWidgets('a failed route says so', (tester) async {
     final (env, _) = await _pinnedEnv(consent: true);

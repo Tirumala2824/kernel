@@ -85,10 +85,15 @@ class SenseEngine implements PestSenseEngine {
 
   // ---- Camera -----------------------------------------------------------------
 
+  /// Live candidates from active camera batches. Inactive batches, bridge
+  /// errors and stream completion invalidate candidates with a stream error,
+  /// never an evaluated empty list. Later active batches recover the stream;
+  /// after completion, a new listener can resubscribe to the native host.
   @override
   Stream<List<SignalCandidate>> cameraCandidates() => _candidates.stream;
 
   /// Thermal level, torch, gyro gating and analysis rate with each batch.
+  /// Bridge errors and stream completion also invalidate this stream.
   Stream<SenseCameraStatus> cameraStatus() => _status.stream;
 
   Future<SenseCameraCapabilities?> cameraCapabilities() async {
@@ -107,6 +112,7 @@ class SenseEngine implements PestSenseEngine {
       for (final c in candidates)
         if (c.source == SignalSource.camera) ?boxFor(c),
     ];
+    final generation = _mediaGeneration;
     NativeStill? native;
     try {
       native = await _host.captureStill(boxes);
@@ -116,7 +122,7 @@ class SenseEngine implements PestSenseEngine {
     if (native == null) return null;
     final still = mapStill(native);
     if (_ranker != null && _stage1Allowed) {
-      _rankings[still.stillId] = _rank(still, _mediaGeneration);
+      _rankings[still.stillId] = _rank(still, generation);
     }
     return still;
   }
@@ -358,7 +364,11 @@ class SenseEngine implements PestSenseEngine {
     if (wanted && _batchSub == null) {
       _batchSub = _host.cameraBatches().listen(
         _onBatch,
-        onError: (Object _) {},
+        onError: _onCameraError,
+        onDone: () {
+          _batchSub = null;
+          _onCameraError(StateError('Camera stream ended'));
+        },
       );
     } else if (!wanted && _batchSub != null) {
       unawaited(_batchSub!.cancel());
@@ -367,15 +377,35 @@ class SenseEngine implements PestSenseEngine {
   }
 
   void _onBatch(NativeCameraBatch b) {
-    _stage0 = [for (final c in b.candidates) mapCandidate(c)];
     final status = mapCameraStatus(b);
     _lastStatus = status;
     if (!_status.isClosed) _status.add(status);
+    if (!status.cameraActive) {
+      _invalidateCameraCandidates(StateError('Camera is inactive'));
+      return;
+    }
+    _stage0 = [for (final c in b.candidates) mapCandidate(c)];
     _emitCandidates();
   }
 
+  void _onCameraError(Object error, [StackTrace? stackTrace]) {
+    _lastStatus = null;
+    _invalidateCameraCandidates(error, stackTrace);
+    if (!_status.isClosed) _status.addError(error, stackTrace);
+  }
+
+  void _invalidateCameraCandidates(Object error, [StackTrace? stackTrace]) {
+    _mediaGeneration++;
+    _rankings.clear();
+    _stage0 = const [];
+    _stage1 = const [];
+    _stage1At = null;
+    if (!_candidates.isClosed) _candidates.addError(error, stackTrace);
+  }
+
   void _emitCandidates() {
-    if (_candidates.isClosed) return;
+    // Only a real active batch can establish an evaluated camera frame.
+    if (_candidates.isClosed || _lastStatus?.cameraActive != true) return;
     final at = _stage1At;
     if (at != null && _clock().difference(at) > stage1Hold) {
       _stage1 = const [];
@@ -402,13 +432,16 @@ class SenseEngine implements PestSenseEngine {
   ) async {
     final ranker = _ranker;
     if (ranker == null) return const [];
+    final liveFrame = _lastStatus?.cameraActive == true;
     try {
       final results = await ranker.rankTiles(still.tiles);
       if (generation != _mediaGeneration) return const [];
-      // The newest still replaces earlier Stage-1 candidates.
-      _stage1 = results;
-      _stage1At = _clock();
-      _emitCandidates();
+      // Still ranking may be useful off-preview, but cannot create a live frame.
+      if (liveFrame) {
+        _stage1 = results;
+        _stage1At = _clock();
+        _emitCandidates();
+      }
       return results;
     } catch (_) {
       return const [];

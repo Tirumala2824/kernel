@@ -36,9 +36,10 @@ class DriftPrivacyService implements PrivacyService {
   /// 2. deletes inspection photo files and kept sighting media files
   ///    (missing files are ignored);
   /// 3. in one transaction, deletes all labeled samples, inspections,
-  ///    scans, reminders, sightings and sensor events, and records on each
+  ///    scans, reminders, sightings, sensor events and health, and records on each
   ///    node the highest event seq it cleared, so the node's
-  ///    store-and-forward buffer never brings those events back;
+  ///    store-and-forward buffer never brings those events back. A separate
+  ///    time cutoff prevents replay of wiped health observations;
   /// 4. deletes retained audio if a deleter was provided;
   /// 5. deletes exported dataset ZIPs.
   ///
@@ -73,11 +74,37 @@ class DriftPrivacyService implements PrivacyService {
       await _db.delete(_db.sightings).go();
       await _markClearedSeqs();
       await _db.delete(_db.sensorEvents).go();
+      await _markClearedHealth();
+      await _db.delete(_db.sensorHealthChanges).go();
     });
     final deleteAudio = _deleteRetainedAudio;
     if (deleteAudio != null) await deleteAudio();
     if (await _datasetDirectory.exists()) {
       await _datasetDirectory.delete(recursive: true);
+    }
+  }
+
+  Future<void> _markClearedHealth() async {
+    final now = _clock().toUtc();
+    final health = _db.sensorHealthChanges;
+    for (final node in await _db.select(_db.sensorNodes).get()) {
+      final latest =
+          await (_db.select(health)
+                ..where((h) => h.nodeId.equals(node.id))
+                ..orderBy([(h) => OrderingTerm.desc(h.at)])
+                ..limit(1))
+              .getSingleOrNull();
+      var cutoff = node.healthClearedThroughAt;
+      if (cutoff == null || now.isAfter(cutoff)) cutoff = now;
+      if (latest != null && latest.at.isAfter(cutoff)) cutoff = latest.at;
+      await (_db.update(
+        _db.sensorNodes,
+      )..where((n) => n.id.equals(node.id))).write(
+        SensorNodesCompanion(
+          healthClearedThroughAt: Value(cutoff),
+          updatedAt: Value(now),
+        ),
+      );
     }
   }
 

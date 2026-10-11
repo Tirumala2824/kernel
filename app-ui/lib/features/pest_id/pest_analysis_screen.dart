@@ -14,7 +14,6 @@ import '../../widgets/kernel_app_bar.dart';
 import '../advice/advice_card.dart';
 import 'pest_analysis_sections.dart';
 import 'pest_card_picker.dart';
-import 'pest_copy.dart';
 import 'pest_providers.dart';
 import 'pest_session.dart';
 import 'pest_widgets.dart';
@@ -153,9 +152,17 @@ class _PestAnalysisScreenState extends ConsumerState<PestAnalysisScreen> {
     final shownId = s.shownCardId;
     final card = s.cardById(shownId);
     final userPicked = s.userCardId != null;
-    final level = moreSerious(
-      analysis?.safety ?? card?.safety ?? SafetyLevel.low,
-      card?.safety,
+    final involvedCards = {
+      for (final involved in <KnowledgeCard>[
+        ?s.cardById(analysis?.cardId),
+        ?s.fallbackCard,
+        ?card,
+      ])
+        involved.id: involved,
+    }.values.toList();
+    final concerns = safetyConcerns(
+      aiLevel: analysis?.safety,
+      cards: involvedCards,
     );
     final capability = ref.watch(distanceCapabilityProvider).value;
     final canMeasure =
@@ -174,7 +181,7 @@ class _PestAnalysisScreenState extends ConsumerState<PestAnalysisScreen> {
             ),
           ),
         ),
-      PestSafetyBanner(level: level),
+      for (final level in concerns) PestSafetyBanner(level: level),
       if (analysis != null)
         PestAiAnalysisCard(analysis: analysis)
       else
@@ -193,7 +200,7 @@ class _PestAnalysisScreenState extends ConsumerState<PestAnalysisScreen> {
                 .guide(
                   PestGuideInput(
                     analysis: analysis,
-                    cards: [card],
+                    cards: involvedCards,
                     languageTag: adviceLanguageTag(context),
                   ),
                 ),
@@ -223,8 +230,11 @@ class _PestAnalysisScreenState extends ConsumerState<PestAnalysisScreen> {
                     context,
                     cards: s.cards,
                     selectedId: s.userCardId,
-                    onPicked: (id) =>
-                        ref.read(pestSessionProvider.notifier).pickCard(id),
+                    onPicked: (id) {
+                      // Old guidance does not cover the new card's concerns.
+                      setState(() => _explaining = false);
+                      ref.read(pestSessionProvider.notifier).pickCard(id);
+                    },
                   ),
             icon: const Icon(Icons.swap_horiz_rounded),
             label: Text(l.pestPickCard),

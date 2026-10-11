@@ -84,25 +84,6 @@
       "defaultConfig": {
         "accelerators": "cpu"
       }
-    },
-    {
-      "name": "Kernel Insect Audio Classifier",
-      "modelId": "ganesh333/kernel-insect-classifier",
-      "modelFile": "model.tflite",
-      "commitHash": "001425d7fab4b44af5cc571174410f1c78552d0e",
-      "revisionKind": "git",
-      "sizeInBytes": 646352,
-      "sha256": "55ad541b87d1ae0bae5a71c7ec9091fc40617051f479ac3f12996bacda6f597e",
-      "license": "cc-by-4.0",
-      "gated": false,
-      "licenseEvidence": "HF /api/models/ganesh333/kernel-insect-classifier: tags license:cc-by-4.0, cardData.license cc-by-4.0, gated false (checked 2026-10-10)",
-      "capabilities": ["audioClassify"],
-      "preference": 90,
-      "description": "Kernel on-device bioacoustic classifier for 32 insect and grain pest species (Cicadidae, Orthoptera, grain borers). Input 16 kHz mono 2.0 s clip, 64-band log-mel spectrogram.",
-      "defaultConfig": {
-        "accelerators": "cpu",
-        "sampleRateHz": 16000
-      }
     }
   ]
 }

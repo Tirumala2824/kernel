@@ -1,0 +1,2 @@
+# Preserve exact upstream bytes: SHA-256 pins cover both binaries and JSON.
+sense-ai/android/src/main/assets/insect_sound/** -text

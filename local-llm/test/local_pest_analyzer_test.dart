@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
 import 'package:local_llm/local_llm.dart';
 import 'package:local_llm/src/llm_api.g.dart';
+import 'package:local_llm/src/pest_prompts.dart'
+    show keepBackWording, protectedWildlifeWording, renderGuidePrompt;
 
 import 'support/fake_llm_host.dart';
 import 'support/media.dart';
@@ -108,11 +110,16 @@ PestAnalysis analysis({
   latencyMs: 9000,
 );
 
-KnowledgeCard scorpionCard() => const KnowledgeCard(
-  id: 'scorpion',
-  names: {'en': 'Scorpion', 'hi': 'बिच्छू'},
+KnowledgeCard scorpionCard({
+  String id = 'scorpion',
+  SafetyLevel safety = SafetyLevel.venomous,
+  Set<SafetyLevel> extraSafety = const {},
+}) => KnowledgeCard(
+  id: id,
+  names: const {'en': 'Scorpion', 'hi': 'बिच्छू'},
   group: PestGroup.arachnid,
-  safety: SafetyLevel.venomous,
+  safety: safety,
+  extraSafety: extraSafety,
   summary: 'An arachnid with a curved tail sting.',
   signs: ['Seen under stones and in dark corners at night'],
   lookAlikes: ['whip_scorpion'],
@@ -427,6 +434,39 @@ void main() {
   });
 
   group('guide', () {
+    for (final beyondFactsLimit in [false, true]) {
+      test('prompt retains every unique required sentence '
+          '(beyond facts limit: $beyondFactsLimit)', () {
+        final input = PestGuideInput(
+          analysis: analysis(safety: SafetyLevel.medicalRisk),
+          cards: [
+            if (beyondFactsLimit)
+              for (var i = 0; i < 3; i++) scorpionCard(id: 'scorpion_$i'),
+            scorpionCard(
+              id: 'secondary_protected',
+              extraSafety: {SafetyLevel.protectedWildlife},
+            ),
+          ],
+        );
+        final rendered = renderGuidePrompt(input);
+        final required = rendered.prompt
+            .split('\n')
+            .where((line) => line.startsWith('- Required wording:'));
+        expect(
+          required,
+          unorderedEquals([
+            '- Required wording: $keepBackWording',
+            '- Required wording: $protectedWildlifeWording',
+          ]),
+        );
+        if (beyondFactsLimit) {
+          expect(rendered.prompt, isNot(contains('id secondary_protected')));
+          expect(rendered.prompt, isNot(contains('Card 4:')));
+        }
+        expect(pestPromptVersion, 'kernel-pest-prompts-v2');
+      });
+    }
+
     test('text only, grounded in the given cards, one guarded event', () async {
       host.onPest = (_, _) async => nativeResult(
         text:
@@ -473,49 +513,63 @@ void main() {
       expect(r.systemInstruction, contains('Never write "kill"'));
     });
 
-    test('a more serious analysis level adds its required wording', () async {
-      host.onPest = (_, _) async => nativeResult(text: 'Stay well back.');
-      await analyzer
-          .guide(
-            PestGuideInput(
-              analysis: analysis(
-                cardId: 'monitor_lizard',
-                safety: SafetyLevel.protectedWildlife,
-              ),
-              cards: [scorpionCard()],
-            ),
-          )
-          .toList();
-      expect(
-        host.pestCalls.single.prompt,
-        contains(
-          '- Required wording: Do not harm, catch or injure it; contact the '
-          'State Forest Department or a licensed rescuer.',
+    for (final (source, input) in [
+      (
+        'analysis',
+        PestGuideInput(
+          analysis: analysis(safety: SafetyLevel.protectedWildlife),
+          cards: [scorpionCard()],
         ),
-      );
-    });
-
-    test('legal text of protected wildlife is passed and may be echoed', () async {
-      host.onPest = (_, _) async => nativeResult(
-        text:
-            'This may be a monitor lizard, which is protected. Do not harm, '
-            'catch or injure it; contact the State Forest Department or a '
-            'licensed rescuer.',
-      );
-      final texts = await analyzer
-          .guide(
-            PestGuideInput(
-              analysis: analysis(
-                cardId: 'monitor_lizard',
-                safety: SafetyLevel.protectedWildlife,
-              ),
-              cards: [monitorCard()],
-            ),
-          )
-          .toList();
-      expect(texts, hasLength(1));
-      expect(host.pestCalls.single.prompt, contains('Schedule I'));
-    });
+      ),
+      (
+        'primary card',
+        PestGuideInput(analysis: analysis(), cards: [monitorCard()]),
+      ),
+      (
+        'extraSafety',
+        PestGuideInput(
+          analysis: analysis(),
+          cards: [
+            scorpionCard(extraSafety: {SafetyLevel.protectedWildlife}),
+          ],
+        ),
+      ),
+      (
+        'card beyond facts limit',
+        PestGuideInput(
+          analysis: analysis(),
+          cards: [
+            for (var i = 0; i < 3; i++) scorpionCard(id: 'scorpion_$i'),
+            scorpionCard(extraSafety: {SafetyLevel.protectedWildlife}),
+          ],
+        ),
+      ),
+      (
+        'analysis without cards',
+        PestGuideInput(
+          analysis: analysis(safety: SafetyLevel.protectedWildlife),
+          cards: const [],
+        ),
+      ),
+    ]) {
+      test('protected wildlife from $source uses static guidance before '
+          'host access or model resolution', () async {
+        await analyzer.dispose();
+        var resolutions = 0;
+        analyzer = build(modelPath: () async {
+          resolutions++;
+          return '/data/files/models/gemma.litertlm';
+        });
+        // The generic guard alone does not block handling instructions.
+        host.onPest = (_, _) async => nativeResult(text: 'Catch it in a trap.');
+        final texts = await analyzer.guide(input).toList();
+        expect(texts, isEmpty);
+        expect(host.calls, isEmpty);
+        expect(host.pestCalls, isEmpty);
+        expect(host.statusEvents.hasListener, isFalse);
+        expect(resolutions, 0);
+      });
+    }
 
     test('poison, certainty or safety claims give an empty stream', () async {
       for (final bad in [

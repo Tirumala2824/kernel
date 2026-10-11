@@ -7,11 +7,11 @@ import 'package:sense_ai/sense_ai.dart';
 import 'package:sense_ai/src/sense_api.g.dart';
 
 class TestSenseHost implements SenseHost {
-  final batches = StreamController<NativeCameraBatch>.broadcast();
+  var batches = StreamController<NativeCameraBatch>.broadcast();
   final sounds = StreamController<NativeSoundEvent>.broadcast();
   final listen = StreamController<NativeListenStatus>.broadcast();
 
-  NativeStill? Function(List<NativeBox> boxes)? onCapture;
+  FutureOr<NativeStill?> Function(List<NativeBox> boxes)? onCapture;
   bool throwOnCapture = false;
   NativeListenStatus Function(NativeListenMode mode, String? path)? onStart;
   NativeDistance Function(NativeBox? target)? onMeasure;

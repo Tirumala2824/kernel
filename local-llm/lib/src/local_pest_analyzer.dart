@@ -499,6 +499,15 @@ class LocalPestAnalyzer implements PestAnalyzer {
     PestGuideInput input,
     void Function(String id) onRequestId,
   ) async {
+    // No verified multilingual handling guard exists for protected animals.
+    // Leave guidance to the localized static cards and banners, before any
+    // host access, model resolution or runtime work.
+    if (safetyConcerns(
+      aiLevel: input.analysis.safety,
+      cards: input.cards,
+    ).contains(SafetyLevel.protectedWildlife)) {
+      return null;
+    }
     final clock = Stopwatch()..start();
     Duration left() => _guideTimeout - clock.elapsed;
     if (!await _isEnabled()) return null;

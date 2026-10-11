@@ -62,6 +62,13 @@ String? kernelRedirect(
   AsyncValue<bool> onboardingDone = const AsyncData(true),
 }) {
   final path = location.path;
+  if (path == Routes.start) return Routes.chat;
+  if (path == Routes.chat ||
+      path == Routes.settings ||
+      path.startsWith('${Routes.settings}/') ||
+      path == Routes.models) {
+    return null;
+  }
   if (!activeRole.hasValue || !onboardingDone.hasValue) {
     return path == Routes.start ? null : Routes.start;
   }
@@ -98,14 +105,51 @@ final routerProvider = Provider<GoRouter>((ref) {
   String id(GoRouterState s, String name) => s.pathParameters[name]!;
   String? q(GoRouterState s, String name) => s.uri.queryParameters[name];
 
+  Uri? deferredOperationalLocation;
   final router = GoRouter(
     initialLocation: Routes.start,
     refreshListenable: gate,
-    redirect: (context, state) => kernelRedirect(
-      gate.value.role,
-      state.uri,
-      onboardingDone: gate.value.onboarding,
-    ),
+    redirect: (context, state) {
+      final current = gate.value;
+      final path = state.uri.path;
+      final ready = current.role.hasValue && current.onboarding.hasValue;
+      final deferred = deferredOperationalLocation;
+      if (deferred != null) {
+        if (path == Routes.start && !ready) return null;
+        if (ready &&
+            (path == Routes.start ||
+                path == Routes.onboarding ||
+                path == Routes.role ||
+                path == Routes.home)) {
+          final redirect = kernelRedirect(
+            current.role,
+            deferred,
+            onboardingDone: current.onboarding,
+          );
+          if (redirect == null) {
+            deferredOperationalLocation = null;
+            return deferred.toString();
+          }
+          return redirect == path ? null : redirect;
+        }
+        // Explicit chat/settings navigation cancels a pending operational link.
+        if (path == Routes.chat ||
+            path == Routes.settings ||
+            path.startsWith('${Routes.settings}/') ||
+            path == Routes.models) {
+          deferredOperationalLocation = null;
+        }
+      }
+      final redirect = kernelRedirect(
+        current.role,
+        state.uri,
+        onboardingDone: current.onboarding,
+      );
+      if (redirect == Routes.start && path != Routes.start) {
+        deferredOperationalLocation = state.uri;
+      }
+      return redirect;
+    },
     routes: [
       GoRoute(path: Routes.start, builder: (_, _) => const StartScreen()),
       GoRoute(

@@ -113,7 +113,7 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get settingsFooter =>
-      'ਸਾਰੀ ਆਵਾਜ਼ ਜਾਂਚ ਇਸੇ ਫ਼ੋਨ ਉੱਤੇ ਹੁੰਦੀ ਹੈ। Kernel ਬਿਨਾਂ ਇੰਟਰਨੈੱਟ ਦੇ ਚੱਲਦਾ ਹੈ ਅਤੇ ਕਦੇ ਆਵਾਜ਼ ਅੱਪਲੋਡ ਨਹੀਂ ਕਰਦਾ।';
+      'Kernel ਆਡੀਓ ਇਸ ਫ਼ੋਨ ਵਿੱਚ ਹੀ ਰੱਖਦਾ ਹੈ। ਫ਼ੋਨ ਵਿੱਚ ਰੱਖੇ ਰਿਕਾਰਡ ਅਤੇ ਐਪ ਨਾਲ ਆਉਂਦੀਆਂ ਜਾਂਚਾਂ ਆਫ਼ਲਾਈਨ ਕੰਮ ਕਰਦੀਆਂ ਹਨ; ਮਾਡਲ ਡਾਊਨਲੋਡ ਅਤੇ ਆਨਲਾਈਨ ਨਕਸ਼ਿਆਂ ਲਈ ਇੰਟਰਨੈੱਟ ਚਾਹੀਦਾ ਹੈ।';
 
   @override
   String get diagnosticsTitle => 'ਤਕਨੀਕੀ ਜਾਣਕਾਰੀ';
@@ -1217,7 +1217,7 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get onboardingPrivacy2 =>
-      'ਕੁਝ ਵੀ ਅੱਪਲੋਡ ਨਹੀਂ ਹੁੰਦਾ। ਕੋਈ ਖਾਤਾ ਨਹੀਂ, ਕੋਈ ਕਲਾਊਡ ਨਹੀਂ, ਅਤੇ ਸਭ ਕੁਝ ਬਿਨਾਂ ਇੰਟਰਨੈੱਟ ਦੇ ਚੱਲਦਾ ਹੈ।';
+      'ਆਡੀਓ ਇਸ ਫ਼ੋਨ ਵਿੱਚ ਹੀ ਰਹਿੰਦਾ ਹੈ। ਫ਼ੋਨ ਵਿੱਚ ਰੱਖੇ ਰਿਕਾਰਡ ਅਤੇ ਐਪ ਨਾਲ ਆਉਂਦੀਆਂ ਜਾਂਚਾਂ ਆਫ਼ਲਾਈਨ ਕੰਮ ਕਰਦੀਆਂ ਹਨ; ਮਾਡਲ ਡਾਊਨਲੋਡ ਅਤੇ ਆਨਲਾਈਨ ਨਕਸ਼ਿਆਂ ਲਈ ਇੰਟਰਨੈੱਟ ਚਾਹੀਦਾ ਹੈ।';
 
   @override
   String get onboardingPrivacy3 =>
@@ -1876,10 +1876,11 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get offlineSemantics =>
-      'ਆਫ਼ਲਾਈਨ। ਇਸ ਫ਼ੋਨ ਉੱਤੇ ਸਭ ਕੁਝ ਚੱਲਦਾ ਰਹਿੰਦਾ ਹੈ।';
+      'ਆਫ਼ਲਾਈਨ। ਫ਼ੋਨ ਵਿੱਚ ਰੱਖੇ ਰਿਕਾਰਡ ਅਤੇ ਐਪ ਨਾਲ ਆਉਂਦੀਆਂ ਜਾਂਚਾਂ ਆਫ਼ਲਾਈਨ ਕੰਮ ਕਰਦੀਆਂ ਹਨ; ਮਾਡਲ ਡਾਊਨਲੋਡ ਅਤੇ ਆਨਲਾਈਨ ਨਕਸ਼ਿਆਂ ਲਈ ਇੰਟਰਨੈੱਟ ਚਾਹੀਦਾ ਹੈ।';
 
   @override
-  String get onlineSemantics => 'ਔਨਲਾਈਨ। Kernel ਨੂੰ ਇੰਟਰਨੈੱਟ ਦੀ ਲੋੜ ਨਹੀਂ।';
+  String get onlineSemantics =>
+      'ਆਨਲਾਈਨ। ਫ਼ੋਨ ਵਿੱਚ ਰੱਖੇ ਰਿਕਾਰਡ ਅਤੇ ਐਪ ਨਾਲ ਆਉਂਦੀਆਂ ਜਾਂਚਾਂ ਆਫ਼ਲਾਈਨ ਕੰਮ ਕਰਦੀਆਂ ਹਨ; ਮਾਡਲ ਡਾਊਨਲੋਡ ਅਤੇ ਆਨਲਾਈਨ ਨਕਸ਼ਿਆਂ ਲਈ ਇੰਟਰਨੈੱਟ ਚਾਹੀਦਾ ਹੈ।';
 
   @override
   String get qrTooltip => 'QR ਲੇਬਲ ਤੋਂ ਬੋਰੀ ਖੋਲ੍ਹੋ';
@@ -1993,7 +1994,7 @@ class AppLocalizationsPa extends AppLocalizations {
   String get levelMeterLabel => 'ਮਾਈਕ ਦੀ ਆਵਾਜ਼ ਦਾ ਪੱਧਰ';
 
   @override
-  String get levelMeterWaiting => 'ਆਵਾਜ਼ ਦੀ ਉਡੀਕ';
+  String get levelMeterWaiting => 'ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਦੇ ਪੱਧਰਾਂ ਦੀ ਉਡੀਕ';
 
   @override
   String levelMeterValue(int dbfs) {
@@ -2910,10 +2911,10 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get hubSubtitle =>
-      'ਕੀੜੇ ਦੀ ਪਛਾਣ ਲਈ ਫ਼ੋਨ \'ਤੇ ਚੱਲਣ ਵਾਲੇ ਮਾਡਲ। ਇਹ ਸਿਰਫ਼ ਇਸੇ ਫ਼ੋਨ \'ਤੇ ਚੱਲਦੇ ਹਨ।';
+      'Android ਐਪ ਵਿੱਚ WAV ਕਲਿੱਪਾਂ ਤੋਂ ਕੀੜਿਆਂ ਦਾ ਤਜਰਬਾਤੀ ਵਰਗੀਕਰਨ ਸ਼ਾਮਲ ਹੈ। ਹੇਠਾਂ ਦਿੱਤੇ ਚੋਣਵੇਂ ਡਾਊਨਲੋਡ ਤਸਵੀਰਾਂ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ, ਖੋਜ ਅਤੇ ਲਾਈਵ ਆਵਾਜ਼ ਵਰਗੀਕਰਨ (YAMNet) ਦੀਆਂ ਸਹੂਲਤਾਂ ਜੋੜਦੇ ਹਨ।';
 
   @override
-  String get hubNeedsTitle => 'ਕੀੜੇ ਦੀ ਪਛਾਣ ਲਈ ਚਾਹੀਦਾ';
+  String get hubNeedsTitle => 'ਚੋਣਵੇਂ ਮਾਡਲ ਡਾਊਨਲੋਡ';
 
   @override
   String get hubNeedImage => 'ਤਸਵੀਰ ਸਮਝਣਾ';
@@ -2922,7 +2923,7 @@ class AppLocalizationsPa extends AppLocalizations {
   String get hubNeedEmbeddings => 'ਐਂਬੈਡਿੰਗ (ਖੋਜ ਲਈ)';
 
   @override
-  String get hubNeedSound => 'ਆਵਾਜ਼ ਪਛਾਣਨ ਵਾਲਾ ਮਾਡਲ';
+  String get hubNeedSound => 'ਲਾਈਵ ਆਵਾਜ਼ ਵਰਗੀਕਰਨ ਮਾਡਲ (YAMNet)';
 
   @override
   String get hubInstalledChip => 'ਲੱਗਿਆ ਹੋਇਆ';
@@ -2932,25 +2933,25 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get hubAllInstalled =>
-      'ਕੀੜੇ ਦੀ ਪਛਾਣ ਲਈ ਲੋੜੀਂਦਾ ਸਭ ਕੁਝ ਇਸ ਫ਼ੋਨ \'ਤੇ ਹੈ।';
+      'ਇੱਥੇ ਦਿੱਤੀਆਂ ਸਾਰੀਆਂ ਚੋਣਵੀਆਂ ਸਹੂਲਤਾਂ ਦੇ ਮਾਡਲ ਇੰਸਟਾਲ ਹਨ।';
 
   @override
   String get hubNothingToDownload =>
-      'ਜੋ ਹਿੱਸੇ ਨਹੀਂ ਹਨ, ਉਨ੍ਹਾਂ ਲਈ ਅਜੇ ਕੋਈ ਡਾਊਨਲੋਡ ਉਪਲਬਧ ਨਹੀਂ।';
+      'ਜੋ ਚੋਣਵੇਂ ਮਾਡਲ ਨਹੀਂ ਹਨ, ਉਨ੍ਹਾਂ ਲਈ ਹਾਲੇ ਡਾਊਨਲੋਡ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।';
 
   @override
   String hubDownloadSummary(int count, String size) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count ਮਾਡਲ ਡਾਊਨਲੋਡ ਕਰਨੇ ਹਨ, ਲਗਭਗ $size',
-      one: '1 ਮਾਡਲ ਡਾਊਨਲੋਡ ਕਰਨਾ ਹੈ, ਲਗਭਗ $size',
+      other: '$count ਚੋਣਵੇਂ ਮਾਡਲ ਡਾਊਨਲੋਡ ਕਰਨੇ ਹਨ, ਲਗਭਗ $size',
+      one: '1 ਚੋਣਵਾਂ ਮਾਡਲ ਡਾਊਨਲੋਡ ਕਰਨਾ ਹੈ, ਲਗਭਗ $size',
     );
     return '$_temp0';
   }
 
   @override
-  String get hubDownloadAction => 'ਮਾਡਲ ਡਾਊਨਲੋਡ ਕਰੋ';
+  String get hubDownloadAction => 'ਚੋਣਵੇਂ ਮਾਡਲ ਡਾਊਨਲੋਡ ਕਰੋ';
 
   @override
   String hubDownloadFailed(String error) {
@@ -2961,14 +2962,15 @@ class AppLocalizationsPa extends AppLocalizations {
   String get hubCatalogUnavailable => 'ਮਾਡਲਾਂ ਦੀ ਸੂਚੀ ਪੜ੍ਹੀ ਨਹੀਂ ਜਾ ਸਕੀ';
 
   @override
-  String get hubInstalledUnavailable => 'ਲੱਗੇ ਹੋਏ ਮਾਡਲ ਪੜ੍ਹੇ ਨਹੀਂ ਜਾ ਸਕੇ';
+  String get hubInstalledUnavailable =>
+      'ਇੰਸਟਾਲ ਕੀਤੇ ਚੋਣਵੇਂ ਮਾਡਲ ਪੜ੍ਹੇ ਨਹੀਂ ਜਾ ਸਕੇ';
 
   @override
   String get hubGalleryNote =>
       'AI Edge Gallery ਵੱਲੋਂ ਪਹਿਲਾਂ ਡਾਊਨਲੋਡ ਕੀਤੀਆਂ ਫ਼ਾਈਲਾਂ Kernel ਨਹੀਂ ਵਰਤ ਸਕਦਾ (Android ਹਰ ਐਪ ਦੀਆਂ ਫ਼ਾਈਲਾਂ ਨਿੱਜੀ ਰੱਖਦਾ ਹੈ), ਇਸ ਲਈ ਉਹੀ ਮਾਡਲ ਇੱਕ ਵਾਰ ਡਾਊਨਲੋਡ ਕਰਦਾ ਹੈ।';
 
   @override
-  String get hubConsentTitle => 'ਕੀੜੇ ਦੀ ਪਛਾਣ ਦੇ ਮਾਡਲ ਡਾਊਨਲੋਡ ਕਰਨੇ ਹਨ?';
+  String get hubConsentTitle => 'ਕੀੜੇ ਪਛਾਣਨ ਲਈ ਚੋਣਵੇਂ ਮਾਡਲ ਡਾਊਨਲੋਡ ਕਰਨੇ ਹਨ?';
 
   @override
   String get hubConsentBody =>
@@ -3060,14 +3062,14 @@ class AppLocalizationsPa extends AppLocalizations {
   String get hubCancel => 'ਰੱਦ ਕਰੋ';
 
   @override
-  String get hubInstalledTitle => 'ਲੱਗੇ ਹੋਏ ਮਾਡਲ';
+  String get hubInstalledTitle => 'ਇੰਸਟਾਲ ਕੀਤੇ ਚੋਣਵੇਂ ਮਾਡਲ';
 
   @override
-  String get hubInstalledEmpty => 'ਅਜੇ ਕੋਈ ਮਾਡਲ ਨਹੀਂ ਲੱਗਿਆ';
+  String get hubInstalledEmpty => 'ਹਾਲੇ ਕੋਈ ਚੋਣਵਾਂ ਮਾਡਲ ਇੰਸਟਾਲ ਨਹੀਂ ਹੈ';
 
   @override
   String get hubInstalledEmptyDetail =>
-      'ਮਾਡਲ ਇੱਕ ਵਾਰ ਡਾਊਨਲੋਡ ਹੋਣ ਤੋਂ ਬਾਅਦ ਕੀੜੇ ਦੀ ਪਛਾਣ ਕੰਮ ਕਰਦੀ ਹੈ।';
+      'Android ਐਪ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀੜਿਆਂ ਦੀ WAV ਜਾਂਚ ਲਈ ਇਹ ਡਾਊਨਲੋਡ ਜ਼ਰੂਰੀ ਨਹੀਂ ਹਨ।';
 
   @override
   String get hubFieldPath => 'ਫ਼ਾਈਲ';
@@ -3172,7 +3174,7 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get hubSettingsCard =>
-      'ਕੀੜੇ ਦੀ ਪਛਾਣ ਵਾਲੇ ਫ਼ੋਨ ਮਾਡਲ ਡਾਊਨਲੋਡ ਕਰੋ ਅਤੇ ਸੰਭਾਲੋ।';
+      'ਤਸਵੀਰਾਂ, ਖੋਜ ਅਤੇ ਲਾਈਵ ਆਵਾਜ਼ ਲਈ ਚੋਣਵੇਂ ਮਾਡਲ ਡਾਊਨਲੋਡ ਸੰਭਾਲੋ।';
 
   @override
   String get hubMapsToggle => 'Google Maps ਵਰਤੋ';
@@ -4172,22 +4174,22 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get pestLocationDenied =>
-      'ਟਿਕਾਣੇ ਦੀ ਇਜਾਜ਼ਤ ਨਹੀਂ ਮਿਲੀ, ਸਿਰਫ਼ ਕਮਰਾ ਸੰਭਾਲਿਆ';
+      'ਟਿਕਾਣੇ ਦੀ ਇਜਾਜ਼ਤ ਨਹੀਂ ਮਿਲੀ। ਪਿੰਨ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।';
 
   @override
   String get pestLocationImprecise =>
-      'ਟਿਕਾਣਾ ਬਹੁਤ ਅੰਦਾਜ਼ਨ ਹੈ, ਸਿਰਫ਼ ਕਮਰਾ ਸੰਭਾਲਿਆ';
+      'ਟਿਕਾਣਾ ਬਹੁਤ ਅੰਦਾਜ਼ਨ ਹੈ। ਪਿੰਨ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।';
 
   @override
   String get pestLocationOff =>
-      'ਇਸ ਫ਼ੋਨ ਉੱਤੇ ਟਿਕਾਣਾ ਬੰਦ ਹੈ, ਸਿਰਫ਼ ਕਮਰਾ ਸੰਭਾਲਿਆ';
+      'ਇਸ ਫ਼ੋਨ ਉੱਤੇ ਟਿਕਾਣਾ ਬੰਦ ਹੈ। ਪਿੰਨ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।';
 
   @override
-  String get pestLocationFailed => 'ਟਿਕਾਣਾ ਨਹੀਂ ਮਿਲਿਆ, ਸਿਰਫ਼ ਕਮਰਾ ਸੰਭਾਲਿਆ';
+  String get pestLocationFailed => 'ਟਿਕਾਣਾ ਨਹੀਂ ਮਿਲਿਆ। ਪਿੰਨ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।';
 
   @override
   String pestLocationPinned(int meters) {
-    return 'ਪਿੰਨ ਸੰਭਾਲਿਆ ($meters ਮੀ. ਦੇ ਅੰਦਰ)';
+    return 'ਪਿੰਨ ਸੰਭਾਲਣ ਲਈ ਤਿਆਰ ($meters ਮੀ. ਦੇ ਅੰਦਰ)';
   }
 
   @override

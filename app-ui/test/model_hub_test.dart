@@ -40,18 +40,92 @@ Future<void> openHub(WidgetTester tester, TestEnv env) =>
     pumpKernelApp(tester, env, location: Routes.models);
 
 Finder textContaining(String part) => find.byWidgetPredicate(
-  (w) => w is Text && (w.data ?? w.textSpan?.toPlainText() ?? '').contains(part),
+  (w) =>
+      w is Text && (w.data ?? w.textSpan?.toPlainText() ?? '').contains(part),
 );
 
 void main() {
-  test('Pest ID needs image understanding, embeddings and a sound classifier',
-      () {
-    expect(pestIdCapabilities, {
-      ModelCapability.imageIn,
-      ModelCapability.embedText,
-      ModelCapability.audioClassify,
-    });
+  test(
+    'Pest ID needs image understanding, embeddings and a sound classifier',
+    () {
+      expect(pestIdCapabilities, {
+        ModelCapability.imageIn,
+        ModelCapability.embedText,
+        ModelCapability.audioClassify,
+      });
+    },
+  );
+
+  test('download copy describes only optional models, not bundled checks', () {
+    expect(en.hubNeedsTitle, 'Optional model downloads');
+    expect(en.hubNeedSound, 'Live sound classifier (YAMNet)');
+    expect(
+      en.hubAllInstalled,
+      'All optional capabilities listed here have installed models.',
+    );
+    expect(
+      en.hubNothingToDownload,
+      'No download is available for the missing optional models yet.',
+    );
+    expect(
+      en.hubDownloadSummary(1, '20 MB'),
+      '1 optional model to download, about 20 MB',
+    );
+    expect(en.hubDownloadAction, 'Download optional models');
+    expect(
+      en.hubInstalledUnavailable,
+      'Could not read installed optional models',
+    );
+    expect(en.hubConsentTitle, 'Download optional Pest ID models?');
+    expect(
+      en.hubSettingsCard,
+      'Manage optional model downloads for images, search and live sound.',
+    );
   });
+
+  testWidgets(
+    'empty registry separates bundled WAV checks from optional models',
+    (tester) async {
+      final env = hubEnv();
+      await openHub(tester, env);
+
+      expect(
+        find.text(
+          'Android includes experimental insect classification for WAV clips. '
+          'The optional downloads below add image analysis, search and live sound '
+          '(YAMNet).',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('Optional model downloads'), findsOneWidget);
+      expect(find.text('Live sound classifier (YAMNet)'), findsOneWidget);
+      expect(find.text('Installed optional models'), findsOneWidget);
+      expect(find.text('No optional models installed yet'), findsOneWidget);
+      expect(
+        find.text(
+          'Bundled insect WAV checks on Android do not need these downloads.',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text('3 optional models to download, about 3.1 GB'),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('hub-need-audioClassify')),
+          matching: find.text('Missing'),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('Sound classifier'), findsNothing);
+      expect(find.text('No models installed yet'), findsNothing);
+      expect(find.text('Installed'), findsNothing);
+      expect(find.byKey(const Key('hub-all-installed')), findsNothing);
+      expect(env.modelRegistry.installed, isEmpty);
+      expect(env.provisioner.ensureCalls, isEmpty);
+    },
+  );
 
   testWidgets('status card shows each need as installed or missing', (
     tester,
@@ -76,7 +150,11 @@ void main() {
       findsOneWidget,
     );
     final card = find.byKey(const Key('hub-status'));
-    for (final need in [en.hubNeedImage, en.hubNeedEmbeddings, en.hubNeedSound]) {
+    for (final need in [
+      en.hubNeedImage,
+      en.hubNeedEmbeddings,
+      en.hubNeedSound,
+    ]) {
       expect(
         find.descendant(of: card, matching: find.text(need)),
         findsOneWidget,
@@ -92,10 +170,7 @@ void main() {
   testWidgets('everything installed: no download offered', (tester) async {
     final env = hubEnv();
     env.modelRegistry.installed = [
-      testInstalled(
-        path: '/m/all.litertlm',
-        capabilities: pestIdCapabilities,
-      ),
+      testInstalled(path: '/m/all.litertlm', capabilities: pestIdCapabilities),
     ];
     await openHub(tester, env);
     expect(find.byKey(const Key('hub-all-installed')), findsOneWidget);
@@ -138,10 +213,7 @@ void main() {
       expect(find.text(en.hubConsentSize(en.unitGb('2.6'))), findsOneWidget);
       expect(find.text(en.hubSourceHf), findsNWidgets(2));
       expect(find.text(en.hubSourceGoogle), findsOneWidget);
-      expect(
-        find.text(en.hubConsentTotal(en.unitGb('3.1'))),
-        findsOneWidget,
-      );
+      expect(find.text(en.hubConsentTotal(en.unitGb('3.1'))), findsOneWidget);
       final wifi = tester.widget<SwitchListTile>(
         find.byKey(const Key('hub-consent-wifi')),
       );
@@ -248,7 +320,10 @@ void main() {
     expect(find.text(en.hubFreeSpace(en.unitMb('500'))), findsOneWidget);
 
     await emit(ProvisionPhase.downloading, 1300000000);
-    expect(phaseText(), en.hubPhaseDownloading(en.unitGb('1.3'), en.unitGb('2.6')));
+    expect(
+      phaseText(),
+      en.hubPhaseDownloading(en.unitGb('1.3'), en.unitGb('2.6')),
+    );
 
     await tapVisible(tester, find.byKey(Key('hub-cancel-${vision.id}')));
     expect(env.provisioner.cancelled, [vision.id]);
@@ -358,7 +433,10 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.descendant(of: models, matching: find.text(en.hubSearchScore('0.82'))),
+        find.descendant(
+          of: models,
+          matching: find.text(en.hubSearchScore('0.82')),
+        ),
         findsOneWidget,
       );
       expect(
@@ -366,7 +444,10 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.descendant(of: cards, matching: find.text(en.hubSearchScore('0.64'))),
+        find.descendant(
+          of: cards,
+          matching: find.text(en.hubSearchScore('0.64')),
+        ),
         findsOneWidget,
       );
       expect(

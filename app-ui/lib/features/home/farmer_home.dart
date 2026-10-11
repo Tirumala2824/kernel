@@ -21,11 +21,17 @@ class FarmerHome extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
-    final items = ref.watch(itemsByRoleProvider(role));
-    final stats = ref.watch(inspectionStatsProvider(roleScope(role))).value;
-    final harvests = ref.watch(harvestsProvider).value ?? const <Harvest>[];
+    final itemsValue = ref.watch(itemsByRoleProvider(role));
+    final inspectionsValue = ref.watch(openInspectionsProvider);
+    final inspections = inspectionsValue.isLoading || inspectionsValue.hasError
+        ? null
+        : inspectionsValue.value;
+    final harvestsValue = ref.watch(harvestsProvider);
+    final harvests = harvestsValue.isLoading || harvestsValue.hasError
+        ? null
+        : harvestsValue.value;
     final latest = ([
-      ...harvests,
+      ...?harvests,
     ]..sort((a, b) => b.harvestedAt.compareTo(a.harvestedAt))).firstOrNull;
     return PageList(
       children: [
@@ -36,7 +42,7 @@ class FarmerHome extends ConsumerWidget {
               : l.farmerHomeHarvestSubtitle(latest.name),
         ),
         AsyncView<List<GrainItem>>(
-          value: items,
+          value: itemsValue,
           data: (items) {
             if (items.isEmpty) {
               return EmptyState(
@@ -48,7 +54,17 @@ class FarmerHome extends ConsumerWidget {
                 onAction: () => context.push(Routes.newItem()),
               );
             }
-            final followUps = stats == null ? 0 : stats.open + stats.inProgress;
+            final itemIds = {for (final item in items) item.id};
+            final followUps =
+                itemsValue.isLoading ||
+                    itemsValue.hasError ||
+                    inspections == null
+                ? null
+                : {
+                    for (final inspection in inspections)
+                      if (itemIds.contains(inspection.itemId))
+                        inspection.itemId,
+                  }.length;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -68,7 +84,9 @@ class FarmerHome extends ConsumerWidget {
                   key: const Key('items-summary'),
                   icon: Icons.inventory_2_rounded,
                   title: l.registeredSacks(items.length),
-                  subtitle: followUps == 0
+                  subtitle: followUps == null
+                      ? null
+                      : followUps == 0
                       ? l.noFollowUps
                       : l.sacksRequireFollowUp(followUps),
                   onTap: () => context.go(Routes.inventory),
@@ -84,12 +102,22 @@ class FarmerHome extends ConsumerWidget {
           tone: KernelCardTone.ivory,
           icon: Icons.grass_rounded,
           title: l.harvestsTitle,
-          subtitle: harvests.isEmpty
+          subtitle: harvestsValue.isLoading
+              ? l.loading
+              : harvestsValue.hasError
+              ? l.errorCouldNotLoad
+              : harvests == null
+              ? null
+              : harvests.isEmpty
               ? l.harvestsEmptyCard
               : l.harvestsCount(harvests.length),
-          onTap: () => context.push(
-            latest == null ? Routes.newHarvest : Routes.harvest(latest.id),
-          ),
+          onTap: harvests == null
+              ? null
+              : () => context.push(
+                  latest == null
+                      ? Routes.newHarvest
+                      : Routes.harvest(latest.id),
+                ),
         ),
         KernelCard(
           tone: KernelCardTone.ivory,

@@ -48,7 +48,7 @@ ItemRepository       create(GrainItemDraft) · update(GrainItem) · get(id) · w
 LocationRepository   create(LocationDraft) · get(id) · watchChildren(parentId?)
 LotRepository        create(LotDraft) · get(id) · watchAll() · updateScreeningStatus(id, status)   // human-set only
 ScanRepository       record(ScanOutcome)  // append-only; throws ArgumentError on invariant violations
-                     watchForItem(itemId) · watchRecent(limit) · latestValidForItem(itemId)
+                     watchForItem(itemId) · watchRecent({limit, role?}) · latestValidForItem(itemId)
 InspectionRepository create(InspectionDraft) · watchForItem(itemId) · watchOpen() · updateFollowUp(id, status)
 ReminderRepository   schedule(itemId, dueAt) · cancel(id) · markDone(id) · watchForItem(itemId) · watchUpcoming()
 SettingsRepository   watchActiveRole() · setActiveRole(role) · watchRetainAudioOptIn() · setRetainAudioOptIn(bool)
@@ -105,7 +105,7 @@ The source of truth is `contracts/lib/src/`. New fields are optional with defaul
 - `PrivacyService.deleteAllHistory` also removes inspection photos and labeled samples.
 
 **Ordering**
-- `watchForItem` (scans and inspections), `watchRecent` and `watchSince` return newest first.
+- `watchForItem` (scans and inspections), `watchRecent` and `watchSince` return newest first. Scan `watchRecent` filters non-archived items and optional role ownership before applying its positive limit; newer records owned by another role cannot hide the requested role's history.
 - `watchOpen` returns open and inProgress inspections, oldest first.
 
 **Model manifest keys** (`models/<name>.properties`, owned by audio-ai): the v1 keys plus `validation=proxy|field` and `note=<text>`. `note` becomes `EngineInfo.modelNote`. A proxy model is always `experimental=true`.
@@ -207,3 +207,11 @@ The source of truth is `contracts/lib/src/model_hub.dart`, `embedding.dart`, `pe
 
 ## Native bridge (audio-ai internal)
 Dart ↔ Kotlin goes through a **pigeon**-generated API in `audio-ai/pigeons/`. The Dart `ScanEngine` implementation in `audio-ai/lib/` maps the pigeon types to the `contracts` types. The app-ui never touches the channel directly.
+
+## Experimental insect-sound classification
+
+`contracts/lib/src/insect_sound.dart` defines a separate `InsectSoundClassifier.classifyWavFile(path)` boundary. It consumes a local WAV and never opens the microphone or uploads audio. It is not `ScanEngine` and does not create a grain classification, lot decision, treatment recommendation, or saved record.
+
+`InsectSoundResult` carries `status` (evaluated/rejected/unavailable), hierarchical `level` (species/genus/group/unknown), nullable `label`, raw uncalibrated `topLabels`, observed quality `reasons`, `modelId`, `modelVersion`, pinned `modelRevision`, and optional observed `sampleRate`/`durationMs`. Outputs remain experimental. Unknown is not promoted to a top-1 species; rejected/unavailable results must have no label or scores. `invariantViolations()` validates output before presentation. An evaluated result requires scored model evidence. A species label must agree with a highest-scored candidate at the pinned model's inclusive 0.6 threshold; a malformed label is rejected, never silently replaced with top-1. Genus/group scores cannot be reconstructed from the truncated top-label list, so this boundary preserves the native hierarchy rather than inventing aggregate evidence.
+
+The dedicated Android adapter belongs to `sense-ai`; the app binds it in `bootstrap.dart`. Its audio frontend and model are distinct from both the grain proxy and YAMNet. The HF model covers audible insect sounds, not ultrasound, grain infestation or pest absence. Bundled model metadata/labels are required reproducibility assets, not simulated UI data.

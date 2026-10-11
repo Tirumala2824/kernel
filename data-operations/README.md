@@ -60,7 +60,7 @@ test scheduler, a temporary report directory and font bytes read from
   uploaded. `deleteAllHistory` also removes inspection photos, labeled samples
   and exported dataset ZIPs (they contain audio copies).
 
-## Pest ID, sensors and knowledge (contracts v4, schema v3)
+## Pest ID, sensors and knowledge (contracts v4, schema v4)
 
 **Sightings (`data.sightings`).** Three records are kept apart: the AI
 analysis (`analysis`, `sound`), the user's validation (`userValidated`,
@@ -87,7 +87,7 @@ the 8-hex-char key fingerprint is stored, never the key.
 - `upsert` keeps the stored placement, which only `setPlacement` changes. A
   null `lastSeenAt` or `batteryPercent` means "not reported". A device address
   that is already paired under another id is refused.
-- Forgetting a node (`delete`) also deletes its events.
+- Forgetting a node (`delete`) also deletes its events and health history.
 - `record` is idempotent on (nodeId, seq) and returns the number of new rows.
   Each event keeps the node's placement at record time. Events are
   append-only (trigger).
@@ -96,6 +96,30 @@ the 8-hex-char key fingerprint is stored, never the key.
 - `lastSeq` is the highest stored seq, or the seq a history wipe cleared,
   whichever is higher. A node's store-and-forward buffer therefore never
   brings deleted events back.
+
+**Health history (`data.sensorEvents`).**
+
+- `recordHealth` persists observed changes transactionally, idempotent on
+  `(nodeId, at, health)` with set-order-independent identity. Ring sequence
+  numbers are metadata, not the identity. Unknown nodes and negative sequences
+  reject the batch. Every observation retains its record-time placement.
+- `watchNotEvaluated` derives intervals from observations, merging consecutive
+  equal health at the same placement. Raw change points remain so late,
+  out-of-order replay can split a previously equal run. Conflicting reports at
+  one instant are conservatively combined; recovery requires a later instant.
+- Filters intersect. Location scope includes descendants and items currently
+  stored there. Placement/time filters run after interval derivation, so a
+  recovery outside the requested placement still closes the old interval.
+  A duration includes intervals overlapping `(now - window, now]`, not just
+  intervals starting in it. Results are newest first, with their original
+  bounds; a null end means ongoing. The stream recomputes on relevant writes,
+  not a timer.
+- An observed empty health set is unknown (an interval with no invented reason).
+  No observations yields no intervals, **not proof of healthy coverage**.
+  Upgrades never backfill health for the time before persistence was available.
+- History wipe removes health observations and saves a per-node privacy time
+  cutoff so replay cannot restore old health, including after reopen. Pairing
+  and placement survive. This cutoff is not the event sync watermark.
 
 **Knowledge (`data.knowledge`).**
 
@@ -137,7 +161,7 @@ Scope rules for the sightings report:
 - Archived locations and items are always excluded.
 
 **Wipe.** `deleteAllHistory` also deletes sightings with their media files and
-all sensor events. Paired nodes, cards and settings are kept.
+all sensor events and health observations. Paired nodes, cards and settings are kept.
 
 ## Ranking filters (contracts v3)
 
@@ -228,8 +252,8 @@ Pest ID and sensor rules:
 - Sightings in archived locations or on archived items never count.
 - Sensor events count under the placement they were recorded with.
   Unplaced nodes, and archived placements, never raise `sensorActivity`.
-- Node health is live link state and is not stored, so `sensorNeedsAttention`
-  follows the injected stream. That stream is listened to once, from
+- `sensorNeedsAttention` still follows the injected live stream, independently
+  of persisted historical health. That stream is listened to once, from
   construction until `close()`, and its errors are ignored. Until it emits, no
   node needs attention.
 - `pestSafetyAlert` sits right after `registerFirst`, ahead of every grain
@@ -305,7 +329,7 @@ exports keep exact UTF-8 text.
 
 ## Schema changes
 
-Current schema: version 3 (`drift_schemas/kernel_database/`). v3 adds `sightings`, `sensor_nodes`, `sensor_events`, `knowledge_cards` and `card_embeddings` plus their indexes and triggers; the v2 -> v3 step is additive only.
+Current schema: version 4 (`drift_schemas/kernel_database/`). The additive v3 -> v4 migration creates empty `sensor_health_changes` with its node/time index and adds a nullable `sensor_nodes.health_cleared_through_at` privacy cutoff. Existing rows and triggers are preserved; historical observation coverage stays unknown.
 
 1. Edit `lib/src/db/tables.dart` and bump `schemaVersion`.
 2. Run `dart run build_runner build` and then `dart run drift_dev make-migrations`.

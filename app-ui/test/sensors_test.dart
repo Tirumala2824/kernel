@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kernel_app/app/platform_providers.dart';
@@ -8,6 +10,25 @@ import 'package:kernel_contracts/kernel_contracts.dart';
 
 import 'support/harness.dart';
 import 'support/in_memory.dart';
+
+class _PendingSyncLink extends ScriptedSensorLink {
+  final syncGate = Completer<int>();
+
+  @override
+  Future<int> syncEvents(String nodeId) {
+    syncCalls.add(nodeId);
+    return syncGate.future;
+  }
+}
+
+class _PendingSyncEnv extends TestEnv {
+  _PendingSyncEnv() : super(role: Role.storageFpo);
+
+  final _link = _PendingSyncLink();
+
+  @override
+  _PendingSyncLink get sensorLink => _link;
+}
 
 const payload = 'kernel:sensor:v1:AABBCCDDEE01.6b6579';
 
@@ -23,7 +44,8 @@ List<String> allText(WidgetTester tester) => [
 ];
 
 Finder textContaining(String part) => find.byWidgetPredicate(
-  (w) => w is Text && (w.data ?? w.textSpan?.toPlainText() ?? '').contains(part),
+  (w) =>
+      w is Text && (w.data ?? w.textSpan?.toPlainText() ?? '').contains(part),
 );
 
 SensorStatus status(
@@ -169,7 +191,9 @@ void main() {
         ..setStatus(status('n1', {SensorHealth.jammed}))
         ..setStatus(status('n2', {SensorHealth.clipped}, battery: 9))
         ..setStatus(
-          status('n3', {SensorHealth.surveyNeeded}, link: SensorLinkState.disconnected),
+          status('n3', {
+            SensorHealth.surveyNeeded,
+          }, link: SensorLinkState.disconnected),
         );
       await pumpKernelApp(tester, env, location: Routes.sensors);
 
@@ -251,23 +275,65 @@ void main() {
       expect(find.text(en.sensorLivePeak('38.5')), findsOneWidget);
     });
 
-    testWidgets('survey runs for 5 minutes with progress', (tester) async {
+    testWidgets('survey command never invents progress or completion', (
+      tester,
+    ) async {
       final env = await detailEnv();
       await pumpKernelApp(tester, env, location: Routes.sensor('n1'));
       await tapVisible(tester, find.byKey(const Key('sensor-survey-start')));
       expect(env.sensorLink.surveys, [('n1', const Duration(minutes: 5))]);
 
-      Text status() =>
-          tester.widget<Text>(find.byKey(const Key('sensor-survey-status')));
-      expect(status().data, en.sensorSurveyRunning(0, 5));
-      await tester.pump(const Duration(minutes: 2));
-      expect(status().data, en.sensorSurveyRunning(2, 5));
-      final bar = tester.widget<LinearProgressIndicator>(
-        find.byKey(const Key('sensor-survey-progress')),
+      // Returning from the command acknowledges neither capture nor completion.
+      await tester.pump(const Duration(minutes: 6));
+      expect(find.text(en.sensorSurveyDone), findsNothing);
+      expect(find.byKey(const Key('sensor-survey-progress')), findsNothing);
+      expect(find.textContaining('Surveying:'), findsNothing);
+      expect(
+        tester
+            .widget<FilledButton>(find.byKey(const Key('sensor-survey-start')))
+            .onPressed,
+        isNotNull,
       );
-      expect(bar.value, closeTo(0.4, 0.01));
-      await tester.pump(const Duration(minutes: 3));
-      expect(status().data, en.sensorSurveyDone);
+
+      // Radio errors arrive through telemetry even if the command returned.
+      env.sensorLink.setStatus(
+        status('n1', {SensorHealth.surveyNeeded}, link: SensorLinkState.error),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(en.sensorLinkError), findsOneWidget);
+      expect(find.text(en.sensorHealthSurveyNeeded), findsOneWidget);
+      expect(find.text(en.sensorNotEvaluatedBody), findsOneWidget);
+      expect(find.text(en.sensorSurveyDone), findsNothing);
+    });
+
+    testWidgets('survey pending and command errors retain the real controls', (
+      tester,
+    ) async {
+      final env = await detailEnv();
+      final gate = Completer<void>();
+      env.sensorLink.surveyGate = gate;
+      await pumpKernelApp(tester, env, location: Routes.sensor('n1'));
+      final start = find.byKey(const Key('sensor-survey-start'));
+      await tapVisible(tester, start);
+      expect(tester.widget<FilledButton>(start).onPressed, isNull);
+      await tester.pump(const Duration(minutes: 6));
+      expect(tester.widget<FilledButton>(start).onPressed, isNull);
+      expect(find.byKey(const Key('sensor-survey-progress')), findsNothing);
+      expect(find.text(en.sensorSurveyDone), findsNothing);
+
+      gate.completeError(StateError('survey command failed'));
+      await tester.pumpAndSettle();
+      expect(tester.widget<FilledButton>(start).onPressed, isNotNull);
+      expect(
+        find.text(en.sensorSurveyFailed('Bad state: survey command failed')),
+        findsOneWidget,
+      );
+      expect(find.text(en.sensorSurveyDone), findsNothing);
+
+      env.sensorLink.surveyGate = null;
+      await tapVisible(tester, start);
+      expect(env.sensorLink.surveys, hasLength(2));
+      expect(find.byKey(const Key('sensor-survey-status')), findsNothing);
     });
 
     testWidgets('overnight session explains the notification and battery', (
@@ -281,17 +347,37 @@ void main() {
       await tapVisible(tester, find.byKey(const Key('sensor-session-start')));
       expect(env.permissions.notificationRequests, 1);
       expect(env.sensorLink.sessionsStarted, ['n1']);
+      expect(find.byKey(const Key('sensor-session-running')), findsNothing);
+      env.sensorLink.setStatus(
+        const SensorStatus(
+          nodeId: 'n1',
+          linkState: SensorLinkState.authenticated,
+          health: {SensorHealth.ok},
+          sessionActive: true,
+        ),
+      );
+      await tester.pumpAndSettle();
       expect(find.byKey(const Key('sensor-session-running')), findsOneWidget);
 
       await tapVisible(tester, find.byKey(const Key('sensor-session-stop')));
       expect(env.sensorLink.sessionsStopped, ['n1']);
+      expect(
+        find.byKey(const Key('sensor-session-running')),
+        findsOneWidget,
+        reason: 'command return does not confirm the session stopped',
+      );
+      env.sensorLink.setStatus(status('n1', {SensorHealth.ok}));
+      await tester.pumpAndSettle();
       expect(find.byKey(const Key('sensor-session-running')), findsNothing);
 
-      await tapVisible(tester, find.byKey(const Key('sensor-battery-settings')));
+      await tapVisible(
+        tester,
+        find.byKey(const Key('sensor-battery-settings')),
+      );
       expect(env.permissions.settingsOpened, 1);
     });
 
-    testWidgets('sync records events; timeline says N events in M minutes', (
+    testWidgets('sync records events without inventing a watched duration', (
       tester,
     ) async {
       final env = await detailEnv();
@@ -312,20 +398,14 @@ void main() {
       expect(find.byKey(const Key('sensor-timeline-empty')), findsOneWidget);
       expect(find.text(en.sensorTimelineEmptyDetail), findsOneWidget);
 
-      await tapVisible(
-        tester,
-        find.descendant(
-          of: find.byKey(const Key('sensor-timeline-empty')),
-          matching: find.byType(FilledButton),
-        ),
-      );
+      await tapVisible(tester, find.byKey(const Key('sensor-sync')));
       expect(env.sensorLink.syncCalls, ['n1']);
       expect(find.text(en.sensorSynced(4)), findsOneWidget);
       expect(env.sensorEvents.all, hasLength(4), reason: 'recorded');
 
-      // 3 mouse-like events from t0 to t0+9:30 (+120 ms) -> 10 minutes.
-      expect(en.sensorEventsSummary(3, 10), '3 events in 10 minutes');
-      expect(en.sensorEventsSummary(1, 1), '1 event in 1 minute');
+      // Event timestamps do not establish how long the node was watching.
+      expect(find.text(en.sensorEventsSummary(3, 10)), findsNothing);
+      expect(find.text(en.sensorEventsSummary(1, 1)), findsNothing);
       final summary = find.byKey(const Key('sensor-summary-mouse_usv'));
       expect(
         find.descendant(of: summary, matching: find.text(en.sensorSigMouseUsv)),
@@ -334,7 +414,7 @@ void main() {
       expect(
         find.descendant(
           of: summary,
-          matching: find.text(en.sensorEventsSummary(3, 10)),
+          matching: find.text('${en.sensorSummaryTitle}: 3'),
         ),
         findsOneWidget,
       );
@@ -345,11 +425,13 @@ void main() {
       expect(
         find.descendant(
           of: find.byKey(const Key('sensor-summary-unmatched')),
-          matching: find.text(en.sensorEventsSummary(1, 1)),
+          matching: find.text('${en.sensorSummaryTitle}: 1'),
         ),
         findsOneWidget,
       );
       expect(find.text(en.sensorSignalNotDiagnosis), findsOneWidget);
+      expect(find.text(en.sensorPack('sig-0.1')), findsOneWidget);
+      expect(textContaining('120 ms'), findsNWidgets(4));
       // Each event in the timeline is marked experimental too.
       expect(find.byKey(const Key('sensor-event-n1-3')), findsOneWidget);
       expect(find.text(en.experimentalBadge), findsNWidgets(6));
@@ -361,6 +443,26 @@ void main() {
       for (final text in allText(tester)) {
         expect(absenceClaim.hasMatch(text), isFalse, reason: text);
       }
+    });
+
+    testWidgets('empty timeline sync action is disabled while awaiting sync', (
+      tester,
+    ) async {
+      final env = _PendingSyncEnv();
+      await env.sensorNodes.upsert(testNode(id: 'n1'));
+      env.sensorLink.setStatus(status('n1', {SensorHealth.ok}));
+      await pumpKernelApp(tester, env, location: Routes.sensor('n1'));
+      final action = find.byKey(const Key('sensor-sync'));
+      await tapVisible(tester, action);
+      expect(env.sensorLink.syncCalls, ['n1']);
+      expect(tester.widget<ButtonStyleButton>(action).onPressed, isNull);
+      expect(find.byKey(const Key('sensor-sync-message')), findsNothing);
+
+      env.sensorLink.syncGate.complete(0);
+      await tester.pumpAndSettle();
+      expect(tester.widget<ButtonStyleButton>(action).onPressed, isNotNull);
+      expect(find.text(en.sensorSynced(0)), findsOneWidget);
+      expect(find.text(en.sensorTimelineEmptyDetail), findsOneWidget);
     });
 
     testWidgets('jammed node: not evaluated, never "nothing there"', (
@@ -397,18 +499,24 @@ void main() {
       final evidence = find.byKey(const Key('sensor-evidence'));
       expect(evidence, findsOneWidget);
       expect(
-        find.descendant(of: evidence, matching: find.text(en.sensorEvidenceTitle)),
+        find.descendant(
+          of: evidence,
+          matching: find.text(en.sensorEvidenceTitle),
+        ),
         findsOneWidget,
       );
       expect(
         find.descendant(
           of: evidence,
-          matching: find.text(en.sensorEventsSummary(2, 5)),
+          matching: find.text('${en.sensorSummaryTitle}: 2'),
         ),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: evidence, matching: find.text(en.experimentalBadge)),
+        find.descendant(
+          of: evidence,
+          matching: find.text(en.experimentalBadge),
+        ),
         findsWidgets,
       );
       // Scan history stays its own section, without sensor content, and no
@@ -423,7 +531,10 @@ void main() {
         expect(absenceClaim.hasMatch(text), isFalse, reason: text);
       }
 
-      await tapVisible(tester, find.byKey(const Key('sensor-evidence-open-n1')));
+      await tapVisible(
+        tester,
+        find.byKey(const Key('sensor-evidence-open-n1')),
+      );
       expect(find.text(en.sensorLiveTitle), findsWidgets);
     });
 
@@ -433,6 +544,7 @@ void main() {
       final env = TestEnv(role: Role.farmer);
       final sack = await env.addItem(label: 'R-10');
       await env.sensorNodes.upsert(testNode(id: 'n1', itemId: sack.id));
+      env.sensorLink.setStatus(status('n1', {SensorHealth.ok}));
       await pumpKernelApp(tester, env, location: Routes.item(sack.id));
       expect(find.byKey(const Key('sensor-evidence-empty')), findsOneWidget);
       expect(find.text(en.sensorEvidenceEmpty(7)), findsOneWidget);

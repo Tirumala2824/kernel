@@ -35,9 +35,26 @@ class _AssignedInspectionsScreenState
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final role = ref.watch(activeRoleProvider).value ?? Role.storageFpo;
-    final items = ref.watch(itemsByRoleProvider(role)).value ?? const [];
+    final roleValue = ref.watch(activeRoleProvider);
+    final role = roleValue.value;
+    final itemData = role == null
+        ? const AsyncLoading<List<GrainItem>>()
+        : ref.watch(itemsByRoleProvider(role));
     final open = ref.watch(openInspectionsProvider);
+    // Missing or stale dependencies are not an empty inspection queue.
+    final failed = roleValue.hasError || itemData.hasError || open.hasError;
+    final loading = roleValue.isLoading || itemData.isLoading || open.isLoading;
+    if (failed || loading || role == null) {
+      return Scaffold(
+        appBar: KernelAppBar(title: l.assignedTitle),
+        body: failed
+            ? ErrorNote(l.errorCouldNotLoad)
+            : roleValue.hasValue && role == null
+                ? QuietNote(l.menuSwitchRole)
+                : const Center(child: CircularProgressIndicator()),
+      );
+    }
+    final items = itemData.requireValue;
     final labels = {for (final item in items) item.id: item.label};
 
     return Scaffold(

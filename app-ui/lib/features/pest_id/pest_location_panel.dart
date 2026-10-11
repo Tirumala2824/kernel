@@ -6,8 +6,9 @@ import '../../widgets/common.dart';
 import '../../widgets/status_chip.dart';
 import 'pest_platform.dart';
 
-/// Optional "Save location". The pin is shown only for a fix within
-/// [maxPinAccuracyMeters]; otherwise only the room is saved.
+/// Stages an optional one-time location fix for the sighting's save action.
+/// A pin is available only within [maxPinAccuracyMeters]; locating alone
+/// persists neither coordinates nor a room.
 class PestLocationPanel extends StatelessWidget {
   const PestLocationPanel({
     super.key,

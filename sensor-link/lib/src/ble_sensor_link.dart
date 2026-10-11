@@ -32,6 +32,7 @@ class _Node {
   int? rssi;
   bool authFailed = false;
   WireStatus? status;
+  Set<SensorHealth>? publishedHealth;
   NodeClock? clock;
   WireBandTable? table;
   WireDeviceInfo? info;
@@ -142,7 +143,7 @@ class BleSensorLink implements SensorLink {
       NativeLinkState.disconnected => SensorLinkState.disconnected,
       NativeLinkState.error => SensorLinkState.error,
     };
-    // A sensor fault has no SensorHealth value; surface it as a link error.
+    // A capture fault invalidates current evaluation even if BLE remains up.
     if (bits & HealthBits.sensorFault != 0 && link == SensorLinkState.authenticated) link = SensorLinkState.error;
     return SensorStatus(
       nodeId: n.id,
@@ -150,6 +151,8 @@ class BleSensorLink implements SensorLink {
       health: health,
       batteryPercent: n.status?.batteryPercent,
       rssi: n.rssi,
+      sessionActive: link == SensorLinkState.authenticated &&
+          bits & HealthBits.sessionActive != 0,
     );
   }
 
@@ -228,16 +231,22 @@ class BleSensorLink implements SensorLink {
     try {
       await _host.startSession(nodeId);
     } on PlatformException catch (e) {
-      if (e.code == 'not_visible') throw SensorSessionException(e.code, e.message);
-      // Other failures: the session keeps retrying natively; state via watchStatus.
+      throw SensorSessionException(e.code, e.message);
     }
   }
 
   @override
-  Future<void> stopSession(String nodeId) => _quiet(() => _host.stopSession(nodeId));
+  Future<void> stopSession(String nodeId) async {
+    try {
+      await _host.stopSession(nodeId);
+    } on PlatformException catch (e) {
+      throw SensorSessionException(e.code, e.message);
+    }
+  }
 
   /// Pulls store-and-forward events after the injected lastSeq. Returns how
-  /// many SensorEvents were emitted on [events] (0 when the node is out of reach).
+  /// many SensorEvents were emitted on [events] after a successful sync.
+  /// An incomplete or failed transfer throws; partial events are still emitted.
   @override
   Future<int> syncEvents(String nodeId) async {
     final n = _node(nodeId);
@@ -245,10 +254,11 @@ class BleSensorLink implements SensorLink {
     final before = n.syncEmitted;
     try {
       await _host.syncEvents(nodeId, since);
-    } on PlatformException {
-      // Out of reach or refused: whatever arrived before the failure still counts.
+    } finally {
+      // Keep partial observations, but propagate failure rather than reporting
+      // them as a completed sync (especially a misleading successful zero).
+      await _callbacks.drained;
     }
-    await _callbacks.drained;
     return n.syncEmitted - before;
   }
 
@@ -278,6 +288,12 @@ class BleSensorLink implements SensorLink {
   void _onLinkState(String nodeId, NativeLinkState state, int? rssi, bool authFailed) {
     final n = _node(nodeId);
     n.link = state;
+    if (state == NativeLinkState.disconnected ||
+        state == NativeLinkState.error ||
+        state == NativeLinkState.unpaired) {
+      // A previous connection cannot confirm present health/session state.
+      n.status = null;
+    }
     if (rssi != null) n.rssi = rssi;
     if (authFailed) n.authFailed = true;
     if (state == NativeLinkState.authenticated) n.authFailed = false;
@@ -315,6 +331,17 @@ class BleSensorLink implements SensorLink {
           receivedAt: DateTime.fromMillisecondsSinceEpoch(receivedAtMs, isUtc: true),
         );
       _emitStatus(n);
+      final health = healthFromBits(s.health, authFailed: n.authFailed);
+      if (!setEquals(n.publishedHealth, health)) {
+        n.publishedHealth = Set.unmodifiable(health);
+        if (!_healthChanges.isClosed) {
+          _healthChanges.add(SensorHealthChange(
+            nodeId: nodeId,
+            at: DateTime.fromMillisecondsSinceEpoch(receivedAtMs, isUtc: true),
+            health: n.publishedHealth!,
+          ));
+        }
+      }
     } on ProtocolException {
       // ignored
     }

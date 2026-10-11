@@ -50,6 +50,43 @@ The Measure screen and night-listening notification use the Android string
 resources in `android/src/main/res/values/strings.xml`; the app can translate
 them by defining the same names.
 
+## Dedicated insect-sound classifier (experimental)
+
+```dart
+final classifier = NativeInsectSoundClassifier();
+final result = await classifier.classifyWavFile(privateWavPath);
+```
+
+This separate adapter bundles `ganesh333/kernel-insect-classifier` at revision
+`001425d7fab4b44af5cc571174410f1c78552d0e`. It never passes that model to the
+existing YAMNet `SoundClassifier`, changes `PestSenseEngine`, or downloads at
+runtime. Classification runs on a serial Android background task queue.
+
+- Input: local RIFF PCM16 WAV, mono or stereo, **16 / 44.1 / 48 kHz**, at most
+  30 seconds and 6,000,000 file bytes. Other formats/rates are rejected, not
+  approximately decoded. The caller owns the source file and its deletion;
+  the adapter neither records nor retains or deletes it.
+- Processing: scaled PCM mixed to mono; upstream RMS/peak quality gate before
+  gain normalization; Kaiser-5 polyphase resampling; 2-second peak-normalized
+  windows (right-zero-pad shorter clips), five evenly spaced crops for longer
+  clips; centered periodic-Hann STFT 512/160, spectrum scaling, integer-bin
+  0–8 kHz mel bank, natural log, per-crop standardization.
+- Real LiteRT CPU inference: FLOAT32 `[1,1,64,201]` → `[1,32]` **logits**;
+  softmax per crop then average; inclusive 0.6 species → genus → group rule.
+  Unknown has no identification label; top labels are raw closed-set scores.
+- Quality rejection and unavailable model/runtime/input have **no labels or
+  scores**. Assets and metadata are SHA-256 checked. Evaluated results preserve
+  `0.1.0-experimental` and the full revision; all results are experimental.
+- It recognizes only 32 trained audible, sound-producing species. It is not
+  grain screening, ultrasonic sensing, evidence of absence, or calibrated
+  identification of arbitrary unseen species. Passing quality checks does not
+  establish an insect sound: tones/noise can receive strong closed-set scores.
+
+Weights/card: CC BY 4.0; frontend source: MIT. Attribution and the unchanged
+upstream card/license are in `android/src/main/assets/insect_sound/`.
+See [INSECT_SOUND_VERIFICATION.md](INSECT_SOUND_VERIFICATION.md) for actual
+parity, device test commands, RED/GREEN evidence, and remaining limitations.
+
 ## Develop
 
 ```bash

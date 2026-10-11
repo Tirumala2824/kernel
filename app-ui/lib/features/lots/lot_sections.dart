@@ -53,7 +53,7 @@ class _SampleScanTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
-    final latest = ref.watch(scansForItemProvider(item.id)).value?.firstOrNull;
+    final scans = ref.watch(scansForItemProvider(item.id));
     return ItemTile(
       key: Key('sample-${item.id}'),
       item: item,
@@ -63,9 +63,15 @@ class _SampleScanTile extends ConsumerWidget {
         icon: const Icon(Icons.graphic_eq_rounded),
         onPressed: () => context.push(Routes.scanItem(item.id)),
       ),
-      footer: latest == null
-          ? Text(l.notScannedYet)
-          : ScanResultChip(quality: latest.quality, result: latest.result),
+      footer: CurrentDataView<List<ScanRecord>>(
+        value: scans,
+        data: (records) {
+          final latest = records.firstOrNull;
+          return latest == null
+              ? Text(l.notScannedYet)
+              : ScanResultChip(quality: latest.quality, result: latest.result);
+        },
+      ),
     );
   }
 }
@@ -101,10 +107,7 @@ class _PhysicalCheckTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
-    final latest = ref
-        .watch(inspectionsForItemProvider(item.id))
-        .value
-        ?.firstOrNull;
+    final inspections = ref.watch(inspectionsForItemProvider(item.id));
     return ItemTile(
       key: Key('check-${item.id}'),
       item: item,
@@ -115,17 +118,23 @@ class _PhysicalCheckTile extends ConsumerWidget {
         icon: const Icon(Icons.person_search_rounded),
         onPressed: () => context.push(Routes.inspect(item.id)),
       ),
-      footer: latest == null
-          ? StatusChip(
-              label: l.noPhysicalCheckYet,
-              tone: StatusTone.attention,
-              icon: Icons.pending_actions_rounded,
-            )
-          : StatusChip(
-              label: l.verifiedFindingLine(latest.verifiedFinding.label(l)),
-              tone: StatusTone.info,
-              icon: Icons.person_search_rounded,
-            ),
+      footer: CurrentDataView<List<Inspection>>(
+        value: inspections,
+        data: (records) {
+          final latest = records.firstOrNull;
+          return latest == null
+              ? StatusChip(
+                  label: l.noPhysicalCheckYet,
+                  tone: StatusTone.attention,
+                  icon: Icons.pending_actions_rounded,
+                )
+              : StatusChip(
+                  label: l.verifiedFindingLine(latest.verifiedFinding.label(l)),
+                  tone: StatusTone.info,
+                  icon: Icons.person_search_rounded,
+                );
+        },
+      ),
     );
   }
 }

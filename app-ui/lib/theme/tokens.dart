@@ -3,31 +3,28 @@ import 'package:flutter/painting.dart';
 
 /// Colour tokens from docs/design-tokens.md plus the tints derived from them.
 ///
-/// Contrast (WCAG relative luminance), checked in test/theme_test.dart:
-/// - ink on ivory ~13:1, ink on sage ~12:1, ink on amber ~6.5:1
-/// - onForest (white) on forest ~9.7:1, amberInk on amberSoft > 7:1
-/// - inkMuted on ivory and on paper > 7:1
+/// Text and control contrast is verified by test/theme_test.dart.
 abstract final class KernelColors {
   /// Primary: hero action cards, headings, primary buttons.
-  static const Color forest = Color(0xFF234C38);
+  static const Color forest = Color(0xFF294B3B);
 
   /// Deeper forest for the hero gradient and pressed states.
-  static const Color forestDeep = Color(0xFF183828);
+  static const Color forestDeep = Color(0xFF1D362B);
 
   /// Lighter forest facet (the left half of the brand kernel).
-  static const Color forestSoft = Color(0xFF2E6249);
+  static const Color forestSoft = Color(0xFF355E49);
 
   /// Secondary cards and surfaces.
-  static const Color sage = Color(0xFFE6EFE4);
+  static const Color sage = Color(0xFFE9EEE7);
 
   /// Sage one step darker: selected navigation, dividers on sage.
-  static const Color sageDeep = Color(0xFFCFDECB);
+  static const Color sageDeep = Color(0xFFD7E1D3);
 
   /// App background and tertiary cards.
-  static const Color ivory = Color(0xFFF6F3E9);
+  static const Color ivory = Color(0xFFF7F6F2);
 
   /// Elevated cards and inputs on the ivory background.
-  static const Color paper = Color(0xFFFFFDF8);
+  static const Color paper = Color(0xFFFFFEFA);
 
   /// Attention: "Inspection needed", "Review due", warnings. Text on amber
   /// must be [ink], never white.
@@ -43,10 +40,10 @@ abstract final class KernelColors {
   static const Color onForest = Color(0xFFFFFFFF);
 
   /// Body text on light surfaces.
-  static const Color ink = Color(0xFF1B2A22);
+  static const Color ink = Color(0xFF202923);
 
   /// Secondary text on light surfaces.
-  static const Color inkMuted = Color(0xFF3F4D45);
+  static const Color inkMuted = Color(0xFF505C53);
 
   /// Destructive actions and errors (white text on it).
   static const Color danger = Color(0xFF9B2C1F);
@@ -55,10 +52,10 @@ abstract final class KernelColors {
   static const Color dangerSoft = Color(0xFFF7E3DE);
 
   /// Borders on interactive elements (>= 3:1 against ivory).
-  static const Color outline = Color(0xFF6E7B72);
+  static const Color outline = Color(0xFF737E75);
 
   /// Decorative hairlines only (never the sole boundary of a control).
-  static const Color hairline = Color(0xFFDCE2D8);
+  static const Color hairline = Color(0xFFDDE2D9);
 }
 
 /// 4-pt spacing scale.

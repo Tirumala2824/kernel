@@ -22,9 +22,12 @@ class ScansTodayScreen extends ConsumerWidget {
     final role = ref.watch(activeRoleProvider).value;
     final since = startOfToday();
     final scans = ref.watch(scansSinceProvider((since: since, role: role)));
-    final items = role == null
+    final itemState = role == null
+        ? const AsyncLoading<List<GrainItem>>()
+        : ref.watch(itemsByRoleProvider(role));
+    final items = itemState.isLoading || itemState.hasError
         ? const <GrainItem>[]
-        : ref.watch(itemsByRoleProvider(role)).value ?? const <GrainItem>[];
+        : itemState.value ?? const <GrainItem>[];
     final labels = {for (final item in items) item.id: item.label};
     return Scaffold(
       appBar: KernelAppBar(title: l.scansTodayTitle),
@@ -45,7 +48,9 @@ class ScansTodayScreen extends ConsumerWidget {
               for (final scan in scans)
                 ScanRecordTile(
                   scan: scan,
-                  itemLabel: labels[scan.itemId] ?? l.archivedBadge,
+                  // A missing current label says nothing about archive state.
+                  // The tile still shows the real scan time and result.
+                  itemLabel: labels[scan.itemId],
                   onTap: () =>
                       context.push(Routes.result(scan.itemId, scan.id)),
                 ),

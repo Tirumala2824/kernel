@@ -1,12 +1,23 @@
 // Pest ID camera flow with a scripted sense engine: live boxes labelled by
-// kind, torch, capture with tiles ranked by embedding hint, confirming a
+// kind, capture with tiles ranked by embedding hint, confirming a
 // tile or a box, and "Not a pest / nothing here".
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kernel_app/app/kernel_app.dart';
 import 'package:kernel_app/app/platform_providers.dart';
+import 'package:kernel_app/app/providers.dart';
 import 'package:kernel_app/app/routes.dart';
+import 'package:kernel_app/features/pest_id/pest_providers.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
+import 'package:sense_ai/sense_ai.dart';
+import 'package:sense_ai/src/sense_api.g.dart';
+
+import '../../sense-ai/test/support/test_sense_host.dart';
 
 import 'support/harness.dart';
 import 'support/test_pest.dart';
@@ -20,7 +31,128 @@ Future<PestEnv> _env() async {
   return env;
 }
 
+// The UI uses the production adapter; only the native boundary is scripted.
+class _NativeCameraEnv extends PestEnv {
+  _NativeCameraEnv(this.productionSense) : super(role: Role.household);
+
+  final SenseEngine productionSense;
+
+  @override
+  List<Override> get overrides => [
+    for (final override in super.overrides)
+      if (override.origin != pestSenseEngineProvider) override,
+    pestSenseEngineProvider.overrideWithValue(productionSense),
+  ];
+}
+
 void main() {
+  for (final interruption in ['inactive', 'bridge error', 'stream done']) {
+    testWidgets(
+      'production $interruption camera removes boxes until real recovery',
+      (tester) async {
+        final host = TestSenseHost();
+        final engine = SenseEngine(host: host);
+        final env = _NativeCameraEnv(engine);
+        addTearDown(() async {
+          await engine.dispose();
+          await host.batches.close();
+        });
+        await pumpKernelApp(tester, env, location: Routes.pestCamera);
+        host.batches.add(nativeBatch([nativeCandidate('old')]));
+        await tester.pumpAndSettle();
+        expect(find.byKey(const Key('pest-box-old')), findsOneWidget);
+
+        if (interruption == 'inactive') {
+          host.batches.add(nativeBatch([], active: false));
+        } else if (interruption == 'bridge error') {
+          host.batches.addError(StateError('native bridge disconnected'));
+        } else {
+          await host.batches.close();
+        }
+        await tester.pumpAndSettle();
+        expect(find.text(en.errorCouldNotLoad), findsOneWidget);
+        expect(find.text(en.pestCandidatesNone), findsNothing);
+        expect(find.byKey(const Key('pest-box-old')), findsNothing);
+        await tapVisible(tester, find.byKey(const Key('pest-capture')));
+        expect(
+          host.captureCalls.single,
+          isEmpty,
+          reason: 'stale boxes must not seed capture',
+        );
+
+        if (interruption == 'stream done') {
+          host.batches = StreamController<NativeCameraBatch>.broadcast();
+          final container = ProviderScope.containerOf(
+            tester.element(find.byType(KernelApp)),
+          );
+          container.invalidate(cameraCandidatesProvider);
+          await tester.pumpAndSettle();
+        }
+        host.batches.add(nativeBatch([]));
+        await tester.pumpAndSettle();
+        expect(find.text(en.errorCouldNotLoad), findsNothing);
+        expect(find.text(en.pestCandidatesNone), findsOneWidget);
+        host.batches.add(nativeBatch([nativeCandidate('fresh')]));
+        await tester.pumpAndSettle();
+        expect(find.byKey(const Key('pest-box-fresh')), findsOneWidget);
+        expect(find.byKey(const Key('pest-box-old')), findsNothing);
+      },
+    );
+  }
+
+  testWidgets('camera pending and refreshing are not an empty observation', (
+    tester,
+  ) async {
+    final env = await _env();
+    await pumpKernelApp(tester, env, location: Routes.pestCamera);
+    expect(find.text(en.pestCandidatesNone), findsNothing);
+    expect(find.text(en.loading), findsOneWidget);
+    expect(find.byKey(const Key('pest-capture')), findsOneWidget);
+    env.sense.candidates.add([]);
+    await tester.pumpAndSettle();
+    expect(find.text(en.pestCandidatesNone), findsOneWidget);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(KernelApp)),
+    );
+    container.invalidate(cameraCandidatesProvider);
+    await tester.pump();
+    final refreshing = container.read(cameraCandidatesProvider);
+    expect(refreshing.isLoading, isTrue);
+    expect(refreshing.hasValue, isTrue);
+    expect(find.text(en.pestCandidatesNone), findsNothing);
+    expect(find.text(en.loading), findsOneWidget);
+  });
+
+  for (final observed in <List<SignalCandidate>?>[
+    null,
+    [],
+    [testCandidate('old')],
+  ]) {
+    testWidgets(
+      'camera error after ${observed?.length} observations is not absence',
+      (tester) async {
+        final env = await _env();
+        await pumpKernelApp(tester, env, location: Routes.pestCamera);
+        if (observed != null) {
+          env.sense.candidates.add(observed);
+          await tester.pumpAndSettle();
+        }
+        env.sense.candidates.addError(StateError('camera unavailable'));
+        await tester.pumpAndSettle();
+        expect(find.text(en.pestCandidatesNone), findsNothing);
+        expect(find.text(en.errorCouldNotLoad), findsOneWidget);
+        expect(find.byKey(const Key('pest-box-old')), findsNothing);
+        expect(find.byKey(const Key('pest-capture')), findsOneWidget);
+        await tapVisible(tester, find.byKey(const Key('pest-capture')));
+        expect(
+          env.sense.captureCalls.single,
+          isEmpty,
+          reason: 'failed candidate data must not seed stale capture tiles',
+        );
+      },
+    );
+  }
+
   testWidgets('live boxes are labelled by kind over the preview', (
     tester,
   ) async {
@@ -28,6 +160,8 @@ void main() {
     await pumpKernelApp(tester, env, location: Routes.pestCamera);
 
     expect(find.byKey(const Key('camera-preview')), findsOneWidget);
+    env.sense.candidates.add([]);
+    await tester.pumpAndSettle();
     expect(find.text(en.pestCandidatesNone), findsOneWidget);
 
     env.sense.candidates.add([
@@ -45,17 +179,35 @@ void main() {
     expect(env.analyzer.imageRequests, isEmpty);
   });
 
-  testWidgets('the torch slider drives setTorch', (tester) async {
+  testWidgets('live camera does not invent detections from gallery imports', (
+    tester,
+  ) async {
     final env = await _env();
     await pumpKernelApp(tester, env, location: Routes.pestCamera);
 
-    final slider = find.byKey(const Key('pest-torch'));
-    await tester.ensureVisible(slider);
-    await tester.tapAt(tester.getTopRight(slider) - const Offset(30, -20));
+    expect(find.byKey(const Key('camera-preview')), findsOneWidget);
+    expect(find.byKey(const Key('pest-capture')), findsOneWidget);
+    env.sense.candidates.add([]);
     await tester.pumpAndSettle();
+    expect(find.text(en.pestCandidatesNone), findsOneWidget);
+    expect(find.byKey(const Key('pest-upload-photo')), findsNothing);
+    expect(find.textContaining('Gallery'), findsNothing);
+    expect(env.sense.captureCalls, isEmpty);
+    expect(env.analyzer.imageRequests, isEmpty);
+  });
 
-    expect(env.sense.torchLevels, isNotEmpty);
-    expect(env.sense.torchLevels.last, greaterThan(0.5));
+  testWidgets('camera does not offer unsupported torch brightness', (
+    tester,
+  ) async {
+    final env = await _env();
+    await pumpKernelApp(tester, env, location: Routes.pestCamera);
+
+    expect(find.byKey(const Key('pest-torch')), findsNothing);
+    expect(find.byType(Slider), findsNothing);
+    expect(find.text(en.pestTorch), findsNothing);
+    expect(env.sense.torchLevels, isEmpty);
+    expect(find.byKey(const Key('camera-preview')), findsOneWidget);
+    expect(find.byKey(const Key('pest-capture')), findsOneWidget);
   });
 
   testWidgets('capture shows tiles ranked by embedding hint; a tap confirms '

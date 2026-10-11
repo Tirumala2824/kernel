@@ -112,7 +112,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsFooter =>
-      'All scanning runs on this phone. Kernel works without a network connection and never uploads audio.';
+      'Kernel keeps audio on this phone. Local records and bundled checks work offline; model downloads and online maps need internet.';
 
   @override
   String get diagnosticsTitle => 'Diagnostics';
@@ -1216,7 +1216,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingPrivacy2 =>
-      'Nothing is uploaded. There is no account and no cloud, and everything works offline.';
+      'Audio stays on this phone. Local records and bundled checks work offline; model downloads and online maps need internet.';
 
   @override
   String get onboardingPrivacy3 =>
@@ -1877,10 +1877,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get offlineSemantics =>
-      'Offline. Everything keeps working on this phone.';
+      'Offline. Local records and bundled checks work offline; model downloads and online maps need internet.';
 
   @override
-  String get onlineSemantics => 'Online. Kernel does not need the network.';
+  String get onlineSemantics =>
+      'Online. Local records and bundled checks work offline; model downloads and online maps need internet.';
 
   @override
   String get qrTooltip => 'Open a sack from its QR label';
@@ -1994,7 +1995,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get levelMeterLabel => 'Microphone level';
 
   @override
-  String get levelMeterWaiting => 'Waiting for sound';
+  String get levelMeterWaiting => 'Waiting for microphone levels';
 
   @override
   String levelMeterValue(int dbfs) {
@@ -2912,10 +2913,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hubSubtitle =>
-      'On-phone models for Pest ID. They run only on this phone.';
+      'Android includes experimental insect classification for WAV clips. The optional downloads below add image analysis, search and live sound (YAMNet).';
 
   @override
-  String get hubNeedsTitle => 'Pest ID needs';
+  String get hubNeedsTitle => 'Optional model downloads';
 
   @override
   String get hubNeedImage => 'Image understanding';
@@ -2924,7 +2925,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hubNeedEmbeddings => 'Embeddings';
 
   @override
-  String get hubNeedSound => 'Sound classifier';
+  String get hubNeedSound => 'Live sound classifier (YAMNet)';
 
   @override
   String get hubInstalledChip => 'Installed';
@@ -2933,25 +2934,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hubMissingChip => 'Missing';
 
   @override
-  String get hubAllInstalled => 'Everything Pest ID needs is on this phone.';
+  String get hubAllInstalled =>
+      'All optional capabilities listed here have installed models.';
 
   @override
   String get hubNothingToDownload =>
-      'No download is available for the missing parts yet.';
+      'No download is available for the missing optional models yet.';
 
   @override
   String hubDownloadSummary(int count, String size) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count models to download, about $size',
-      one: '1 model to download, about $size',
+      other: '$count optional models to download, about $size',
+      one: '1 optional model to download, about $size',
     );
     return '$_temp0';
   }
 
   @override
-  String get hubDownloadAction => 'Download models';
+  String get hubDownloadAction => 'Download optional models';
 
   @override
   String hubDownloadFailed(String error) {
@@ -2962,14 +2964,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hubCatalogUnavailable => 'Could not read the model list';
 
   @override
-  String get hubInstalledUnavailable => 'Could not read installed models';
+  String get hubInstalledUnavailable =>
+      'Could not read installed optional models';
 
   @override
   String get hubGalleryNote =>
       'Kernel can\'t use files AI Edge Gallery already downloaded (Android keeps each app\'s files private), so it downloads the same models once.';
 
   @override
-  String get hubConsentTitle => 'Download Pest ID models?';
+  String get hubConsentTitle => 'Download optional Pest ID models?';
 
   @override
   String get hubConsentBody =>
@@ -3061,14 +3064,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hubCancel => 'Cancel';
 
   @override
-  String get hubInstalledTitle => 'Installed models';
+  String get hubInstalledTitle => 'Installed optional models';
 
   @override
-  String get hubInstalledEmpty => 'No models installed yet';
+  String get hubInstalledEmpty => 'No optional models installed yet';
 
   @override
   String get hubInstalledEmptyDetail =>
-      'Pest ID works after its models are downloaded once.';
+      'Bundled insect WAV checks on Android do not need these downloads.';
 
   @override
   String get hubFieldPath => 'File';
@@ -3173,7 +3176,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hubSettingsCard =>
-      'Download and manage the on-phone models Pest ID uses.';
+      'Manage optional model downloads for images, search and live sound.';
 
   @override
   String get hubMapsToggle => 'Use Google Maps';
@@ -4173,21 +4176,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pestLocationDenied =>
-      'Location permission denied, saved room only';
+      'Location permission denied. No pin available.';
 
   @override
-  String get pestLocationImprecise => 'Location too imprecise, saved room only';
+  String get pestLocationImprecise =>
+      'Location too imprecise. No pin available.';
 
   @override
   String get pestLocationOff =>
-      'Location is turned off on this phone, saved room only';
+      'Location is turned off on this phone. No pin available.';
 
   @override
-  String get pestLocationFailed => 'Could not get a location, saved room only';
+  String get pestLocationFailed =>
+      'Could not get a location. No pin available.';
 
   @override
   String pestLocationPinned(int meters) {
-    return 'Pin saved (within $meters m)';
+    return 'Pin ready to save (within $meters m)';
   }
 
   @override

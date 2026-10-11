@@ -154,6 +154,50 @@ void main() {
       expect(find.text('1 sack requires follow-up inspection'), findsOneWidget);
     });
 
+    testWidgets(
+      'farmer follow-ups count distinct current sacks, not inspections',
+      (tester) async {
+        final env = TestEnv(role: Role.farmer);
+        final sack = await env.addItem();
+        final other = await env.addItem(role: Role.buyer);
+        final archived = await env.addItem(label: 'Archived sack');
+        await env.items.archive(archived.id);
+        final first = await env.addInspection(
+          sack.id,
+          VerifiedFinding.inconclusive,
+        );
+        final second = await env.addInspection(
+          sack.id,
+          VerifiedFinding.inconclusive,
+          status: FollowUpStatus.inProgress,
+        );
+        await env.addInspection(other.id, VerifiedFinding.inconclusive);
+        await env.addInspection(archived.id, VerifiedFinding.inconclusive);
+        await env.addInspection(
+          sack.id,
+          VerifiedFinding.noneFound,
+          status: FollowUpStatus.done,
+        );
+        await pumpKernelApp(tester, env);
+
+        expect(find.text('1 registered sack'), findsOneWidget);
+        expect(
+          find.text('1 sack requires follow-up inspection'),
+          findsOneWidget,
+        );
+        expect(find.text('2 sacks require follow-up inspection'), findsNothing);
+        await env.inspections.updateFollowUp(first.id, FollowUpStatus.done);
+        await tester.pumpAndSettle();
+        expect(
+          find.text('1 sack requires follow-up inspection'),
+          findsOneWidget,
+        );
+        await env.inspections.updateFollowUp(second.id, FollowUpStatus.done);
+        await tester.pumpAndSettle();
+        expect(find.text('No follow-up inspections open'), findsOneWidget);
+      },
+    );
+
     testWidgets('FPO queue puts unscanned sacks under needs scan', (
       tester,
     ) async {

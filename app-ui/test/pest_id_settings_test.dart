@@ -109,17 +109,14 @@ void main() {
           path:
               '/data/user/0/com.kernel.kernel_app/files/models/'
               'embeddinggemma-300m_seq512_mixed-precision.tflite',
-          capabilities: {
-            ModelCapability.embedText,
-            ModelCapability.embedImage,
-          },
+          capabilities: {ModelCapability.embedText, ModelCapability.embedImage},
           catalogEntryId: embedder.id,
         ),
       ];
       return env;
     }
 
-    for (final code in ['en', 'ta', 'ml', 'hi']) {
+    for (final code in ['en', 'ta', 'ml', 'hi', 'kn']) {
       final l = lookupAppLocalizations(Locale(code));
 
       testWidgets('$code: Model Hub with consent, progress and results', (
@@ -175,34 +172,27 @@ void main() {
         await env.sensorNodes.upsert(
           testNode(id: 'n1', name: 'Warehouse rafters ultrasonic node'),
         );
-        env.sensorLink
-          ..setStatus(
-            SensorStatus(
-              nodeId: 'n1',
-              linkState: SensorLinkState.authenticated,
-              health: const {
-                SensorHealth.jammed,
-                SensorHealth.clipped,
-                SensorHealth.surveyNeeded,
-                SensorHealth.lowBattery,
-              },
-              batteryPercent: 12,
-            ),
-          )
-          ..setBands(
-            BandFrame(
-              nodeId: 'n1',
-              seq: 1,
-              at: DateTime(2026, 10, 1),
-              frameMs: 250,
-              noiseFloorDbfs: -80,
-              bandEdgesHz: const [20000, 40000, 60000, 80000],
-              bandsDbAboveFloor: const [6, 18, 2],
-              peakHz: 41000,
-              peakDbfs: -50,
-            ),
-          );
+        env.sensorLink.setStatus(
+          const SensorStatus(
+            nodeId: 'n1',
+            linkState: SensorLinkState.authenticated,
+            health: {
+              SensorHealth.jammed,
+              SensorHealth.clipped,
+              SensorHealth.surveyNeeded,
+              SensorHealth.lowBattery,
+            },
+            batteryPercent: 12,
+          ),
+        );
         final now = DateTime.now();
+        await env.sensorEvents.recordHealth([
+          SensorHealthChange(
+            nodeId: 'n1',
+            at: now.subtract(const Duration(hours: 1)),
+            health: const {SensorHealth.jammed, SensorHealth.clipped},
+          ),
+        ]);
         await env.sensorEvents.record([
           for (var i = 0; i < 4; i++)
             testEvent(
@@ -216,17 +206,108 @@ void main() {
         await pumpKernelApp(tester, env, location: Routes.sensor('n1'));
         expect(tester.takeException(), isNull);
         expect(find.text(l.sensorHealthJammed), findsOneWidget);
+        expect(find.text(l.sensorHealthClipped), findsOneWidget);
+        expect(find.text(l.sensorHealthSurveyNeeded), findsOneWidget);
+        expect(find.text(l.sensorHealthLowBattery), findsOneWidget);
+        expect(
+          find.byKey(const Key('sensor-not-evaluated-n1')),
+          findsOneWidget,
+        );
+        await scrollTo(tester, find.byKey(const Key('sensor-live')));
+        expect(find.byKey(const Key('sensor-live-waiting')), findsOneWidget);
+        // A real frame arrives after the authenticated connection, not as a
+        // cached value from before this live view subscribed.
+        env.sensorLink.setBands(
+          BandFrame(
+            nodeId: 'n1',
+            seq: 1,
+            at: now,
+            frameMs: 250,
+            noiseFloorDbfs: -80,
+            bandEdgesHz: const [20000, 40000, 60000, 80000],
+            bandsDbAboveFloor: const [6, 18, 2],
+            peakHz: 41000,
+            peakDbfs: -50,
+          ),
+        );
+        await tester.pumpAndSettle();
         await scrollTo(tester, find.byKey(const Key('sensor-bands')));
-        await scrollTo(tester, find.byKey(const Key('sensor-session')));
+        expect(find.text(l.sensorLivePeak('41.0')), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        await scrollTo(tester, find.byKey(const Key('sensor-survey-start')));
+        expect(find.byKey(const Key('sensor-survey-status')), findsNothing);
+        await scrollTo(tester, find.byKey(const Key('sensor-session-start')));
+        expect(find.byKey(const Key('sensor-session-running')), findsNothing);
+        await scrollTo(tester, find.byKey(const Key('sensor-sync')));
         await scrollTo(
           tester,
-          find.byKey(const Key('sensor-summary-grain_larva')),
+          find.byKey(const Key('sensor-timeline-not-evaluated')),
         );
+        expect(find.byKey(const Key('sensor-timeline-summary')), findsNothing);
+        expect(find.text(l.sensorEventsSummary(2, 6)), findsNothing);
         expect(tester.takeException(), isNull);
-        expect(find.text(l.sensorEventsSummary(2, 6)), findsNWidgets(2));
         await scrollTo(tester, find.byKey(const Key('sensor-event-n1-0')));
+        for (var i = 0; i < 4; i++) {
+          expect(find.byKey(Key('sensor-event-n1-$i')), findsOneWidget);
+        }
         expect(tester.takeException(), isNull);
       });
+
+      testWidgets(
+        '$code: healthy sensor detail shows recorded counts, not invented rates',
+        (tester) async {
+          final env = TestEnv(role: Role.storageFpo);
+          await env.settings.setLanguageTag(code);
+          await env.sensorNodes.upsert(testNode(id: 'n1'));
+          env.sensorLink.setStatus(
+            const SensorStatus(
+              nodeId: 'n1',
+              linkState: SensorLinkState.authenticated,
+              health: {SensorHealth.ok},
+            ),
+          );
+          final now = DateTime.now();
+          await env.sensorEvents.record([
+            for (var i = 0; i < 4; i++)
+              testEvent(
+                'n1',
+                i,
+                at: now.subtract(Duration(minutes: 40 - i * 3)),
+                signatureId: i.isEven ? 'rat_22k' : 'grain_larva',
+              ),
+          ]);
+          largeText(tester);
+          await pumpKernelApp(tester, env, location: Routes.sensor('n1'));
+          for (final signature in ['grain_larva', 'rat_22k']) {
+            final summary = find.byKey(Key('sensor-summary-$signature'));
+            await scrollTo(tester, summary);
+            expect(
+              find.descendant(
+                of: summary,
+                matching: find.text('${l.sensorSummaryTitle}: 2'),
+              ),
+              findsOneWidget,
+            );
+            expect(
+              find.descendant(
+                of: summary,
+                matching: find.text(l.sensorPack('sig-0.1')),
+              ),
+              findsOneWidget,
+            );
+            expect(tester.takeException(), isNull);
+          }
+          // Six minutes is merely the first/last-event span per signature, not
+          // an observed monitoring duration, so it must never become a rate.
+          expect(find.text(l.sensorEventsSummary(2, 6)), findsNothing);
+          expect(
+            find.byKey(const Key('sensor-timeline-not-evaluated')),
+            findsNothing,
+          );
+          await scrollTo(tester, find.byKey(const Key('sensor-event-n1-0')));
+          expect(tester.takeException(), isNull);
+        },
+      );
 
       testWidgets('$code: sensors list, item evidence and settings', (
         tester,
@@ -245,7 +326,11 @@ void main() {
           ),
         );
         await env.sensorEvents.record([
-          testEvent('n1', 1, at: DateTime.now().subtract(const Duration(hours: 2))),
+          testEvent(
+            'n1',
+            1,
+            at: DateTime.now().subtract(const Duration(hours: 2)),
+          ),
         ]);
         largeText(tester);
         await pumpKernelApp(tester, env, location: Routes.sensors);

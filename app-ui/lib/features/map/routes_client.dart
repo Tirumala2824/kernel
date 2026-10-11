@@ -104,15 +104,25 @@ class RoutesClient {
     final route = routes.first;
     if (route is! Map) return null;
     final meters = route['distanceMeters'];
-    final duration = '${route['duration'] ?? ''}';
+    final duration = route['duration'];
+    // Missing/malformed measurements are unavailable, never measured zeroes.
+    if (meters is! int ||
+        meters < 0 ||
+        duration is! String ||
+        !RegExp(r'^\d+(?:\.\d{1,9})?s$').hasMatch(duration)) {
+      return null;
+    }
+    final seconds = double.tryParse(duration.substring(0, duration.length - 1));
+    if (seconds == null || !seconds.isFinite) return null;
+    final micros = seconds * Duration.microsecondsPerSecond;
+    if (!micros.isFinite || micros >= 0x7fffffffffffffff) return null;
     final polyline = route['polyline'];
     final encoded = polyline is Map
         ? '${polyline['encodedPolyline'] ?? ''}'
         : '';
-    final seconds = double.tryParse(duration.replaceAll('s', ''));
     return RouteSummary(
-      distanceMeters: meters is num ? meters.round() : 0,
-      duration: Duration(seconds: (seconds ?? 0).round()),
+      distanceMeters: meters,
+      duration: Duration(microseconds: micros.round()),
       path: decodePolyline(encoded),
     );
   }

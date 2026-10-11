@@ -13,8 +13,8 @@ import 'sensor_widgets.dart';
 
 /// "Sensor evidence" on a sack or container: events from nodes placed on
 /// it, shown alongside (never inside) its acoustic scans and inspections,
-/// and never changing them (guardrails §10). Hidden when no node is placed
-/// on the item and it has no events, or when sensors are not available.
+/// and never changing them (guardrails §10). Hidden only when loaded data
+/// confirms no placed nodes, events or not-evaluated history for the item.
 class SensorEvidenceSection extends ConsumerWidget {
   const SensorEvidenceSection({super.key, required this.item});
 
@@ -25,15 +25,38 @@ class SensorEvidenceSection extends ConsumerWidget {
     final l = context.l10n;
     final nodesValue = ref.watch(sensorNodesProvider);
     final eventsValue = ref.watch(sensorEventsForItemProvider(item.id));
-    if (nodesValue.hasError || eventsValue.hasError) {
-      return const SizedBox.shrink();
+    final historyValue = ref.watch(sensorNotEvaluatedForItemProvider(item.id));
+    final error = nodesValue.error ?? eventsValue.error ?? historyValue.error;
+    if (nodesValue.hasError || eventsValue.hasError || historyValue.hasError) {
+      return ErrorNote(
+        l.errorWithDetail(l.sensorEvidenceTitle, '$error'),
+        key: const Key('sensor-evidence-error'),
+      );
+    }
+    if (nodesValue.isLoading ||
+        !nodesValue.hasValue ||
+        eventsValue.isLoading ||
+        !eventsValue.hasValue ||
+        historyValue.isLoading ||
+        !historyValue.hasValue) {
+      return Text(l.loading, key: const Key('sensor-evidence-loading'));
     }
     final nodes = [
-      for (final n in nodesValue.value ?? const <SensorNode>[])
+      for (final n in nodesValue.requireValue)
         if (n.itemId == item.id) n,
     ];
-    final events = eventsValue.value ?? const <SensorEvent>[];
-    if (nodes.isEmpty && events.isEmpty) return const SizedBox.shrink();
+    final events = eventsValue.requireValue;
+    final history = historyValue.requireValue;
+    if (nodes.isEmpty && events.isEmpty && history.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final currentUnavailable = nodes.any((node) {
+      final status = ref.watch(sensorStatusProvider(node.id));
+      return status.isLoading ||
+          status.hasError ||
+          !status.hasValue ||
+          status.requireValue.notEvaluated;
+    });
     final textTheme = Theme.of(context).textTheme;
     return Column(
       key: const Key('sensor-evidence'),
@@ -87,7 +110,14 @@ class SensorEvidenceSection extends ConsumerWidget {
                 ),
               ],
               const SizedBox(height: KernelSpace.sm),
-              if (events.isEmpty)
+              if (history.isNotEmpty)
+                SensorNotEvaluatedHistory(
+                  key: const Key('sensor-evidence-not-evaluated'),
+                  periods: history,
+                )
+              else if (currentUnavailable)
+                Text(l.sensorSignalNotDiagnosis)
+              else if (events.isEmpty)
                 Text(
                   l.sensorEvidenceEmpty(sensorEvidenceWindow.inDays),
                   key: const Key('sensor-evidence-empty'),

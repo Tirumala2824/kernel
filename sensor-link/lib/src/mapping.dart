@@ -8,6 +8,8 @@ const _notEvaluated = {
   SensorHealth.clipped,
   SensorHealth.surveyNeeded,
   SensorHealth.authFailed,
+  SensorHealth.sensorFault,
+  SensorHealth.eventsOverwritten,
 };
 
 /// Maps Status.health bits to contracts health. Jammed, clipped and
@@ -20,8 +22,9 @@ Set<SensorHealth> healthFromBits(int bits, {bool authFailed = false}) {
   if (bits & HealthBits.lowBattery != 0) out.add(SensorHealth.lowBattery);
   if (bits & (HealthBits.surveyNeeded | HealthBits.surveyActive) != 0) out.add(SensorHealth.surveyNeeded);
   if (authFailed) out.add(SensorHealth.authFailed);
-  // A sensor fault has no SensorHealth value (contract gap); it must never read as ok.
-  if (out.isEmpty && bits & HealthBits.sensorFault == 0) out.add(SensorHealth.ok);
+  if (bits & HealthBits.sensorFault != 0) out.add(SensorHealth.sensorFault);
+  if (bits & HealthBits.eventsOverwritten != 0) out.add(SensorHealth.eventsOverwritten);
+  if (out.isEmpty) out.add(SensorHealth.ok);
   return out;
 }
 
@@ -35,7 +38,8 @@ bool bitsNotEvaluated(int bits) =>
             HealthBits.clipped |
             HealthBits.surveyNeeded |
             HealthBits.surveyActive |
-            HealthBits.sensorFault) !=
+            HealthBits.sensorFault |
+            HealthBits.eventsOverwritten) !=
     0;
 
 SensorType? sensorTypeFromWire(int t) => switch (t) {

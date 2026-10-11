@@ -26,8 +26,7 @@ class BatchSessionScreen extends ConsumerStatefulWidget {
   final String? lotId;
 
   @override
-  ConsumerState<BatchSessionScreen> createState() =>
-      _BatchSessionScreenState();
+  ConsumerState<BatchSessionScreen> createState() => _BatchSessionScreenState();
 }
 
 class _BatchSessionScreenState extends ConsumerState<BatchSessionScreen> {
@@ -48,10 +47,7 @@ class _BatchSessionScreenState extends ConsumerState<BatchSessionScreen> {
     lotId: widget.lotId,
   );
 
-  List<GrainItem> _candidates(
-    InspectionQueue queue,
-    List<ScanRecord> today,
-  ) {
+  List<GrainItem> _candidates(InspectionQueue queue, List<ScanRecord> today) {
     final scannedToday = {for (final s in today) s.itemId};
     return queue.needsScan
         .where((i) => !_skipScannedToday || !scannedToday.contains(i.id))
@@ -59,13 +55,37 @@ class _BatchSessionScreenState extends ConsumerState<BatchSessionScreen> {
       ..sort((a, b) => a.label.toLowerCase().compareTo(b.label.toLowerCase()));
   }
 
-  void _begin(List<GrainItem> walk) => setState(() {
-    _walk = walk;
-    _index = 0;
-    _attempt = 0;
-    _current = null;
-    _stage = walk.isEmpty ? _Stage.summary : _Stage.walking;
-  });
+  List<GrainItem>? _availableWalk(
+    AsyncValue<InspectionQueue> queue,
+    AsyncValue<List<ScanRecord>> today,
+  ) {
+    if (queue.isLoading || queue.hasError || !queue.hasValue) return null;
+    if (_skipScannedToday &&
+        (today.isLoading || today.hasError || !today.hasValue)) {
+      return null;
+    }
+    return _candidates(
+      queue.requireValue,
+      _skipScannedToday ? today.requireValue : const [],
+    );
+  }
+
+  void _begin() {
+    if (_stage != _Stage.intro) return;
+    // Re-read before freezing the walk: an old callback may outlive a refresh.
+    final walk = _availableWalk(
+      ref.read(inspectionQueueProvider(_scope)),
+      ref.read(scansSinceProvider((since: startOfToday(), role: null))),
+    );
+    if (walk == null || walk.isEmpty) return;
+    setState(() {
+      _walk = walk;
+      _index = 0;
+      _attempt = 0;
+      _current = null;
+      _stage = _Stage.walking;
+    });
+  }
 
   void _advance() => setState(() {
     _current = null;
@@ -119,51 +139,50 @@ class _BatchSessionScreenState extends ConsumerState<BatchSessionScreen> {
   Widget _intro(BuildContext context, String? scopeName) {
     final l = context.l10n;
     final queue = ref.watch(inspectionQueueProvider(_scope));
-    final today =
-        ref
-            .watch(scansSinceProvider((since: startOfToday(), role: null)))
-            .value ??
-        const <ScanRecord>[];
-    return AsyncView<InspectionQueue>(
-      value: queue,
-      data: (queue) {
-        final walk = _candidates(queue, today);
-        return PageList(
-          children: [
-            ScreenHeader(
-              title: scopeName ?? l.batchScanTitle,
-              subtitle: l.batchIntroSubtitle(walk.length),
+    final today = ref.watch(
+      scansSinceProvider((since: startOfToday(), role: null)),
+    );
+    final walk = _availableWalk(queue, today);
+    final loading = queue.isLoading || (_skipScannedToday && today.isLoading);
+    return PageList(
+      children: [
+        ScreenHeader(
+          title: scopeName ?? l.batchScanTitle,
+          subtitle: walk == null
+              ? (loading ? l.loading : l.errorCouldNotLoad)
+              : l.batchIntroSubtitle(walk.length),
+        ),
+        QuietNote(l.batchSequentialNote, icon: Icons.touch_app_rounded),
+        Container(
+          decoration: BoxDecoration(
+            color: KernelColors.paper,
+            borderRadius: BorderRadius.circular(KernelRadii.md),
+            border: Border.all(color: KernelColors.hairline),
+          ),
+          child: Material(
+            type: MaterialType.transparency,
+            child: SwitchListTile(
+              key: const Key('batch-skip-today'),
+              value: _skipScannedToday,
+              onChanged: (v) => setState(() => _skipScannedToday = v),
+              title: Text(l.batchSkipToday),
+              subtitle: Text(l.batchSkipTodayBody),
             ),
-            QuietNote(l.batchSequentialNote, icon: Icons.touch_app_rounded),
-            Container(
-              decoration: BoxDecoration(
-                color: KernelColors.paper,
-                borderRadius: BorderRadius.circular(KernelRadii.md),
-                border: Border.all(color: KernelColors.hairline),
-              ),
-              child: Material(
-                type: MaterialType.transparency,
-                child: SwitchListTile(
-                  key: const Key('batch-skip-today'),
-                  value: _skipScannedToday,
-                  onChanged: (v) => setState(() => _skipScannedToday = v),
-                  title: Text(l.batchSkipToday),
-                  subtitle: Text(l.batchSkipTodayBody),
-                ),
-              ),
-            ),
-            for (final (i, item) in walk.indexed)
-              Text(l.batchWalkLine(i + 1, item.label, item.grainType)),
-            FilledButton.icon(
-              key: const Key('batch-start'),
-              onPressed: walk.isEmpty ? null : () => _begin(walk),
-              icon: const Icon(Icons.play_arrow_rounded),
-              label: Text(l.batchStart(walk.length)),
-            ),
-            if (walk.isEmpty) QuietNote(l.batchNothingToWalk),
-          ],
-        );
-      },
+          ),
+        ),
+        if (walk != null)
+          for (final (i, item) in walk.indexed)
+            Text(l.batchWalkLine(i + 1, item.label, item.grainType)),
+        FilledButton.icon(
+          key: const Key('batch-start'),
+          onPressed: walk == null || walk.isEmpty ? null : _begin,
+          icon: const Icon(Icons.play_arrow_rounded),
+          label: Text(
+            walk == null ? l.batchScanTitle : l.batchStart(walk.length),
+          ),
+        ),
+        if (walk != null && walk.isEmpty) QuietNote(l.batchNothingToWalk),
+      ],
     );
   }
 
@@ -189,9 +208,8 @@ class _BatchSessionScreenState extends ConsumerState<BatchSessionScreen> {
           child: Text(
             l.batchProgress(_index + 1, _walk.length),
             key: const Key('batch-progress'),
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: KernelColors.amberInk,
-            ),
+            style: Theme.of(context).textTheme.labelLarge
+                ?.copyWith(color: KernelColors.amberInk),
           ),
         ),
         LinearProgressIndicator(

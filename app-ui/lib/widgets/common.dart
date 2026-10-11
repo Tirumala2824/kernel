@@ -26,7 +26,10 @@ class ScreenHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Padding(
-      padding: const EdgeInsets.only(top: KernelSpace.xs, bottom: KernelSpace.xs),
+      padding: const EdgeInsets.only(
+        top: KernelSpace.xs,
+        bottom: KernelSpace.xs,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -166,7 +169,11 @@ class EmptyState extends StatelessWidget {
 
 /// Quiet inline note for "nothing here yet" inside a section (no action).
 class QuietNote extends StatelessWidget {
-  const QuietNote(this.text, {super.key, this.icon = Icons.info_outline_rounded});
+  const QuietNote(
+    this.text, {
+    super.key,
+    this.icon = Icons.info_outline_rounded,
+  });
 
   final String text;
   final IconData icon;
@@ -277,6 +284,25 @@ class AsyncView<T> extends StatelessWidget {
   }
 }
 
+/// Compact record summaries require current data before claiming absence.
+/// Retained values during refresh/error are not a new observation.
+class CurrentDataView<T> extends StatelessWidget {
+  const CurrentDataView({super.key, required this.value, required this.data});
+
+  final AsyncValue<T> value;
+  final Widget Function(T data) data;
+
+  @override
+  Widget build(BuildContext context) => value.when(
+    skipLoadingOnRefresh: false,
+    skipLoadingOnReload: false,
+    skipError: false,
+    data: data,
+    loading: () => Text(context.l10n.loading),
+    error: (_, _) => Text(context.l10n.errorCouldNotLoad),
+  );
+}
+
 class ErrorNote extends StatelessWidget {
   const ErrorNote(this.message, {super.key});
 
@@ -300,9 +326,8 @@ class ErrorNote extends StatelessWidget {
           Expanded(
             child: Text(
               message,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: KernelColors.ink),
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: KernelColors.ink),
             ),
           ),
         ],
@@ -339,7 +364,11 @@ class FieldRow extends StatelessWidget {
 
 /// Standard scrollable page body.
 class PageList extends StatelessWidget {
-  const PageList({super.key, required this.children, this.gap = KernelSpace.md});
+  const PageList({
+    super.key,
+    required this.children,
+    this.gap = KernelSpace.md,
+  });
 
   final List<Widget> children;
   final double gap;

@@ -78,6 +78,115 @@ void main() {
     expect((await env.sightings.get(s.id))?.analysis?.cardId, 'test_cockroach');
   });
 
+  testWidgets('detail keeps all AI and user-card safety concerns', (
+    tester,
+  ) async {
+    final env = PestEnv(role: Role.household);
+    env.knowledge.cards = [
+      const KnowledgeCard(
+        id: 'test_cockroach',
+        names: {'en': 'Test protected animal'},
+        group: PestGroup.reptile,
+        safety: SafetyLevel.venomous,
+        extraSafety: {SafetyLevel.protectedWildlife, SafetyLevel.low},
+        summary: 'Test protected animal card.',
+        signs: [],
+        lookAlikes: [],
+        healthRisks: [],
+        safeSteps: ['Keep away from the animal.'],
+        trapSteps: ['Catch it in a trap.'],
+        callProfessionalWhen: [],
+        firstAid: [],
+        legal: null,
+        sources: [],
+        reviewStatus: 'needs-expert-review',
+      ),
+      testCard('test_rat', name: 'Test rat', safety: SafetyLevel.caution),
+    ];
+    final s = await env.sightings.add(
+      analysis: testAnalysis(safety: SafetyLevel.medicalRisk),
+      userCardId: 'test_rat',
+    );
+    await pumpKernelApp(tester, env, location: Routes.sighting(s.id));
+
+    expect(
+      find.byKey(const Key('pest-safety-protectedWildlife')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('pest-safety-venomous')), findsOneWidget);
+    expect(find.byKey(const Key('pest-safety-medicalRisk')), findsOneWidget);
+    expect(find.byKey(const Key('pest-safety-caution')), findsOneWidget);
+    expect(find.byKey(const Key('pest-safety-low')), findsNothing);
+    expect(find.text(en.pestSafetyProtectedBody), findsOneWidget);
+    expect(find.text(en.pestSafetyDistanceBody), findsNWidgets(2));
+    expect(find.text('Catch it in a trap.'), findsNothing);
+
+    // Picking the protected card itself retains its extra concern once,
+    // and its displayed content still omits trapping instructions.
+    final protectedPick = await env.sightings.add(
+      analysis: testAnalysis(safety: SafetyLevel.venomous),
+      userCardId: 'test_cockroach',
+    );
+    routerOf(tester).go(Routes.sighting(protectedPick.id));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('pest-safety-venomous')), findsOneWidget);
+    expect(
+      find.byKey(const Key('pest-safety-protectedWildlife')),
+      findsOneWidget,
+    );
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('knowledge-card-test_cockroach')),
+      400,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Keep away from the animal.'), findsOneWidget);
+    expect(find.text('Catch it in a trap.'), findsNothing);
+  });
+
+  for (final userPick in [null, 'test_rat']) {
+    testWidgets(
+      'saved sound retains matched-card warnings with pick $userPick',
+      (tester) async {
+        final env = PestEnv(role: Role.household);
+        env.knowledge.cards = [
+          testCard('test_snake', safety: SafetyLevel.venomous),
+          testCard('test_wildlife', safety: SafetyLevel.protectedWildlife),
+          testCard('test_rat', safety: SafetyLevel.medicalRisk),
+          testCard('unrelated', safety: SafetyLevel.caution),
+        ];
+        final s = await env.sightings.create(
+          SightingDraft(
+            role: Role.household,
+            source: SignalSource.microphone,
+            observedAt: DateTime.utc(2026, 10, 10),
+            userValidated: true,
+            userCardId: userPick,
+            sound: const SoundAnalysis(
+              preFilter: [],
+              groupHint: PestGroup.unknown,
+              modelVersion: 'test-sound',
+              cardIds: ['test_snake', 'test_wildlife'],
+            ),
+          ),
+        );
+        await pumpKernelApp(tester, env, location: Routes.sighting(s.id));
+
+        expect(
+          find.byKey(const Key('pest-safety-protectedWildlife')),
+          findsOneWidget,
+        );
+        expect(find.byKey(const Key('pest-safety-venomous')), findsOneWidget);
+        expect(
+          find.byKey(const Key('pest-safety-medicalRisk')),
+          userPick == null ? findsNothing : findsOneWidget,
+        );
+        expect(find.byKey(const Key('pest-safety-caution')), findsNothing);
+        expect(find.byKey(const Key('pest-safety-low')), findsNothing);
+      },
+    );
+  }
+
   testWidgets('a pinned sighting links to the map', (tester) async {
     final env = PestEnv(role: Role.household);
     final s = await env.sightings.add(

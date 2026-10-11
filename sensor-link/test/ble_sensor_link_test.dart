@@ -218,7 +218,7 @@ void main() {
     host.startSessionError = 'not_visible';
     expect(() => link.startSession('node-a'), throwsA(isA<SensorSessionException>()));
     host.startSessionError = 'link';
-    await link.startSession('node-a'); // radio failure: reported via status, not thrown
+    await expectLater(link.startSession('node-a'), throwsA(isA<SensorSessionException>()));
     await link.startSurvey('node-a', duration: const Duration(seconds: 5));
     expect(host.calls.last, 'survey node-a 30');
   });

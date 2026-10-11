@@ -26,11 +26,14 @@ class SensorStatusChips extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
-    final status = ref.watch(sensorStatusProvider(node.id)).value;
+    final statusValue = ref.watch(sensorStatusProvider(node.id));
+    final status = statusValue.isLoading || statusValue.hasError
+        ? null
+        : statusValue.value;
     final battery = status?.batteryPercent ?? node.batteryPercent;
     final health = [...?status?.health]
       ..sort((a, b) => a.index.compareTo(b.index));
-    final notEvaluated = status != null && isNotEvaluated(status.health);
+    final notEvaluated = status?.notEvaluated ?? false;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -64,7 +67,7 @@ class SensorStatusChips extends ConsumerWidget {
             for (final h in health)
               // "Sensor working" is implied by the link chip; only problems
               // get their own chip when anything else is reported.
-              if (h != SensorHealth.ok || health.length == 1)
+              if (h != SensorHealth.ok || (!notEvaluated && health.length == 1))
                 StatusChip(
                   key: Key('sensor-health-${h.name}-${node.id}'),
                   label: h.label(l),
@@ -73,6 +76,10 @@ class SensorStatusChips extends ConsumerWidget {
                 ),
           ],
         ),
+        if (statusValue.hasError)
+          ErrorNote(l.errorWithDetail(l.sensorTitle, '${statusValue.error}'))
+        else if (statusValue.isLoading)
+          Text(l.loading),
         if (showNotice && notEvaluated) ...[
           const SizedBox(height: KernelSpace.sm),
           NoticeBanner(
@@ -83,6 +90,29 @@ class SensorStatusChips extends ConsumerWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+/// Health gaps remain visible after recovery, without claiming the node
+/// is currently faulty. Dates identify the affected historical windows.
+class SensorNotEvaluatedHistory extends StatelessWidget {
+  const SensorNotEvaluatedHistory({super.key, required this.periods});
+
+  final List<SensorNotEvaluatedPeriod> periods;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return NoticeBanner(
+      title: l.sensorNotEvaluatedTitle,
+      text: [
+        for (final period in periods)
+          '${formatDateTime(context, period.from)}'
+              '${period.until == null ? '' : ' — ${formatDateTime(context, period.until!)}'}',
+        l.sensorSignalNotDiagnosis,
+      ].join('\n'),
+      icon: Icons.do_not_disturb_on_outlined,
     );
   }
 }
@@ -123,7 +153,7 @@ class SensorBandBars extends StatelessWidget {
   }
 }
 
-/// "N events in M minutes" per signature, each marked experimental.
+/// Recorded event counts per signature, each marked experimental.
 class SensorEventSummary extends StatelessWidget {
   const SensorEventSummary({super.key, required this.events});
 
@@ -148,7 +178,7 @@ class SensorEventSummary extends StatelessWidget {
                   style: textTheme.titleSmall,
                 ),
                 Text(
-                  l.sensorEventsSummary(s.count, s.minutes),
+                  '${l.sensorSummaryTitle}: ${s.count}',
                   style: textTheme.bodyLarge,
                 ),
                 const SizedBox(height: KernelSpace.xxs),

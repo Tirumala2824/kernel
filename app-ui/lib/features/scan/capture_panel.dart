@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
 
+import '../../agents/media_picker_service.dart';
 import '../../app/copy.dart';
 import '../../app/data_providers.dart';
 import '../../app/platform_providers.dart';
@@ -18,7 +19,15 @@ import '../../widgets/level_meter.dart';
 /// Gap after a spoken prompt so its tail never reaches the recording.
 const voiceSettleDelay = Duration(milliseconds: 400);
 
-enum CapturePhase { ready, requesting, prompting, capturing, saving, failed }
+enum CapturePhase {
+  ready,
+  requesting,
+  prompting,
+  capturing,
+  analyzing,
+  saving,
+  failed,
+}
 
 /// One guided capture for [itemId]: microphone permission, optional voice
 /// prompts, live levels from [ScanEngine.captureLevels], then
@@ -54,6 +63,7 @@ class _CapturePanelState extends ConsumerState<CapturePanel> {
   StreamSubscription<CaptureLevel>? _levelSub;
   String? _error;
   bool _disposed = false;
+  bool _fromFile = false;
   late final VoicePrompter _prompter;
 
   @override
@@ -86,6 +96,7 @@ class _CapturePanelState extends ConsumerState<CapturePanel> {
   Future<void> _start() async {
     final l = context.l10n;
     final languageTag = Localizations.localeOf(context).languageCode;
+    _fromFile = false;
     _set(CapturePhase.requesting);
     _levels.clear();
 
@@ -120,12 +131,17 @@ class _CapturePanelState extends ConsumerState<CapturePanel> {
     }
 
     // Subscribe before starting so the first levels are not missed.
+    void clearTelemetry() {
+      if (mounted) setState(_levels.clear);
+    }
+
     _levelSub = engine.captureLevels().listen(
       (level) {
         if (!mounted) return;
         setState(() => _levels.add(level));
       },
-      onError: (Object _) {},
+      onError: (Object _) => clearTelemetry(),
+      onDone: clearTelemetry,
     );
     _set(CapturePhase.capturing);
 
@@ -160,82 +176,48 @@ class _CapturePanelState extends ConsumerState<CapturePanel> {
   }
 
   Future<void> _uploadAudio() async {
-    final picker = ref.read(mediaPickerServiceProvider);
-    final sensor = await showModalBottomSheet<SensorType>(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Select Audio Sensor Transducer',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Identifies the physical recording transducer for calibrated screening.',
-                  style: TextStyle(fontSize: 13, color: Colors.grey),
-                ),
-                const Divider(height: 24),
-                ListTile(
-                  leading: const Icon(Icons.touch_app, color: Color(0xFF1B4D3E)),
-                  title: const Text('Contact Piezo Sensor (Grain Probe)'),
-                  subtitle: const Text('Direct acoustic contact coupling'),
-                  onTap: () => Navigator.pop(ctx, SensorType.contactPiezo),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.mic, color: Color(0xFF2E7D32)),
-                  title: const Text('Acoustic Air Microphone'),
-                  subtitle: const Text('Air-coupled microphone recording'),
-                  onTap: () => Navigator.pop(ctx, SensorType.audioAir),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.waves, color: Color(0xFF0277BD)),
-                  title: const Text('Ultrasonic Air Transducer'),
-                  subtitle: const Text('Ultrasonic sensor recording'),
-                  onTap: () => Navigator.pop(ctx, SensorType.usAir),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.vibration, color: Color(0xFFF57F17)),
-                  title: const Text('Contact Accelerometer'),
-                  subtitle: const Text('Vibration sensor probe'),
-                  onTap: () => Navigator.pop(ctx, SensorType.contactAccel),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    if (sensor == null || _disposed) return;
-    final media = await picker.pickAudioFile(sensorType: sensor);
-    if (media == null || media.path.isEmpty || _disposed) return;
-
-    _set(CapturePhase.saving);
-    final engine = ref.read(scanEngineProvider);
-    final scans = ref.read(scanRepositoryProvider);
-    final retainAudio = widget.research || (ref.read(retainAudioOptInProvider).value ?? false);
-
+    final l = context.l10n;
+    MediaPickerService? picker;
+    PickedMedia? media;
     try {
+      final selectedPicker = ref.read(mediaPickerServiceProvider);
+      picker = selectedPicker;
+      // A selected WAV does not establish a calibrated transducer origin.
+      media = await selectedPicker.pickAudioFile(
+        sensorType: SensorType.audioAir,
+      );
+      if (media == null || media.path.isEmpty || _disposed) return;
+
+      _fromFile = true;
+      _levels.clear();
+      _set(CapturePhase.analyzing);
+      final engine = ref.read(scanEngineProvider);
+      final scans = ref.read(scanRepositoryProvider);
+      final retainAudio =
+          widget.research ||
+          (ref.read(retainAudioOptInProvider).value ?? false);
       final outcome = await engine.analyzeAudioFile(
         widget.itemId,
         media.path,
-        sensorType: sensor,
+        sensorType: SensorType.audioAir,
         retainAudio: retainAudio,
       );
+      if (_disposed) return;
+      _set(CapturePhase.saving);
       final record = await scans.record(outcome);
       if (_disposed) return;
       widget.onRecorded(record);
     } catch (e) {
-      _set(CapturePhase.failed, error: 'Could not analyze audio file: $e');
+      _set(
+        CapturePhase.failed,
+        error: _phase == CapturePhase.saving
+            ? l.scanCouldNotSave('$e')
+            : l.scanCouldNotRun('$e'),
+      );
+    } finally {
+      // Release only the imported cache copy after the engine finishes reading.
+      // Original documents and separately opted-in retained audio are untouched.
+      await picker?.release(media);
     }
   }
 
@@ -253,11 +235,13 @@ class _CapturePanelState extends ConsumerState<CapturePanel> {
         _phase == CapturePhase.requesting ||
         _phase == CapturePhase.prompting ||
         _phase == CapturePhase.capturing ||
+        _phase == CapturePhase.analyzing ||
         _phase == CapturePhase.saving;
     final last = _levels.isEmpty ? null : _levels.last;
     final hint = levelHint(_levels);
     final title = switch (_phase) {
       CapturePhase.capturing => l.captureListening,
+      CapturePhase.analyzing => l.captureChecking,
       CapturePhase.saving => l.captureSaving,
       CapturePhase.requesting => l.captureCheckingMic,
       CapturePhase.prompting => l.captureGetReady,
@@ -335,8 +319,26 @@ class _CapturePanelState extends ConsumerState<CapturePanel> {
               ),
               const SizedBox(height: KernelSpace.lg),
               if (_phase == CapturePhase.capturing ||
+                  (_phase == CapturePhase.saving && !_fromFile))
+                _LiveSection(
+                  levels: _levels,
+                  hint: hint,
+                  saving: _phase == CapturePhase.saving,
+                )
+              else if (_phase == CapturePhase.analyzing ||
                   _phase == CapturePhase.saving)
-                _LiveSection(levels: _levels, hint: hint, saving: _phase == CapturePhase.saving)
+                LinearProgressIndicator(
+                  key: Key(
+                    _phase == CapturePhase.analyzing
+                        ? 'file-analysis-progress'
+                        : 'scan-saving-progress',
+                  ),
+                  semanticsLabel: title,
+                  color: KernelColors.amber,
+                  backgroundColor: KernelColors.onForest.withValues(
+                    alpha: 0.18,
+                  ),
+                )
               else ...[
                 FilledButton.icon(
                   key: const Key('start-capture'),
@@ -374,7 +376,7 @@ class _CapturePanelState extends ConsumerState<CapturePanel> {
                   ),
                   onPressed: busy ? null : _uploadAudio,
                   icon: const Icon(Icons.audio_file_outlined),
-                  label: const Text('Upload Grain Audio (.wav) with Sensor Tag'),
+                  label: const Text('Import Grain Audio (.wav)'),
                 ),
               ],
             ],
@@ -406,8 +408,7 @@ class _LiveSection extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final last = levels.isEmpty ? null : levels.last;
     final progress = last?.progress;
-    final targetSeconds = (last?.targetMs ?? 2000) / 1000;
-    final elapsedSeconds = (last?.elapsedMs ?? 0) / 1000;
+
     final (hintText, hintIcon, attention) = switch (hint) {
       LevelHint.waiting => (l.hintWaiting, Icons.hearing_rounded, false),
       LevelHint.tooQuiet => (l.hintTooQuiet, Icons.volume_down_rounded, true),
@@ -428,8 +429,8 @@ class _LiveSection extends StatelessWidget {
             borderRadius: BorderRadius.circular(KernelRadii.pill),
             child: LinearProgressIndicator(
               key: const Key('capture-progress'),
-              // Real elapsed progress from the engine; 0 until it reports.
-              value: saving ? 1 : (progress ?? 0),
+              // No observed level means progress is unknown, not zero.
+              value: progress == null ? null : (saving ? 1 : progress),
               minHeight: 8,
               color: KernelColors.amber,
               backgroundColor: KernelColors.onForest.withValues(alpha: 0.18),
@@ -437,17 +438,18 @@ class _LiveSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: KernelSpace.sm),
-        Text(
-          saving || (progress ?? 0) >= 1
-              ? l.captureChecking
-              : l.captureElapsed(
-                  elapsedSeconds.toStringAsFixed(1),
-                  targetSeconds.toStringAsFixed(1),
-                ),
-          key: const Key('capture-elapsed'),
-          textAlign: TextAlign.center,
-          style: textTheme.bodyMedium?.copyWith(color: KernelColors.onForest),
-        ),
+        if (last != null)
+          Text(
+            saving || last.progress >= 1
+                ? l.captureChecking
+                : l.captureElapsed(
+                    (last.elapsedMs / 1000).toStringAsFixed(1),
+                    (last.targetMs / 1000).toStringAsFixed(1),
+                  ),
+            key: const Key('capture-elapsed'),
+            textAlign: TextAlign.center,
+            style: textTheme.bodyMedium?.copyWith(color: KernelColors.onForest),
+          ),
         if (!saving) ...[
           const SizedBox(height: KernelSpace.md),
           Center(
@@ -471,7 +473,9 @@ class _LiveSection extends StatelessWidget {
                     Icon(
                       hintIcon,
                       size: 20,
-                      color: attention ? KernelColors.ink : KernelColors.onForest,
+                      color: attention
+                          ? KernelColors.ink
+                          : KernelColors.onForest,
                     ),
                     const SizedBox(width: KernelSpace.sm),
                     Flexible(

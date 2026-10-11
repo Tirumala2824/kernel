@@ -26,6 +26,7 @@ part 'database.g.dart';
     Sightings,
     SensorNodes,
     SensorEvents,
+    SensorHealthChanges,
     KnowledgeCards,
     CardEmbeddings,
   ],
@@ -37,7 +38,7 @@ class KernelDatabase extends _$KernelDatabase {
   /// Bump together with a drift migration step, a new schema dump
   /// (`dart run drift_dev make-migrations`) and a migration test.
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -99,6 +100,15 @@ class KernelDatabase extends _$KernelDatabase {
       await m.create(schema.sensorEventsAppendOnly);
       await m.createTable(schema.knowledgeCards);
       await m.createTable(schema.cardEmbeddings);
+    },
+    from3To4: (m, schema) async {
+      // Pre-upgrade observation coverage is unknown. Never backfill health.
+      await m.addColumn(
+        schema.sensorNodes,
+        schema.sensorNodes.healthClearedThroughAt,
+      );
+      await m.createTable(schema.sensorHealthChanges);
+      await m.createIndex(schema.sensorHealthNodeAt);
     },
   );
 }

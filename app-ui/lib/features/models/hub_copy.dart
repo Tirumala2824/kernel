@@ -20,7 +20,7 @@ extension ModelCapabilityCopy on ModelCapability {
   };
 }
 
-/// One Pest ID need on the status card.
+/// One optional downloadable capability on the status card.
 String pestIdNeedLabel(AppLocalizations l, ModelCapability capability) =>
     switch (capability) {
       ModelCapability.imageIn => l.hubNeedImage,

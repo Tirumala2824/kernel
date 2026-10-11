@@ -299,7 +299,7 @@ abstract class AppLocalizations {
   /// Settings footer.
   ///
   /// In en, this message translates to:
-  /// **'All scanning runs on this phone. Kernel works without a network connection and never uploads audio.'**
+  /// **'Kernel keeps audio on this phone. Local records and bundled checks work offline; model downloads and online maps need internet.'**
   String get settingsFooter;
 
   /// Diagnostics screen.
@@ -2015,7 +2015,7 @@ abstract class AppLocalizations {
   /// Onboarding privacy point.
   ///
   /// In en, this message translates to:
-  /// **'Nothing is uploaded. There is no account and no cloud, and everything works offline.'**
+  /// **'Audio stays on this phone. Local records and bundled checks work offline; model downloads and online maps need internet.'**
   String get onboardingPrivacy2;
 
   /// Onboarding privacy point.
@@ -2915,13 +2915,13 @@ abstract class AppLocalizations {
   /// Screen reader text for the indicator.
   ///
   /// In en, this message translates to:
-  /// **'Offline. Everything keeps working on this phone.'**
+  /// **'Offline. Local records and bundled checks work offline; model downloads and online maps need internet.'**
   String get offlineSemantics;
 
   /// Screen reader text for the indicator.
   ///
   /// In en, this message translates to:
-  /// **'Online. Kernel does not need the network.'**
+  /// **'Online. Local records and bundled checks work offline; model downloads and online maps need internet.'**
   String get onlineSemantics;
 
   /// App bar QR button tooltip.
@@ -3098,10 +3098,10 @@ abstract class AppLocalizations {
   /// **'Microphone level'**
   String get levelMeterLabel;
 
-  /// Level meter value before levels arrive.
+  /// Microphone level readings have not arrived or are no longer available. This does not mean silence was measured.
   ///
   /// In en, this message translates to:
-  /// **'Waiting for sound'**
+  /// **'Waiting for microphone levels'**
   String get levelMeterWaiting;
 
   /// Current input level in decibels relative to full scale.
@@ -4505,13 +4505,13 @@ abstract class AppLocalizations {
   /// Model Hub subtitle.
   ///
   /// In en, this message translates to:
-  /// **'On-phone models for Pest ID. They run only on this phone.'**
+  /// **'Android includes experimental insect classification for WAV clips. The optional downloads below add image analysis, search and live sound (YAMNet).'**
   String get hubSubtitle;
 
   /// Status card title; followed by each need with Installed/Missing.
   ///
   /// In en, this message translates to:
-  /// **'Pest ID needs'**
+  /// **'Optional model downloads'**
   String get hubNeedsTitle;
 
   /// Pest ID need: a model that understands photos.
@@ -4529,7 +4529,7 @@ abstract class AppLocalizations {
   /// Pest ID need: a model that labels sounds.
   ///
   /// In en, this message translates to:
-  /// **'Sound classifier'**
+  /// **'Live sound classifier (YAMNet)'**
   String get hubNeedSound;
 
   /// Chip: the model is on the phone. Also the final download phase.
@@ -4547,25 +4547,25 @@ abstract class AppLocalizations {
   /// Status card when nothing is missing.
   ///
   /// In en, this message translates to:
-  /// **'Everything Pest ID needs is on this phone.'**
+  /// **'All optional capabilities listed here have installed models.'**
   String get hubAllInstalled;
 
   /// Status card when a need is missing but the catalog has nothing to download.
   ///
   /// In en, this message translates to:
-  /// **'No download is available for the missing parts yet.'**
+  /// **'No download is available for the missing optional models yet.'**
   String get hubNothingToDownload;
 
   /// What is left to download and its total size.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 model to download, about {size}} other{{count} models to download, about {size}}}'**
+  /// **'{count, plural, =1{1 optional model to download, about {size}} other{{count} optional models to download, about {size}}}'**
   String hubDownloadSummary(int count, String size);
 
   /// Button: start the Pest ID model downloads (asks for consent first).
   ///
   /// In en, this message translates to:
-  /// **'Download models'**
+  /// **'Download optional models'**
   String get hubDownloadAction;
 
   /// Error when downloads fail to start.
@@ -4583,7 +4583,7 @@ abstract class AppLocalizations {
   /// Error prefix when installed models cannot be read.
   ///
   /// In en, this message translates to:
-  /// **'Could not read installed models'**
+  /// **'Could not read installed optional models'**
   String get hubInstalledUnavailable;
 
   /// Why models already in Google's AI Edge Gallery app are downloaded again. Keep Kernel and AI Edge Gallery in Latin script.
@@ -4595,7 +4595,7 @@ abstract class AppLocalizations {
   /// One-time download consent sheet title.
   ///
   /// In en, this message translates to:
-  /// **'Download Pest ID models?'**
+  /// **'Download optional Pest ID models?'**
   String get hubConsentTitle;
 
   /// Consent sheet explanation.
@@ -4739,19 +4739,19 @@ abstract class AppLocalizations {
   /// Section title.
   ///
   /// In en, this message translates to:
-  /// **'Installed models'**
+  /// **'Installed optional models'**
   String get hubInstalledTitle;
 
   /// Empty state for installed models.
   ///
   /// In en, this message translates to:
-  /// **'No models installed yet'**
+  /// **'No optional models installed yet'**
   String get hubInstalledEmpty;
 
   /// Empty state detail.
   ///
   /// In en, this message translates to:
-  /// **'Pest ID works after its models are downloaded once.'**
+  /// **'Bundled insect WAV checks on Android do not need these downloads.'**
   String get hubInstalledEmptyDetail;
 
   /// Installed model field: file path.
@@ -4943,7 +4943,7 @@ abstract class AppLocalizations {
   /// Settings entry subtitle for Model Hub.
   ///
   /// In en, this message translates to:
-  /// **'Download and manage the on-phone models Pest ID uses.'**
+  /// **'Manage optional model downloads for images, search and live sound.'**
   String get hubSettingsCard;
 
   /// Settings switch: maps consent. Keep Google Maps in Latin script.
@@ -6529,34 +6529,34 @@ abstract class AppLocalizations {
   /// **'Getting location…'**
   String get pestLocating;
 
-  /// Location denied.
+  /// Location permission was denied, so no pin is available. Nothing has been saved and a room may not be selected.
   ///
   /// In en, this message translates to:
-  /// **'Location permission denied, saved room only'**
+  /// **'Location permission denied. No pin available.'**
   String get pestLocationDenied;
 
-  /// Accuracy worse than 25 m or approximate only.
+  /// Accuracy worse than 25 m or approximate only, so no pin is available. Nothing has been saved and a room may not be selected.
   ///
   /// In en, this message translates to:
-  /// **'Location too imprecise, saved room only'**
+  /// **'Location too imprecise. No pin available.'**
   String get pestLocationImprecise;
 
-  /// Location service off.
+  /// Location services are off, so no pin is available. Nothing has been saved and a room may not be selected.
   ///
   /// In en, this message translates to:
-  /// **'Location is turned off on this phone, saved room only'**
+  /// **'Location is turned off on this phone. No pin available.'**
   String get pestLocationOff;
 
-  /// Location error.
+  /// Location acquisition failed, so no pin is available. Nothing has been saved and a room may not be selected.
   ///
   /// In en, this message translates to:
-  /// **'Could not get a location, saved room only'**
+  /// **'Could not get a location. No pin available.'**
   String get pestLocationFailed;
 
-  /// Precise pin saved.
+  /// A precise fix is staged in memory, ready to save with the sighting. Nothing is persisted yet. Keep the meters placeholder.
   ///
   /// In en, this message translates to:
-  /// **'Pin saved (within {meters} m)'**
+  /// **'Pin ready to save (within {meters} m)'**
   String pestLocationPinned(int meters);
 
   /// Keep media toggle.

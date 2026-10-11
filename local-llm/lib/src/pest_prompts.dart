@@ -11,7 +11,7 @@ import 'package:kernel_contracts/kernel_contracts.dart';
 import 'prompts.dart' show adviceLanguages, normalizeLanguageTag, percentWords;
 
 /// Version of the templates below; stored as `PestAnalysis.promptVersion`.
-const String pestPromptVersion = 'kernel-pest-prompts-v1';
+const String pestPromptVersion = 'kernel-pest-prompts-v2';
 
 /// The "no card fits" label of the constrained label set.
 const String noMatchLabel = 'none';
@@ -375,7 +375,7 @@ String regionSchema(List<String> labels) => jsonEncode({
 // ---------------------------------------------------------------------------
 // Card-grounded guidance (text only)
 
-/// Cards included in one guidance prompt.
+/// Cards whose facts are included; required wording uses every input card.
 const int maxGuideCards = 3;
 
 /// Facts per list field and characters per fact.
@@ -402,8 +402,7 @@ String guideSystemInstruction(String? languageTag) {
     '- Never say the identification is certain, and never say an animal or a '
         'place is harmless. The label is AI-estimated and not calibrated; say '
         'so briefly and suggest an expert check.',
-    '- When a card gives "Required wording", include that sentence, in '
-        '$language.',
+    '- Include every "Required wording" sentence in $language.',
     ..._wordingRules(tag),
     '- If the facts do not answer the question, say so and suggest a '
         'licensed professional.',
@@ -428,10 +427,9 @@ List<String> _cardLines(int index, KnowledgeCard c, String languageTag) {
     return f.isEmpty ? null : '- $label: $f';
   }
 
-  // Never rendered: sources, the safety enum and reviewStatus (lead card
-  // review). The safety level only selects the required sentence.
+  // Never rendered: sources, safety enums and reviewStatus. Required wording
+  // is collected separately from every concern, without the facts limit.
   final legal = sanitizeFreeText(c.legal, maxFactChars);
-  final wording = requiredWording(c.safety);
   return [
     'Card ${index + 1}: ${cardName(c, languageTag)} (id ${c.id})',
     '- Group: ${groupWords(c.group)}',
@@ -444,7 +442,6 @@ List<String> _cardLines(int index, KnowledgeCard c, String languageTag) {
     ?field('Call a professional when', c.callProfessionalWhen),
     ?field('If bitten or stung', c.firstAid),
     if (legal.isNotEmpty) '- Legal: $legal',
-    if (wording != null) '- Required wording: $wording',
   ];
 }
 
@@ -454,10 +451,10 @@ PestPrompt renderGuidePrompt(PestGuideInput input) {
   final agreeing = (a.agreement.clamp(0.0, 1.0) * a.samples).round();
   final question = sanitizeFreeText(input.question, 200);
   final cards = input.cards.take(maxGuideCards).toList();
-  // The analysis' own level can be more serious than its cards (or there
-  // may be no matching card); its sentence is then required too.
-  final analysisWording = requiredWording(a.safety);
-  final covered = cards.any((c) => requiredWording(c.safety) == analysisWording);
+  final wording = safetyConcerns(aiLevel: a.safety, cards: input.cards)
+      .map(requiredWording)
+      .whereType<String>()
+      .toSet();
   return PestPrompt(
     systemInstruction: guideSystemInstruction(tag),
     languageTag: tag,
@@ -467,8 +464,7 @@ PestPrompt renderGuidePrompt(PestGuideInput input) {
           '(card ${a.cardId ?? noMatchLabel})',
       '- The model\'s own confidence: ${percentWords(a.aiConfidence)}',
       '- Agreement between independent runs: $agreeing of ${a.samples}',
-      if (analysisWording != null && !covered)
-        '- Required wording: $analysisWording',
+      for (final sentence in wording) '- Required wording: $sentence',
       'Card facts:',
       for (var i = 0; i < cards.length; i++) ..._cardLines(i, cards[i], tag),
       question.isEmpty

@@ -1,0 +1,44 @@
+{
+  "notice": "SYNTHETIC frontend-only fixtures; no model inference or species validation",
+  "revision": "001425d7fab4b44af5cc571174410f1c78552d0e",
+  "source_sha256": {
+    "src/audio.py": "df78b3a6c79840569ac5c7fb073ac390c28de138cf493ba618073931f5975e85",
+    "src/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "versions": {
+    "numpy": "2.5.3",
+    "scipy": "1.18.1"
+  },
+  "cases": {
+    "silence16": {
+      "rate": 16000,
+      "samples": 32000,
+      "offsets": [
+        null
+      ],
+      "quality_pass": false,
+      "quality_reasons": [
+        "low_level_or_silence"
+      ],
+      "first_crop_unique": [
+        0.16018247604370117
+      ]
+    },
+    "silent_first16": {
+      "rate": 16000,
+      "samples": 64000,
+      "offsets": [
+        0,
+        8000,
+        16000,
+        24000,
+        32000
+      ],
+      "quality_pass": true,
+      "quality_reasons": [],
+      "first_crop_unique": [
+        0.16018247604370117
+      ]
+    }
+  }
+}

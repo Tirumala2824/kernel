@@ -1,0 +1,39 @@
+Kernel Insect Sound Classifier — bundled third-party asset
+
+Source: https://huggingface.co/ganesh333/kernel-insect-classifier
+Publisher: ganesh333; model/card authors: Kernel MVP contributors.
+Pinned revision: 001425d7fab4b44af5cc571174410f1c78552d0e
+Version: 0.1.0-experimental
+Model SHA-256: 55ad541b87d1ae0bae5a71c7ec9091fc40617051f479ac3f12996bacda6f597e
+Model size: 646352 bytes
+
+Model weights and model card: Creative Commons Attribution 4.0 International.
+License: https://creativecommons.org/licenses/by/4.0/
+Legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+Redistributed model.tflite, labels.json, config.json and README.md unchanged.
+The upstream model card and code LICENSE are included alongside this notice.
+No endorsement by the authors or dataset recordists is implied.
+
+Training data: InsectSet32 by Marius Faiß, Baudewijn Odé and Ed Baker,
+CC BY 4.0, https://zenodo.org/records/7072196.
+Orthoptera recordings: Baudewijn Odé.
+Cicadidae recordings: Global Cicada Sound Collection on Bioacoustica,
+https://doi.org/10.1093/database/bav054.
+Copyright in individual recordings belongs to the recordists.
+Citation: Faiß, M. & Stowell, D., Adaptive representations of sound for
+ automatic insect recognition, PLOS Computational Biology (2023),
+https://doi.org/10.1371/journal.pcbi.1011541.
+No dataset audio is bundled in the app.
+
+The Android frontend and hierarchical postprocessing are ports of src/audio.py
+and src/inference.py at the pinned revision (MIT; Copyright (c) 2026 Kernel MVP
+contributors; see LICENSE). Changes: Kotlin implementation, bounded PCM16 WAV
+input, Android LiteRT interpreter, strict quality rejection rather than emitting
+scores on failed audio, and unknown identification represented with no label.
+No Python, HDF5 or pickle code executes in the shipped app.
+
+Experimental closed-set audible sound classification of 32 species only
+(9 Orthoptera and 23 Cicadidae). Not grain-pest screening, proof of absence,
+ultrasound sensing, or a basis for treatment/lot decisions. Scores are not
+calibrated. Numerical port parity does not establish field accuracy or mobile
+readiness across devices. The upstream card documents substantial limitations.

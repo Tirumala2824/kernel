@@ -16,9 +16,10 @@ import 'hub_copy.dart';
 import 'hub_providers.dart';
 import 'hub_search.dart';
 
-/// Model Hub: what Pest ID needs, the one-time download consent, download
-/// progress, installed models and on-phone semantic search. Only catalogs
-/// and model files use the network (guardrails §7); every model runs here.
+/// Model Hub: optional Pest ID downloads, consent, progress, installed files
+/// and on-phone semantic search. The subtitle describes Android's bundled
+/// insect WAV checks; their availability is not inferred from this registry.
+/// Only catalogs and model files use the network here (guardrails §7).
 class ModelHubScreen extends ConsumerWidget {
   const ModelHubScreen({super.key});
 
@@ -74,8 +75,8 @@ Future<void> startPestIdDownloads(BuildContext context, WidgetRef ref) async {
   }
 }
 
-/// "Pest ID needs: image understanding, embeddings, sound classifier",
-/// each shown as installed or missing, plus what is left to download.
+/// Optional image, search and live sound models, each shown as installed or
+/// missing based only on the downloadable-model registry, plus remaining files.
 class PestIdStatusCard extends ConsumerWidget {
   const PestIdStatusCard({super.key});
 

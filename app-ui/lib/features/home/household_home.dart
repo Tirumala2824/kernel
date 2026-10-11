@@ -24,7 +24,10 @@ class HouseholdHome extends ConsumerWidget {
     final l = context.l10n;
     final items = ref.watch(itemsByRoleProvider(role));
     final upcoming = ref.watch(upcomingRemindersProvider);
-    final activity = ref.watch(scanActivityProvider(roleScope(role))).value;
+    final activityValue = ref.watch(scanActivityProvider(roleScope(role)));
+    final activity = activityValue.isLoading || activityValue.hasError
+        ? null
+        : activityValue.value;
     return PageList(
       children: [
         ScreenHeader(
@@ -44,9 +47,11 @@ class HouseholdHome extends ConsumerWidget {
                 onAction: () => context.push(Routes.newItem()),
               );
             }
-            final reminders = upcoming.value ?? const <Reminder>[];
+            final reminders = upcoming.isLoading || upcoming.hasError
+                ? null
+                : upcoming.value;
             final ids = {for (final item in items) item.id};
-            final mine = reminders.where((r) => ids.contains(r.itemId)).length;
+            final mine = reminders?.where((r) => ids.contains(r.itemId)).length;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -75,7 +80,9 @@ class HouseholdHome extends ConsumerWidget {
                     padding: const EdgeInsets.only(bottom: 12),
                     child: ContainerCard(
                       item: item,
-                      nextReminder: _nextFor(item.id, reminders),
+                      nextReminder: reminders == null
+                          ? null
+                          : _nextFor(item.id, reminders),
                     ),
                   ),
                 KernelCard(
@@ -83,7 +90,9 @@ class HouseholdHome extends ConsumerWidget {
                   tone: KernelCardTone.ivory,
                   icon: Icons.alarm_rounded,
                   title: l.remindersCardTitle,
-                  subtitle: mine == 0
+                  subtitle: mine == null
+                      ? null
+                      : mine == 0
                       ? l.remindersCardEmpty
                       : l.remindersScheduled(mine),
                 ),

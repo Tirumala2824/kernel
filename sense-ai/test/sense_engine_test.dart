@@ -49,6 +49,23 @@ SignalCandidate _camera(String id, {NormalizedBox? box}) => SignalCandidate(
   box: box ?? const NormalizedBox(left: 0.4, top: 0.4, width: 0.1, height: 0.1),
 );
 
+class _DelayedEmbedder extends TestEmbedder {
+  _DelayedEmbedder() : super(['gecko']);
+
+  final imageStarted = Completer<void>();
+  final imageReady = Completer<void>();
+
+  @override
+  Future<EmbeddingVector?> embedImage(
+    Uint8List encodedImage, {
+    int dim = 256,
+  }) async {
+    imageStarted.complete();
+    await imageReady.future;
+    return super.embedImage(encodedImage, dim: dim);
+  }
+}
+
 Future<void> _pump() => Future<void>.delayed(Duration.zero);
 
 void main() {
@@ -116,6 +133,308 @@ void main() {
       await s2.cancel();
       expect(host.batchListeners, 0, reason: 'native stream released');
     });
+
+    test('inactive camera invalidates candidates until an active batch', () async {
+      final e = engine(embedder: TestEmbedder(['gecko']));
+      final lists = <List<SignalCandidate>>[];
+      final errors = <Object>[];
+      final statuses = <SenseCameraStatus>[];
+      final sub = e.cameraCandidates().listen(lists.add, onError: errors.add);
+      final statusSub = e.cameraStatus().listen(statuses.add);
+      addTearDown(() async {
+        await sub.cancel();
+        await statusSub.cancel();
+        await e.dispose();
+      });
+      host.batches.add(nativeBatch([nativeCandidate('motion-1')]));
+      await _pump();
+      host.onCapture = _still;
+      final still = await e.captureStill(candidates: [_camera('motion-1')]);
+      await e.rankStill(still!);
+      await _pump();
+      expect(lists.last.map((c) => c.id), ['motion-1', 'sign:motion-1']);
+      final dataEvents = lists.length;
+
+      host.batches.add(
+        nativeBatch([], active: false, thermal: NativeThermalLevel.paused),
+      );
+      await _pump();
+      expect(errors, [isStateError]);
+      expect(
+        lists,
+        hasLength(dataEvents),
+        reason: 'idle is not an evaluated empty frame',
+      );
+      expect(statuses.last.cameraActive, isFalse);
+      expect(statuses.last.thermalLevel, ThermalLevel.paused);
+      host.batches.add(nativeBatch([]));
+      await _pump();
+      expect(lists, hasLength(dataEvents + 1));
+      expect(
+        lists.last,
+        isEmpty,
+        reason:
+            'real active empty frames remain valid; stale ranks do not return',
+      );
+      expect(e.lastCameraStatus!.cameraActive, isTrue);
+      host.batches.add(nativeBatch([], active: false));
+      await _pump();
+      await e.discardMedia();
+      await _pump();
+      expect(
+        lists,
+        hasLength(dataEvents + 1),
+        reason: 'cleanup must not erase unavailability',
+      );
+    });
+
+    test(
+      'bridge errors invalidate camera data and preserve recovery',
+      () async {
+        final e = engine(embedder: TestEmbedder(['gecko']));
+        final lists = <List<SignalCandidate>>[];
+        final errors = <Object>[];
+        final traces = <StackTrace>[];
+        final statusErrors = <Object>[];
+        final sub = e.cameraCandidates().listen(
+          lists.add,
+          onError: (Object error, StackTrace trace) {
+            errors.add(error);
+            traces.add(trace);
+          },
+        );
+        final statusSub = e.cameraStatus().listen(
+          (_) {},
+          onError: statusErrors.add,
+        );
+        addTearDown(() async {
+          await sub.cancel();
+          await statusSub.cancel();
+          await e.dispose();
+        });
+        host.batches.add(nativeBatch([nativeCandidate('motion-1')]));
+        await _pump();
+        host.onCapture = _still;
+        final still = await e.captureStill(candidates: [_camera('motion-1')]);
+        await e.rankStill(still!);
+        await _pump();
+        expect(lists.last.map((c) => c.id), ['motion-1', 'sign:motion-1']);
+        final dataEvents = lists.length;
+        final error = StateError('native bridge disconnected');
+        final trace = StackTrace.current;
+        host.batches.addError(error, trace);
+        await _pump();
+        expect(errors, [same(error)]);
+        expect(traces, [same(trace)]);
+        expect(statusErrors, [same(error)]);
+        expect(
+          e.lastCameraStatus,
+          isNull,
+          reason: 'last active metadata is no longer current',
+        );
+        expect(lists, hasLength(dataEvents));
+
+        host.batches.add(nativeBatch([]));
+        await _pump();
+        expect(
+          lists.last,
+          isEmpty,
+          reason: 'recovery cannot revive stale Stage-1 boxes',
+        );
+        expect(e.lastCameraStatus!.cameraActive, isTrue);
+        host.batches.addError(error);
+        await _pump();
+        await e.discardMedia();
+        await _pump();
+        expect(
+          lists,
+          hasLength(dataEvents + 1),
+          reason: 'cleanup is not a recovery frame',
+        );
+      },
+    );
+
+    test(
+      'camera stream completion invalidates data and permits resubscription',
+      () async {
+        final e = engine();
+        final lists = <List<SignalCandidate>>[];
+        final errors = <Object>[];
+        final statusErrors = <Object>[];
+        var sub = e.cameraCandidates().listen(lists.add, onError: errors.add);
+        final statusSub = e.cameraStatus().listen(
+          (_) {},
+          onError: statusErrors.add,
+        );
+        addTearDown(() async {
+          await sub.cancel();
+          await statusSub.cancel();
+          await e.dispose();
+        });
+        host.batches.add(nativeBatch([nativeCandidate('old')]));
+        await _pump();
+        expect(lists.single.single.id, 'old');
+        await host.batches.close();
+        await _pump();
+        expect(errors, [isStateError]);
+        expect(statusErrors, [same(errors.single)]);
+        expect(e.lastCameraStatus, isNull);
+        await e.discardMedia();
+        await _pump();
+        expect(
+          lists,
+          hasLength(1),
+          reason: 'completion and cleanup are not empty observations',
+        );
+
+        host.batches = StreamController<NativeCameraBatch>.broadcast();
+        await sub.cancel();
+        sub = e.cameraCandidates().listen(lists.add, onError: errors.add);
+        host.batches.add(nativeBatch([]));
+        await _pump();
+        expect(
+          lists,
+          hasLength(2),
+          reason: 'the completed native subscription must be released',
+        );
+        expect(lists.last, isEmpty);
+        expect(e.lastCameraStatus!.cameraActive, isTrue);
+      },
+    );
+
+    for (final interruption in ['inactive', 'bridge error', 'stream done']) {
+      test(
+        'late Stage-1 ranking cannot revive boxes after $interruption',
+        () async {
+          final emb = _DelayedEmbedder();
+          final e = engine(embedder: emb);
+          final lists = <List<SignalCandidate>>[];
+          final errors = <Object>[];
+          var sub = e.cameraCandidates().listen(lists.add, onError: errors.add);
+          addTearDown(() async {
+            await sub.cancel();
+            await e.dispose();
+          });
+          host.batches.add(nativeBatch([nativeCandidate('motion-1')]));
+          await _pump();
+          host.onCapture = _still;
+          final still = await e.captureStill(candidates: [_camera('motion-1')]);
+          final ranking = e.rankStill(still!);
+          await emb.imageStarted.future;
+          if (interruption == 'inactive') {
+            host.batches.add(nativeBatch([], active: false));
+          } else if (interruption == 'bridge error') {
+            host.batches.addError(StateError('bridge disconnected'));
+          } else {
+            await host.batches.close();
+          }
+          await _pump();
+          expect(errors, hasLength(1));
+          if (interruption == 'stream done') {
+            host.batches = StreamController<NativeCameraBatch>.broadcast();
+            await sub.cancel();
+            sub = e.cameraCandidates().listen(lists.add, onError: errors.add);
+          }
+          host.batches.add(nativeBatch([]));
+          await _pump();
+          expect(lists.last, isEmpty);
+          final dataEvents = lists.length;
+          emb.imageReady.complete();
+          expect(
+            await ranking,
+            isEmpty,
+            reason: 'the interrupted ranking is invalidated',
+          );
+          await _pump();
+          expect(
+            lists,
+            hasLength(dataEvents),
+            reason: 'late work must not overwrite recovery',
+          );
+        },
+      );
+    }
+
+    test(
+      'ranking started while inactive cannot seed the recovered preview',
+      () async {
+        final emb = _DelayedEmbedder();
+        final e = engine(embedder: emb);
+        final lists = <List<SignalCandidate>>[];
+        final sub = e.cameraCandidates().listen(
+          lists.add,
+          onError: (Object _) {},
+        );
+        addTearDown(() async {
+          await sub.cancel();
+          await e.dispose();
+        });
+        host.batches.add(nativeBatch([], active: false));
+        await _pump();
+        host.onCapture = _still;
+        final still = await e.captureStill(candidates: [_camera('motion-1')]);
+        final ranking = e.rankStill(still!);
+        await emb.imageStarted.future;
+        host.batches.add(nativeBatch([]));
+        await _pump();
+        expect(lists.single, isEmpty);
+        emb.imageReady.complete();
+        expect(
+          await ranking,
+          isNotEmpty,
+          reason: 'explicit still ranking remains available',
+        );
+        await _pump();
+        expect(
+          lists,
+          hasLength(1),
+          reason: 'a still rank without a live frame cannot create live boxes',
+        );
+      },
+    );
+
+    test(
+      'capture begun before interruption cannot seed recovered camera boxes',
+      () async {
+        final e = engine(embedder: TestEmbedder(['gecko']));
+        final lists = <List<SignalCandidate>>[];
+        final sub = e.cameraCandidates().listen(
+          lists.add,
+          onError: (Object _) {},
+        );
+        addTearDown(() async {
+          await sub.cancel();
+          await e.dispose();
+        });
+        host.batches.add(nativeBatch([nativeCandidate('motion-1')]));
+        await _pump();
+        final captured = Completer<NativeStill?>();
+        host.onCapture = (_) => captured.future;
+        final pendingCapture = e.captureStill(
+          candidates: [_camera('motion-1')],
+        );
+        host.batches.addError(StateError('bridge interrupted during capture'));
+        await _pump();
+        host.batches.add(nativeBatch([]));
+        await _pump();
+        final dataEvents = lists.length;
+        captured.complete(_still(host.captureCalls.single));
+        final still = await pendingCapture;
+        expect(
+          still,
+          isNotNull,
+          reason: 'the actual captured still is still returned',
+        );
+        await e.rankStill(still!);
+        await _pump();
+        expect(
+          lists,
+          hasLength(dataEvents),
+          reason: 'a delayed old capture must not repopulate live boxes',
+        );
+        expect(lists.last, isEmpty);
+      },
+    );
 
     test('captureStill sends only camera candidates with boxes', () async {
       final e = engine();

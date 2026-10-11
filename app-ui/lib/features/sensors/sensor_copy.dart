@@ -127,36 +127,19 @@ String signatureName(AppLocalizations l, String? signatureId) =>
       final id => l.sensorSigOther(id.replaceAll('_', ' ')),
     };
 
-/// "N events in M minutes" for one signature (or unmatched events).
+/// Recorded event counts for one signature (or unmatched events).
+/// Event timestamps alone do not establish a watched window.
 class SignatureSummary {
   const SignatureSummary({
     required this.signatureId,
     required this.packVersion,
     required this.count,
-    required this.minutes,
   });
 
   /// Null for events without a signature match.
   final String? signatureId;
   final String? packVersion;
   final int count;
-  final int minutes;
-}
-
-/// Whole minutes covered by [events], from the first start to the last
-/// end, at least 1.
-int spanMinutes(Iterable<SensorEvent> events) {
-  if (events.isEmpty) return 0;
-  var first = events.first.startedAt;
-  var last = events.first.startedAt;
-  for (final e in events) {
-    final end = e.startedAt.add(Duration(milliseconds: e.durationMs));
-    if (e.startedAt.isBefore(first)) first = e.startedAt;
-    if (end.isAfter(last)) last = end;
-  }
-  final seconds = last.difference(first).inSeconds;
-  final minutes = (seconds / 60).ceil();
-  return minutes < 1 ? 1 : minutes;
 }
 
 /// Groups events by signature, most frequent first.
@@ -171,7 +154,6 @@ List<SignatureSummary> summarizeEvents(List<SensorEvent> events) {
         signatureId: key,
         packVersion: value.first.match?.packVersion,
         count: value.length,
-        minutes: spanMinutes(value),
       ),
   ]..sort((a, b) => b.count.compareTo(a.count));
   return summaries;

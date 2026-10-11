@@ -1,6 +1,8 @@
 // Saving a sighting: room picker, the optional one-time location with the
 // 25 m accuracy gate, keep-media, notes, and discarding buffered media.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kernel_app/app/routes.dart';
@@ -23,6 +25,26 @@ PestEnv _env() {
   final env = PestEnv(role: Role.household);
   env.knowledge.cards = [testCard('test_cockroach')];
   return env;
+}
+
+class _PendingSightingRepository extends InMemorySightingRepository {
+  final createGate = Completer<void>();
+  final attempted = <SightingDraft>[];
+
+  @override
+  Future<Sighting> create(SightingDraft draft) async {
+    attempted.add(draft);
+    await createGate.future;
+    return super.create(draft);
+  }
+}
+
+class _PendingSaveEnv extends PestEnv {
+  _PendingSaveEnv() : super(role: Role.household);
+
+  @override
+  // ignore: overridden_fields
+  final _PendingSightingRepository sightings = _PendingSightingRepository();
 }
 
 void main() {
@@ -149,14 +171,85 @@ void main() {
     expect(env.sightings.drafts.single.mediaPath, contains('sighting_media'));
   });
 
-  testWidgets('cancel discards media and saves nothing', (tester) async {
+  testWidgets('locate then cancel never claims a pin was saved', (
+    tester,
+  ) async {
     final env = _env();
+    env.locator.fix = classifyFix(12.97161, 77.59456, 8);
     await _openSave(tester, env);
+
+    await tapVisible(tester, find.byKey(const Key('pest-save-location')));
+    expect(env.locator.calls, 1);
+    expect(env.sightings.drafts, isEmpty);
+    expect(env.sightings.all, isEmpty);
+    expect(find.text('Pin ready to save (within 8 m)'), findsOneWidget);
+    expect(find.text('Pin saved (within 8 m)'), findsNothing);
+    expect(find.text(en.pestSaved), findsNothing);
 
     await tapVisible(tester, find.byKey(const Key('pest-save-cancel')));
 
+    expect(env.sightings.drafts, isEmpty);
     expect(env.sightings.all, isEmpty);
+    expect(find.text('Pin saved (within 8 m)'), findsNothing);
+    expect(find.text(en.pestSaved), findsNothing);
     expect(env.sense.discardCalls, greaterThanOrEqualTo(1));
+
+    await _openSave(tester, env);
+    expect(find.byKey(const Key('pest-pin')), findsNothing);
+  });
+
+  testWidgets('locate then failed save never claims persistence', (
+    tester,
+  ) async {
+    final env = _PendingSaveEnv();
+    env.knowledge.cards = [testCard('test_cockroach')];
+    env.locator.fix = classifyFix(12.97161, 77.59456, 8);
+    await _openSave(tester, env);
+
+    await tapVisible(tester, find.byKey(const Key('pest-save-location')));
+    expect(env.sightings.attempted, isEmpty);
+    await tapVisible(tester, find.byKey(const Key('pest-save-confirm')));
+    expect(env.sightings.attempted.single.latitude, 12.97161);
+    expect(env.sightings.all, isEmpty);
+    expect(find.text(en.pestSaved), findsNothing);
+
+    env.sightings.createGate.completeError(StateError('test: storage full'));
+    await tester.pumpAndSettle();
+
+    expect(find.text(en.pestSaveFailed), findsOneWidget);
+    expect(env.sightings.all, isEmpty);
+    expect(env.sightings.drafts, isEmpty);
+    expect(find.text('Pin ready to save (within 8 m)'), findsOneWidget);
+    expect(find.text('Pin saved (within 8 m)'), findsNothing);
+    expect(find.text(en.pestSaved), findsNothing);
+    expect(find.text(en.pestDetailTitle), findsNothing);
+  });
+
+  testWidgets('a located pin stays staged until repository create succeeds', (
+    tester,
+  ) async {
+    final env = _PendingSaveEnv();
+    env.knowledge.cards = [testCard('test_cockroach')];
+    env.locator.fix = classifyFix(12.97161, 77.59456, 8);
+    await _openSave(tester, env);
+
+    await tapVisible(tester, find.byKey(const Key('pest-save-location')));
+    await tapVisible(tester, find.byKey(const Key('pest-save-confirm')));
+    expect(env.sightings.attempted, hasLength(1));
+    expect(env.sightings.all, isEmpty);
+    expect(find.text('Pin ready to save (within 8 m)'), findsOneWidget);
+    expect(find.text('Pin saved (within 8 m)'), findsNothing);
+    expect(find.text(en.pestSaved), findsNothing);
+    expect(find.text(en.pestDetailTitle), findsNothing);
+
+    env.sightings.createGate.complete();
+    await tester.pumpAndSettle();
+
+    expect(env.sightings.all.single.latitude, 12.97161);
+    expect(env.sightings.all.single.longitude, 77.59456);
+    expect(env.sightings.all.single.accuracyMeters, 8);
+    expect(find.text(en.pestSaved), findsOneWidget);
+    expect(find.text(en.pestDetailTitle), findsWidgets);
   });
 
   testWidgets('no rooms yet: a quiet note, saving still works', (tester) async {

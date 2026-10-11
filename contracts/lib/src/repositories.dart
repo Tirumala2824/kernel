@@ -58,8 +58,8 @@ abstract interface class ScanRepository {
   /// Newest first.
   Stream<List<ScanRecord>> watchForItem(String itemId);
 
-  /// Newest first.
-  Stream<List<ScanRecord>> watchRecent({int limit = 50});
+  /// Newest first for non-archived items; filter ownership before limiting.
+  Stream<List<ScanRecord>> watchRecent({int limit = 50, Role? role});
 
   /// Scans captured at or after [since], newest first; optionally only for
   /// items owned by [role].

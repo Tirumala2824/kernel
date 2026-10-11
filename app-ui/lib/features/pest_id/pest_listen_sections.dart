@@ -121,12 +121,20 @@ class PestSoundResult extends StatelessWidget {
     final lang = Localizations.localeOf(context).languageCode;
     final matches = session.soundCards;
     final shown = session.cardById(session.userCardId) ?? matches.firstOrNull;
+    final concerns = safetyConcerns(
+      cards: [
+        ...matches,
+        shown,
+        for (final id in sound?.cardIds ?? const <String>[])
+          session.cardById(id),
+      ],
+    );
     return Column(
       key: const Key('pest-sound-result'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (shown != null) ...[
-          PestSafetyBanner(level: shown.safety),
+        for (final level in concerns) ...[
+          PestSafetyBanner(level: level),
           const SizedBox(height: KernelSpace.md),
         ],
         Container(

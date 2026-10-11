@@ -12,6 +12,7 @@ import 'package:sense_ai/sense_ai.dart';
 import 'package:sensor_link/sensor_link.dart';
 
 import 'app/providers.dart';
+import 'features/sensors/sensor_providers.dart';
 
 /// Binds the providers in lib/app/providers.dart to the real on-device
 /// implementations: the grain scan engine, the local SQLite data layer, the
@@ -27,6 +28,13 @@ import 'app/providers.dart';
 /// because the unbound providers throw.
 Future<List<Override>> bootstrapOverrides() async {
   final engine = NativeScanEngine();
+  // This pinned classifier is bundled with sense-ai. It needs neither local
+  // records nor model downloads, so it remains available if storage fails.
+  final soundBindings = <Override>[
+    insectSoundClassifierProvider.overrideWithValue(
+      NativeInsectSoundClassifier(),
+    ),
+  ];
 
   // The hub needs an embedder for semantic model search, and the embedder
   // finds its model through the hub, so the hub is created lazily here.
@@ -55,18 +63,19 @@ Future<List<Override>> bootstrapOverrides() async {
     );
   } catch (error, stack) {
     debugPrint('Kernel: local data failed to open: $error\n$stack');
-    return const [];
+    return soundBindings;
   }
 
   // BLE frequency-detection nodes (guardrails §10). Events are persisted for
   // the whole app session (idempotent on node + seq), so a night of
   // store-and-forward events is never lost because no sensor screen was open.
   final sensorLink = BleSensorLink(lastSeqOf: ops.sensorEvents.lastSeq);
-  sensorLink.events().listen(
-    (event) => ops.sensorEvents.record([event]),
-    onError: (Object error) => debugPrint('Kernel: sensor event: $error'),
+  final sensorBindings = bootstrapSensorOverrides(
+    link: sensorLink,
+    nodes: ops.sensorNodes,
+    events: ops.sensorEvents,
+    attention: sensorAttention,
   );
-  _watchSensorAttention(sensorLink, ops.sensorNodes, sensorAttention);
 
   final advice = LocalAdviceEngine(
     optIn: ops.settings.watchLocalAdviceOptIn(),
@@ -81,6 +90,7 @@ Future<List<Override>> bootstrapOverrides() async {
   );
 
   return [
+    ...soundBindings,
     scanEngineProvider.overrideWithValue(engine),
     itemRepositoryProvider.overrideWithValue(ops.items),
     locationRepositoryProvider.overrideWithValue(ops.locations),
@@ -112,9 +122,44 @@ Future<List<Override>> bootstrapOverrides() async {
     ),
     knowledgeServiceProvider.overrideWithValue(ops.knowledge),
     sightingRepositoryProvider.overrideWithValue(ops.sightings),
-    sensorNodeRepositoryProvider.overrideWithValue(ops.sensorNodes),
-    sensorEventRepositoryProvider.overrideWithValue(ops.sensorEvents),
-    sensorLinkProvider.overrideWithValue(sensorLink),
+    ...sensorBindings,
+  ];
+}
+
+/// Starts app-wide sensor observation and returns its provider bindings.
+/// Kept separate so the real bootstrap ordering can run over local test data.
+List<Override> bootstrapSensorOverrides({
+  required SensorLink link,
+  required SensorNodeRepository nodes,
+  required SensorEventRepository events,
+  required StreamController<Set<String>> attention,
+}) {
+  link.events().listen(
+    (event) => events.record([event]),
+    onError: (Object error) => debugPrint('Kernel: sensor event: $error'),
+  );
+  // Both streams are non-replaying. Attach persistence before watchStatus
+  // can connect paired nodes and immediately report (or replay) health.
+  link.healthChanges().listen(
+    (change) => unawaited(
+      events
+          .recordHealth([change])
+          .then(
+            (_) {},
+            onError: (Object error) =>
+                debugPrint('Kernel: sensor health: $error'),
+          ),
+    ),
+    onError: (Object error) => debugPrint('Kernel: sensor health: $error'),
+  );
+  _watchSensorAttention(link, nodes, attention);
+  return [
+    sensorNodeRepositoryProvider.overrideWithValue(nodes),
+    sensorEventRepositoryProvider.overrideWithValue(events),
+    sensorLinkProvider.overrideWithValue(link),
+    // The app-session listeners above already own persistence. Screens only
+    // observe readiness; they must not start another pair of subscriptions.
+    sensorEventRecorderProvider.overrideWithValue(true),
   ];
 }
 

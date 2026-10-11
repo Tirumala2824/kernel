@@ -3,20 +3,22 @@
 ## Colour
 | Token | Hex | Use |
 |---|---|---|
-| `forest` | #234C38 | Primary: hero action cards, headings, primary buttons |
-| `sage` | #E6EFE4 | Secondary cards / surfaces |
-| `ivory` | #F6F3E9 | App background, tertiary cards |
+| `forest` | #294B3B | Primary actions and restrained moss accents |
+| `sage` | #E9EEE7 | Secondary cards / surfaces |
+| `ivory` | #F7F6F2 | App background, tertiary cards |
 | `amber` | #D9A441 | Attention: "Inspection needed", "Review due", warnings |
 | `onForest` | #FFFFFF | Text on forest |
-| `ink` | #1B2A22 (suggested) | Body text on light surfaces. Check ≥4.5:1 contrast |
+| `ink` | #202923 | Body text on light surfaces. Check ≥4.5:1 contrast |
 
 Status colours always come **with a text label** (never colour alone).
 
 ## Rules
 - Touch targets ≥ 48dp. Plain-language instructions. Support font scaling and do not clip at 200%.
-- A persistent **Offline** indicator in the app bar, driven by connectivity_plus. It is informational only, because nothing in the core flows needs the network.
-- Bottom navigation: **Home · Scan · Inventory · Reports**. Labels may change per role (e.g. Inventory → "My Grain" / "My Containers" / "Warehouse" / "Lots").
-- Every result screen shows model provenance: `Model: none — Not evaluated` or `Model vX — Experimental`.
+- Chat is the launch surface: a 760dp maximum reading column, paper background, bundled Manrope, unboxed assistant text and a single Photo/WAV attachment menu. No static metrics, waveform, online badge, agent-activity claims, or seeded welcome turn.
+- Genuine operational screens retain their connectivity-driven indicator; it is not a claim that inference needs network.
+- **Records & tools** in the chat menu opens the existing operational navigation: Home · Scan · Inventory · Reports. Those real-data routes and their role-specific labels remain intact; chat itself has no bottom navigation.
+- Model-derived results show their actual model version and experimental status. Chat sound results disclose the exact source/revision under Model details. Rejected/unavailable recordings show actionable native reasons, not a fake identification, confidence, or `Model: none` placeholder.
+- The bundled insect classifier is separate from grain screening; a sound match cannot certify grain, hidden-pest presence/absence, or ultrasound. No model-selection/configuration prompt is needed to use the bundled WAV classifier.
 
 ## Screen skeletons (from PRD wireframes)
 The wireframe numbers are illustrations. **Bind every count to the real DB and show an empty state at zero.**

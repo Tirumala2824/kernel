@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../app/data_providers.dart';
 import '../../app/routes.dart';
 import '../../l10n/l10n.dart';
 import '../../widgets/common.dart';
 import '../../widgets/kernel_app_bar.dart';
 import '../../widgets/kernel_card.dart';
-import 'pest_providers.dart';
 
 /// Pest & Animal ID start screen: look, listen, sightings and the map.
 class PestHubScreen extends StatelessWidget {
@@ -30,24 +27,23 @@ class PestHubScreen extends StatelessWidget {
 }
 
 /// The Pest ID actions, shared by the hub screen and the Scan tab segment.
-class PestHubPanel extends ConsumerWidget {
+class PestHubPanel extends StatelessWidget {
   const PestHubPanel({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l = context.l10n;
-    final role = ref.watch(activeRoleProvider).value;
-    final count = ref.watch(recentSightingsProvider(role)).value?.length;
     return Column(
       key: const Key('pest-hub'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         KernelCard(
           key: const Key('pest-hub-agent-chat'),
-          tone: KernelCardTone.hero,
-          icon: Icons.smart_toy_outlined,
-          title: 'Autonomous Multimodal Agent',
-          subtitle: 'ChatGPT-style screening with InsectSet32 bioacoustics & safe IPM',
+          tone: KernelCardTone.ivory,
+          icon: Icons.chat_bubble_outline_rounded,
+          title: 'Insect sound & photo chat',
+          subtitle:
+              'Classify an attached WAV or inspect a photo on this phone.',
           onTap: () => context.push(Routes.chat),
         ),
         const SizedBox(height: 12),
@@ -74,7 +70,7 @@ class PestHubPanel extends ConsumerWidget {
           tone: KernelCardTone.ivory,
           icon: Icons.list_alt_rounded,
           title: l.pestSightingsCardTitle,
-          subtitle: count == null ? null : l.pestSightingsCount(count),
+          subtitle: l.pestSightingsSubtitle,
           onTap: () => context.push(Routes.sightings),
         ),
         const SizedBox(height: 12),

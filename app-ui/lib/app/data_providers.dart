@@ -152,11 +152,13 @@ final scansForItemProvider = StreamProvider.autoDispose
           .map(newestFirst),
     );
 
+typedef RecentScansQuery = ({int limit, Role role});
+
 final recentScansProvider = StreamProvider.autoDispose
-    .family<List<ScanRecord>, int>(
-      (ref, limit) => ref
+    .family<List<ScanRecord>, RecentScansQuery>(
+      (ref, query) => ref
           .watch(scanRepositoryProvider)
-          .watchRecent(limit: limit)
+          .watchRecent(limit: query.limit, role: query.role)
           .map(newestFirst),
     );
 

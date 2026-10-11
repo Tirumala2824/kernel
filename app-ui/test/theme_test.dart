@@ -23,9 +23,17 @@ double contrast(Color a, Color b) {
 void main() {
   group('Design tokens', () {
     test('token values match docs/design-tokens.md', () {
-      expect(KernelColors.forest, const Color(0xFF234C38));
-      expect(KernelColors.sage, const Color(0xFFE6EFE4));
-      expect(KernelColors.ivory, const Color(0xFFF6F3E9));
+      expect(KernelColors.forest, const Color(0xFF294B3B));
+      expect(KernelColors.sage, const Color(0xFFE9EEE7));
+      expect(KernelColors.ivory, const Color(0xFFF7F6F2));
+      expect(KernelColors.paper, const Color(0xFFFFFEFA));
+      expect(KernelColors.ink, const Color(0xFF202923));
+      expect(KernelColors.inkMuted, const Color(0xFF505C53));
+      expect(KernelColors.forestDeep, const Color(0xFF1D362B));
+      expect(KernelColors.forestSoft, const Color(0xFF355E49));
+      expect(KernelColors.sageDeep, const Color(0xFFD7E1D3));
+      expect(KernelColors.outline, const Color(0xFF737E75));
+      expect(KernelColors.hairline, const Color(0xFFDDE2D9));
       expect(KernelColors.amber, const Color(0xFFD9A441));
     });
 
@@ -87,7 +95,7 @@ void main() {
       );
       expect(
         kernelRedirect(const AsyncData(Role.farmer), Uri.parse(Routes.start)),
-        Routes.home,
+        Routes.chat,
       );
       expect(
         kernelRedirect(const AsyncData(Role.farmer), Uri.parse(Routes.role)),
@@ -133,7 +141,10 @@ void main() {
         contrast(KernelColors.onForest, KernelColors.forestSoft),
         greaterThan(4.5),
       );
-      expect(contrast(KernelColors.ink, KernelColors.sageDeep), greaterThan(4.5));
+      expect(
+        contrast(KernelColors.ink, KernelColors.sageDeep),
+        greaterThan(4.5),
+      );
     });
 
     test('theme uses the bundled Manrope type scale', () {

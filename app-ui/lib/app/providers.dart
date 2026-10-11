@@ -258,50 +258,27 @@ final senseCameraPreviewBuilderProvider = Provider<SenseCameraPreviewBuilder>(
   name: 'senseCameraPreviewBuilderProvider',
 );
 
-// Autonomous Domain Agent Providers
+// Chat requests resolve only the local capabilities they need.
 
 final mediaPickerServiceProvider = Provider<MediaPickerService>(
   (ref) => MediaPickerService(),
   name: 'mediaPickerServiceProvider',
 );
 
-final acousticDiagnosticAgentProvider = Provider<AcousticDiagnosticAgent>(
-  (ref) => AcousticDiagnosticAgent(scanEngine: ref.watch(scanEngineProvider)),
-  name: 'acousticDiagnosticAgentProvider',
-);
-
-final visualDiagnosticAgentProvider = Provider<VisualDiagnosticAgent>(
-  (ref) => VisualDiagnosticAgent(analyzer: ref.watch(pestAnalyzerProvider)),
-  name: 'visualDiagnosticAgentProvider',
-);
-
-final sensorTelemetryAgentProvider = Provider<SensorTelemetryAgent>(
-  (ref) => SensorTelemetryAgent(
-    nodeRepo: ref.watch(sensorNodeRepositoryProvider),
-    eventRepo: ref.watch(sensorEventRepositoryProvider),
+final insectSoundClassifierProvider = Provider<InsectSoundClassifier>(
+  (ref) => _unbound(
+    'insectSoundClassifierProvider',
+    'InsectSoundClassifier',
+    'sense_ai',
   ),
-  name: 'sensorTelemetryAgentProvider',
-);
-
-final evidenceFusionAgentProvider = Provider<EvidenceFusionAgent>(
-  (ref) => EvidenceFusionAgent(),
-  name: 'evidenceFusionAgentProvider',
-);
-
-final agronomySafetyAgentProvider = Provider<AgronomySafetyAgent>(
-  (ref) => AgronomySafetyAgent(
-    knowledgeService: ref.watch(knowledgeServiceProvider),
-  ),
-  name: 'agronomySafetyAgentProvider',
+  name: 'insectSoundClassifierProvider',
 );
 
 final orchestratorAgentProvider = Provider<OrchestratorAgent>(
   (ref) => OrchestratorAgent(
-    acousticAgent: ref.watch(acousticDiagnosticAgentProvider),
-    visualAgent: ref.watch(visualDiagnosticAgentProvider),
-    sensorAgent: ref.watch(sensorTelemetryAgentProvider),
-    fusionAgent: ref.watch(evidenceFusionAgentProvider),
-    safetyAgent: ref.watch(agronomySafetyAgentProvider),
+    soundClassifier: () => ref.read(insectSoundClassifierProvider),
+    analyzer: () => ref.read(pestAnalyzerProvider),
+    knowledge: () => ref.read(knowledgeServiceProvider),
   ),
   name: 'orchestratorAgentProvider',
 );

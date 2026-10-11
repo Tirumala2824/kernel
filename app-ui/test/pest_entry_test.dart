@@ -3,6 +3,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:kernel_app/features/pest_id/pest_providers.dart';
 import 'package:kernel_app/app/routes.dart';
 import 'package:kernel_app/features/home/next_actions.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
@@ -10,7 +12,37 @@ import 'package:kernel_contracts/kernel_contracts.dart';
 import 'support/harness.dart';
 import 'support/test_pest.dart';
 
+class _HubEnv extends PestEnv {
+  _HubEnv() : super(role: Role.household);
+
+  int recentReads = 0;
+
+  @override
+  List<Override> get overrides => [
+    ...super.overrides,
+    recentSightingsProvider(Role.household).overrideWith((ref) {
+      recentReads++;
+      return sightings.watchRecent(role: Role.household);
+    }),
+  ];
+}
+
 void main() {
+  testWidgets(
+    'hub does not subscribe to a capped count; sightings route stays real',
+    (tester) async {
+      final env = _HubEnv();
+      await env.sightings.add(role: Role.household);
+      await pumpKernelApp(tester, env, location: Routes.pestHub);
+      expect(env.recentReads, 0);
+      expect(find.text(en.pestSightingsSubtitle), findsOneWidget);
+      expect(find.text(en.pestSightingsCount(1)), findsNothing);
+      await tapVisible(tester, find.byKey(const Key('pest-hub-sightings')));
+      expect(routerOf(tester).state.uri.path, Routes.sightings);
+      expect(env.recentReads, 1);
+    },
+  );
+
   testWidgets('Household home has a Pest & animal ID hero into the hub', (
     tester,
   ) async {
@@ -22,7 +54,7 @@ void main() {
     await tapVisible(tester, hero);
 
     expect(find.byKey(const Key('pest-hub')), findsOneWidget);
-    expect(find.text(en.pestSightingsCount(0)), findsOneWidget);
+    expect(find.text(en.pestSightingsSubtitle), findsOneWidget);
   });
 
   for (final role in [Role.farmer, Role.storageFpo, Role.buyer]) {
@@ -47,7 +79,7 @@ void main() {
 
     await tapVisible(tester, find.byKey(const Key('scan-mode-pest')));
     expect(find.byKey(const Key('pest-hub')), findsOneWidget);
-    expect(find.text(en.pestSightingsCount(1)), findsOneWidget);
+    expect(find.text(en.pestSightingsSubtitle), findsOneWidget);
 
     await tapVisible(tester, find.byKey(const Key('pest-hub-listen')));
     expect(find.text(en.pestListenTitle), findsWidgets);

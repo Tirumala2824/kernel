@@ -152,13 +152,19 @@ class _HarvestSackTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
-    final latest = ref.watch(scansForItemProvider(item.id)).value?.firstOrNull;
+    final scans = ref.watch(scansForItemProvider(item.id));
     return ItemTile(
       item: item,
       onTap: () => context.push(Routes.item(item.id)),
-      footer: latest == null
-          ? Text(l.notScannedYet)
-          : ScanResultChip(quality: latest.quality, result: latest.result),
+      footer: CurrentDataView<List<ScanRecord>>(
+        value: scans,
+        data: (records) {
+          final latest = records.firstOrNull;
+          return latest == null
+              ? Text(l.notScannedYet)
+              : ScanResultChip(quality: latest.quality, result: latest.result);
+        },
+      ),
     );
   }
 }

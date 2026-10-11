@@ -2,6 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:kernel_app/app/data_providers.dart';
+import 'package:kernel_app/app/kernel_app.dart';
 import 'package:kernel_app/app/copy.dart';
 import 'package:kernel_app/app/routes.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
@@ -36,7 +40,65 @@ ModelImportProgress _copying(int copied, int? total) => ModelImportProgress(
   totalBytes: total,
 );
 
+class _ModelInfoEnv extends TestEnv {
+  _ModelInfoEnv() : super(role: Role.farmer);
+
+  var modelInfo = Completer<AdviceModelInfo?>();
+
+  @override
+  List<Override> get overrides => [
+    ...super.overrides,
+    adviceModelInfoProvider.overrideWith((ref) => modelInfo.future),
+  ];
+}
+
 void main() {
+  testWidgets('pending or failed model lookup is not a missing model', (
+    tester,
+  ) async {
+    final env = _ModelInfoEnv();
+    await pumpKernelApp(tester, env, location: Routes.settings);
+    expect(find.text(en.adviceModelNone), findsNothing);
+    expect(find.text(en.loading), findsWidgets);
+    expect(find.byKey(const Key('advice-import')), findsOneWidget);
+    env.modelInfo.completeError(StateError('model lookup failed'));
+    await tester.pumpAndSettle();
+    expect(find.text(en.adviceModelNone), findsNothing);
+    expect(find.text(en.errorCouldNotLoad), findsOneWidget);
+  });
+
+  for (final info in <AdviceModelInfo?>[null, testAdviceModel]) {
+    testWidgets(
+      'model refresh hides retained ${info?.id} data until confirmed',
+      (tester) async {
+        final env = _ModelInfoEnv();
+        env.modelInfo.complete(info);
+        await pumpKernelApp(tester, env, location: Routes.settings);
+        expect(
+          find.text(info == null ? en.adviceModelNone : info.id),
+          findsOneWidget,
+        );
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(KernelApp)),
+        );
+        env.modelInfo = Completer<AdviceModelInfo?>();
+        container.invalidate(adviceModelInfoProvider);
+        await tester.pump();
+        final refreshing = container.read(adviceModelInfoProvider);
+        expect(refreshing.isLoading, isTrue);
+        expect(refreshing.hasValue, isTrue);
+        expect(find.text(en.adviceModelNone), findsNothing);
+        expect(find.text(testAdviceModel.id), findsNothing);
+        expect(find.text(en.loading), findsWidgets);
+        env.modelInfo.completeError(StateError('model refresh failed'));
+        await tester.pumpAndSettle();
+        expect(find.text(en.adviceModelNone), findsNothing);
+        expect(find.text(testAdviceModel.id), findsNothing);
+        expect(find.text(en.errorCouldNotLoad), findsOneWidget);
+      },
+    );
+  }
+
   group('Explain this result (on-phone assistant)', () {
     testWidgets('hidden while opted out, even if a model is ready', (
       tester,
@@ -327,26 +389,26 @@ void main() {
       expect(find.byKey(const Key('advice-import-error')), findsNothing);
     });
 
-    testWidgets('delete asks first, then removes the model', (tester) async {
+    testWidgets('engine model details do not offer ambiguous legacy deletion', (
+      tester,
+    ) async {
       final env = TestEnv(role: Role.farmer);
       await env.enableAdvice();
-      env.adviceModels.onDelete = () => env.advice
-        ..info = null
-        ..status = AdviceStatus.noModel;
       await pumpKernelApp(tester, env, location: Routes.settings);
 
-      await tapVisible(tester, find.byKey(const Key('advice-delete')));
-      expect(find.text(en.adviceDeleteConfirmTitle), findsOneWidget);
-      await tester.tap(find.byKey(const Key('confirm-cancel')));
-      await tester.pumpAndSettle();
-      expect(env.adviceModels.deleteCalls, 0);
-
-      await tapVisible(tester, find.byKey(const Key('advice-delete')));
-      await tester.tap(find.byKey(const Key('confirm-ok')));
-      await tester.pumpAndSettle();
-      expect(env.adviceModels.deleteCalls, 1);
       expect(find.byKey(const Key('advice-delete')), findsNothing);
-      expect(find.text(en.adviceStatusNoModel), findsOneWidget);
+      expect(find.text(en.adviceDeleteAction), findsNothing);
+      expect(env.adviceModels.deleteCalls, 0);
+      expect(find.text(testAdviceModel.id), findsOneWidget);
+      expect(find.text(testAdviceModelVersion), findsOneWidget);
+      expect(find.text(en.adviceStatusReady), findsOneWidget);
+      expect(find.byKey(const Key('advice-import')), findsOneWidget);
+
+      await tapVisible(tester, find.byKey(const Key('advice-toggle')));
+      expect(env.settings.localAdviceOptIn, isFalse);
+      expect(find.text(en.adviceStatusOff), findsOneWidget);
+      expect(env.adviceModels.deleteCalls, 0);
+      expect(env.advice.info, testAdviceModel);
     });
   });
 }

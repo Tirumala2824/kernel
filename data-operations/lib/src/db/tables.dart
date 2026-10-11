@@ -228,6 +228,10 @@ class SensorNodes extends Table with TrackedColumns {
   /// Highest event seq removed by `deleteAllHistory`. Events at or below it
   /// are never re-imported from the node's store-and-forward buffer.
   IntColumn get eventsClearedThroughSeq => integer().nullable()();
+
+  /// Privacy cutoff (v4), not a sync watermark or proof of coverage.
+  /// Health observed at or before a history wipe must not be replayed.
+  DateTimeColumn get healthClearedThroughAt => dateTime().nullable()();
 }
 
 /// One detection event from a node (v3): features only, never audio.
@@ -266,6 +270,27 @@ class SensorEvents extends Table with TrackedColumns {
   @override
   List<Set<Column<Object>>> get uniqueKeys => [
     {nodeId, seq},
+  ];
+}
+
+/// Observed node health (v4), never inferred from pairing or event absence.
+/// Keep every distinct observation so a late replay can split an equal run.
+/// Read models merge consecutive equal health, retaining record-time placement.
+@DataClassName('SensorHealthChangeRow')
+@TableIndex(name: 'sensor_health_node_at', columns: {#nodeId, #at})
+class SensorHealthChanges extends Table with TrackedColumns {
+  TextColumn get nodeId => text().references(SensorNodes, #id)();
+  DateTimeColumn get at => dateTime()();
+
+  /// Sorted enum names: stable set identity, independent of iteration order.
+  TextColumn get health => text()();
+  IntColumn get seq => integer().nullable()();
+  TextColumn get locationId => text().nullable().references(Locations, #id)();
+  TextColumn get itemId => text().nullable().references(Items, #id)();
+
+  @override
+  List<Set<Column<Object>>> get uniqueKeys => [
+    {nodeId, at, health},
   ];
 }
 

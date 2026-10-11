@@ -10,6 +10,7 @@ import 'package:kernel_app/app/kernel_app.dart';
 import 'package:kernel_app/app/platform_providers.dart';
 import 'package:kernel_app/app/providers.dart';
 import 'package:kernel_app/app/router.dart';
+import 'package:kernel_app/app/routes.dart';
 import 'package:kernel_app/l10n/app_localizations.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
 
@@ -184,7 +185,7 @@ class TestEnv {
 Future<void> pumpKernelApp(
   WidgetTester tester,
   TestEnv env, {
-  String? location,
+  String? location = Routes.home,
   bool reduceMotion = true,
 }) async {
   tester.view.physicalSize = const Size(1080, 12000);
@@ -199,7 +200,9 @@ Future<void> pumpKernelApp(
     ProviderScope(overrides: env.overrides, child: const KernelApp()),
   );
   await tester.pumpAndSettle();
-  if (location != null) {
+  final currentPath = routerOf(tester).state.uri.path;
+  if (location != null &&
+      (location != Routes.home || currentPath == Routes.chat)) {
     routerOf(tester).go(location);
     await tester.pumpAndSettle();
   }

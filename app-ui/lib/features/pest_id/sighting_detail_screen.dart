@@ -61,9 +61,15 @@ class _SightingBody extends ConsumerWidget {
     final place = s.locationId == null
         ? null
         : ref.watch(locationProvider(s.locationId!)).value;
-    final level = moreSerious(
-      s.analysis?.safety ?? card?.safety ?? SafetyLevel.low,
-      card?.safety,
+    final concerns = safetyConcerns(
+      aiLevel: s.analysis?.safety,
+      cards: [
+        card,
+        if (s.analysis?.cardId case final id?)
+          ref.watch(knowledgeCardProvider(id)).value,
+        for (final id in s.sound?.cardIds ?? const <String>[])
+          ref.watch(knowledgeCardProvider(id)).value,
+      ],
     );
     final pin = s.latitude != null && s.longitude != null;
     final pickName = s.userCardId == null
@@ -80,7 +86,7 @@ class _SightingBody extends ConsumerWidget {
             s.source.label(l),
           ].join(' · '),
         ),
-        PestSafetyBanner(level: level),
+        for (final level in concerns) PestSafetyBanner(level: level),
         SectionTitle(l.pestDetailAiSection),
         QuietNote(l.pestDetailAiNote, icon: Icons.science_rounded),
         if (s.analysis case final analysis?)

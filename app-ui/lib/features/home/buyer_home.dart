@@ -23,7 +23,10 @@ class BuyerHome extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final lots = ref.watch(lotsProvider);
-    final stats = ref.watch(inspectionStatsProvider(roleScope(role))).value;
+    final statsValue = ref.watch(inspectionStatsProvider(roleScope(role)));
+    final stats = statsValue.isLoading || statsValue.hasError
+        ? null
+        : statsValue.value;
     final registerLot = HeroActionCard(
       key: const Key('hero-register-lot'),
       eyebrow: l.heroEyebrowDelivery,
@@ -113,15 +116,12 @@ class LotCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
-    final queue = ref
-        .watch(
-          inspectionQueueProvider((
-            role: null,
-            locationId: null,
-            lotId: lot.id,
-          )),
-        )
-        .value;
+    final queueValue = ref.watch(
+      inspectionQueueProvider((role: null, locationId: null, lotId: lot.id)),
+    );
+    final queue = queueValue.isLoading || queueValue.hasError
+        ? null
+        : queueValue.value;
     final screened = queue?.ranked.length ?? 0;
     final total = queue == null
         ? 0
@@ -131,8 +131,12 @@ class LotCard extends ConsumerWidget {
       tone: KernelCardTone.ivory,
       icon: Icons.inventory_rounded,
       title: l.lotTitle(lot.code, lot.grainType),
-      subtitle: queue == null
+      subtitle: queueValue.isLoading
           ? l.loading
+          : queueValue.hasError
+          ? l.errorCouldNotLoad
+          : queue == null
+          ? null
           : total == 0
           ? l.lotNoSacks
           : l.lotScreenedCount(screened, total),

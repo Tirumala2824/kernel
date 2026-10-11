@@ -24,15 +24,27 @@ class LiveLevelMeter extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final last = levels.isEmpty ? null : levels.last;
-    final rms = last?.rmsDbfs ?? -90;
-    final peak = last?.peakDbfs ?? -90;
+    if (last == null) {
+      return Semantics(
+        key: const Key('level-meter'),
+        label: l.levelMeterLabel,
+        liveRegion: true,
+        child: Text(
+          l.levelMeterWaiting,
+          style: Theme.of(context).textTheme.bodyMedium
+              ?.copyWith(color: KernelColors.onForest),
+        ),
+      );
+    }
+    final rms = last.rmsDbfs;
+    final peak = last.peakDbfs;
     final history = levels.length > historyLength
         ? levels.sublist(levels.length - historyLength)
         : levels;
     return Semantics(
       key: const Key('level-meter'),
       label: l.levelMeterLabel,
-      value: last == null ? l.levelMeterWaiting : l.levelMeterValue(rms.round()),
+      value: l.levelMeterValue(rms.round()),
       excludeSemantics: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -50,7 +62,9 @@ class LiveLevelMeter extends StatelessWidget {
           const SizedBox(height: KernelSpace.sm),
           SizedBox(
             height: 14,
-            child: CustomPaint(painter: _MeterPainter(rms: rms, peak: peak)),
+            child: CustomPaint(
+              painter: _MeterPainter(rms: rms, peak: peak),
+            ),
           ),
         ],
       ),

@@ -68,6 +68,42 @@ void main() {
     expect(await h.ops.scans.get('nope'), isNull);
   });
 
+  test(
+    'watchRecent filters role before limit and excludes archived items',
+    () async {
+      final farmer = await h.addItem(role: Role.farmer, label: 'Farmer');
+      final buyer = await h.addItem(role: Role.buyer, label: 'Buyer');
+      final archived = await h.addItem(role: Role.farmer, label: 'Archived');
+      await h.recordScan(farmer.id, minutesAgo: 20);
+      final older = await h.recordScan(farmer.id, minutesAgo: 15);
+      final newer = await h.recordScan(farmer.id, minutesAgo: 10);
+      await h.recordScan(buyer.id, minutesAgo: 2);
+      final newestBuyer = await h.recordScan(buyer.id, minutesAgo: 1);
+      await h.recordScan(archived.id);
+      await h.ops.items.archive(archived.id);
+
+      final stream = h.ops.scans.watchRecent(limit: 2, role: Role.farmer);
+      expect((await stream.first).map((s) => s.id), [newer.id, older.id]);
+      expect(
+        (await h.ops.scans.watchRecent(limit: 1).first).single.id,
+        newestBuyer.id,
+      );
+      expect(
+        await h.ops.scans.watchRecent(role: Role.household).first,
+        isEmpty,
+      );
+
+      final latest = await h.recordScan(farmer.id);
+      expect(
+        (await firstWhere(
+          stream,
+          (scans) => scans.first.id == latest.id,
+        )).map((s) => s.id),
+        [latest.id, newer.id],
+      );
+    },
+  );
+
   test('watchForItem and watchRecent stay newest first', () async {
     final item = await h.addItem();
     final a = await h.recordScan(item.id, minutesAgo: 9);

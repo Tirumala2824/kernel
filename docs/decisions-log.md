@@ -77,6 +77,22 @@ Append new decisions at the bottom. Never rewrite past entries; supersede them w
 | 70 | 2026-10-10 | Android 16: request BLUETOOTH_CONNECT/SCAN at runtime. Guard the connectedDevice and microphone foreground-service starts (stable error codes). Remove the CDM bond on forget, and treat KEY_MISSING as re-pair. Declare REQUEST_COMPANION_RUN_IN_BACKGROUND. Battery-exemption guidance, with vivo steps, but no REQUEST_IGNORE_BATTERY_OPTIMIZATIONS | Android review: starting a session crashed the app |
 | 71 | 2026-10-10 | Privacy hardening:<br>• Delete-all also wipes reports, the share_plus cache and media folders, with secure_delete plus VACUUM<br>• dataExtractionRules exclude device transfer<br>• datatransport is removed in every build type<br>• the maps-utils startup initializer is removed<br>• the ARCore probe checks the package first, so there is no Play call<br>• the Google Maps hand-off is listed in §7, with no browser fallback<br>• Wi-Fi only and revoking consent apply to queued downloads | Privacy and Android reviews |
 
+| 72 | 2026-10-10 | **Insect-sound classifier not used for grain.** `ganesh333/kernel-insect-classifier` (cc-by-4.0, 32 Orthoptera/Cicadidae labels, model.tflite sha256 55ad541b...f597e, 646,352 B) is a sound model. Its card says it is not a grain-pest detector and not mobile-ready. The acoustic agent now reports only the on-device kernel-proxy-0.1 class (clean / uncertain / infested). Hard-coded species names, fixed candidate scores, fixed bounding boxes and unsourced safety thresholds were removed. Chat is the primary surface and existing screens stay reachable | User decision (clarify, 2026-10-10). Guardrails §1 and §4 |
+## Chat and insect-sound integration (2026-10-11)
+
+- Chat WAV submissions now use the bundled `NativeInsectSoundClassifier`, not the grain proxy or a fabricated fusion/quality score. Bootstrap binds it even when local record storage is unavailable; no model picker or download consent is required for this bundled asset.
+- The pinned Hugging Face asset remains unchanged: revision `001425d7fab4b44af5cc571174410f1c78552d0e`, SHA-256 `55ad541b87d1ae0bae5a71c7ec9091fc40617051f479ac3f12996bacda6f597e`. It is an experimental closed-set audible-insect model, not a hidden grain-pest detector or ultrasound sensor. Numerical parity is not field accuracy. See `sense-ai/INSECT_SOUND_VERIFICATION.md` and the bundled attribution.
+- Removed the unused grain-result branch from chat, raw status labels, unavailable-model placeholders, and the duplicate Pest Listen upload action that silently returned on path-only WAV selections. File classification belongs to the functioning Photo/WAV chat path. Real live-listening and grain-record workflows remain separate.
+- Sound quality/format failures show their actual native reason in plain language. Successful results retain the actual hierarchy, version and safety limitation; exact source/revision is available under Model details. No invented scores, live feeds, metrics or specimen records are added.
+- New app integration coverage exercises production bootstrap, the real registered native interpreter, and chat presentation using explicitly test-only numerical audio. It must not be described as labeled-insect accuracy testing.
+
+## Current-data record summaries (2026-10-11)
+
+- Lot inspections and lot/harvest scan footers require current history before showing an absence claim; pending/error/retained refresh states use localized loading/error copy instead. Real actions remain available.
+- Batch eligibility is unknown until both the queue and any enabled today-history filter have current data. Start rechecks those dependencies before freezing the walk, so a stale callback cannot schedule already-recorded sacks. Turning off the optional filter does not bypass the queue requirement.
+- Scans Today omits unresolved item labels rather than inventing an Archived state. Recorded scan time/result/navigation remain available independently.
+- The real pinned Hugging Face interpreter and app chat path were reverified on the connected iQOO, and the normal app entry point was rebuilt, reinstalled without wiping data, and read back. See `chat-sound-cleanup-validation.md` for executed tests, artifact hash, warnings, and model limits.
+
 ## Contract follow-ups (proposed by agents, not yet done)
 - **Sensors:**
   - `SensorHealth.sensorFault` / `eventsOverwritten`

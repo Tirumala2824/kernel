@@ -17,7 +17,13 @@ void main() {
 
       expect(find.byKey(const Key('onboarding-page-0')), findsOneWidget);
       expect(find.text(en.onboardingPrivacyTitle), findsOneWidget);
-      expect(find.text(en.onboardingPrivacy2), findsOneWidget);
+      expect(
+        find.text(
+          'Audio stays on this phone. Local records and bundled checks work '
+          'offline; model downloads and online maps need internet.',
+        ),
+        findsOneWidget,
+      );
       expect(find.byType(NavigationBar), findsNothing);
 
       await tester.tap(find.byKey(const Key('onboarding-next')));

@@ -83,13 +83,18 @@ class DriftScanRepository implements ScanRepository {
     return query.watch().map(_toModels);
   }
 
-  /// Newest first, across all items that are not archived.
+  /// Newest first for non-archived items, filtering ownership before limit.
   @override
-  Stream<List<ScanRecord>> watchRecent({int limit = 50}) {
+  Stream<List<ScanRecord>> watchRecent({int limit = 50, Role? role}) {
     if (limit <= 0) {
       throw ArgumentError.value(limit, 'limit', 'must be positive');
     }
-    return _watchJoined(const Constant(true), limit: limit);
+    return _watchJoined(
+      role == null
+          ? const Constant(true)
+          : _db.items.ownerRole.equalsValue(role),
+      limit: limit,
+    );
   }
 
   /// Scans captured at or after [since], newest first, for items that are

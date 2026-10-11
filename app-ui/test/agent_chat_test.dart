@@ -1,258 +1,185 @@
-import 'dart:typed_data';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+// Migrated wrapper regressions: preserve results, not heuristic evidence.
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kernel_app/agents/agents.dart';
-import 'package:kernel_app/features/chat/kernel_chat_screen.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
 
-import 'support/harness.dart';
-import 'support/test_engine.dart';
+import 'support/chat_fixtures.dart';
 
 void main() {
-  group('AcousticDiagnosticAgent', () {
-    test('analyzes audio file and computes ASQI and top candidates', () async {
-      final engine = ScriptedScanEngine(
-        next: (_) => ScanOutcome(
-          scanId: 'scan-100',
-          itemId: 'item-1',
-          capturedAt: DateTime.utc(2026, 10, 10),
-          quality: ScanQuality.pass,
-          qualityReasons: [],
-          classification: Classification.infested,
-          confidence: 0.88,
-          experimental: false,
-          modelVersion: 'kernel-insect-classifier-v1',
-          latencyMs: 42,
+  test('transient native sound failures allow one explicit retry', () async {
+    for (final reason in [
+      'memory_unavailable',
+      'inference_failed',
+      'native_failure',
+    ]) {
+      final classifier = ChatSoundClassifier()
+        ..result = InsectSoundResult(
+          status: InsectSoundStatus.unavailable,
+          reasons: [reason],
+        );
+      final agent = OrchestratorAgent(soundClassifier: () => classifier);
+      final task = OrchestratorTask(userMessage: '', audioMedia: chatAudio());
+      final failed = await agent.execute(task);
+      expect(failed.retryable, isTrue, reason: reason);
+      expect(failed.sound!.topLabels, isEmpty);
+      classifier.result = ChatSoundClassifier().result;
+      final recovered = await agent.execute(task);
+      expect(recovered.sound!.status, InsectSoundStatus.evaluated);
+      expect(recovered.retryable, isFalse);
+    }
+  });
+
+  test(
+    'native identification level and scores are never promoted or fused',
+    () async {
+      for (final level in InsectIdentificationLevel.values) {
+        final native = InsectSoundResult(
+          status: InsectSoundStatus.evaluated,
+          level: level,
+          label: level == InsectIdentificationLevel.unknown
+              ? null
+              : 'Native label',
+          topLabels: [
+            ScoredLabel(
+              label: level == InsectIdentificationLevel.species
+                  ? 'Native label'
+                  : 'Native candidate',
+              score: level == InsectIdentificationLevel.species ? 0.7 : 0.42,
+            ),
+          ],
+          reasons: const ['closed-set-match'],
+          modelVersion: 'test-native',
+          modelRevision: '001425d7fab4b44af5cc571174410f1c78552d0e',
+          sampleRate: 44100,
           durationMs: 2000,
-          sampleRate: 16000,
-          deviceModel: 'test-device',
-          osVersion: 'test-os',
-          asqiScore: 0.94,
-        ),
-      );
+        );
+        final classifier = ChatSoundClassifier()..result = native;
+        final result = await OrchestratorAgent(
+          soundClassifier: () => classifier,
+        ).execute(OrchestratorTask(userMessage: '', audioMedia: chatAudio()));
+        expect(result.sound, same(native));
+        expect(result.sound!.level, level);
+        expect(result.sound!.topLabels, same(native.topLabels));
 
-      final agent = AcousticDiagnosticAgent(scanEngine: engine);
-      final report = await agent.execute(
-        const AcousticTask(
-          itemId: 'item-1',
-          filePath: '/path/to/rice_weevil.wav',
-          sensorType: SensorType.contactPiezo,
-        ),
-      );
+        expect(result.analysis, isNull);
+        expect(result.cards, isEmpty);
+        expect(result.generated, isNull);
+      }
+    },
+  );
 
-      expect(report.isPass, isTrue);
-      expect(report.speciesId, 'sitophilus_oryzae');
-      expect(report.speciesName, contains('Sitophilus oryzae'));
-      expect(report.rawConfidence, 0.88);
-      expect(report.asqi.badge, QualityBadge.clear);
-      expect(report.topCandidates, isNotEmpty);
-      expect(report.topCandidates.first.label, contains('Sitophilus oryzae'));
-    });
+  test(
+    'unavailable or rejected recordings have no invented identification',
+    () async {
+      for (final status in [
+        InsectSoundStatus.unavailable,
+        InsectSoundStatus.rejected,
+      ]) {
+        final native = InsectSoundResult(
+          status: status,
+          reasons: const ['native-reason'],
+        );
+        final result = await OrchestratorAgent(
+          soundClassifier: () => ChatSoundClassifier()..result = native,
+        ).execute(OrchestratorTask(userMessage: '', audioMedia: chatAudio()));
+        expect(result.sound, same(native));
+        expect(result.sound!.label, isNull);
+        expect(result.sound!.topLabels, isEmpty);
+        expect(result.sound!.level, InsectIdentificationLevel.unknown);
 
-    test('maps retry outcome with quality reason when noise is high', () async {
-      final engine = ScriptedScanEngine(
-        next: (_) => ScanOutcome(
-          scanId: 'scan-101',
-          itemId: 'item-1',
-          capturedAt: DateTime.utc(2026, 10, 10),
-          quality: ScanQuality.retry,
-          qualityReasons: [QualityReason.highNoise],
-          classification: Classification.notEvaluated,
-          confidence: null,
-          experimental: true,
-          modelVersion: 'none',
-          latencyMs: 10,
-          durationMs: 2000,
-          sampleRate: 16000,
-          deviceModel: 'test-device',
-          osVersion: 'test-os',
-          asqiScore: 0.35,
-        ),
-      );
+        expect(result.retryable, isFalse);
+      }
+    },
+  );
 
-      final agent = AcousticDiagnosticAgent(scanEngine: engine);
-      final report = await agent.execute(
-        const AcousticTask(
-          itemId: 'item-1',
-          filePath: '/path/to/noisy.wav',
-          sensorType: SensorType.audioAir,
-        ),
-      );
+  test(
+    'missing photo model produces no inferred quality or fallback species',
+    () async {
+      final result = await OrchestratorAgent(
+        analyzer: () => ChatAnalyzer()..result = null,
+        knowledge: () => ChatKnowledge(),
+      ).execute(OrchestratorTask(userMessage: '', visualMedia: chatPhoto()));
+      expect(result.analysis, isNull);
+      expect(result.cards, isEmpty);
+      expect(result.generated, isNull);
+      expect(result.notices, {ChatNotice.imageUnavailable});
+      expect(result.retryable, isFalse);
+    },
+  );
 
-      expect(report.isPass, isFalse);
-      expect(report.retryReason, QualityReason.highNoise);
-      expect(report.rawConfidence, 0.0);
-    });
-  });
+  test(
+    'guidance is the actual curated card, not generic seeded IPM copy',
+    () async {
+      final card = chatCard(extraSafety: {SafetyLevel.protectedWildlife});
+      final result = await OrchestratorAgent(
+        knowledge: () => ChatKnowledge()..cards = [card],
+      ).execute(const OrchestratorTask(userMessage: 'storage'));
+      expect(result.cards.single, same(card));
+      expect(result.cards.single.safeSteps, same(card.safeSteps));
+      expect(result.cards.single.sources, same(card.sources));
+      expect(result.safetyLevels, {
+        SafetyLevel.caution,
+        SafetyLevel.protectedWildlife,
+      });
+      expect(result.generated, isNull);
+    },
+  );
 
-  group('VisualDiagnosticAgent', () {
-    test('computes VQI and returns candidate', () async {
-      final agent = VisualDiagnosticAgent();
-      final bytes = Uint8List.fromList(List.generate(2000, (i) => (i * 7) % 256));
-
-      final report = await agent.execute(VisualTask(bytes: bytes));
-
-      expect(report.vqi.laplacianSharpness, greaterThan(20.0));
-      expect(report.vqi.meanLuminance, greaterThan(0.0));
-      expect(report.candidates, isNotEmpty);
-    });
-  });
-
-  group('EvidenceFusionAgent', () {
-    test('calibrates confidence using noise and resolution weighting', () async {
-      final fusion = EvidenceFusionAgent();
-
-      const asqi = AudioSignalQualityIndex(
-        snrDb: 18.0,
-        noiseFloorDbfs: -55.0,
-        clipRatio: 0.0,
-        sampleRate: 16000,
-        durationSeconds: 2.0,
-        sensorType: SensorType.contactPiezo,
-      );
-
-      const acousticReport = AcousticEvidenceReport(
-        speciesId: 'sitophilus_oryzae',
-        speciesName: 'Sitophilus oryzae (Rice Weevil)',
-        rawConfidence: 0.90,
-        asqi: asqi,
-        modelVersion: 'ganesh333/kernel-insect-classifier',
-        isPass: true,
-      );
-
-      final verdict = await fusion.execute(
-        const FusionTask(acousticReport: acousticReport),
-      );
-
-      expect(verdict.speciesName, contains('Sitophilus oryzae'));
-      expect(verdict.calibratedConfidence, greaterThan(0.70));
-      expect(verdict.qualityBadge, QualityBadge.clear);
-      expect(verdict.plainLanguageQuality, contains('Clear'));
-    });
-
-    test('downgrades verdict when acoustic recording failed quality gate', () async {
-      final fusion = EvidenceFusionAgent();
-
-      const asqi = AudioSignalQualityIndex(
-        snrDb: 4.0,
-        noiseFloorDbfs: -35.0,
-        clipRatio: 0.0,
-        sampleRate: 16000,
-        durationSeconds: 2.0,
-        sensorType: SensorType.audioAir,
-      );
-
-      const acousticReport = AcousticEvidenceReport(
-        speciesId: 'retry',
-        speciesName: 'Noisy Audio',
-        rawConfidence: 0.0,
-        asqi: asqi,
-        modelVersion: 'none',
-        isPass: false,
-        retryReason: QualityReason.highNoise,
-      );
-
-      final verdict = await fusion.execute(
-        const FusionTask(acousticReport: acousticReport),
-      );
-
-      expect(verdict.calibratedConfidence, 0.0);
-      expect(verdict.qualityBadge, QualityBadge.noisy);
-      expect(verdict.plainLanguageQuality, contains('Noisy'));
-      expect(verdict.userAdvice, contains('machinery or fan noise'));
-    });
-  });
-
-  group('AgronomySafetyAgent', () {
-    test('enforces non-chemical safe IPM steps', () async {
-      final safetyAgent = AgronomySafetyAgent();
-      const verdict = QualityWeightedVerdict(
-        speciesName: 'Sitophilus oryzae (Rice Weevil)',
-        calibratedConfidence: 0.85,
-        rawConfidence: 0.90,
-        qualityWeight: 0.95,
-        qualityBadge: QualityBadge.clear,
-        plainLanguageQuality: 'Clear Signal',
-        userAdvice: 'Clean signal',
-      );
-
-      final guidance = await safetyAgent.execute(
-        const AgronomySafetyTask(verdict: verdict),
-      );
-
-      expect(guidance.safeSteps, isNotEmpty);
-      expect(guidance.safeSteps.any((s) => s.contains('Hermetic') || s.contains('PICS')), isTrue);
-      expect(guidance.safeSteps.any((s) => s.contains('Solar') || s.contains('Sieving')), isTrue);
-      expect(guidance.legalNote, contains('Strict IPM Compliance'));
-    });
-  });
-
-  group('OrchestratorAgent', () {
-    test('coordinates multimodal analysis and builds comprehensive response', () async {
-      final engine = ScriptedScanEngine(
-        next: (_) => ScanOutcome(
-          scanId: 'scan-1',
-          itemId: 'item-1',
-          capturedAt: DateTime.utc(2026, 10, 10),
-          quality: ScanQuality.pass,
-          qualityReasons: [],
-          classification: Classification.infested,
-          confidence: 0.86,
-          experimental: false,
-          modelVersion: 'ganesh333/kernel-insect-classifier',
-          latencyMs: 25,
-          durationMs: 2000,
-          sampleRate: 16000,
-          deviceModel: 'test-device',
-          osVersion: 'test-os',
-          asqiScore: 0.92,
-        ),
-      );
-
-      final orchestrator = OrchestratorAgent(
-        acousticAgent: AcousticDiagnosticAgent(scanEngine: engine),
-        visualAgent: VisualDiagnosticAgent(),
-        sensorAgent: SensorTelemetryAgent(),
-        fusionAgent: EvidenceFusionAgent(),
-        safetyAgent: AgronomySafetyAgent(),
-      );
-
-      final response = await orchestrator.execute(
-        const OrchestratorTask(
-          userMessage: 'Screen this grain sample',
-          isLiveCapture: true,
-        ),
-      );
-
-      expect(response.responseText, contains('Multimodal Screening Diagnostic'));
-      expect(response.responseText, contains('Sitophilus oryzae'));
-      expect(response.verdict.qualityBadge, QualityBadge.clear);
-      expect(response.guidance.safeSteps, isNotEmpty);
-    });
-  });
-
-  group('KernelChatScreen UI', () {
-    testWidgets('renders conversational interface with attachment buttons', (tester) async {
-      final env = TestEnv();
-
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: env.overrides,
-          child: const MaterialApp(
-            home: KernelChatScreen(),
+  test('different native audio and photo results stay separate', () async {
+    final sound = ChatSoundClassifier();
+    final analyzer = ChatAnalyzer();
+    final result =
+        await OrchestratorAgent(
+          soundClassifier: () => sound,
+          analyzer: () => analyzer,
+          knowledge: () => ChatKnowledge(),
+        ).execute(
+          OrchestratorTask(
+            userMessage: '',
+            audioMedia: chatAudio(),
+            visualMedia: chatPhoto(),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('Kernel Agent Chat'), findsOneWidget);
-      expect(find.textContaining('Welcome to Kernel Autonomous Multi-Agent'), findsOneWidget);
-      expect(find.byIcon(Icons.audio_file), findsOneWidget);
-      expect(find.byIcon(Icons.camera_alt), findsOneWidget);
-      expect(find.byIcon(Icons.videocam), findsOneWidget);
-      expect(find.byIcon(Icons.mic), findsOneWidget);
-    });
+        );
+    expect(result.sound, same(sound.result));
+    expect(result.analysis, same(analyzer.result));
+    expect(result.sound!.label, isNot(result.analysis!.commonName));
   });
+
+  test('general chat without matching knowledge fabricates nothing', () async {
+    final analyzer = ChatAnalyzer();
+    final result = await OrchestratorAgent(
+      knowledge: () => ChatKnowledge()..cards = [],
+      analyzer: () => analyzer,
+    ).execute(const OrchestratorTask(userMessage: 'tell me a joke'));
+    expect(result.cards, isEmpty);
+    expect(result.analysis, isNull);
+    expect(result.sound, isNull);
+
+    expect(result.generated, isNull);
+    expect(result.safetyLevels, isEmpty);
+    expect(analyzer.guides, isEmpty);
+    expect(result.notices, {ChatNotice.noKnowledge});
+  });
+
+  test(
+    'unknown native photo ID never becomes an invented card or guide',
+    () async {
+      final analyzer = ChatAnalyzer()
+        ..result = chatAnalysis(cardId: 'not-in-library');
+      final result =
+          await OrchestratorAgent(
+            analyzer: () => analyzer,
+            knowledge: () => ChatKnowledge()..searchCards = [],
+          ).execute(
+            OrchestratorTask(
+              userMessage: 'What next?',
+              visualMedia: chatPhoto(),
+            ),
+          );
+      expect(result.analysis, same(analyzer.result));
+      expect(result.cards, isEmpty);
+      expect(result.generated, isNull);
+      expect(analyzer.guides, isEmpty);
+    },
+  );
 }

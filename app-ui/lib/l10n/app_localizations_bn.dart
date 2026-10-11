@@ -112,7 +112,7 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get settingsFooter =>
-      'সব শব্দ-পরীক্ষা এই ফোনেই হয়। Kernel ইন্টারনেট ছাড়াই চলে আর কখনও শব্দ আপলোড করে না।';
+      'Kernel অডিও এই ফোনেই রাখে। ফোনে রাখা রেকর্ড ও অ্যাপের সঙ্গে থাকা পরীক্ষাগুলি অফলাইনে কাজ করে; মডেল ডাউনলোড ও অনলাইন মানচিত্রের জন্য ইন্টারনেট দরকার।';
 
   @override
   String get diagnosticsTitle => 'যান্ত্রিক তথ্য';
@@ -1218,7 +1218,7 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get onboardingPrivacy2 =>
-      'কিছুই আপলোড হয় না। কোনো অ্যাকাউন্ট নেই, কোনো ক্লাউড নেই, আর সবকিছু ইন্টারনেট ছাড়াই চলে।';
+      'অডিও এই ফোনেই থাকে। ফোনে রাখা রেকর্ড ও অ্যাপের সঙ্গে থাকা পরীক্ষাগুলি অফলাইনে কাজ করে; মডেল ডাউনলোড ও অনলাইন মানচিত্রের জন্য ইন্টারনেট দরকার।';
 
   @override
   String get onboardingPrivacy3 =>
@@ -1878,10 +1878,12 @@ class AppLocalizationsBn extends AppLocalizations {
   String get onlineLabel => 'অনলাইন';
 
   @override
-  String get offlineSemantics => 'অফলাইন। এই ফোনে সবকিছু চলতে থাকে।';
+  String get offlineSemantics =>
+      'অফলাইন। ফোনে রাখা রেকর্ড ও অ্যাপের সঙ্গে থাকা পরীক্ষাগুলি অফলাইনে কাজ করে; মডেল ডাউনলোড ও অনলাইন মানচিত্রের জন্য ইন্টারনেট দরকার।';
 
   @override
-  String get onlineSemantics => 'অনলাইন। Kernel-এর ইন্টারনেট লাগে না।';
+  String get onlineSemantics =>
+      'অনলাইন। ফোনে রাখা রেকর্ড ও অ্যাপের সঙ্গে থাকা পরীক্ষাগুলি অফলাইনে কাজ করে; মডেল ডাউনলোড ও অনলাইন মানচিত্রের জন্য ইন্টারনেট দরকার।';
 
   @override
   String get qrTooltip => 'QR লেবেল থেকে বস্তা খুলুন';
@@ -1995,7 +1997,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get levelMeterLabel => 'মাইকের শব্দের মাত্রা';
 
   @override
-  String get levelMeterWaiting => 'শব্দের অপেক্ষায়';
+  String get levelMeterWaiting => 'মাইক্রোফোনের মাত্রার অপেক্ষায়';
 
   @override
   String levelMeterValue(int dbfs) {
@@ -2913,10 +2915,10 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get hubSubtitle =>
-      'পোকা চেনার জন্য ফোনে চলা মডেল। এগুলো শুধু এই ফোনেই চলে।';
+      'Android অ্যাপে WAV ক্লিপ থেকে পরীক্ষামূলকভাবে পোকা শ্রেণিবিভাগের ব্যবস্থা আছে। নিচের ঐচ্ছিক ডাউনলোডগুলি ছবি বিশ্লেষণ, অনুসন্ধান ও লাইভ শব্দ শ্রেণিবিভাগ (YAMNet) যোগ করে।';
 
   @override
-  String get hubNeedsTitle => 'পোকা চেনার জন্য দরকার';
+  String get hubNeedsTitle => 'ঐচ্ছিক মডেল ডাউনলোড';
 
   @override
   String get hubNeedImage => 'ছবি বোঝা';
@@ -2925,7 +2927,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get hubNeedEmbeddings => 'এমবেডিং (খোঁজার জন্য)';
 
   @override
-  String get hubNeedSound => 'শব্দ চেনার মডেল';
+  String get hubNeedSound => 'লাইভ শব্দ শ্রেণিবিভাগের মডেল (YAMNet)';
 
   @override
   String get hubInstalledChip => 'বসানো আছে';
@@ -2934,25 +2936,26 @@ class AppLocalizationsBn extends AppLocalizations {
   String get hubMissingChip => 'নেই';
 
   @override
-  String get hubAllInstalled => 'পোকা চেনার জন্য যা যা দরকার সব এই ফোনে আছে।';
+  String get hubAllInstalled =>
+      'এখানে দেওয়া সব ঐচ্ছিক সুবিধার মডেল ইনস্টল করা আছে।';
 
   @override
   String get hubNothingToDownload =>
-      'যে অংশগুলো নেই, সেগুলোর জন্য এখনও কোনো ডাউনলোড পাওয়া যাচ্ছে না।';
+      'যে ঐচ্ছিক মডেলগুলি নেই, সেগুলির ডাউনলোড এখনও পাওয়া যাচ্ছে না।';
 
   @override
   String hubDownloadSummary(int count, String size) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$countটি মডেল ডাউনলোড করতে হবে, প্রায় $size',
-      one: '1টি মডেল ডাউনলোড করতে হবে, প্রায় $size',
+      other: '$countটি ঐচ্ছিক মডেল ডাউনলোড করতে হবে, প্রায় $size',
+      one: '1টি ঐচ্ছিক মডেল ডাউনলোড করতে হবে, প্রায় $size',
     );
     return '$_temp0';
   }
 
   @override
-  String get hubDownloadAction => 'মডেল ডাউনলোড করুন';
+  String get hubDownloadAction => 'ঐচ্ছিক মডেল ডাউনলোড করুন';
 
   @override
   String hubDownloadFailed(String error) {
@@ -2963,14 +2966,15 @@ class AppLocalizationsBn extends AppLocalizations {
   String get hubCatalogUnavailable => 'মডেলের তালিকা পড়া গেল না';
 
   @override
-  String get hubInstalledUnavailable => 'বসানো মডেল পড়া গেল না';
+  String get hubInstalledUnavailable =>
+      'ইনস্টল করা ঐচ্ছিক মডেলগুলি পড়া যায়নি';
 
   @override
   String get hubGalleryNote =>
       'AI Edge Gallery আগে যে ফাইল ডাউনলোড করেছে, Kernel সেগুলো ব্যবহার করতে পারে না (Android প্রতিটি অ্যাপের ফাইল আলাদা ও গোপন রাখে), তাই একই মডেল একবার ডাউনলোড করে।';
 
   @override
-  String get hubConsentTitle => 'পোকা চেনার মডেল ডাউনলোড করবেন?';
+  String get hubConsentTitle => 'পোকা চেনার ঐচ্ছিক মডেল ডাউনলোড করবেন?';
 
   @override
   String get hubConsentBody =>
@@ -3062,14 +3066,14 @@ class AppLocalizationsBn extends AppLocalizations {
   String get hubCancel => 'বাতিল';
 
   @override
-  String get hubInstalledTitle => 'বসানো মডেল';
+  String get hubInstalledTitle => 'ইনস্টল করা ঐচ্ছিক মডেল';
 
   @override
-  String get hubInstalledEmpty => 'এখনও কোনো মডেল বসানো হয়নি';
+  String get hubInstalledEmpty => 'এখনও কোনও ঐচ্ছিক মডেল ইনস্টল করা নেই';
 
   @override
   String get hubInstalledEmptyDetail =>
-      'মডেলগুলো একবার ডাউনলোড হলে পোকা চেনা কাজ করে।';
+      'Android অ্যাপে থাকা পোকা চেনার WAV পরীক্ষার জন্য এই ডাউনলোডগুলি দরকার নেই।';
 
   @override
   String get hubFieldPath => 'ফাইল';
@@ -3174,7 +3178,7 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get hubSettingsCard =>
-      'পোকা চেনার জন্য ফোনে চলা মডেল ডাউনলোড ও সামলান।';
+      'ছবি, অনুসন্ধান ও লাইভ শব্দের জন্য ঐচ্ছিক মডেল ডাউনলোড পরিচালনা করুন।';
 
   @override
   String get hubMapsToggle => 'Google Maps ব্যবহার করুন';
@@ -4177,20 +4181,22 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get pestLocationDenied =>
-      'অবস্থানের অনুমতি পাওয়া যায়নি, শুধু ঘর সংরক্ষিত';
+      'অবস্থানের অনুমতি পাওয়া যায়নি। পিন পাওয়া যাচ্ছে না।';
 
   @override
-  String get pestLocationImprecise => 'অবস্থান খুব আন্দাজি, শুধু ঘর সংরক্ষিত';
+  String get pestLocationImprecise =>
+      'অবস্থান খুব আন্দাজি। পিন পাওয়া যাচ্ছে না।';
 
   @override
-  String get pestLocationOff => 'এই ফোনে অবস্থান বন্ধ, শুধু ঘর সংরক্ষিত';
+  String get pestLocationOff => 'এই ফোনে অবস্থান বন্ধ। পিন পাওয়া যাচ্ছে না।';
 
   @override
-  String get pestLocationFailed => 'অবস্থান পাওয়া যায়নি, শুধু ঘর সংরক্ষিত';
+  String get pestLocationFailed =>
+      'অবস্থান পাওয়া যায়নি। পিন পাওয়া যাচ্ছে না।';
 
   @override
   String pestLocationPinned(int meters) {
-    return 'পিন সংরক্ষিত ($meters মি.-এর মধ্যে)';
+    return 'পিন সংরক্ষণের জন্য প্রস্তুত ($meters মি.-এর মধ্যে)';
   }
 
   @override

@@ -41,12 +41,17 @@ Future<List<String>> _triggers(KernelDatabase db) => db
     .get();
 
 Future<Map<String, int>> _counts(KernelDatabase db) async => {
-  for (final table in db.allTables)
-    table.actualTableName:
+  for (final table
+      in await db
+          .customSelect(
+            "SELECT name FROM sqlite_master WHERE type = 'table' "
+            "AND name NOT LIKE 'sqlite_%'",
+          )
+          .map((row) => row.read<String>('name'))
+          .get())
+    table:
         (await db
-                .customSelect(
-                  'SELECT COUNT(*) AS c FROM "${table.actualTableName}"',
-                )
+                .customSelect('SELECT COUNT(*) AS c FROM "$table"')
                 .getSingle())
             .read<int>('c'),
 };
@@ -61,11 +66,77 @@ void main() {
   test('every schema version up to the current one is exported', () {
     final db = KernelDatabase(NativeDatabase.memory());
     addTearDown(db.close);
-    expect(db.schemaVersion, 3);
-    expect(GeneratedHelper.versions, [1, 2, 3]);
+    expect(db.schemaVersion, 4);
+    expect(GeneratedHelper.versions, [1, 2, 3, 4]);
   });
 
-  test('a fresh install creates exactly the exported v3 schema', () async {
+  test(
+    'v3 -> v4 adds empty health history without fabricating coverage',
+    () async {
+      final schema = await verifier.schemaAt(3);
+      final raw = schema.rawDatabase;
+      raw.execute(
+        "INSERT INTO sensor_nodes (id, created_at, updated_at, device_address, "
+        "name, type, protocol_version, firmware_version, key_fingerprint, "
+        "events_cleared_through_seq) VALUES ('node', '$_t', '$_t', 'AA:01', "
+        "'Pantry', 'usAir', 1, '1.0', '0a1b2c3d', 12)",
+      );
+      raw.execute(
+        "INSERT INTO sensor_events (id, created_at, updated_at, node_id, seq, "
+        "started_at, duration_ms, event_class, peak_hz, min_hz, max_hz, "
+        "slope_hz_per_ms, snr_db, peak_dbfs, impulses, rep_rate_hz, harmonics) "
+        "VALUES ('event', '$_t', '$_t', 'node', 13, '$_t', 40, 'tonal', "
+        "40000, 39000, 41000, 0, 12, -30, 0, 0, 0)",
+      );
+      final beforeEvent = raw.select('SELECT * FROM sensor_events').single;
+      final before = raw.select('SELECT * FROM sensor_nodes').single;
+      final oldSchema = raw.select(
+        "SELECT name, sql FROM sqlite_master WHERE sql IS NOT NULL "
+        "AND name NOT LIKE 'sqlite_%' ORDER BY name",
+      );
+      final db = KernelDatabase(schema.newConnection());
+      addTearDown(db.close);
+      expect(db.schemaVersion, 4);
+      await verifier.migrateAndValidate(db, 4);
+      expect((await _counts(db))['sensor_health_changes'], 0);
+      final afterNode =
+          (await db.customSelect('SELECT * FROM sensor_nodes').getSingle())
+              .data;
+      expect(afterNode.remove('health_cleared_through_at'), isNull);
+      expect(afterNode, before);
+      expect(
+        (await db.customSelect('SELECT * FROM sensor_events').getSingle()).data,
+        beforeEvent,
+      );
+      for (final entry in oldSchema) {
+        final name = entry['name'];
+        if (name == 'sensor_nodes') {
+          continue; // Only the nullable cutoff is added.
+        }
+        final after = await db
+            .customSelect("SELECT sql FROM sqlite_master WHERE name = '$name'")
+            .getSingle();
+        expect(
+          after.read<String>('sql'),
+          entry['sql'],
+          reason: '$name unchanged',
+        );
+      }
+      expect(await _triggers(db), unorderedEquals(_v3Triggers));
+    },
+  );
+
+  for (final from in [1, 2, 4]) {
+    test('opening v$from reaches exactly the exported v4 schema', () async {
+      final connection = await verifier.startAt(from);
+      final db = KernelDatabase(connection);
+      addTearDown(db.close);
+      await verifier.migrateAndValidate(db, 4);
+      expect((await _counts(db))['sensor_health_changes'], 0);
+    });
+  }
+
+  test('a fresh install creates exactly the exported v4 schema', () async {
     final db = KernelDatabase(NativeDatabase.memory());
     addTearDown(db.close);
     await db.validateDatabaseSchema();
@@ -450,7 +521,7 @@ void main() {
 
   test('an unexpected schema version is refused, not silently reset', () async {
     final db = KernelDatabase(
-      NativeDatabase.memory(setup: (raw) => raw.userVersion = 4),
+      NativeDatabase.memory(setup: (raw) => raw.userVersion = 5),
     );
     addTearDown(db.close);
     // A database from a newer build must never be "migrated" by dropping

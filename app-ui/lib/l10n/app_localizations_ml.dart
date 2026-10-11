@@ -114,7 +114,7 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get settingsFooter =>
-      'എല്ലാ ശബ്ദ പരിശോധനയും ഈ ഫോണിൽത്തന്നെയാണ്. Kernel ഇന്റർനെറ്റ് ഇല്ലാതെ പ്രവർത്തിക്കും, ഒരിക്കലും ശബ്ദം അപ്‌ലോഡ് ചെയ്യില്ല.';
+      'Kernel ഓഡിയോ ഈ ഫോണിൽത്തന്നെ സൂക്ഷിക്കുന്നു. ഫോണിലുള്ള രേഖകളും ആപ്പിനൊപ്പം വരുന്ന പരിശോധനകളും ഓഫ്‌ലൈനിൽ പ്രവർത്തിക്കും; മോഡൽ ഡൗൺലോഡുകൾക്കും ഓൺലൈൻ ഭൂപടങ്ങൾക്കും ഇന്റർനെറ്റ് വേണം.';
 
   @override
   String get diagnosticsTitle => 'സാങ്കേതിക വിവരങ്ങൾ';
@@ -1225,7 +1225,7 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get onboardingPrivacy2 =>
-      'ഒന്നും അപ്‌ലോഡ് ചെയ്യില്ല. അക്കൗണ്ടില്ല, ക്ലൗഡില്ല, എല്ലാം ഇന്റർനെറ്റ് ഇല്ലാതെ പ്രവർത്തിക്കും.';
+      'ഓഡിയോ ഈ ഫോണിൽത്തന്നെ ഇരിക്കും. ഫോണിലുള്ള രേഖകളും ആപ്പിനൊപ്പം വരുന്ന പരിശോധനകളും ഓഫ്‌ലൈനിൽ പ്രവർത്തിക്കും; മോഡൽ ഡൗൺലോഡുകൾക്കും ഓൺലൈൻ ഭൂപടങ്ങൾക്കും ഇന്റർനെറ്റ് വേണം.';
 
   @override
   String get onboardingPrivacy3 =>
@@ -1891,10 +1891,11 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get offlineSemantics =>
-      'ഓഫ്‌ലൈൻ. ഈ ഫോണിൽ എല്ലാം പ്രവർത്തിച്ചുകൊണ്ടിരിക്കും.';
+      'ഓഫ്‌ലൈൻ. ഫോണിലുള്ള രേഖകളും ആപ്പിനൊപ്പം വരുന്ന പരിശോധനകളും ഓഫ്‌ലൈനിൽ പ്രവർത്തിക്കും; മോഡൽ ഡൗൺലോഡുകൾക്കും ഓൺലൈൻ ഭൂപടങ്ങൾക്കും ഇന്റർനെറ്റ് വേണം.';
 
   @override
-  String get onlineSemantics => 'ഓൺലൈൻ. Kernel-ന് ഇന്റർനെറ്റ് ആവശ്യമില്ല.';
+  String get onlineSemantics =>
+      'ഓൺലൈൻ. ഫോണിലുള്ള രേഖകളും ആപ്പിനൊപ്പം വരുന്ന പരിശോധനകളും ഓഫ്‌ലൈനിൽ പ്രവർത്തിക്കും; മോഡൽ ഡൗൺലോഡുകൾക്കും ഓൺലൈൻ ഭൂപടങ്ങൾക്കും ഇന്റർനെറ്റ് വേണം.';
 
   @override
   String get qrTooltip => 'QR ലേബലിൽ നിന്ന് ചാക്ക് തുറക്കുക';
@@ -2008,7 +2009,7 @@ class AppLocalizationsMl extends AppLocalizations {
   String get levelMeterLabel => 'മൈക്ക് ശബ്ദ നില';
 
   @override
-  String get levelMeterWaiting => 'ശബ്ദത്തിനായി കാത്തിരിക്കുന്നു';
+  String get levelMeterWaiting => 'മൈക്രോഫോൺ നിലകൾക്കായി കാത്തിരിക്കുന്നു';
 
   @override
   String levelMeterValue(int dbfs) {
@@ -2932,10 +2933,10 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get hubSubtitle =>
-      'കീട തിരിച്ചറിയലിനായി ഫോണിൽ പ്രവർത്തിക്കുന്ന മോഡലുകൾ. ഇവ ഈ ഫോണിൽ മാത്രമേ പ്രവർത്തിക്കൂ.';
+      'Android ആപ്പിൽ WAV ക്ലിപ്പുകളിൽ നിന്ന് പ്രാണികളെ പരീക്ഷണാടിസ്ഥാനത്തിൽ വർഗീകരിക്കാനുള്ള സൗകര്യമുണ്ട്. താഴെയുള്ള ഐച്ഛിക ഡൗൺലോഡുകൾ ചിത്ര വിശകലനം, തിരച്ചിൽ, തത്സമയ ശബ്ദ വർഗീകരണം (YAMNet) എന്നിവ ചേർക്കുന്നു.';
 
   @override
-  String get hubNeedsTitle => 'കീട തിരിച്ചറിയലിന് വേണ്ടത്';
+  String get hubNeedsTitle => 'ഐച്ഛിക മോഡൽ ഡൗൺലോഡുകൾ';
 
   @override
   String get hubNeedImage => 'ചിത്രം മനസ്സിലാക്കൽ';
@@ -2944,7 +2945,7 @@ class AppLocalizationsMl extends AppLocalizations {
   String get hubNeedEmbeddings => 'എംബെഡിംഗ് (തിരയാൻ)';
 
   @override
-  String get hubNeedSound => 'ശബ്ദം തിരിച്ചറിയുന്ന മോഡൽ';
+  String get hubNeedSound => 'തത്സമയ ശബ്ദ വർഗീകരണ മോഡൽ (YAMNet)';
 
   @override
   String get hubInstalledChip => 'ഇട്ടിട്ടുണ്ട്';
@@ -2953,25 +2954,26 @@ class AppLocalizationsMl extends AppLocalizations {
   String get hubMissingChip => 'ഇല്ല';
 
   @override
-  String get hubAllInstalled => 'കീട തിരിച്ചറിയലിന് വേണ്ടതെല്ലാം ഈ ഫോണിലുണ്ട്.';
+  String get hubAllInstalled =>
+      'ഇവിടെ നൽകിയ എല്ലാ ഐച്ഛിക സൗകര്യങ്ങൾക്കുമുള്ള മോഡലുകൾ ഇൻസ്റ്റാൾ ചെയ്തിട്ടുണ്ട്.';
 
   @override
   String get hubNothingToDownload =>
-      'ഇല്ലാത്ത ഭാഗങ്ങൾക്ക് ഇപ്പോൾ ഡൗൺലോഡ് ഒന്നും ലഭ്യമല്ല.';
+      'ഇനിയും ഇല്ലാത്ത ഐച്ഛിക മോഡലുകൾക്കുള്ള ഡൗൺലോഡുകൾ ഇപ്പോൾ ലഭ്യമല്ല.';
 
   @override
   String hubDownloadSummary(int count, String size) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count മോഡലുകൾ ഡൗൺലോഡ് ചെയ്യാനുണ്ട്, ഏകദേശം $size',
-      one: '1 മോഡൽ ഡൗൺലോഡ് ചെയ്യാനുണ്ട്, ഏകദേശം $size',
+      other: '$count ഐച്ഛിക മോഡലുകൾ ഡൗൺലോഡ് ചെയ്യണം, ഏകദേശം $size',
+      one: '1 ഐച്ഛിക മോഡൽ ഡൗൺലോഡ് ചെയ്യണം, ഏകദേശം $size',
     );
     return '$_temp0';
   }
 
   @override
-  String get hubDownloadAction => 'മോഡലുകൾ ഡൗൺലോഡ് ചെയ്യുക';
+  String get hubDownloadAction => 'ഐച്ഛിക മോഡലുകൾ ഡൗൺലോഡ് ചെയ്യുക';
 
   @override
   String hubDownloadFailed(String error) {
@@ -2982,14 +2984,16 @@ class AppLocalizationsMl extends AppLocalizations {
   String get hubCatalogUnavailable => 'മോഡൽ പട്ടിക വായിക്കാനായില്ല';
 
   @override
-  String get hubInstalledUnavailable => 'ഇട്ട മോഡലുകൾ വായിക്കാനായില്ല';
+  String get hubInstalledUnavailable =>
+      'ഇൻസ്റ്റാൾ ചെയ്ത ഐച്ഛിക മോഡലുകൾ വായിക്കാനായില്ല';
 
   @override
   String get hubGalleryNote =>
       'AI Edge Gallery ഇതിനകം ഡൗൺലോഡ് ചെയ്ത ഫയലുകൾ Kernel-ന് ഉപയോഗിക്കാനാവില്ല (Android ഓരോ ആപ്പിന്റെയും ഫയലുകൾ സ്വകാര്യമായി സൂക്ഷിക്കുന്നു), അതിനാൽ അതേ മോഡലുകൾ ഒരിക്കൽ ഡൗൺലോഡ് ചെയ്യുന്നു.';
 
   @override
-  String get hubConsentTitle => 'കീട തിരിച്ചറിയൽ മോഡലുകൾ ഡൗൺലോഡ് ചെയ്യണോ?';
+  String get hubConsentTitle =>
+      'കീടങ്ങളെ തിരിച്ചറിയാനുള്ള ഐച്ഛിക മോഡലുകൾ ഡൗൺലോഡ് ചെയ്യണോ?';
 
   @override
   String get hubConsentBody =>
@@ -3081,14 +3085,15 @@ class AppLocalizationsMl extends AppLocalizations {
   String get hubCancel => 'റദ്ദാക്കുക';
 
   @override
-  String get hubInstalledTitle => 'ഇട്ട മോഡലുകൾ';
+  String get hubInstalledTitle => 'ഇൻസ്റ്റാൾ ചെയ്ത ഐച്ഛിക മോഡലുകൾ';
 
   @override
-  String get hubInstalledEmpty => 'ഇതുവരെ ഒരു മോഡലും ഇട്ടിട്ടില്ല';
+  String get hubInstalledEmpty =>
+      'ഐച്ഛിക മോഡലുകളൊന്നും ഇതുവരെ ഇൻസ്റ്റാൾ ചെയ്തിട്ടില്ല';
 
   @override
   String get hubInstalledEmptyDetail =>
-      'മോഡലുകൾ ഒരിക്കൽ ഡൗൺലോഡ് ചെയ്ത ശേഷം കീട തിരിച്ചറിയൽ പ്രവർത്തിക്കും.';
+      'Android ആപ്പിൽ ഉൾപ്പെടുത്തിയ പ്രാണികളുടെ WAV പരിശോധനകൾക്ക് ഈ ഡൗൺലോഡുകൾ ആവശ്യമില്ല.';
 
   @override
   String get hubFieldPath => 'ഫയൽ';
@@ -3194,7 +3199,7 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get hubSettingsCard =>
-      'കീട തിരിച്ചറിയൽ ഉപയോഗിക്കുന്ന ഫോൺ മോഡലുകൾ ഡൗൺലോഡ് ചെയ്ത് നിയന്ത്രിക്കുക.';
+      'ചിത്രങ്ങൾ, തിരച്ചിൽ, തത്സമയ ശബ്ദം എന്നിവയ്ക്കുള്ള ഐച്ഛിക മോഡൽ ഡൗൺലോഡുകൾ നിയന്ത്രിക്കുക.';
 
   @override
   String get hubMapsToggle => 'Google Maps ഉപയോഗിക്കുക';
@@ -4199,23 +4204,20 @@ class AppLocalizationsMl extends AppLocalizations {
   String get pestLocating => 'സ്ഥാനം എടുക്കുന്നു…';
 
   @override
-  String get pestLocationDenied =>
-      'സ്ഥാന അനുമതി നിരസിച്ചു, മുറി മാത്രം സേവ് ചെയ്തു';
+  String get pestLocationDenied => 'സ്ഥാന അനുമതി നിരസിച്ചു. പിൻ ലഭ്യമല്ല.';
 
   @override
-  String get pestLocationImprecise =>
-      'സ്ഥാനം വളരെ ഏകദേശമാണ്, മുറി മാത്രം സേവ് ചെയ്തു';
+  String get pestLocationImprecise => 'സ്ഥാനം വളരെ ഏകദേശമാണ്. പിൻ ലഭ്യമല്ല.';
 
   @override
-  String get pestLocationOff => 'ഈ ഫോണിൽ സ്ഥാനം ഓഫാണ്, മുറി മാത്രം സേവ് ചെയ്തു';
+  String get pestLocationOff => 'ഈ ഫോണിൽ സ്ഥാനം ഓഫാണ്. പിൻ ലഭ്യമല്ല.';
 
   @override
-  String get pestLocationFailed =>
-      'സ്ഥാനം കിട്ടിയില്ല, മുറി മാത്രം സേവ് ചെയ്തു';
+  String get pestLocationFailed => 'സ്ഥാനം കിട്ടിയില്ല. പിൻ ലഭ്യമല്ല.';
 
   @override
   String pestLocationPinned(int meters) {
-    return 'പിൻ സേവ് ചെയ്തു ($meters മീ.-നുള്ളിൽ)';
+    return 'പിൻ സേവ് ചെയ്യാൻ തയ്യാറാണ് ($meters മീ.-നുള്ളിൽ)';
   }
 
   @override

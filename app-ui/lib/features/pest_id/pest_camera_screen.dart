@@ -17,7 +17,7 @@ import 'pest_ranking.dart';
 import 'pest_session.dart';
 import 'pest_tiles.dart';
 
-/// Live preview with candidate boxes, a torch slider and Capture. The user
+/// Live preview with candidate boxes and Capture. The user
 /// confirms a box or a close-up tile; only then is anything analysed.
 class PestCameraScreen extends ConsumerStatefulWidget {
   const PestCameraScreen({super.key});
@@ -28,7 +28,6 @@ class PestCameraScreen extends ConsumerStatefulWidget {
 
 class _PestCameraScreenState extends ConsumerState<PestCameraScreen> {
   PermissionAccess? _camera;
-  double _torch = 0;
   bool _busy = false;
   bool _captureFailed = false;
   CapturedStill? _still;
@@ -47,15 +46,6 @@ class _PestCameraScreenState extends ConsumerState<PestCameraScreen> {
       access = await permissions.requestCamera();
     }
     if (mounted) setState(() => _camera = access);
-  }
-
-  Future<void> _setTorch(double level) async {
-    setState(() => _torch = level);
-    try {
-      await ref.read(pestSenseEngineProvider).setTorch(level);
-    } on Object {
-      // No torch on this camera; the slider simply has no effect.
-    }
   }
 
   Future<CapturedStill?> _capture(List<SignalCandidate> candidates) async {
@@ -81,7 +71,10 @@ class _PestCameraScreenState extends ConsumerState<PestCameraScreen> {
 
   /// Capture: show the tiles ranked by embedding hint.
   Future<void> _captureAll() async {
-    final candidates = ref.read(cameraCandidatesProvider).value ?? const [];
+    final observed = ref.read(cameraCandidatesProvider);
+    final candidates = !observed.isLoading && !observed.hasError
+        ? observed.value ?? const <SignalCandidate>[]
+        : const <SignalCandidate>[];
     final still = await _capture(candidates);
     if (still == null || !mounted) return;
     setState(() => _busy = true);
@@ -133,35 +126,6 @@ class _PestCameraScreenState extends ConsumerState<PestCameraScreen> {
   ) {
     ref.read(pestSessionProvider.notifier).confirmTile(still, tile, candidate);
     context.push(Routes.pestAnalysis);
-  }
-
-  Future<void> _uploadImageOrVideo() async {
-    final picker = ref.read(mediaPickerServiceProvider);
-    final media = await picker.pickImage();
-    if (media == null || media.bytes.isEmpty) return;
-
-    final candidate = SignalCandidate(
-      id: 'upload_${DateTime.now().millisecondsSinceEpoch}',
-      source: SignalSource.camera,
-      kind: SignalKind.modelBox,
-      score: 0.85,
-      detectedAt: DateTime.now().toUtc(),
-      box: const NormalizedBox(left: 0.1, top: 0.1, width: 0.8, height: 0.8),
-    );
-
-    final still = CapturedStill(
-      stillId: 'upload_still_${DateTime.now().millisecondsSinceEpoch}',
-      contextImage: media.bytes,
-      tiles: [
-        ImageTile(
-          candidateId: candidate.id,
-          box: candidate.box!,
-          image: media.bytes,
-        ),
-      ],
-    );
-
-    _openAnalysis(still, still.tiles.first, candidate);
   }
 
   Future<void> _nothingHere() async {
@@ -233,17 +197,23 @@ class _PestCameraScreenState extends ConsumerState<PestCameraScreen> {
         ),
       ];
     }
-    final candidates =
-        ref.watch(cameraCandidatesProvider).value ?? const <SignalCandidate>[];
+    final observed = ref.watch(cameraCandidatesProvider);
+    final candidates = !observed.isLoading && !observed.hasError
+        ? observed.value ?? const <SignalCandidate>[]
+        : const <SignalCandidate>[];
     return [
       PestLivePreview(candidates: candidates, onConfirm: _confirmBox),
-      Text(
-        candidates.isEmpty
-            ? l.pestCandidatesNone
-            : l.pestCandidatesCount(candidates.length),
-        key: const Key('pest-candidate-count'),
-      ),
-      PestTorchSlider(value: _torch, onChanged: _setTorch),
+      if (observed.isLoading)
+        Text(l.loading)
+      else if (observed.hasError)
+        ErrorNote(l.errorCouldNotLoad)
+      else
+        Text(
+          candidates.isEmpty
+              ? l.pestCandidatesNone
+              : l.pestCandidatesCount(candidates.length),
+          key: const Key('pest-candidate-count'),
+        ),
       if (_captureFailed) ErrorNote(l.pestCaptureFailed),
       FilledButton.icon(
         key: const Key('pest-capture'),
@@ -255,13 +225,6 @@ class _PestCameraScreenState extends ConsumerState<PestCameraScreen> {
               )
             : const Icon(Icons.camera_rounded),
         label: Text(_busy ? l.pestCapturing : l.pestCapture),
-      ),
-      const SizedBox(height: 8),
-      OutlinedButton.icon(
-        key: const Key('pest-upload-photo'),
-        onPressed: _busy ? null : _uploadImageOrVideo,
-        icon: const Icon(Icons.photo_library_outlined),
-        label: const Text('Upload Photo / Video from Gallery'),
       ),
     ];
   }

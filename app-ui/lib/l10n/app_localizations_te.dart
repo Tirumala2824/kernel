@@ -112,7 +112,7 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get settingsFooter =>
-      'శబ్ద పరీక్ష అంతా ఈ ఫోన్‌లోనే జరుగుతుంది. Kernel ఇంటర్నెట్ లేకుండానే పని చేస్తుంది, ఎప్పుడూ శబ్దాన్ని అప్‌లోడ్ చేయదు.';
+      'Kernel ఆడియోను ఈ ఫోన్‌లోనే ఉంచుతుంది. ఫోన్‌లోని రికార్డులు, యాప్‌తో వచ్చే తనిఖీలు ఆఫ్‌లైన్‌లో పనిచేస్తాయి; మోడల్ డౌన్‌లోడ్‌లకు, ఆన్‌లైన్ మ్యాప్‌లకు ఇంటర్నెట్ అవసరం.';
 
   @override
   String get diagnosticsTitle => 'సాంకేతిక సమాచారం';
@@ -1216,7 +1216,7 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get onboardingPrivacy2 =>
-      'ఏదీ అప్‌లోడ్ కాదు. ఖాతా లేదు, క్లౌడ్ లేదు, అంతా ఇంటర్నెట్ లేకుండానే పని చేస్తుంది.';
+      'ఆడియో ఈ ఫోన్‌లోనే ఉంటుంది. ఫోన్‌లోని రికార్డులు, యాప్‌తో వచ్చే తనిఖీలు ఆఫ్‌లైన్‌లో పనిచేస్తాయి; మోడల్ డౌన్‌లోడ్‌లకు, ఆన్‌లైన్ మ్యాప్‌లకు ఇంటర్నెట్ అవసరం.';
 
   @override
   String get onboardingPrivacy3 =>
@@ -1879,10 +1879,11 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get offlineSemantics =>
-      'ఆఫ్‌లైన్. ఈ ఫోన్‌లో అంతా పని చేస్తూనే ఉంటుంది.';
+      'ఆఫ్‌లైన్. ఫోన్‌లోని రికార్డులు, యాప్‌తో వచ్చే తనిఖీలు ఆఫ్‌లైన్‌లో పనిచేస్తాయి; మోడల్ డౌన్‌లోడ్‌లకు, ఆన్‌లైన్ మ్యాప్‌లకు ఇంటర్నెట్ అవసరం.';
 
   @override
-  String get onlineSemantics => 'ఆన్‌లైన్. Kernelకు ఇంటర్నెట్ అవసరం లేదు.';
+  String get onlineSemantics =>
+      'ఆన్‌లైన్. ఫోన్‌లోని రికార్డులు, యాప్‌తో వచ్చే తనిఖీలు ఆఫ్‌లైన్‌లో పనిచేస్తాయి; మోడల్ డౌన్‌లోడ్‌లకు, ఆన్‌లైన్ మ్యాప్‌లకు ఇంటర్నెట్ అవసరం.';
 
   @override
   String get qrTooltip => 'QR లేబుల్ నుంచి బస్తా తెరవండి';
@@ -1996,7 +1997,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get levelMeterLabel => 'మైక్ శబ్ద స్థాయి';
 
   @override
-  String get levelMeterWaiting => 'శబ్దం కోసం ఎదురుచూస్తోంది';
+  String get levelMeterWaiting => 'మైక్రోఫోన్ స్థాయిల కోసం ఎదురుచూస్తోంది';
 
   @override
   String levelMeterValue(int dbfs) {
@@ -2916,10 +2917,10 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get hubSubtitle =>
-      'పురుగు గుర్తింపు కోసం ఫోన్‌లో నడిచే మోడల్స్. ఇవి ఈ ఫోన్‌లో మాత్రమే నడుస్తాయి.';
+      'Android యాప్‌లో WAV క్లిప్‌లతో కీటకాలను ప్రయోగాత్మకంగా వర్గీకరించే సదుపాయం ఉంది. కింద ఉన్న ఐచ్ఛిక డౌన్‌లోడ్‌లు చిత్ర విశ్లేషణ, శోధన, ప్రత్యక్ష ధ్వని వర్గీకరణ (YAMNet) సదుపాయాలను జోడిస్తాయి.';
 
   @override
-  String get hubNeedsTitle => 'పురుగు గుర్తింపుకు కావాల్సినవి';
+  String get hubNeedsTitle => 'ఐచ్ఛిక మోడల్ డౌన్‌లోడ్‌లు';
 
   @override
   String get hubNeedImage => 'ఫోటోను అర్థం చేసుకోవడం';
@@ -2928,7 +2929,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get hubNeedEmbeddings => 'ఎంబెడ్డింగ్స్ (వెతకడానికి)';
 
   @override
-  String get hubNeedSound => 'శబ్దాన్ని గుర్తించే మోడల్';
+  String get hubNeedSound => 'ప్రత్యక్ష ధ్వని వర్గీకరణ మోడల్ (YAMNet)';
 
   @override
   String get hubInstalledChip => 'ఇన్‌స్టాల్ అయింది';
@@ -2938,25 +2939,25 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get hubAllInstalled =>
-      'పురుగు గుర్తింపుకు కావాల్సినవన్నీ ఈ ఫోన్‌లో ఉన్నాయి.';
+      'ఇక్కడ ఇచ్చిన అన్ని ఐచ్ఛిక సదుపాయాలకు మోడల్‌లు ఇన్‌స్టాల్ అయ్యాయి.';
 
   @override
   String get hubNothingToDownload =>
-      'లేని భాగాల కోసం ఇప్పుడు ఏ డౌన్‌లోడ్ అందుబాటులో లేదు.';
+      'ఇంకా లేని ఐచ్ఛిక మోడల్‌లకు డౌన్‌లోడ్‌లు ప్రస్తుతం అందుబాటులో లేవు.';
 
   @override
   String hubDownloadSummary(int count, String size) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count మోడల్స్ డౌన్‌లోడ్ చేయాలి, సుమారు $size',
-      one: '1 మోడల్ డౌన్‌లోడ్ చేయాలి, సుమారు $size',
+      other: '$count ఐచ్ఛిక మోడల్‌లు డౌన్‌లోడ్ చేయాలి, సుమారు $size',
+      one: '1 ఐచ్ఛిక మోడల్ డౌన్‌లోడ్ చేయాలి, సుమారు $size',
     );
     return '$_temp0';
   }
 
   @override
-  String get hubDownloadAction => 'మోడల్స్ డౌన్‌లోడ్ చేయండి';
+  String get hubDownloadAction => 'ఐచ్ఛిక మోడల్‌లను డౌన్‌లోడ్ చేయండి';
 
   @override
   String hubDownloadFailed(String error) {
@@ -2968,14 +2969,15 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get hubInstalledUnavailable =>
-      'ఇన్‌స్టాల్ అయిన మోడల్స్‌ను చదవలేకపోయాం';
+      'ఇన్‌స్టాల్ చేసిన ఐచ్ఛిక మోడల్‌లను చదవలేకపోయాం';
 
   @override
   String get hubGalleryNote =>
       'AI Edge Gallery ఇప్పటికే డౌన్‌లోడ్ చేసిన ఫైళ్లను Kernel వాడలేదు (Android ప్రతి యాప్ ఫైళ్లను వేరుగా, గోప్యంగా ఉంచుతుంది), అందుకే అవే మోడల్స్‌ను ఒక్కసారి డౌన్‌లోడ్ చేస్తుంది.';
 
   @override
-  String get hubConsentTitle => 'పురుగు గుర్తింపు మోడల్స్ డౌన్‌లోడ్ చేయాలా?';
+  String get hubConsentTitle =>
+      'కీటక గుర్తింపు కోసం ఐచ్ఛిక మోడల్‌లను డౌన్‌లోడ్ చేయాలా?';
 
   @override
   String get hubConsentBody =>
@@ -3067,14 +3069,14 @@ class AppLocalizationsTe extends AppLocalizations {
   String get hubCancel => 'రద్దు చేయండి';
 
   @override
-  String get hubInstalledTitle => 'ఇన్‌స్టాల్ అయిన మోడల్స్';
+  String get hubInstalledTitle => 'ఇన్‌స్టాల్ చేసిన ఐచ్ఛిక మోడల్‌లు';
 
   @override
-  String get hubInstalledEmpty => 'ఇంకా ఏ మోడల్ ఇన్‌స్టాల్ కాలేదు';
+  String get hubInstalledEmpty => 'ఇంకా ఐచ్ఛిక మోడల్‌లు ఏవీ ఇన్‌స్టాల్ కాలేదు';
 
   @override
   String get hubInstalledEmptyDetail =>
-      'మోడల్స్ ఒక్కసారి డౌన్‌లోడ్ అయ్యాక పురుగు గుర్తింపు పనిచేస్తుంది.';
+      'Android యాప్‌లో ఉన్న కీటకాల WAV తనిఖీలకు ఈ డౌన్‌లోడ్‌లు అవసరం లేదు.';
 
   @override
   String get hubFieldPath => 'ఫైల్';
@@ -3179,7 +3181,7 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get hubSettingsCard =>
-      'పురుగు గుర్తింపు వాడే ఫోన్ మోడల్స్‌ను డౌన్‌లోడ్ చేసి నిర్వహించండి.';
+      'చిత్రాలు, శోధన, ప్రత్యక్ష ధ్వని కోసం ఐచ్ఛిక మోడల్ డౌన్‌లోడ్‌లను నిర్వహించండి.';
 
   @override
   String get hubMapsToggle => 'Google Maps వాడండి';
@@ -4183,22 +4185,22 @@ class AppLocalizationsTe extends AppLocalizations {
   String get pestLocating => 'స్థానం తీసుకుంటోంది…';
 
   @override
-  String get pestLocationDenied => 'స్థాన అనుమతి లేదు, గది మాత్రమే సేవ్ అయింది';
+  String get pestLocationDenied => 'స్థాన అనుమతి లేదు. పిన్ అందుబాటులో లేదు.';
 
   @override
   String get pestLocationImprecise =>
-      'స్థానం చాలా అస్పష్టం, గది మాత్రమే సేవ్ అయింది';
+      'స్థానం చాలా అస్పష్టం. పిన్ అందుబాటులో లేదు.';
 
   @override
   String get pestLocationOff =>
-      'ఈ ఫోన్‌లో స్థానం ఆఫ్‌లో ఉంది, గది మాత్రమే సేవ్ అయింది';
+      'ఈ ఫోన్‌లో స్థానం ఆఫ్‌లో ఉంది. పిన్ అందుబాటులో లేదు.';
 
   @override
-  String get pestLocationFailed => 'స్థానం దొరకలేదు, గది మాత్రమే సేవ్ అయింది';
+  String get pestLocationFailed => 'స్థానం దొరకలేదు. పిన్ అందుబాటులో లేదు.';
 
   @override
   String pestLocationPinned(int meters) {
-    return 'పిన్ సేవ్ అయింది ($meters మీ. లోపు)';
+    return 'పిన్ సేవ్ చేయడానికి సిద్ధంగా ఉంది ($meters మీ. లోపు)';
   }
 
   @override

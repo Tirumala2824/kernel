@@ -6648,6 +6648,17 @@ class $SensorNodesTable extends SensorNodes
         type: DriftSqlType.int,
         requiredDuringInsert: false,
       );
+  static const VerificationMeta _healthClearedThroughAtMeta =
+      const VerificationMeta('healthClearedThroughAt');
+  @override
+  late final GeneratedColumn<DateTime> healthClearedThroughAt =
+      GeneratedColumn<DateTime>(
+        'health_cleared_through_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -6665,6 +6676,7 @@ class $SensorNodesTable extends SensorNodes
     lastSeenAt,
     batteryPercent,
     eventsClearedThroughSeq,
+    healthClearedThroughAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -6790,6 +6802,15 @@ class $SensorNodesTable extends SensorNodes
         ),
       );
     }
+    if (data.containsKey('health_cleared_through_at')) {
+      context.handle(
+        _healthClearedThroughAtMeta,
+        healthClearedThroughAt.isAcceptableOrUnknown(
+          data['health_cleared_through_at']!,
+          _healthClearedThroughAtMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -6863,6 +6884,10 @@ class $SensorNodesTable extends SensorNodes
         DriftSqlType.int,
         data['${effectivePrefix}events_cleared_through_seq'],
       ),
+      healthClearedThroughAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}health_cleared_through_at'],
+      ),
     );
   }
 
@@ -6896,6 +6921,10 @@ class SensorNodeRow extends DataClass implements Insertable<SensorNodeRow> {
   /// Highest event seq removed by `deleteAllHistory`. Events at or below it
   /// are never re-imported from the node's store-and-forward buffer.
   final int? eventsClearedThroughSeq;
+
+  /// Privacy cutoff (v4), not a sync watermark or proof of coverage.
+  /// Health observed at or before a history wipe must not be replayed.
+  final DateTime? healthClearedThroughAt;
   const SensorNodeRow({
     required this.id,
     required this.createdAt,
@@ -6912,6 +6941,7 @@ class SensorNodeRow extends DataClass implements Insertable<SensorNodeRow> {
     this.lastSeenAt,
     this.batteryPercent,
     this.eventsClearedThroughSeq,
+    this.healthClearedThroughAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -6951,6 +6981,11 @@ class SensorNodeRow extends DataClass implements Insertable<SensorNodeRow> {
         eventsClearedThroughSeq,
       );
     }
+    if (!nullToAbsent || healthClearedThroughAt != null) {
+      map['health_cleared_through_at'] = Variable<DateTime>(
+        healthClearedThroughAt,
+      );
+    }
     return map;
   }
 
@@ -6981,6 +7016,9 @@ class SensorNodeRow extends DataClass implements Insertable<SensorNodeRow> {
       eventsClearedThroughSeq: eventsClearedThroughSeq == null && nullToAbsent
           ? const Value.absent()
           : Value(eventsClearedThroughSeq),
+      healthClearedThroughAt: healthClearedThroughAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(healthClearedThroughAt),
     );
   }
 
@@ -7011,6 +7049,9 @@ class SensorNodeRow extends DataClass implements Insertable<SensorNodeRow> {
       eventsClearedThroughSeq: serializer.fromJson<int?>(
         json['eventsClearedThroughSeq'],
       ),
+      healthClearedThroughAt: serializer.fromJson<DateTime?>(
+        json['healthClearedThroughAt'],
+      ),
     );
   }
   @override
@@ -7038,6 +7079,9 @@ class SensorNodeRow extends DataClass implements Insertable<SensorNodeRow> {
       'eventsClearedThroughSeq': serializer.toJson<int?>(
         eventsClearedThroughSeq,
       ),
+      'healthClearedThroughAt': serializer.toJson<DateTime?>(
+        healthClearedThroughAt,
+      ),
     };
   }
 
@@ -7057,6 +7101,7 @@ class SensorNodeRow extends DataClass implements Insertable<SensorNodeRow> {
     Value<DateTime?> lastSeenAt = const Value.absent(),
     Value<int?> batteryPercent = const Value.absent(),
     Value<int?> eventsClearedThroughSeq = const Value.absent(),
+    Value<DateTime?> healthClearedThroughAt = const Value.absent(),
   }) => SensorNodeRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -7077,6 +7122,9 @@ class SensorNodeRow extends DataClass implements Insertable<SensorNodeRow> {
     eventsClearedThroughSeq: eventsClearedThroughSeq.present
         ? eventsClearedThroughSeq.value
         : this.eventsClearedThroughSeq,
+    healthClearedThroughAt: healthClearedThroughAt.present
+        ? healthClearedThroughAt.value
+        : this.healthClearedThroughAt,
   );
   SensorNodeRow copyWithCompanion(SensorNodesCompanion data) {
     return SensorNodeRow(
@@ -7111,6 +7159,9 @@ class SensorNodeRow extends DataClass implements Insertable<SensorNodeRow> {
       eventsClearedThroughSeq: data.eventsClearedThroughSeq.present
           ? data.eventsClearedThroughSeq.value
           : this.eventsClearedThroughSeq,
+      healthClearedThroughAt: data.healthClearedThroughAt.present
+          ? data.healthClearedThroughAt.value
+          : this.healthClearedThroughAt,
     );
   }
 
@@ -7131,7 +7182,8 @@ class SensorNodeRow extends DataClass implements Insertable<SensorNodeRow> {
           ..write('itemId: $itemId, ')
           ..write('lastSeenAt: $lastSeenAt, ')
           ..write('batteryPercent: $batteryPercent, ')
-          ..write('eventsClearedThroughSeq: $eventsClearedThroughSeq')
+          ..write('eventsClearedThroughSeq: $eventsClearedThroughSeq, ')
+          ..write('healthClearedThroughAt: $healthClearedThroughAt')
           ..write(')'))
         .toString();
   }
@@ -7153,6 +7205,7 @@ class SensorNodeRow extends DataClass implements Insertable<SensorNodeRow> {
     lastSeenAt,
     batteryPercent,
     eventsClearedThroughSeq,
+    healthClearedThroughAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -7172,7 +7225,8 @@ class SensorNodeRow extends DataClass implements Insertable<SensorNodeRow> {
           other.itemId == this.itemId &&
           other.lastSeenAt == this.lastSeenAt &&
           other.batteryPercent == this.batteryPercent &&
-          other.eventsClearedThroughSeq == this.eventsClearedThroughSeq);
+          other.eventsClearedThroughSeq == this.eventsClearedThroughSeq &&
+          other.healthClearedThroughAt == this.healthClearedThroughAt);
 }
 
 class SensorNodesCompanion extends UpdateCompanion<SensorNodeRow> {
@@ -7191,6 +7245,7 @@ class SensorNodesCompanion extends UpdateCompanion<SensorNodeRow> {
   final Value<DateTime?> lastSeenAt;
   final Value<int?> batteryPercent;
   final Value<int?> eventsClearedThroughSeq;
+  final Value<DateTime?> healthClearedThroughAt;
   final Value<int> rowid;
   const SensorNodesCompanion({
     this.id = const Value.absent(),
@@ -7208,6 +7263,7 @@ class SensorNodesCompanion extends UpdateCompanion<SensorNodeRow> {
     this.lastSeenAt = const Value.absent(),
     this.batteryPercent = const Value.absent(),
     this.eventsClearedThroughSeq = const Value.absent(),
+    this.healthClearedThroughAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SensorNodesCompanion.insert({
@@ -7226,6 +7282,7 @@ class SensorNodesCompanion extends UpdateCompanion<SensorNodeRow> {
     this.lastSeenAt = const Value.absent(),
     this.batteryPercent = const Value.absent(),
     this.eventsClearedThroughSeq = const Value.absent(),
+    this.healthClearedThroughAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -7252,6 +7309,7 @@ class SensorNodesCompanion extends UpdateCompanion<SensorNodeRow> {
     Expression<DateTime>? lastSeenAt,
     Expression<int>? batteryPercent,
     Expression<int>? eventsClearedThroughSeq,
+    Expression<DateTime>? healthClearedThroughAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -7271,6 +7329,8 @@ class SensorNodesCompanion extends UpdateCompanion<SensorNodeRow> {
       if (batteryPercent != null) 'battery_percent': batteryPercent,
       if (eventsClearedThroughSeq != null)
         'events_cleared_through_seq': eventsClearedThroughSeq,
+      if (healthClearedThroughAt != null)
+        'health_cleared_through_at': healthClearedThroughAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -7291,6 +7351,7 @@ class SensorNodesCompanion extends UpdateCompanion<SensorNodeRow> {
     Value<DateTime?>? lastSeenAt,
     Value<int?>? batteryPercent,
     Value<int?>? eventsClearedThroughSeq,
+    Value<DateTime?>? healthClearedThroughAt,
     Value<int>? rowid,
   }) {
     return SensorNodesCompanion(
@@ -7310,6 +7371,8 @@ class SensorNodesCompanion extends UpdateCompanion<SensorNodeRow> {
       batteryPercent: batteryPercent ?? this.batteryPercent,
       eventsClearedThroughSeq:
           eventsClearedThroughSeq ?? this.eventsClearedThroughSeq,
+      healthClearedThroughAt:
+          healthClearedThroughAt ?? this.healthClearedThroughAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -7368,6 +7431,11 @@ class SensorNodesCompanion extends UpdateCompanion<SensorNodeRow> {
         eventsClearedThroughSeq.value,
       );
     }
+    if (healthClearedThroughAt.present) {
+      map['health_cleared_through_at'] = Variable<DateTime>(
+        healthClearedThroughAt.value,
+      );
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -7392,6 +7460,7 @@ class SensorNodesCompanion extends UpdateCompanion<SensorNodeRow> {
           ..write('lastSeenAt: $lastSeenAt, ')
           ..write('batteryPercent: $batteryPercent, ')
           ..write('eventsClearedThroughSeq: $eventsClearedThroughSeq, ')
+          ..write('healthClearedThroughAt: $healthClearedThroughAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -9671,6 +9740,626 @@ class SettingsCompanion extends UpdateCompanion<SettingRow> {
   }
 }
 
+class $SensorHealthChangesTable extends SensorHealthChanges
+    with TableInfo<$SensorHealthChangesTable, SensorHealthChangeRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SensorHealthChangesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<SyncState, String> syncState =
+      GeneratedColumn<String>(
+        'sync_state',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(SyncState.localOnly.name),
+      ).withConverter<SyncState>($SensorHealthChangesTable.$convertersyncState);
+  static const VerificationMeta _nodeIdMeta = const VerificationMeta('nodeId');
+  @override
+  late final GeneratedColumn<String> nodeId = GeneratedColumn<String>(
+    'node_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES sensor_nodes (id)',
+    ),
+  );
+  static const VerificationMeta _atMeta = const VerificationMeta('at');
+  @override
+  late final GeneratedColumn<DateTime> at = GeneratedColumn<DateTime>(
+    'at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _healthMeta = const VerificationMeta('health');
+  @override
+  late final GeneratedColumn<String> health = GeneratedColumn<String>(
+    'health',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _seqMeta = const VerificationMeta('seq');
+  @override
+  late final GeneratedColumn<int> seq = GeneratedColumn<int>(
+    'seq',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _locationIdMeta = const VerificationMeta(
+    'locationId',
+  );
+  @override
+  late final GeneratedColumn<String> locationId = GeneratedColumn<String>(
+    'location_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES locations (id)',
+    ),
+  );
+  static const VerificationMeta _itemIdMeta = const VerificationMeta('itemId');
+  @override
+  late final GeneratedColumn<String> itemId = GeneratedColumn<String>(
+    'item_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES items (id)',
+    ),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    nodeId,
+    at,
+    health,
+    seq,
+    locationId,
+    itemId,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sensor_health_changes';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SensorHealthChangeRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('node_id')) {
+      context.handle(
+        _nodeIdMeta,
+        nodeId.isAcceptableOrUnknown(data['node_id']!, _nodeIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nodeIdMeta);
+    }
+    if (data.containsKey('at')) {
+      context.handle(_atMeta, at.isAcceptableOrUnknown(data['at']!, _atMeta));
+    } else if (isInserting) {
+      context.missing(_atMeta);
+    }
+    if (data.containsKey('health')) {
+      context.handle(
+        _healthMeta,
+        health.isAcceptableOrUnknown(data['health']!, _healthMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_healthMeta);
+    }
+    if (data.containsKey('seq')) {
+      context.handle(
+        _seqMeta,
+        seq.isAcceptableOrUnknown(data['seq']!, _seqMeta),
+      );
+    }
+    if (data.containsKey('location_id')) {
+      context.handle(
+        _locationIdMeta,
+        locationId.isAcceptableOrUnknown(data['location_id']!, _locationIdMeta),
+      );
+    }
+    if (data.containsKey('item_id')) {
+      context.handle(
+        _itemIdMeta,
+        itemId.isAcceptableOrUnknown(data['item_id']!, _itemIdMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {nodeId, at, health},
+  ];
+  @override
+  SensorHealthChangeRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SensorHealthChangeRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      syncState: $SensorHealthChangesTable.$convertersyncState.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}sync_state'],
+        )!,
+      ),
+      nodeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}node_id'],
+      )!,
+      at: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}at'],
+      )!,
+      health: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}health'],
+      )!,
+      seq: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}seq'],
+      ),
+      locationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}location_id'],
+      ),
+      itemId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}item_id'],
+      ),
+    );
+  }
+
+  @override
+  $SensorHealthChangesTable createAlias(String alias) {
+    return $SensorHealthChangesTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<SyncState, String, String> $convertersyncState =
+      const EnumNameConverter<SyncState>(SyncState.values);
+}
+
+class SensorHealthChangeRow extends DataClass
+    implements Insertable<SensorHealthChangeRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final SyncState syncState;
+  final String nodeId;
+  final DateTime at;
+
+  /// Sorted enum names: stable set identity, independent of iteration order.
+  final String health;
+  final int? seq;
+  final String? locationId;
+  final String? itemId;
+  const SensorHealthChangeRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.syncState,
+    required this.nodeId,
+    required this.at,
+    required this.health,
+    this.seq,
+    this.locationId,
+    this.itemId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    {
+      map['sync_state'] = Variable<String>(
+        $SensorHealthChangesTable.$convertersyncState.toSql(syncState),
+      );
+    }
+    map['node_id'] = Variable<String>(nodeId);
+    map['at'] = Variable<DateTime>(at);
+    map['health'] = Variable<String>(health);
+    if (!nullToAbsent || seq != null) {
+      map['seq'] = Variable<int>(seq);
+    }
+    if (!nullToAbsent || locationId != null) {
+      map['location_id'] = Variable<String>(locationId);
+    }
+    if (!nullToAbsent || itemId != null) {
+      map['item_id'] = Variable<String>(itemId);
+    }
+    return map;
+  }
+
+  SensorHealthChangesCompanion toCompanion(bool nullToAbsent) {
+    return SensorHealthChangesCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      syncState: Value(syncState),
+      nodeId: Value(nodeId),
+      at: Value(at),
+      health: Value(health),
+      seq: seq == null && nullToAbsent ? const Value.absent() : Value(seq),
+      locationId: locationId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(locationId),
+      itemId: itemId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(itemId),
+    );
+  }
+
+  factory SensorHealthChangeRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SensorHealthChangeRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      syncState: $SensorHealthChangesTable.$convertersyncState.fromJson(
+        serializer.fromJson<String>(json['syncState']),
+      ),
+      nodeId: serializer.fromJson<String>(json['nodeId']),
+      at: serializer.fromJson<DateTime>(json['at']),
+      health: serializer.fromJson<String>(json['health']),
+      seq: serializer.fromJson<int?>(json['seq']),
+      locationId: serializer.fromJson<String?>(json['locationId']),
+      itemId: serializer.fromJson<String?>(json['itemId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'syncState': serializer.toJson<String>(
+        $SensorHealthChangesTable.$convertersyncState.toJson(syncState),
+      ),
+      'nodeId': serializer.toJson<String>(nodeId),
+      'at': serializer.toJson<DateTime>(at),
+      'health': serializer.toJson<String>(health),
+      'seq': serializer.toJson<int?>(seq),
+      'locationId': serializer.toJson<String?>(locationId),
+      'itemId': serializer.toJson<String?>(itemId),
+    };
+  }
+
+  SensorHealthChangeRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    SyncState? syncState,
+    String? nodeId,
+    DateTime? at,
+    String? health,
+    Value<int?> seq = const Value.absent(),
+    Value<String?> locationId = const Value.absent(),
+    Value<String?> itemId = const Value.absent(),
+  }) => SensorHealthChangeRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    syncState: syncState ?? this.syncState,
+    nodeId: nodeId ?? this.nodeId,
+    at: at ?? this.at,
+    health: health ?? this.health,
+    seq: seq.present ? seq.value : this.seq,
+    locationId: locationId.present ? locationId.value : this.locationId,
+    itemId: itemId.present ? itemId.value : this.itemId,
+  );
+  SensorHealthChangeRow copyWithCompanion(SensorHealthChangesCompanion data) {
+    return SensorHealthChangeRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      syncState: data.syncState.present ? data.syncState.value : this.syncState,
+      nodeId: data.nodeId.present ? data.nodeId.value : this.nodeId,
+      at: data.at.present ? data.at.value : this.at,
+      health: data.health.present ? data.health.value : this.health,
+      seq: data.seq.present ? data.seq.value : this.seq,
+      locationId: data.locationId.present
+          ? data.locationId.value
+          : this.locationId,
+      itemId: data.itemId.present ? data.itemId.value : this.itemId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SensorHealthChangeRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('nodeId: $nodeId, ')
+          ..write('at: $at, ')
+          ..write('health: $health, ')
+          ..write('seq: $seq, ')
+          ..write('locationId: $locationId, ')
+          ..write('itemId: $itemId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    syncState,
+    nodeId,
+    at,
+    health,
+    seq,
+    locationId,
+    itemId,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SensorHealthChangeRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.syncState == this.syncState &&
+          other.nodeId == this.nodeId &&
+          other.at == this.at &&
+          other.health == this.health &&
+          other.seq == this.seq &&
+          other.locationId == this.locationId &&
+          other.itemId == this.itemId);
+}
+
+class SensorHealthChangesCompanion
+    extends UpdateCompanion<SensorHealthChangeRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<SyncState> syncState;
+  final Value<String> nodeId;
+  final Value<DateTime> at;
+  final Value<String> health;
+  final Value<int?> seq;
+  final Value<String?> locationId;
+  final Value<String?> itemId;
+  final Value<int> rowid;
+  const SensorHealthChangesCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.syncState = const Value.absent(),
+    this.nodeId = const Value.absent(),
+    this.at = const Value.absent(),
+    this.health = const Value.absent(),
+    this.seq = const Value.absent(),
+    this.locationId = const Value.absent(),
+    this.itemId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SensorHealthChangesCompanion.insert({
+    required String id,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.syncState = const Value.absent(),
+    required String nodeId,
+    required DateTime at,
+    required String health,
+    this.seq = const Value.absent(),
+    this.locationId = const Value.absent(),
+    this.itemId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       nodeId = Value(nodeId),
+       at = Value(at),
+       health = Value(health);
+  static Insertable<SensorHealthChangeRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? syncState,
+    Expression<String>? nodeId,
+    Expression<DateTime>? at,
+    Expression<String>? health,
+    Expression<int>? seq,
+    Expression<String>? locationId,
+    Expression<String>? itemId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (syncState != null) 'sync_state': syncState,
+      if (nodeId != null) 'node_id': nodeId,
+      if (at != null) 'at': at,
+      if (health != null) 'health': health,
+      if (seq != null) 'seq': seq,
+      if (locationId != null) 'location_id': locationId,
+      if (itemId != null) 'item_id': itemId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SensorHealthChangesCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<SyncState>? syncState,
+    Value<String>? nodeId,
+    Value<DateTime>? at,
+    Value<String>? health,
+    Value<int?>? seq,
+    Value<String?>? locationId,
+    Value<String?>? itemId,
+    Value<int>? rowid,
+  }) {
+    return SensorHealthChangesCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      syncState: syncState ?? this.syncState,
+      nodeId: nodeId ?? this.nodeId,
+      at: at ?? this.at,
+      health: health ?? this.health,
+      seq: seq ?? this.seq,
+      locationId: locationId ?? this.locationId,
+      itemId: itemId ?? this.itemId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (syncState.present) {
+      map['sync_state'] = Variable<String>(
+        $SensorHealthChangesTable.$convertersyncState.toSql(syncState.value),
+      );
+    }
+    if (nodeId.present) {
+      map['node_id'] = Variable<String>(nodeId.value);
+    }
+    if (at.present) {
+      map['at'] = Variable<DateTime>(at.value);
+    }
+    if (health.present) {
+      map['health'] = Variable<String>(health.value);
+    }
+    if (seq.present) {
+      map['seq'] = Variable<int>(seq.value);
+    }
+    if (locationId.present) {
+      map['location_id'] = Variable<String>(locationId.value);
+    }
+    if (itemId.present) {
+      map['item_id'] = Variable<String>(itemId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SensorHealthChangesCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('syncState: $syncState, ')
+          ..write('nodeId: $nodeId, ')
+          ..write('at: $at, ')
+          ..write('health: $health, ')
+          ..write('seq: $seq, ')
+          ..write('locationId: $locationId, ')
+          ..write('itemId: $itemId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $KnowledgeCardsTable extends KnowledgeCards
     with TableInfo<$KnowledgeCardsTable, KnowledgeCardRow> {
   @override
@@ -11430,6 +12119,8 @@ abstract class _$KernelDatabase extends GeneratedDatabase {
   );
   late final $RemindersTable reminders = $RemindersTable(this);
   late final $SettingsTable settings = $SettingsTable(this);
+  late final $SensorHealthChangesTable sensorHealthChanges =
+      $SensorHealthChangesTable(this);
   late final $KnowledgeCardsTable knowledgeCards = $KnowledgeCardsTable(this);
   late final $CardEmbeddingsTable cardEmbeddings = $CardEmbeddingsTable(this);
   late final Index itemsOwnerRole = Index(
@@ -11488,6 +12179,10 @@ abstract class _$KernelDatabase extends GeneratedDatabase {
     'sensor_events_item',
     'CREATE INDEX sensor_events_item ON sensor_events (item_id)',
   );
+  late final Index sensorHealthNodeAt = Index(
+    'sensor_health_node_at',
+    'CREATE INDEX sensor_health_node_at ON sensor_health_changes (node_id, at)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -11511,6 +12206,7 @@ abstract class _$KernelDatabase extends GeneratedDatabase {
     sensorEventsAppendOnly,
     reminders,
     settings,
+    sensorHealthChanges,
     knowledgeCards,
     cardEmbeddings,
     itemsOwnerRole,
@@ -11527,6 +12223,7 @@ abstract class _$KernelDatabase extends GeneratedDatabase {
     sensorEventsStarted,
     sensorEventsLocation,
     sensorEventsItem,
+    sensorHealthNodeAt,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([

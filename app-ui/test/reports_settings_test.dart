@@ -8,6 +8,21 @@ import 'support/in_memory.dart';
 
 void main() {
   group('Reports tab', () {
+    testWidgets('newer scans from another role do not hide my history', (tester) async {
+      final env = TestEnv(role: Role.farmer);
+      final mine = await env.addItem(label: 'Older farmer record');
+      final other = await env.addItem(role: Role.buyer, label: 'Buyer record');
+      await env.scans.record(notEvaluatedOutcome(mine.id, at: DateTime.utc(2026, 1, 1)));
+      for (var i = 0; i < 51; i++) {
+        await env.scans.record(notEvaluatedOutcome(other.id,
+          at: DateTime.utc(2026, 1, 2).add(Duration(minutes: i))));
+      }
+      await pumpKernelApp(tester, env, location: Routes.reports);
+      expect(find.textContaining('Older farmer record ·'), findsOneWidget);
+      expect(find.text(en.recentScansEmpty), findsNothing);
+      expect(find.textContaining('Buyer record'), findsNothing);
+    });
+
     testWidgets('exports CSV for the role scope and shares the file', (
       tester,
     ) async {

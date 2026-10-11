@@ -1,4 +1,10 @@
-## Unreleased (contracts v4, schema v3)
+## Unreleased (contracts v4, schema v4)
+
+* Persist sensor health observations with idempotent, merged not-evaluated
+  intervals, placement and overlap filters, and live database watches.
+* Additive schema v4: health table/index and a nullable per-node privacy cutoff;
+  no synthesized health history on upgrade. Wipe/forget removes health history,
+  with stale replay protection across database reopen.
 
 * Drift schema v3 with an additive v2 -> v3 migration: `sightings`,
   `sensor_nodes`, `sensor_events` (UNIQUE(node_id, seq)), `knowledge_cards`

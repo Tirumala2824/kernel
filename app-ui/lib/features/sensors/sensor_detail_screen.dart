@@ -69,8 +69,8 @@ class _DetailsCard extends ConsumerWidget {
     final itemId = node.itemId;
     final location = locationId == null
         ? null
-        : ref.watch(locationProvider(locationId)).value;
-    final item = itemId == null ? null : ref.watch(itemProvider(itemId)).value;
+        : ref.watch(locationProvider(locationId));
+    final item = itemId == null ? null : ref.watch(itemProvider(itemId));
     final lastSeen = node.lastSeenAt;
     return KernelCard(
       key: const Key('sensor-details'),
@@ -85,11 +85,27 @@ class _DetailsCard extends ConsumerWidget {
             label: l.sensorFieldPlace,
             value: location == null
                 ? l.sensorPlaceNone
-                : l.nameWithType(location.name, location.type.label(l)),
+                : location.when(
+                    skipLoadingOnRefresh: false,
+                    skipError: false,
+                    data: (place) => place == null
+                        ? l.errorCouldNotLoad
+                        : l.nameWithType(place.name, place.type.label(l)),
+                    loading: () => l.loading,
+                    error: (_, _) => l.errorCouldNotLoad,
+                  ),
           ),
           FieldRow(
             label: l.sensorFieldItem,
-            value: item == null ? l.sensorPlaceNone : item.label,
+            value: item == null
+                ? l.sensorPlaceNone
+                : item.when(
+                    skipLoadingOnRefresh: false,
+                    skipError: false,
+                    data: (item) => item?.label ?? l.errorCouldNotLoad,
+                    loading: () => l.loading,
+                    error: (_, _) => l.errorCouldNotLoad,
+                  ),
           ),
           FieldRow(label: l.sensorFieldFirmware, value: node.firmwareVersion),
           FieldRow(label: l.sensorFieldKey, value: node.keyFingerprint),
@@ -127,8 +143,13 @@ class _LiveBands extends ConsumerWidget {
       title: l.sensorLiveTitle,
       subtitle: l.sensorLiveNote,
       child: frame.when(
-        data: (f) => SensorBandBars(frame: f),
-        loading: () => Text(l.sensorLiveWaiting, key: const Key('sensor-live-waiting')),
+        skipLoadingOnRefresh: false,
+        skipError: false,
+        data: (f) => f == null
+            ? Text(l.sensorLiveWaiting, key: const Key('sensor-live-waiting'))
+            : SensorBandBars(frame: f),
+        loading: () =>
+            Text(l.sensorLiveWaiting, key: const Key('sensor-live-waiting')),
         error: (e, _) => ErrorNote(l.errorWithDetail(l.sensorLiveTitle, '$e')),
       ),
     );
@@ -154,22 +175,9 @@ class _SurveyCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (survey.started) ...[
-            LinearProgressIndicator(
-              key: const Key('sensor-survey-progress'),
-              value: survey.progress,
-              semanticsLabel: l.sensorSurveyTitle,
-            ),
-            const SizedBox(height: KernelSpace.xs),
-            Text(
-              survey.done
-                  ? l.sensorSurveyDone
-                  : survey.error != null
-                  ? l.sensorSurveyFailed(survey.error!)
-                  : l.sensorSurveyRunning(
-                      survey.elapsed.inMinutes.clamp(0, total),
-                      total,
-                    ),
+          if (survey.error != null) ...[
+            ErrorNote(
+              l.sensorSurveyFailed(survey.error!),
               key: const Key('sensor-survey-status'),
             ),
             const SizedBox(height: KernelSpace.sm),
@@ -178,9 +186,10 @@ class _SurveyCard extends ConsumerWidget {
             alignment: AlignmentDirectional.centerStart,
             child: FilledButton.icon(
               key: const Key('sensor-survey-start'),
-              onPressed: survey.running
+              onPressed: survey.commandPending
                   ? null
-                  : () => ref.read(sensorSurveyProvider(nodeId).notifier).start(),
+                  : () =>
+                        ref.read(sensorSurveyProvider(nodeId).notifier).start(),
               icon: const Icon(Icons.play_arrow_rounded),
               label: Text(l.sensorSurveyStart(total)),
             ),
@@ -211,13 +220,13 @@ class _SessionCardState extends ConsumerState<_SessionCard> {
       _error = null;
     });
     try {
-      final sessions = ref.read(sensorSessionsProvider.notifier);
+      final link = ref.read(sensorLinkProvider);
       if (running) {
-        await sessions.stop(widget.nodeId);
+        await link.stopSession(widget.nodeId);
       } else {
         // The foreground service shows a notification (Android 13+ asks).
         await ref.read(devicePermissionsProvider).requestNotifications();
-        await sessions.start(widget.nodeId);
+        await link.startSession(widget.nodeId);
       }
     } on Object catch (e) {
       if (mounted) setState(() => _error = l.sensorSessionFailed('$e'));
@@ -229,7 +238,15 @@ class _SessionCardState extends ConsumerState<_SessionCard> {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final running = ref.watch(sensorSessionsProvider).contains(widget.nodeId);
+    final statusValue = ref.watch(sensorStatusProvider(widget.nodeId));
+    final status = statusValue.isLoading || statusValue.hasError
+        ? null
+        : statusValue.value;
+    // A returned command is not an observation, and cached/disconnected
+    // telemetry cannot establish that the session is still running.
+    final running =
+        status?.linkState == SensorLinkState.authenticated &&
+        status!.sessionActive;
     return KernelCard(
       key: const Key('sensor-session'),
       tone: KernelCardTone.ivory,
@@ -258,7 +275,9 @@ class _SessionCardState extends ConsumerState<_SessionCard> {
           ActionWrap(
             children: [
               FilledButton.icon(
-                key: Key(running ? 'sensor-session-stop' : 'sensor-session-start'),
+                key: Key(
+                  running ? 'sensor-session-stop' : 'sensor-session-start',
+                ),
                 onPressed: _busy ? null : () => _toggle(running),
                 icon: Icon(
                   running ? Icons.stop_rounded : Icons.play_arrow_rounded,
@@ -302,7 +321,9 @@ class _TimelineState extends ConsumerState<_Timeline> {
       _message = null;
     });
     try {
-      final count = await ref.read(sensorLinkProvider).syncEvents(widget.nodeId);
+      final count = await ref
+          .read(sensorLinkProvider)
+          .syncEvents(widget.nodeId);
       if (mounted) setState(() => _message = l.sensorSynced(count));
     } on Object catch (e) {
       if (mounted) setState(() => _message = l.sensorSyncFailed('$e'));
@@ -315,6 +336,13 @@ class _TimelineState extends ConsumerState<_Timeline> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final events = ref.watch(sensorEventsForNodeProvider(widget.nodeId));
+    final history = ref.watch(sensorNotEvaluatedForNodeProvider(widget.nodeId));
+    final status = ref.watch(sensorStatusProvider(widget.nodeId));
+    final currentUnavailable =
+        status.isLoading ||
+        status.hasError ||
+        !status.hasValue ||
+        status.requireValue.notEvaluated;
     final syncButton = OutlinedButton.icon(
       key: const Key('sensor-sync'),
       onPressed: _syncing ? null : _sync,
@@ -328,37 +356,48 @@ class _TimelineState extends ConsumerState<_Timeline> {
           Text(_message!, key: const Key('sensor-sync-message')),
           const SizedBox(height: KernelSpace.sm),
         ],
-        AsyncView<List<SensorEvent>>(
-          value: events,
-          data: (events) => events.isEmpty
-              ? EmptyState(
-                  key: const Key('sensor-timeline-empty'),
-                  message: l.sensorTimelineEmpty,
-                  detail: l.sensorTimelineEmptyDetail,
-                  actionLabel: l.sensorSyncAction,
-                  actionIcon: Icons.sync_rounded,
-                  onAction: _syncing ? () {} : _sync,
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: syncButton,
-                    ),
-                    const SizedBox(height: KernelSpace.md),
-                    KernelCard(
-                      key: const Key('sensor-timeline-summary'),
-                      tone: KernelCardTone.sage,
-                      icon: Icons.insights_rounded,
-                      title: l.sensorSummaryTitle,
-                      child: SensorEventSummary(events: events),
-                    ),
-                    const SizedBox(height: KernelSpace.md),
-                    SensorEventTimeline(events: events),
-                  ],
-                ),
-        ),
+        Align(alignment: AlignmentDirectional.centerStart, child: syncButton),
+        const SizedBox(height: KernelSpace.md),
+        if (events.hasError || history.hasError)
+          ErrorNote(
+            l.errorWithDetail(
+              l.sensorTimelineTitle,
+              '${events.error ?? history.error}',
+            ),
+            key: const Key('sensor-timeline-error'),
+          )
+        else if (events.isLoading ||
+            !events.hasValue ||
+            history.isLoading ||
+            !history.hasValue)
+          Text(l.loading, key: const Key('sensor-timeline-loading'))
+        else ...[
+          if (history.requireValue.isNotEmpty)
+            SensorNotEvaluatedHistory(
+              key: const Key('sensor-timeline-not-evaluated'),
+              periods: history.requireValue,
+            )
+          else if (currentUnavailable)
+            Text(l.sensorSignalNotDiagnosis)
+          else if (events.requireValue.isEmpty)
+            KernelCard(
+              key: const Key('sensor-timeline-empty'),
+              title: l.sensorTimelineEmpty,
+              subtitle: l.sensorTimelineEmptyDetail,
+            )
+          else
+            KernelCard(
+              key: const Key('sensor-timeline-summary'),
+              tone: KernelCardTone.sage,
+              icon: Icons.insights_rounded,
+              title: l.sensorSummaryTitle,
+              child: SensorEventSummary(events: events.requireValue),
+            ),
+          if (events.requireValue.isNotEmpty) ...[
+            const SizedBox(height: KernelSpace.md),
+            SensorEventTimeline(events: events.requireValue),
+          ],
+        ],
       ],
     );
   }
