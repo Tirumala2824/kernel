@@ -6,8 +6,21 @@ import 'package:test/test.dart';
 void main() {
   group('Tokenization and Vector Helpers', () {
     test('tokenizeText extracts clean tokens and filters stop words', () {
-      final tokens = tokenizeText('The insect with high frequency sound in sack LOT-024');
-      expect(tokens, containsAll(['insect', 'high', 'frequency', 'sound', 'sack', 'lot', '024']));
+      final tokens = tokenizeText(
+        'The insect with high frequency sound in sack LOT-024',
+      );
+      expect(
+        tokens,
+        containsAll([
+          'insect',
+          'high',
+          'frequency',
+          'sound',
+          'sack',
+          'lot',
+          '024',
+        ]),
+      );
       expect(tokens, isNot(contains('the')));
       expect(tokens, isNot(contains('with')));
       expect(tokens, isNot(contains('in')));
@@ -23,30 +36,26 @@ void main() {
   });
 
   group('Quality Indexes (ASQI and VQI)', () {
-    test('AudioSignalQualityIndex rewards high SNR and piezo sensor', () {
+    test('AudioSignalQualityIndex preserves the scan engine quality score', () {
       final asqi = AudioSignalQualityIndex(
-        snrDb: 22.0,
-        noiseFloorDbfs: -55.0,
-        clipRatio: 0.0,
+        score: 0.94,
         sampleRate: 16000,
         durationSeconds: 2.0,
         sensorType: SensorType.contactPiezo,
       );
-      expect(asqi.compositeScore, greaterThan(0.8));
+      expect(asqi.compositeScore, 0.94);
       expect(asqi.badge, equals(QualityBadge.clear));
     });
 
-    test('AudioSignalQualityIndex penalizes low SNR and air microphone', () {
+    test('AudioSignalQualityIndex keeps missing quality unavailable', () {
       final asqi = AudioSignalQualityIndex(
-        snrDb: 6.0,
-        noiseFloorDbfs: -32.0,
-        clipRatio: 0.05,
+        score: null,
         sampleRate: 16000,
-        durationSeconds: 1.5,
+        durationSeconds: 2.0,
         sensorType: SensorType.audioAir,
       );
-      expect(asqi.compositeScore, lessThan(0.6));
-      expect(asqi.badge, equals(QualityBadge.noisy));
+      expect(asqi.compositeScore, isNull);
+      expect(asqi.badge, equals(QualityBadge.unavailable));
     });
 
     test('VisualQualityIndex evaluates sharpness and exposure', () {

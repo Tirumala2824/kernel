@@ -54,7 +54,7 @@ import 'routes.dart';
 /// - while settings are unknown, stay on the start screen;
 /// - onboarding not done (first launch) -> onboarding;
 /// - no role yet -> role selection;
-/// - role set -> leave start/onboarding/role screens for Home, unless the
+/// - role set -> leave start/onboarding/role screens for chat, unless the
 ///   user opened role selection on purpose to switch roles.
 String? kernelRedirect(
   AsyncValue<Role?> activeRole,
@@ -70,9 +70,9 @@ String? kernelRedirect(
   }
   final role = activeRole.value;
   if (role == null) return path == Routes.role ? null : Routes.role;
-  if (path == Routes.start || path == Routes.onboarding) return Routes.home;
+  if (path == Routes.start || path == Routes.onboarding) return Routes.chat;
   if (path == Routes.role && location.queryParameters['switch'] != '1') {
-    return Routes.home;
+    return Routes.chat;
   }
   return null;
 }

@@ -87,11 +87,11 @@ void main() {
       );
       expect(
         kernelRedirect(const AsyncData(Role.farmer), Uri.parse(Routes.start)),
-        Routes.home,
+        Routes.chat,
       );
       expect(
         kernelRedirect(const AsyncData(Role.farmer), Uri.parse(Routes.role)),
-        Routes.home,
+        Routes.chat,
       );
       expect(
         kernelRedirect(
@@ -133,7 +133,10 @@ void main() {
         contrast(KernelColors.onForest, KernelColors.forestSoft),
         greaterThan(4.5),
       );
-      expect(contrast(KernelColors.ink, KernelColors.sageDeep), greaterThan(4.5));
+      expect(
+        contrast(KernelColors.ink, KernelColors.sageDeep),
+        greaterThan(4.5),
+      );
     });
 
     test('theme uses the bundled Manrope type scale', () {

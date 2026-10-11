@@ -1,6 +1,6 @@
 import 'package:kernel_contracts/kernel_contracts.dart';
 
-/// Task input for AgronomySafetyAgent.
+/// Task input for the local knowledge and safety agent.
 class AgronomySafetyTask {
   const AgronomySafetyTask({
     required this.verdict,
@@ -13,57 +13,53 @@ class AgronomySafetyTask {
   final String? sightingCardId;
 }
 
-/// Autonomous agronomy and safety validation agent.
-/// Enforces strict safety guardrails (§6, §9) against hazardous chemicals,
-/// unverified home remedies, and promotes grounded, non-chemical IPM protocols.
-class AgronomySafetyAgent implements Agent<AgronomySafetyTask, GroundedGuidanceReport> {
+/// Provides safety guidance only from the reviewed, bundled knowledge cards.
+/// If the local corpus has no applicable card, it returns an explicit
+/// unavailable state rather than inventing treatment thresholds or legal claims.
+class AgronomySafetyAgent
+    implements Agent<AgronomySafetyTask, GroundedGuidanceReport> {
   AgronomySafetyAgent({this.knowledgeService});
 
   final KnowledgeService? knowledgeService;
 
   @override
-  String get agentId => 'agent.safety.agronomy';
+  String get agentId => 'agent.safety.local_knowledge';
 
   @override
   Future<GroundedGuidanceReport> execute(AgronomySafetyTask task) async {
-    final cardId = task.sightingCardId ?? 'grain_weevil_ipm';
-    KnowledgeCard? card;
-    final svc = knowledgeService;
-    if (svc != null && task.sightingCardId != null) {
-      card = await svc.get(task.sightingCardId!);
-    }
-
-    final safeSteps = card?.safeSteps.isNotEmpty == true
-        ? card!.safeSteps
-        : [
-            '1. Quarantine: Immediately separate infested sacks 5 meters away from healthy grain stacks.',
-            '2. Solar Drying & Sieving: Sieve grain through 2.0 mm mesh screen to remove free insects, then sun-dry on clean tarpaulin for 4 hours (grain temp > 50°C kills eggs).',
-            '3. Hermetic Storage: Repack cooled, clean grain into triple-layer hermetic bags (PICS) or sealed metal bins to deplete oxygen naturally.',
-            '4. Clean Store Hygiene: Remove cracked grains, dust, and webbings from floor cracks using a broom; seal crevices before restocking.',
-          ];
-
-    final callProfessional = card?.callProfessionalWhen ?? [
-      'Infestation exceeds 5 insects per kg across more than 20% of stored sacks.',
-      'Grain heating / damp pockets detected inside bulk grain bulkheads.',
-    ];
-
-    final firstAid = card?.firstAid ?? [
-      'Wash skin thoroughly with soap and water if handling mouldy or dusty grain.',
-      'Wear an N95 dust mask when cleaning storage facilities to prevent grain dust inhalation.',
-    ];
-
-    const legalNote =
-        'Strict IPM Compliance: Chemical fumigation (e.g. Aluminium Phosphide) is restricted to certified commercial fumigators under government regulations. Never mix unverified household pesticides with edible grain.';
-
-    return GroundedGuidanceReport(
-      cardId: cardId,
-      summary: card?.summary ??
-          'Integrated Pest Management (IPM) protocol for stored grain insect screening: prioritize non-chemical isolation, mechanical sieving, and hermetic storage.',
-      safeSteps: safeSteps,
-      safetyConcerns: card?.safety != null ? {card!.safety} : {SafetyLevel.low},
-      callProfessionalWhen: callProfessional,
-      firstAid: firstAid,
-      legalNote: legalNote,
-    );
+    final cardId = task.sightingCardId;
+    final service = knowledgeService;
+    if (cardId == null || service == null) return _unavailable;
+    final card = await service.get(cardId);
+    return card == null ? _unavailable : _fromCard(card);
   }
+
+  /// Answers a text-only chat turn with the best matching local knowledge
+  /// card. It does not call a network model or fabricate unsupported facts.
+  Future<GroundedGuidanceReport> answerQuestion(String question) async {
+    final service = knowledgeService;
+    if (service == null || question.trim().isEmpty) return _unavailable;
+    final hits = await service.search(question.trim(), limit: 1);
+    if (hits.isEmpty) return _unavailable;
+    return _fromCard(hits.first.card);
+  }
+
+  GroundedGuidanceReport _fromCard(KnowledgeCard card) =>
+      GroundedGuidanceReport(
+        cardId: card.id,
+        summary: card.summary,
+        safeSteps: card.safeSteps,
+        safetyConcerns: safetyConcerns(cards: [card]),
+        callProfessionalWhen: card.callProfessionalWhen,
+        firstAid: card.firstAid,
+        legalNote: card.legal,
+        sources: card.sources,
+      );
+
+  static const _unavailable = GroundedGuidanceReport(
+    cardId: 'unavailable',
+    summary: 'No matching reviewed local knowledge card is available. Do not rely on an AI or sensor result as a confirmed finding; consult a qualified local expert for advice.',
+    safeSteps: [],
+    safetyConcerns: {},
+  );
 }

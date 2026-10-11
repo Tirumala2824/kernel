@@ -1,10 +1,15 @@
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
 
 import '../../agents/agents.dart';
+import '../../app/data_providers.dart';
 import '../../app/providers.dart';
+import '../../app/routes.dart';
+import 'chat_history_store.dart';
 
 class ChatMessage {
   ChatMessage({
@@ -32,6 +37,17 @@ class ChatMessage {
   final VisualEvidenceReport? visualReport;
 }
 
+enum _ChatTool {
+  grainScan,
+  pestTools,
+  sensors,
+  map,
+  models,
+  inventory,
+  reports,
+  settings,
+}
+
 class KernelChatScreen extends ConsumerStatefulWidget {
   const KernelChatScreen({super.key});
 
@@ -48,25 +64,89 @@ class _KernelChatScreenState extends ConsumerState<KernelChatScreen> {
   PickedMedia? _pendingVisual;
   SensorType _selectedSensor = SensorType.contactPiezo;
   String? _selectedNodeId;
+  String? _selectedItemId;
   bool _isProcessing = false;
+  ChatHistoryStore? _historyStore;
+  Future<void>? _historyLoading;
+
+  String? _currentItemId() {
+    final roleState = ref.read(activeRoleProvider);
+    final role = roleState.hasValue ? roleState.value : null;
+    if (role == null) return null;
+    final itemsState = ref.read(itemsByRoleProvider(role));
+    final items = itemsState.hasValue ? itemsState.value : null;
+    if (items == null || items.isEmpty) return null;
+    if (_selectedItemId != null &&
+        items.any((item) => item.id == _selectedItemId)) {
+      return _selectedItemId;
+    }
+    return items.first.id;
+  }
 
   @override
   void initState() {
     super.initState();
-    _messages.add(
-      ChatMessage(
-        id: 'msg_init',
-        isUser: false,
-        text: '🌾 **Welcome to Kernel Autonomous Multi-Agent Grain Screening.**\n\n'
-            'I coordinate specialized bioacoustic and computer vision agents running directly on your phone:\n'
-            '• **Acoustic Diagnostic Agent** (InsectSet32 16 kHz Log-Mel Classifier)\n'
-            '• **Visual Diagnostic Agent** (Sharpness & Macro Pest ID)\n'
-            '• **Evidence Fusion Agent** (Calibrated Quality Weighting W_media)\n'
-            '• **Agronomy Safety Agent** (Grounded IPM & statutory safety protocols)\n\n'
-            'Attach a grain sound recording (.wav) or insect photo below, or ask any grain protection question.',
-        timestamp: DateTime.now(),
-      ),
-    );
+    _messages.add(_welcomeMessage());
+    _historyLoading = _restoreHistory();
+  }
+
+  ChatMessage _welcomeMessage() => ChatMessage(
+    id: 'msg_init',
+    isUser: false,
+    text:
+        'Welcome to Kernel. Ask a question covered by the bundled local knowledge cards, or attach media for on-device analysis.\n\n'
+        'AI results are suggestions, not verified findings. Experimental models may not be validated for grain-pest identification; confirm important findings independently.',
+    timestamp: DateTime.now(),
+  );
+
+  Future<void> _restoreHistory() async {
+    try {
+      final store = await ChatHistoryStore.open();
+      final history = await store.load();
+      if (!mounted) return;
+      _historyStore = store;
+      if (history.isNotEmpty) {
+        setState(() {
+          _messages
+            ..clear()
+            ..add(_welcomeMessage())
+            ..addAll(
+              history.map(
+                (entry) => ChatMessage(
+                  id: entry.id,
+                  isUser: entry.isUser,
+                  text: entry.text,
+                  timestamp: entry.timestamp,
+                ),
+              ),
+            );
+        });
+        _scrollToBottom();
+      }
+    } on Object {
+      // Keep chat usable if private storage is temporarily unavailable.
+    }
+  }
+
+  Future<void> _persistHistory() async {
+    final store = _historyStore;
+    if (store == null) return;
+    try {
+      await store.save(
+        _messages
+            .where((message) => message.id != 'msg_init')
+            .map(
+              (message) => StoredChatMessage(
+                id: message.id,
+                isUser: message.isUser,
+                text: message.text,
+                timestamp: message.timestamp,
+              ),
+            ),
+      );
+    } on Object {
+      // Chat remains available even if local history cannot be written.
+    }
   }
 
   @override
@@ -77,6 +157,7 @@ class _KernelChatScreenState extends ConsumerState<KernelChatScreen> {
   }
 
   void _scrollToBottom() {
+    unawaited(_persistHistory());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
@@ -111,32 +192,38 @@ class _KernelChatScreenState extends ConsumerState<KernelChatScreen> {
                 ),
                 const SizedBox(height: 6),
                 const Text(
-                  'Physical coupling calibrates the acoustic quality weight Q_sensor.',
+                  'Choose the source used for this recording so it is recorded with the scan.',
                   style: TextStyle(fontSize: 13, color: Colors.grey),
                 ),
                 const Divider(height: 24),
                 ListTile(
-                  leading: const Icon(Icons.touch_app, color: Color(0xFF1B4D3E)),
+                  leading: const Icon(
+                    Icons.touch_app,
+                    color: Color(0xFF1B4D3E),
+                  ),
                   title: const Text('Contact Piezo Sensor (Grain Probe)'),
-                  subtitle: const Text('Direct mechanical contact (Q = 1.0)'),
+                  subtitle: const Text('Direct-contact audio source'),
                   onTap: () => Navigator.pop(ctx, SensorType.contactPiezo),
                 ),
                 ListTile(
                   leading: const Icon(Icons.mic, color: Color(0xFF2E7D32)),
                   title: const Text('Acoustic Air Microphone (Phone / Lab)'),
-                  subtitle: const Text('Air-coupled acoustic capture (Q = 0.88)'),
+                  subtitle: const Text('Phone or external air microphone'),
                   onTap: () => Navigator.pop(ctx, SensorType.audioAir),
                 ),
                 ListTile(
                   leading: const Icon(Icons.waves, color: Color(0xFF0277BD)),
                   title: const Text('Ultrasonic Air Transducer (20-40 kHz)'),
-                  subtitle: const Text('Ultrasonic insect pulses (Q = 0.90)'),
+                  subtitle: const Text('External ultrasonic transducer'),
                   onTap: () => Navigator.pop(ctx, SensorType.usAir),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.vibration, color: Color(0xFFF57F17)),
+                  leading: const Icon(
+                    Icons.vibration,
+                    color: Color(0xFFF57F17),
+                  ),
                   title: const Text('Contact Accelerometer'),
-                  subtitle: const Text('Vibration pulse pickup (Q = 0.95)'),
+                  subtitle: const Text('Contact vibration pickup'),
                   onTap: () => Navigator.pop(ctx, SensorType.contactAccel),
                 ),
               ],
@@ -173,22 +260,25 @@ class _KernelChatScreenState extends ConsumerState<KernelChatScreen> {
   }
 
   Future<void> _handleLiveCapture() async {
+    await _historyLoading;
     final orchestrator = ref.read(orchestratorAgentProvider);
     setState(() => _isProcessing = true);
 
     final userMsg = ChatMessage(
       id: 'usr_${DateTime.now().millisecondsSinceEpoch}',
       isUser: true,
-      text: '🎙️ Live 2-second Acoustic Grain Screening',
+      text: 'Audio screening requested',
       timestamp: DateTime.now(),
     );
     setState(() => _messages.add(userMsg));
+    unawaited(_persistHistory());
     _scrollToBottom();
 
     try {
       final response = await orchestrator.execute(
-        const OrchestratorTask(
+        OrchestratorTask(
           userMessage: 'Live capture screening',
+          itemId: _currentItemId(),
           isLiveCapture: true,
         ),
       );
@@ -220,6 +310,7 @@ class _KernelChatScreenState extends ConsumerState<KernelChatScreen> {
   }
 
   Future<void> _sendMessage() async {
+    await _historyLoading;
     final text = _textController.text.trim();
     if (text.isEmpty && _pendingAudio == null && _pendingVisual == null) return;
 
@@ -251,6 +342,7 @@ class _KernelChatScreenState extends ConsumerState<KernelChatScreen> {
           audioMedia: audio,
           visualMedia: visual,
           sensorNodeId: _selectedNodeId,
+          itemId: _currentItemId(),
         ),
       );
 
@@ -280,6 +372,22 @@ class _KernelChatScreenState extends ConsumerState<KernelChatScreen> {
     }
   }
 
+  void _openTool(_ChatTool tool) {
+    final itemId = _currentItemId();
+    final route = switch (tool) {
+      _ChatTool.grainScan =>
+        itemId == null ? Routes.newItem() : Routes.scanItem(itemId),
+      _ChatTool.pestTools => Routes.pestHub,
+      _ChatTool.sensors => Routes.sensors,
+      _ChatTool.map => Routes.sightingsMap(),
+      _ChatTool.models => Routes.models,
+      _ChatTool.inventory => Routes.inventory,
+      _ChatTool.reports => Routes.reports,
+      _ChatTool.settings => Routes.settings,
+    };
+    unawaited(context.push<void>(route).then((_) {}));
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -297,22 +405,53 @@ class _KernelChatScreenState extends ConsumerState<KernelChatScreen> {
               child: const Icon(Icons.grain, color: Colors.white, size: 20),
             ),
             const SizedBox(width: 10),
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Kernel Agent Chat',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  'Autonomous On-Device Screening',
-                  style: TextStyle(fontSize: 11, color: Colors.grey),
-                ),
-              ],
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Kernel Agent Chat',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'On-device tools and local knowledge',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 11, color: Colors.grey),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
         actions: [
+          PopupMenuButton<_ChatTool>(
+            tooltip: 'Open tools',
+            icon: const Icon(Icons.more_vert),
+            onSelected: _openTool,
+            itemBuilder: (context) => const [
+              PopupMenuItem(
+                value: _ChatTool.grainScan,
+                child: Text('Scan a saved grain item'),
+              ),
+              PopupMenuItem(
+                value: _ChatTool.pestTools,
+                child: Text('Pest and animal tools'),
+              ),
+              PopupMenuItem(value: _ChatTool.sensors, child: Text('Sensors')),
+              PopupMenuItem(value: _ChatTool.map, child: Text('Sighting map')),
+              PopupMenuItem(
+                value: _ChatTool.models,
+                child: Text('On-device models'),
+              ),
+              PopupMenuItem(
+                value: _ChatTool.inventory,
+                child: Text('Inventory'),
+              ),
+              PopupMenuItem(value: _ChatTool.reports, child: Text('Reports')),
+              PopupMenuItem(value: _ChatTool.settings, child: Text('Settings')),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.mic),
             tooltip: 'Live Acoustic Scan',
@@ -322,6 +461,10 @@ class _KernelChatScreenState extends ConsumerState<KernelChatScreen> {
       ),
       body: Column(
         children: [
+          _ChatItemSelector(
+            selectedItemId: _selectedItemId,
+            onSelected: (id) => setState(() => _selectedItemId = id),
+          ),
           // Message stream
           Expanded(
             child: ListView.builder(
@@ -338,7 +481,7 @@ class _KernelChatScreenState extends ConsumerState<KernelChatScreen> {
           if (_isProcessing)
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-              color: Colors.amber.withOpacity(0.1),
+              color: Colors.amber.withValues(alpha: 0.1),
               child: const Row(
                 children: [
                   SizedBox(
@@ -348,7 +491,7 @@ class _KernelChatScreenState extends ConsumerState<KernelChatScreen> {
                   ),
                   SizedBox(width: 12),
                   Text(
-                    'Agents processing on-device: computing ASQI, InsectSet32 classification & IPM...',
+                    'On-device tools are processing your request…',
                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
                   ),
                 ],
@@ -359,7 +502,9 @@ class _KernelChatScreenState extends ConsumerState<KernelChatScreen> {
           if (_pendingAudio != null || _pendingVisual != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              color: theme.colorScheme.surfaceVariant.withOpacity(0.4),
+              color: theme.colorScheme.surfaceContainerHighest.withValues(
+                alpha: 0.4,
+              ),
               child: Row(
                 children: [
                   if (_pendingAudio != null)
@@ -395,20 +540,28 @@ class _KernelChatScreenState extends ConsumerState<KernelChatScreen> {
               decoration: BoxDecoration(
                 color: theme.colorScheme.surface,
                 border: Border(
-                  top: BorderSide(color: theme.dividerColor.withOpacity(0.2)),
+                  top: BorderSide(
+                    color: theme.dividerColor.withValues(alpha: 0.2),
+                  ),
                 ),
               ),
               child: Row(
                 children: [
                   // Audio upload button
                   IconButton(
-                    icon: const Icon(Icons.audio_file, color: Color(0xFF1B4D3E)),
+                    icon: const Icon(
+                      Icons.audio_file,
+                      color: Color(0xFF1B4D3E),
+                    ),
                     tooltip: 'Upload Audio (.wav) with Sensor Tag',
                     onPressed: _isProcessing ? null : _handleAudioUpload,
                   ),
                   // Photo upload button
                   IconButton(
-                    icon: const Icon(Icons.camera_alt, color: Color(0xFF2E7D32)),
+                    icon: const Icon(
+                      Icons.camera_alt,
+                      color: Color(0xFF2E7D32),
+                    ),
                     tooltip: 'Take / Upload Pest Photo',
                     onPressed: _isProcessing ? null : _handleImageUpload,
                   ),
@@ -425,10 +578,14 @@ class _KernelChatScreenState extends ConsumerState<KernelChatScreen> {
                       controller: _textController,
                       decoration: InputDecoration(
                         hintText: 'Type query or send attachments...',
-                        hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+                        hintStyle: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade500,
+                        ),
                         isDense: true,
                         filled: true,
-                        fillColor: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                        fillColor: theme.colorScheme.surfaceContainerHighest
+                            .withValues(alpha: 0.3),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 14,
                           vertical: 10,
@@ -475,8 +632,9 @@ class _MessageBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Column(
-        crossAxisAlignment:
-            isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isUser
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
           // Bubble
           Container(
@@ -487,7 +645,9 @@ class _MessageBubble extends StatelessWidget {
             decoration: BoxDecoration(
               color: isUser
                   ? const Color(0xFF1B4D3E)
-                  : theme.colorScheme.surfaceVariant.withOpacity(0.4),
+                  : theme.colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.4,
+                    ),
               borderRadius: BorderRadius.only(
                 topLeft: const Radius.circular(16),
                 topRight: const Radius.circular(16),
@@ -505,7 +665,11 @@ class _MessageBubble extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.audiotrack, size: 16, color: Colors.white70),
+                        const Icon(
+                          Icons.audiotrack,
+                          size: 16,
+                          color: Colors.white70,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           '${message.audioMedia!.fileName} (${message.audioMedia!.sensorType.name})',
@@ -526,7 +690,9 @@ class _MessageBubble extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          message.visualMedia!.isVideo ? Icons.videocam : Icons.image,
+                          message.visualMedia!.isVideo
+                              ? Icons.videocam
+                              : Icons.image,
                           size: 16,
                           color: Colors.white70,
                         ),
@@ -548,7 +714,9 @@ class _MessageBubble extends StatelessWidget {
                   message.text,
                   style: TextStyle(
                     fontSize: 14,
-                    color: isUser ? Colors.white : theme.textTheme.bodyMedium?.color,
+                    color: isUser
+                        ? Colors.white
+                        : theme.textTheme.bodyMedium?.color,
                     height: 1.4,
                   ),
                 ),
@@ -592,6 +760,7 @@ class _QualityVerdictCard extends StatelessWidget {
       QualityBadge.clear => const Color(0xFF2E7D32),
       QualityBadge.fair => const Color(0xFFF57F17),
       QualityBadge.noisy => const Color(0xFFC62828),
+      QualityBadge.unavailable => Colors.blueGrey,
     };
 
     return Container(
@@ -599,10 +768,13 @@ class _QualityVerdictCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: badgeColor.withOpacity(0.4), width: 1.5),
+        border: Border.all(
+          color: badgeColor.withValues(alpha: 0.4),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -611,12 +783,15 @@ class _QualityVerdictCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: badgeColor.withOpacity(0.12),
+                  color: badgeColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -628,36 +803,47 @@ class _QualityVerdictCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const Spacer(),
-              Text(
-                'Weight: ${(verdict.qualityWeight * 100).toInt()}%',
-                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.black54),
-              ),
+              if (verdict.qualityScore != null)
+                Text(
+                  'Capture quality: ${(verdict.qualityScore! * 100).round()}%',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black54,
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: 8),
           Text(
-            verdict.speciesName,
+            verdict.activityLabel,
             style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
               color: Color(0xFF1B4D3E),
             ),
           ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              const Text('Calibrated Confidence: ', style: TextStyle(fontSize: 12, color: Colors.black54)),
-              Text(
-                '${(verdict.calibratedConfidence * 100).toInt()}%',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: verdict.calibratedConfidence >= 0.70 ? Colors.green.shade800 : Colors.orange.shade800,
-                ),
-              ),
-            ],
-          ),
+          if (verdict.aiEstimatedConfidence != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              'AI-estimated confidence: ${(verdict.aiEstimatedConfidence! * 100).round()}% (not calibrated)',
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
+            ),
+          ],
+          if (verdict.agreement != null) ...[
+            const SizedBox(height: 3),
+            Text(
+              'Agreement across independent runs: ${(verdict.agreement! * 100).round()}%',
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
+            ),
+          ],
+          if (verdict.modelVersion != null) ...[
+            const SizedBox(height: 3),
+            Text(
+              'Model: ${verdict.modelVersion}${verdict.experimental ? ' · experimental' : ''}',
+              style: const TextStyle(fontSize: 11, color: Colors.black54),
+            ),
+          ],
           const Divider(height: 14),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -667,7 +853,11 @@ class _QualityVerdictCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   verdict.userAdvice,
-                  style: const TextStyle(fontSize: 12, color: Colors.black87, fontStyle: FontStyle.italic),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.black87,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
               ),
             ],
@@ -690,7 +880,9 @@ class _IpmProtocolCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFF9FBF9),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF1B4D3E).withOpacity(0.2)),
+        border: Border.all(
+          color: const Color(0xFF1B4D3E).withValues(alpha: 0.2),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -700,7 +892,7 @@ class _IpmProtocolCard extends StatelessWidget {
               Icon(Icons.shield, size: 16, color: Color(0xFF1B4D3E)),
               SizedBox(width: 6),
               Text(
-                'Safe Non-Chemical IPM Protocols',
+                'Reviewed local guidance',
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
@@ -715,17 +907,90 @@ class _IpmProtocolCard extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(
                 step,
-                style: const TextStyle(fontSize: 12, color: Colors.black87, height: 1.3),
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.black87,
+                  height: 1.3,
+                ),
               ),
             ),
           if (guidance.legalNote != null) ...[
             const SizedBox(height: 6),
             Text(
               guidance.legalNote!,
-              style: TextStyle(fontSize: 10, color: Colors.red.shade800, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: 10,
+                color: Colors.red.shade800,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+          if (guidance.sources.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              'Sources: ${guidance.sources.join('; ')}',
+              style: const TextStyle(fontSize: 10, color: Colors.black54),
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _ChatItemSelector extends ConsumerWidget {
+  const _ChatItemSelector({
+    required this.selectedItemId,
+    required this.onSelected,
+  });
+
+  final String? selectedItemId;
+  final ValueChanged<String?> onSelected;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final roleState = ref.watch(activeRoleProvider);
+    final role = roleState.hasValue ? roleState.value : null;
+    if (role == null) return const SizedBox.shrink();
+    final itemsState = ref.watch(itemsByRoleProvider(role));
+    final items = itemsState.hasValue ? itemsState.value! : const <GrainItem>[];
+    final selected = items.any((item) => item.id == selectedItemId)
+        ? selectedItemId
+        : items.firstOrNull?.id;
+    return Material(
+      color: Theme.of(context).colorScheme.surface,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 6, 14, 2),
+        child: Row(
+          children: [
+            const Icon(Icons.inventory_2_outlined, size: 18),
+            const SizedBox(width: 8),
+            Expanded(
+              child: items.isEmpty
+                  ? const Text(
+                      'No saved grain items yet. Audio screening needs an item.',
+                    )
+                  : DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: selected,
+                        isExpanded: true,
+                        hint: const Text('Choose saved grain item'),
+                        items: [
+                          for (final item in items)
+                            DropdownMenuItem(
+                              value: item.id,
+                              child: Text(
+                                '${item.label} · ${item.grainType}',
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                        ],
+                        onChanged: onSelected,
+                      ),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

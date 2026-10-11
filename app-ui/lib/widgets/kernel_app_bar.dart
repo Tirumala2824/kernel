@@ -18,34 +18,39 @@ class OfflineIndicator extends ConsumerWidget {
     final l = context.l10n;
     final offline = ref.watch(isOfflineProvider);
     if (offline == null) return const SizedBox.shrink();
+    final compact = MediaQuery.textScalerOf(context).scale(14) > 18;
     return Semantics(
       label: offline ? l.offlineSemantics : l.onlineSemantics,
       excludeSemantics: true,
-      child: Container(
-        key: const Key('offline-indicator'),
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: offline ? KernelColors.sage : KernelColors.paper,
-          borderRadius: BorderRadius.circular(KernelRadii.pill),
-          border: Border.all(color: KernelColors.forestSoft),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              offline ? Icons.cloud_off_rounded : Icons.cloud_done_rounded,
-              size: 16,
-              color: KernelColors.forest,
-            ),
-            const SizedBox(width: 6),
-            Text(
-              offline ? l.offlineLabel : l.onlineLabel,
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+      child: Tooltip(
+        message: offline ? l.offlineLabel : l.onlineLabel,
+        child: Container(
+          key: const Key('offline-indicator'),
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: offline ? KernelColors.sage : KernelColors.paper,
+            borderRadius: BorderRadius.circular(KernelRadii.pill),
+            border: Border.all(color: KernelColors.forestSoft),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                offline ? Icons.cloud_off_rounded : Icons.cloud_done_rounded,
+                size: 16,
                 color: KernelColors.forest,
               ),
-            ),
-          ],
+              if (!compact) ...[
+                const SizedBox(width: 6),
+                Text(
+                  offline ? l.offlineLabel : l.onlineLabel,
+                  style: Theme.of(context).textTheme.labelMedium
+                      ?.copyWith(color: KernelColors.forest),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );

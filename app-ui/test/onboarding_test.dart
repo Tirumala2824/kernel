@@ -39,8 +39,8 @@ void main() {
       await tapVisible(tester, find.byKey(const Key('role-household')));
       expect(env.settings.activeRole, Role.household);
       expect(env.settings.onboardingDone, isTrue);
-      expect(find.text(en.householdHomeTitle), findsOneWidget);
-      expect(find.byType(NavigationBar), findsOneWidget);
+      expect(find.text('Kernel Agent Chat'), findsOneWidget);
+      expect(find.byType(NavigationBar), findsNothing);
     });
 
     testWidgets('skip jumps to the role page', (tester) async {
@@ -82,7 +82,7 @@ void main() {
           Uri.parse(Routes.onboarding),
           onboardingDone: const AsyncData(true),
         ),
-        Routes.home,
+        Routes.chat,
       );
       expect(
         kernelRedirect(

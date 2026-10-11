@@ -1,4 +1,6 @@
+import 'dart:math' as math;
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:kernel_contracts/kernel_contracts.dart';
 
@@ -17,91 +19,138 @@ class VisualTask {
   final String? fileName;
 }
 
-/// Autonomous visual diagnostic agent.
-/// Analyzes grain screening images, macro photos, and video keyframes.
-/// Computes VQI (Visual Quality Index: sharpness, exposure, resolution)
-/// and identifies visual pest candidates.
+/// Decodes image pixels for capture-quality measurements and delegates pest
+/// analysis to the installed on-device PestAnalyzer. It never manufactures a
+/// candidate, species, or bounding box from arbitrary file bytes.
 class VisualDiagnosticAgent implements Agent<VisualTask, VisualEvidenceReport> {
-  VisualDiagnosticAgent({this.analyzer});
+  VisualDiagnosticAgent({this.analyzer, this.knowledgeService});
 
   final PestAnalyzer? analyzer;
+  final KnowledgeService? knowledgeService;
 
   @override
   String get agentId => 'agent.diagnostic.visual';
 
   @override
   Future<VisualEvidenceReport> execute(VisualTask task) async {
-    // Compute image quality metrics (sharpness proxy, mean luminance)
-    final vqi = _calculateVqi(task.bytes);
-
+    final vqi = await _measureImage(task.bytes);
     PestAnalysis? analysis;
-    final an = analyzer;
-    if (an != null && task.bytes.isNotEmpty) {
+    final model = analyzer;
+    if (model != null && task.bytes.isNotEmpty) {
+      var allowedCardIds = task.allowedCardIds;
+      if (allowedCardIds.isEmpty) {
+        try {
+          allowedCardIds = (await knowledgeService?.all() ?? const [])
+              .map((card) => card.id)
+              .toList(growable: false);
+        } on Object {
+          allowedCardIds = const [];
+        }
+      }
       try {
-        analysis = await an.analyzeImage(
-          PestImageRequest(
-            crop: task.bytes,
-            allowedCardIds: task.allowedCardIds,
-          ),
+        analysis = await model.analyzeImage(
+          PestImageRequest(crop: task.bytes, allowedCardIds: allowedCardIds),
         );
-      } catch (_) {
+      } on Object {
+        // A failed or unavailable model is represented as no analysis.
         analysis = null;
       }
     }
-
-    final candidate = SignalCandidate(
-      id: 'vis_${DateTime.now().millisecondsSinceEpoch}',
-      source: SignalSource.camera,
-      kind: SignalKind.modelBox,
-      score: analysis?.aiConfidence ?? (vqi.compositeScore * 0.85),
-      detectedAt: DateTime.now().toUtc(),
-      box: const NormalizedBox(left: 0.2, top: 0.2, width: 0.6, height: 0.6),
-      hint: analysis?.cardId ?? 'sitophilus_oryzae',
-    );
-
-    return VisualEvidenceReport(
-      vqi: vqi,
-      candidates: [candidate],
-      analysis: analysis,
-      selectedCandidate: candidate,
-    );
+    return VisualEvidenceReport(vqi: vqi, analysis: analysis);
   }
 
-  /// Estimates Laplacian variance and luminance from image bytes.
-  VisualQualityIndex _calculateVqi(Uint8List bytes) {
-    if (bytes.isEmpty) {
-      return const VisualQualityIndex(
-        laplacianSharpness: 20.0,
-        meanLuminance: 30.0,
-        cropWidth: 200,
-        cropHeight: 200,
+  Future<VisualQualityIndex> _measureImage(Uint8List bytes) async {
+    if (bytes.isEmpty) return _unavailableVqi;
+
+    ui.ImmutableBuffer? buffer;
+    ui.ImageDescriptor? descriptor;
+    ui.Codec? codec;
+    ui.Image? image;
+    try {
+      buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
+      descriptor = await ui.ImageDescriptor.encoded(buffer);
+      final originalWidth = descriptor.width;
+      final originalHeight = descriptor.height;
+      if (originalWidth <= 0 || originalHeight <= 0) return _unavailableVqi;
+
+      // Downsample in the platform codec before reading pixels; this bounds
+      // the analysis buffer to approximately 512 x 512 even for large photos.
+      final scale = math.min(
+        1.0,
+        512.0 / math.max(originalWidth, originalHeight),
       );
-    }
+      final targetWidth = math.max(1, (originalWidth * scale).round());
+      final targetHeight = math.max(1, (originalHeight * scale).round());
+      codec = await descriptor.instantiateCodec(
+        targetWidth: targetWidth,
+        targetHeight: targetHeight,
+      );
+      final frame = await codec.getNextFrame();
+      image = frame.image;
+      final pixels = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+      if (pixels == null) return _unavailableVqi;
 
-    // Fast sampling of bytes to approximate luminance and variance
-    final step = (bytes.length / 500).clamp(1, 1000).toInt();
-    double sum = 0.0;
-    int count = 0;
-    for (int i = 0; i < bytes.length; i += step) {
-      sum += bytes[i];
-      count++;
-    }
-    final mean = count > 0 ? sum / count : 128.0;
+      final width = image.width;
+      final height = image.height;
+      final luminance = Float64List(width * height);
+      double luminanceSum = 0;
+      for (var y = 0; y < height; y++) {
+        for (var x = 0; x < width; x++) {
+          final offset = (y * width + x) * 4;
+          final value =
+              0.2126 * pixels.getUint8(offset) +
+              0.7152 * pixels.getUint8(offset + 1) +
+              0.0722 * pixels.getUint8(offset + 2);
+          luminance[y * width + x] = value;
+          luminanceSum += value;
+        }
+      }
 
-    double diffSum = 0.0;
-    for (int i = step; i < bytes.length; i += step) {
-      final diff = (bytes[i] - bytes[i - step]).abs();
-      diffSum += diff;
+      double laplacianSum = 0;
+      double laplacianSquareSum = 0;
+      var sampleCount = 0;
+      for (var y = 1; y < height - 1; y++) {
+        for (var x = 1; x < width - 1; x++) {
+          final index = y * width + x;
+          final laplacian =
+              4 * luminance[index] -
+              luminance[index - 1] -
+              luminance[index + 1] -
+              luminance[index - width] -
+              luminance[index + width];
+          laplacianSum += laplacian;
+          laplacianSquareSum += laplacian * laplacian;
+          sampleCount++;
+        }
+      }
+      final meanLaplacian = sampleCount == 0 ? 0.0 : laplacianSum / sampleCount;
+      final sharpness = sampleCount == 0
+          ? 0.0
+          : math.max(
+              0.0,
+              laplacianSquareSum / sampleCount - meanLaplacian * meanLaplacian,
+            );
+      return VisualQualityIndex(
+        laplacianSharpness: sharpness,
+        meanLuminance: luminanceSum / (width * height),
+        cropWidth: originalWidth,
+        cropHeight: originalHeight,
+      );
+    } on Object {
+      // Unsupported/corrupt media does not receive synthetic quality values.
+      return _unavailableVqi;
+    } finally {
+      image?.dispose();
+      codec?.dispose();
+      descriptor?.dispose();
+      buffer?.dispose();
     }
-    final avgDiff = count > 1 ? diffSum / (count - 1) : 40.0;
-    // Map avgDiff to Laplacian proxy
-    final sharpness = (avgDiff * 3.5).clamp(25.0, 160.0);
-
-    return VisualQualityIndex(
-      laplacianSharpness: sharpness,
-      meanLuminance: mean,
-      cropWidth: 1024,
-      cropHeight: 1024,
-    );
   }
+
+  static const _unavailableVqi = VisualQualityIndex(
+    laplacianSharpness: null,
+    meanLuminance: null,
+    cropWidth: null,
+    cropHeight: null,
+  );
 }

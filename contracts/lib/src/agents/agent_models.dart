@@ -8,60 +8,41 @@ abstract interface class Agent<TTask, TReport> {
   Future<TReport> execute(TTask task);
 }
 
-/// Visual quality badge for plain-language UX across all user bases.
-enum QualityBadge { clear, fair, noisy }
+/// Plain-language state for a measured capture-quality signal.
+enum QualityBadge { clear, fair, noisy, unavailable }
 
-/// Evaluated Audio Signal Quality Index based on noise floor, SNR, and sensor coupling.
+/// An audio capture-quality score reported by the scan engine.
+///
+/// No proxy SNR, noise floor, or sensor-coupling values are synthesized when
+/// the engine does not report them. The score describes recording quality; it
+/// is not a pest probability.
 class AudioSignalQualityIndex {
   const AudioSignalQualityIndex({
-    required this.snrDb,
-    required this.noiseFloorDbfs,
-    required this.clipRatio,
+    required this.score,
     required this.sampleRate,
     required this.durationSeconds,
     required this.sensorType,
   });
 
-  final double snrDb;
-  final double noiseFloorDbfs;
-  final double clipRatio;
+  /// Scan-engine ASQI in 0..1, or null when the engine did not report it.
+  final double? score;
   final int sampleRate;
   final double durationSeconds;
   final SensorType sensorType;
 
-  /// Sensor physical acoustic coupling factor (1.0 = best contact piezo).
-  double get sensorCouplingFactor => switch (sensorType) {
-    SensorType.contactPiezo => 1.0,
-    SensorType.contactAccel => 0.95,
-    SensorType.usAir => 0.90,
-    SensorType.audioAir => 0.88,
-  };
-
-  /// Noise score in 0..1 (SNR penalty + clipping penalty).
-  double get noiseScore {
-    final snrFraction = (snrDb / 18.0).clamp(0.2, 1.0);
-    final clipPenalty = (1.0 - clipRatio * 10.0).clamp(0.2, 1.0);
-    return snrFraction * clipPenalty;
-  }
-
-  /// Resolution score based on duration (target 2.0 s) and sample rate.
-  double get resolutionScore {
-    final durFraction = (durationSeconds / 2.0).clamp(0.5, 1.0);
-    final rateFraction = sampleRate >= 16000 ? 1.0 : 0.8;
-    return durFraction * rateFraction;
-  }
-
-  /// Composite Audio Signal Quality Index (0..1).
-  double get compositeScore => (noiseScore * resolutionScore * sensorCouplingFactor).clamp(0.1, 1.0);
+  double? get compositeScore => score?.clamp(0.0, 1.0).toDouble();
 
   QualityBadge get badge {
-    if (compositeScore >= 0.78) return QualityBadge.clear;
-    if (compositeScore >= 0.50) return QualityBadge.fair;
+    final value = compositeScore;
+    if (value == null) return QualityBadge.unavailable;
+    if (value >= 0.78) return QualityBadge.clear;
+    if (value >= 0.50) return QualityBadge.fair;
     return QualityBadge.noisy;
   }
 }
 
-/// Evaluated Visual Quality Index based on sharpness, exposure, and crop resolution.
+/// Pixel-derived image-capture measurements. Scores are quality heuristics,
+/// never evidence that an image contains a particular pest.
 class VisualQualityIndex {
   const VisualQualityIndex({
     required this.laplacianSharpness,
@@ -70,73 +51,81 @@ class VisualQualityIndex {
     required this.cropHeight,
   });
 
-  final double laplacianSharpness;
-  final double meanLuminance;
-  final int cropWidth;
-  final int cropHeight;
+  final double? laplacianSharpness;
+  final double? meanLuminance;
+  final int? cropWidth;
+  final int? cropHeight;
 
-  /// Sharpness score in 0..1 (Laplacian variance: >=100 is sharp, <30 is blurry).
-  double get sharpnessScore => (laplacianSharpness / 100.0).clamp(0.4, 1.0);
-
-  /// Exposure score (optimal luminance 60..200).
-  double get exposureScore {
-    if (meanLuminance >= 60 && meanLuminance <= 200) return 1.0;
-    if (meanLuminance < 60) return (meanLuminance / 60.0).clamp(0.5, 1.0);
-    return ((255 - meanLuminance) / 55.0).clamp(0.5, 1.0);
+  double? get sharpnessScore {
+    final value = laplacianSharpness;
+    return value == null ? null : (value / 100.0).clamp(0.0, 1.0).toDouble();
   }
 
-  /// Resolution score (512+ px long edge is optimal).
-  double get resolutionScore {
-    final maxDim = cropWidth > cropHeight ? cropWidth : cropHeight;
-    return (maxDim / 512.0).clamp(0.5, 1.0);
+  double? get exposureScore {
+    final value = meanLuminance;
+    if (value == null) return null;
+    if (value >= 60 && value <= 200) return 1.0;
+    if (value < 60) return (value / 60.0).clamp(0.0, 1.0).toDouble();
+    return ((255 - value) / 55.0).clamp(0.0, 1.0).toDouble();
   }
 
-  /// Composite Visual Quality Index (0..1).
-  double get compositeScore => (sharpnessScore * exposureScore * resolutionScore).clamp(0.2, 1.0);
+  double? get resolutionScore {
+    final width = cropWidth;
+    final height = cropHeight;
+    if (width == null || height == null) return null;
+    final maxDim = width > height ? width : height;
+    return (maxDim / 512.0).clamp(0.0, 1.0).toDouble();
+  }
+
+  double? get compositeScore {
+    final sharpness = sharpnessScore;
+    final exposure = exposureScore;
+    final resolution = resolutionScore;
+    if (sharpness == null || exposure == null || resolution == null) {
+      return null;
+    }
+    return (sharpness * exposure * resolution).clamp(0.0, 1.0).toDouble();
+  }
 
   QualityBadge get badge {
-    if (compositeScore >= 0.80) return QualityBadge.clear;
-    if (compositeScore >= 0.58) return QualityBadge.fair;
+    final value = compositeScore;
+    if (value == null) return QualityBadge.unavailable;
+    if (value >= 0.80) return QualityBadge.clear;
+    if (value >= 0.58) return QualityBadge.fair;
     return QualityBadge.noisy;
   }
 }
 
-/// Structured acoustic diagnostic report emitted by AcousticDiagnosticAgent.
+/// Acoustic activity result. It does not claim a pest/species identification.
 class AcousticEvidenceReport {
   const AcousticEvidenceReport({
-    required this.speciesId,
-    required this.speciesName,
-    required this.rawConfidence,
+    required this.activityLabel,
+    required this.modelScore,
     required this.asqi,
     required this.modelVersion,
+    required this.experimental,
     required this.isPass,
     this.retryReason,
-    this.topCandidates = const [],
   });
 
-  final String speciesId;
-  final String speciesName;
-  final double rawConfidence;
+  final String activityLabel;
+
+  /// Model-reported score, in its training domain; not a calibrated probability.
+  final double? modelScore;
   final AudioSignalQualityIndex asqi;
   final String modelVersion;
+  final bool experimental;
   final bool isPass;
   final QualityReason? retryReason;
-  final List<ScoredLabel> topCandidates;
 }
 
-/// Structured visual report emitted by VisualDiagnosticAgent.
+/// Image report. A pest label exists only when the on-device analyzer returned
+/// an actual [PestAnalysis].
 class VisualEvidenceReport {
-  const VisualEvidenceReport({
-    required this.vqi,
-    required this.candidates,
-    this.analysis,
-    this.selectedCandidate,
-  });
+  const VisualEvidenceReport({required this.vqi, this.analysis});
 
   final VisualQualityIndex vqi;
-  final List<SignalCandidate> candidates;
   final PestAnalysis? analysis;
-  final SignalCandidate? selectedCandidate;
 }
 
 /// Structured sensor telemetry report emitted by SensorTelemetryAgent.
@@ -158,44 +147,59 @@ class SensorEvidenceReport {
   final double? peakHz;
 }
 
-/// Calibrated quality-weighted verdict produced by EvidenceFusionAgent.
+/// Summary of screening evidence. AI estimates and capture quality are kept
+/// separate; an AI estimate is never relabelled as calibrated confidence.
 class QualityWeightedVerdict {
   const QualityWeightedVerdict({
-    required this.speciesName,
-    required this.calibratedConfidence,
-    required this.rawConfidence,
-    required this.qualityWeight,
+    required this.activityLabel,
+    required this.aiEstimatedConfidence,
+    required this.agreement,
+    required this.modelVersion,
+    required this.experimental,
+    required this.qualityScore,
     required this.qualityBadge,
     required this.plainLanguageQuality,
     required this.userAdvice,
   });
 
-  final String speciesName;
-  final double calibratedConfidence;
-  final double rawConfidence;
-  final double qualityWeight;
+  final String activityLabel;
+
+  /// The vision model's own self-estimate, not calibrated. Null when there is
+  /// no constrained on-device identification result.
+  final double? aiEstimatedConfidence;
+
+  /// Fraction of independent model samples agreeing on the displayed label.
+  final double? agreement;
+  final String? modelVersion;
+  final bool experimental;
+
+  /// Capture-quality score, not a pest-classification score.
+  final double? qualityScore;
   final QualityBadge qualityBadge;
   final String plainLanguageQuality;
   final String userAdvice;
 }
 
-/// Grounded guidance report emitted by AgronomySafetyAgent.
+/// Guidance grounded in an actual local knowledge card, or an explicit
+/// unavailable state when no reviewed card matches.
 class GroundedGuidanceReport {
   const GroundedGuidanceReport({
     required this.cardId,
     required this.summary,
     required this.safeSteps,
     required this.safetyConcerns,
-    this.callProfessionalWhen,
-    this.firstAid,
+    this.callProfessionalWhen = const [],
+    this.firstAid = const [],
     this.legalNote,
+    this.sources = const [],
   });
 
   final String cardId;
   final String summary;
   final List<String> safeSteps;
   final Set<SafetyLevel> safetyConcerns;
-  final List<String>? callProfessionalWhen;
-  final List<String>? firstAid;
+  final List<String> callProfessionalWhen;
+  final List<String> firstAid;
   final String? legalNote;
+  final List<String> sources;
 }

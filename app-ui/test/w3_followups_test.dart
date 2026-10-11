@@ -25,7 +25,7 @@ void main() {
       ),
     ];
     for (final (name, roleDelay, onboardingDelay) in orders) {
-      testWidgets('lands on Home when settings emit late ($name)', (
+      testWidgets('lands on chat when settings emit late ($name)', (
         tester,
       ) async {
         final env = TestEnv(
@@ -55,9 +55,8 @@ void main() {
 
         expect(env.settings.roleWrites, [Role.farmer]);
         expect(env.settings.onboardingDone, isTrue);
-        expect(find.text(en.farmerHomeTitle), findsOneWidget);
-        final nav = tester.widget<NavigationBar>(find.byType(NavigationBar));
-        expect(nav.selectedIndex, 0);
+        expect(find.text('Kernel Agent Chat'), findsOneWidget);
+        expect(find.byType(NavigationBar), findsNothing);
         expect(find.byType(ScanTabScreen), findsNothing);
         expect(find.byKey(const Key('onboarding-page-2')), findsNothing);
       });

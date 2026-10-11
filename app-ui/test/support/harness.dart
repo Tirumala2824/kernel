@@ -10,6 +10,7 @@ import 'package:kernel_app/app/kernel_app.dart';
 import 'package:kernel_app/app/platform_providers.dart';
 import 'package:kernel_app/app/providers.dart';
 import 'package:kernel_app/app/router.dart';
+import 'package:kernel_app/app/routes.dart';
 import 'package:kernel_app/l10n/app_localizations.dart';
 import 'package:kernel_contracts/kernel_contracts.dart';
 
@@ -201,6 +202,13 @@ Future<void> pumpKernelApp(
   await tester.pumpAndSettle();
   if (location != null) {
     routerOf(tester).go(location);
+    await tester.pumpAndSettle();
+  } else if (env.settings.activeRole != null &&
+      env.settings.onboardingDone &&
+      routerOf(tester).routeInformationProvider.value.uri.path == Routes.chat) {
+    // Legacy feature tests are explicit about their target screen; keep their
+    // no-location default on Home while production startup remains chat-first.
+    routerOf(tester).go(Routes.home);
     await tester.pumpAndSettle();
   }
 }

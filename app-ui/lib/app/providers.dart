@@ -271,7 +271,10 @@ final acousticDiagnosticAgentProvider = Provider<AcousticDiagnosticAgent>(
 );
 
 final visualDiagnosticAgentProvider = Provider<VisualDiagnosticAgent>(
-  (ref) => VisualDiagnosticAgent(analyzer: ref.watch(pestAnalyzerProvider)),
+  (ref) => VisualDiagnosticAgent(
+    analyzer: ref.watch(pestAnalyzerProvider),
+    knowledgeService: ref.watch(knowledgeServiceProvider),
+  ),
   name: 'visualDiagnosticAgentProvider',
 );
 

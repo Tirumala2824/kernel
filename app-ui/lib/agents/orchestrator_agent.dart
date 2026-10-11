@@ -14,8 +14,8 @@ class OrchestratorTask {
     this.audioMedia,
     this.visualMedia,
     this.sensorNodeId,
-    this.cropContext = 'Paddy / Rice',
-    this.itemId = 'grain-item-01',
+    this.cropContext,
+    this.itemId,
     this.isLiveCapture = false,
   });
 
@@ -23,8 +23,11 @@ class OrchestratorTask {
   final PickedMedia? audioMedia;
   final PickedMedia? visualMedia;
   final String? sensorNodeId;
-  final String cropContext;
-  final String itemId;
+  final String? cropContext;
+
+  /// A real local inventory item is required before the scan engine can
+  /// persist a scan. No synthetic item identifier is invented by chat.
+  final String? itemId;
   final bool isLiveCapture;
 }
 
@@ -47,10 +50,10 @@ class OrchestratorResponse {
   final SensorEvidenceReport? sensorReport;
 }
 
-/// Orchestrator agent coordinating the autonomous domain agents.
-/// Manages user dialogue, delegates to specialist diagnostic agents,
-/// synthesizes quality-weighted evidence, and enforces safe IPM agronomic guidance.
-class OrchestratorAgent implements Agent<OrchestratorTask, OrchestratorResponse> {
+/// Coordinates on-device specialists, curated local retrieval, and safety.
+/// It never invents scan records, pest labels, or calibrated confidence.
+class OrchestratorAgent
+    implements Agent<OrchestratorTask, OrchestratorResponse> {
   OrchestratorAgent({
     required this.acousticAgent,
     required this.visualAgent,
@@ -73,12 +76,14 @@ class OrchestratorAgent implements Agent<OrchestratorTask, OrchestratorResponse>
     AcousticEvidenceReport? acousticReport;
     VisualEvidenceReport? visualReport;
     SensorEvidenceReport? sensorReport;
+    final audioRequested = task.audioMedia != null || task.isLiveCapture;
+    final audioNeedsItem = audioRequested && task.itemId == null;
 
-    // 1. Dispatch acoustic task if audio provided or live capture requested
-    if (task.audioMedia != null || task.isLiveCapture) {
+    // Scan history is linked to a real grain item. Chat never creates a fake ID.
+    if (audioRequested && task.itemId != null) {
       acousticReport = await acousticAgent.execute(
         AcousticTask(
-          itemId: task.itemId,
+          itemId: task.itemId!,
           filePath: task.audioMedia?.path,
           sensorType: task.audioMedia?.sensorType ?? SensorType.audioAir,
           sensorNodeId: task.sensorNodeId,
@@ -87,7 +92,6 @@ class OrchestratorAgent implements Agent<OrchestratorTask, OrchestratorResponse>
       );
     }
 
-    // 2. Dispatch visual task if photo/video provided
     if (task.visualMedia != null && task.visualMedia!.bytes.isNotEmpty) {
       visualReport = await visualAgent.execute(
         VisualTask(
@@ -98,14 +102,12 @@ class OrchestratorAgent implements Agent<OrchestratorTask, OrchestratorResponse>
       );
     }
 
-    // 3. Dispatch sensor telemetry task if sensor node tagged
     if (task.sensorNodeId != null) {
       sensorReport = await sensorAgent.execute(
-        SensorTelemetryTask(nodeId: task.sensorNodeId),
+        SensorTelemetryTask(nodeId: task.sensorNodeId!),
       );
     }
 
-    // 4. Multi-agent evidence fusion & quality weighting
     final verdict = await fusionAgent.execute(
       FusionTask(
         acousticReport: acousticReport,
@@ -114,48 +116,153 @@ class OrchestratorAgent implements Agent<OrchestratorTask, OrchestratorResponse>
       ),
     );
 
-    // 5. Agronomy and safety validation
-    final guidance = await safetyAgent.execute(
-      AgronomySafetyTask(verdict: verdict, cropContext: task.cropContext),
+    final hasEvidence =
+        acousticReport != null || visualReport != null || sensorReport != null;
+    final cardId = visualReport?.analysis?.cardId;
+    final guidance = !hasEvidence && task.userMessage.trim().isNotEmpty
+        ? await safetyAgent.answerQuestion(task.userMessage)
+        : await safetyAgent.execute(
+            AgronomySafetyTask(
+              verdict: verdict,
+              cropContext: task.cropContext,
+              sightingCardId: cardId,
+            ),
+          );
+
+    final responseText = _composeResponse(
+      task: task,
+      verdict: verdict,
+      guidance: guidance,
+      acoustic: acousticReport,
+      visual: visualReport,
+      sensor: sensorReport,
+      audioNeedsItem: audioNeedsItem,
     );
 
-    // 6. Build conversational response text
-    final buffer = StringBuffer();
-    if (acousticReport != null || visualReport != null) {
-      buffer.writeln('### 🌾 Multimodal Screening Diagnostic\n');
-      buffer.writeln(
-        '**Signal Quality:** ${verdict.plainLanguageQuality} '
-        '(Weight: ${(verdict.qualityWeight * 100).toInt()}%)\n',
-      );
-      buffer.writeln(
-        '**Identified Activity:** **${verdict.speciesName}** '
-        '(*${(verdict.calibratedConfidence * 100).toInt()}% calibrated confidence*)\n',
-      );
-      buffer.writeln('> 💡 **Capture Quality Advice:** ${verdict.userAdvice}\n');
-      buffer.writeln('#### 🛡️ Recommended IPM Protocol:');
-      for (final step in guidance.safeSteps) {
-        buffer.writeln('- $step');
-      }
-      buffer.writeln('\n⚠️ *${guidance.legalNote}*');
-    } else {
-      buffer.writeln(
-        'Hello! I am your **Kernel Autonomous Grain Screening & Pest ID Agent**.\n\n'
-        'You can:\n'
-        '• 🎙️ **Record live acoustic audio** from grain sacks\n'
-        '• 📁 **Upload .wav audio files** with sensor transducer tags (Contact Piezo, Acoustic Air, BLE node)\n'
-        '• 📷 **Take or upload insect photos/videos**\n'
-        '• 💬 Ask agronomic questions regarding safe grain storage, hermetic sealing, and non-chemical IPM.\n\n'
-        '*Everything runs entirely on your device with calibrated noise-weighting and zero cloud leakage.*',
-      );
-    }
-
     return OrchestratorResponse(
-      responseText: buffer.toString(),
+      responseText: responseText,
       verdict: verdict,
       guidance: guidance,
       acousticReport: acousticReport,
       visualReport: visualReport,
       sensorReport: sensorReport,
     );
+  }
+
+  String _composeResponse({
+    required OrchestratorTask task,
+    required QualityWeightedVerdict verdict,
+    required GroundedGuidanceReport guidance,
+    required AcousticEvidenceReport? acoustic,
+    required VisualEvidenceReport? visual,
+    required SensorEvidenceReport? sensor,
+    required bool audioNeedsItem,
+  }) {
+    final buffer = StringBuffer();
+    final hasEvidence = acoustic != null || visual != null || sensor != null;
+
+    if (audioNeedsItem) {
+      buffer.writeln(
+        'Audio screening was not run. Link the capture to an existing saved grain item first; no scan record or model result was created.\n',
+      );
+    }
+
+    if (hasEvidence) {
+      buffer.writeln('### On-device screening result\n');
+      if (visual != null) {
+        buffer.writeln('**Image result:** ${verdict.activityLabel}\n');
+        final analysis = visual.analysis;
+        if (analysis?.cardId != null) {
+          if (verdict.aiEstimatedConfidence != null) {
+            buffer.writeln(
+              '**AI-estimated confidence:** ${(verdict.aiEstimatedConfidence! * 100).round()}% (not calibrated).\n',
+            );
+          }
+          if (verdict.agreement != null) {
+            buffer.writeln(
+              '**Independent-run agreement:** ${(verdict.agreement! * 100).round()}% across ${analysis!.samples} sample(s).\n',
+            );
+          }
+          buffer.writeln(
+            '**Model:** ${analysis!.modelVersion}${analysis.experimental ? ' — experimental' : ''}. This is an AI suggestion, not a verified finding.\n',
+          );
+        } else {
+          buffer.writeln(
+            'Image quality measurements do not identify a pest. No constrained knowledge-card label was returned.\n',
+          );
+        }
+      }
+      if (acoustic != null) {
+        buffer.writeln('**Audio result:** ${acoustic.activityLabel}\n');
+        buffer.writeln(
+          '**Audio model:** ${acoustic.modelVersion}${acoustic.experimental ? ' — experimental' : ''}. Its score is not a calibrated grain-pest probability.\n',
+        );
+      }
+      if (sensor != null) {
+        buffer.writeln(
+          '**Sensor:** ${sensor.isEvaluated ? '${sensor.recentEventsCount} stored event(s) evaluated.' : 'No events were available for evaluation.'} Sensor telemetry alone does not identify a pest.\n',
+        );
+      }
+      buffer.writeln('**Capture quality:** ${verdict.plainLanguageQuality}');
+      if (verdict.qualityScore != null) {
+        buffer.writeln(
+          ' (quality score ${(verdict.qualityScore! * 100).round()}%, not a classification score).\n',
+        );
+      } else {
+        buffer.writeln('\n');
+      }
+      buffer.writeln('> ${verdict.userAdvice}\n');
+      _appendGuidance(buffer, guidance);
+      return buffer.toString().trim();
+    }
+
+    if (task.userMessage.trim().isNotEmpty) {
+      buffer.writeln('### Local knowledge\n');
+      buffer.writeln(guidance.summary);
+      if (guidance.safeSteps.isNotEmpty) {
+        buffer.writeln('\n**Suggested steps from the reviewed local card:**');
+        for (final step in guidance.safeSteps) {
+          buffer.writeln('- $step');
+        }
+      }
+      if (guidance.callProfessionalWhen.isNotEmpty) {
+        buffer.writeln('\n**Contact a qualified professional when:**');
+        for (final condition in guidance.callProfessionalWhen) {
+          buffer.writeln('- $condition');
+        }
+      }
+      if (guidance.legalNote != null) {
+        buffer.writeln('\n**Card note:** ${guidance.legalNote}');
+      }
+      if (guidance.sources.isNotEmpty) {
+        buffer.writeln('\n**Sources:** ${guidance.sources.join('; ')}');
+      }
+      return buffer.toString().trim();
+    }
+
+    if (audioNeedsItem) return buffer.toString().trim();
+
+    return 'Kernel runs available screening and knowledge features on this device. Attach a photo for constrained on-device identification, or ask a question covered by the bundled local knowledge cards. Experimental model suggestions require independent confirmation; no identification or verified finding is created by this welcome message.';
+  }
+
+  void _appendGuidance(StringBuffer buffer, GroundedGuidanceReport guidance) {
+    if (guidance.cardId == 'unavailable') {
+      buffer.writeln(
+        '\nNo matching reviewed local guidance card is available.',
+      );
+      return;
+    }
+    if (guidance.safeSteps.isNotEmpty) {
+      buffer.writeln('\n#### Relevant reviewed guidance');
+      for (final step in guidance.safeSteps) {
+        buffer.writeln('- $step');
+      }
+    }
+    if (guidance.legalNote != null) {
+      buffer.writeln('\n> ${guidance.legalNote}');
+    }
+    if (guidance.sources.isNotEmpty) {
+      buffer.writeln('\n**Sources:** ${guidance.sources.join('; ')}');
+    }
   }
 }
